@@ -26,8 +26,6 @@
 ;; Useful Elisp Libraries ===========================
 ;; ==================================================
 
-(require 'elisp-machine-elisp-libs)
-
 (use-package dash
   :config
   (function-put '->  'lisp-indent-function nil)
@@ -126,8 +124,6 @@
 ;; evil-mode config =================================
 ;; ==================================================
 
-(require 'elisp-machine-evil-conf)
-
 (setq evil-undo-system 'undo-tree)
 (use-package evil
   :init
@@ -220,8 +216,6 @@
 ;; Korean environment ===============================
 ;; ==================================================
 
-(require 'elisp-machine-korean-env)
-
 (set-language-environment "Korean")
 (prefer-coding-system 'utf-8)
 (global-set-key (kbd "<f6>") 'toggle-korean-input-method)
@@ -247,8 +241,6 @@
 
 ;; General.el config ================================
 ;; ==================================================
-
-(require 'elisp-machine-general-definers)
 
 (use-package general
   :config
@@ -298,8 +290,6 @@
 ;; Emoji config =====================================
 ;; ==================================================
 
-(require 'elisp-machine-emoji)
-
 (use-package emoji-cheat-sheet-plus) ; TODO: add general
 
 (use-package emojify
@@ -308,7 +298,6 @@
 ;; Mixed-Pitch ======================================
 ;; ==================================================
 
-(require 'elisp-machine-visual)
 (use-package mixed-pitch
   :hook ((org-mode . mixed-pitch-mode)
 	 (w3m-mode . mixed-pitch-mode)))
@@ -316,7 +305,6 @@
 ;; Org config =======================================
 ;; ==================================================
 
-(require 'elisp-machine-org)
 (use-package org
   :straight (:type built-in)
   :defer    t
