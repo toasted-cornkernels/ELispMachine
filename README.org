@@ -30,6 +30,8 @@ I am forever indebted to the hacker community for helping others pick up power t
 
 - [[https://systemcrafters.cc/][System Crafters]]
 - [[https://distro.tube/][DistroTube]]
+- [[https://www.spacemacs.org/][Spacemacs]]
+- [[https://github.com/doomemacs/][Doom Emacs]]
 - [[https://www.reddit.com/r/emacs/][r/emacs]]
 - [[https://emacs.stackexchange.com/][Emacs StackExchange]]
 
