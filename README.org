@@ -1,3 +1,7 @@
+#+TITLE: Runnable Specification for ELisp-Machine
+#+AUTHOR: toasted-cornkernels
+#+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el
+
 * (E)Lisp-Machine
 
 [[https://en.wikipedia.org/wiki/Lisp_machine][Lisp Machine]] was a computer designed to be a Lisp heaven. All of its application and systems software were written in Lisp and was fully customizable, on-the-fly. Its hardware was specifically designed to carry out Lisp code efficiently, with CAR and CDR baked into the processors' instruction set.
@@ -42,6 +46,301 @@ I am forever indebted to the hacker community for helping others pick up power t
 
 ** Contents
 
-*** In the beginning
+*** Bootstrapping =straight.el=
 
-*** There was darkness
+#+begin_src emacs-lisp
+  (defvar bootstrap-version)
+
+  (let ((bootstrap-file
+	 (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+	(bootstrap-version 6))
+    (unless (file-exists-p bootstrap-file)
+      (with-current-buffer
+	  (url-retrieve-synchronously
+	   "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
+	   'silent 'inhibit-cookies)
+	(goto-char (point-max))
+	(eval-print-last-sexp)))
+    (load bootstrap-file nil 'nomessage))
+
+  (straight-use-package 'use-package)
+
+  (setq straight-use-package-by-default t)
+#+end_src
+
+*** Useful Elisp Libraries
+
+#+begin_src emacs-lisp
+  (use-package dash
+    :config
+    (function-put '->  'lisp-indent-function nil)
+    (function-put '->> 'lisp-indent-function nil))
+
+  (use-package s)
+
+  (use-package ts)
+#+end_src
+
+*** Custom Functions
+
+Variables/functions/macros are too small to be dedicated a space for their own
+
+#+begin_src emacs-lisp
+  (defmacro plaintext (&rest body)
+    "Write whatever you want in the BODY!"
+    (string-join
+     (-interpose " "
+		 (mapcar (lambda (elem)
+			   (cond
+			    ((stringp elem) elem)
+			    ((and (symbolp elem)
+				  (string= (symbol-name elem) "//")) "\n")
+			    ((symbolp elem) (symbol-name elem))
+			    (t (error (format "Unrecognized string: %s" elem))))) body))))
+
+  (defmacro comment (&rest args)
+    "Rich comment: ignore whatever that is in ARGS."
+    nil)
+
+  (defun minor-mode-activated-p (minor-mode)
+    "Is the given MINOR-MODE activated?"
+    (let ((activated-minor-modes (mapcar #'car minor-mode-alist)))
+      (memq minor-mode activated-minor-modes)))
+
+  (defun straight-from-github (package repo)
+    "Make a straight.el specification to locate the PACKAGE from github REPO."
+    (list package :type 'git :host 'github :repo repo))
+
+  (defalias 'assert 'cl-assert)
+
+  (defun keyword-to-string (keyword)
+    "Convert the KEYWORD to string."
+    (assert (symbolp keyword))
+    (->> keyword
+	 intern-soft
+	 symbol-name
+	 (s-chop-prefix ":")))
+
+  (defun which-key-prefix (label)
+    "Create a which-key prefix with LABEL."
+    (list
+     :ignore t
+     :which-key (if (keywordp label) (keyword-to-string label) label)))
+
+  (defvar macOS-p (equal system-type 'darwin)
+    "Am I in macOS?")
+
+  (defvar linux-p (equal system-type 'gnu/linux)
+    "Am I in a generic Linux distro?")
+
+  (defvar chromeOS-p (string= (system-name) "penguin")
+    "Am I in chromeOS?")
+
+  (defvar GUI-p (window-system)
+    "Am I in a GUI Client?")
+
+  (defvar terminal-p (not GUI-p)
+    "Am I in a tty?")
+
+  (defvar work-machine-p (getenv "WORK_MACHINE")
+    "Am I in a work machine?")
+
+  (defmacro use-package-from-github (package repo &rest body)
+    "Extended form of use-package to pull PACKAGE from REPO.  Use the BODY as ordinary use-package."
+    (let ((github-form (straight-from-github package repo)))
+      `(use-package ,package :straight ,github-form ,@body)))
+
+  (defun toggle-debug-on-error ()
+    "Toggle `debug-on-error`."
+    (interactive)
+    (if debug-on-error
+	(progn
+	  (setq debug-on-error nil)
+	  (message "%s" "Now disabling stacktrace on error."))
+      (setq debug-on-error t)
+      (message "%s" "Now showing stacktrace on error.")))
+
+  (defun visit-init-dot-el ()
+    "Visit `~/.emacs.d/init.el'."
+    (interactive)
+    (find-file "~/.emacs.d/init.el"))
+
+  (defun eval-init-dot-el ()
+    "Evaluate the contents of `~/.emacs.d/init.el'."
+    (interactive)
+    (with-temp-buffer
+      (insert-file-contents "~/.emacs.d/init.el")
+      (eval-buffer)))
+#+end_src
+
+*** Evil mode
+
+#+begin_src emacs-lisp
+  (setq evil-undo-system 'undo-tree)
+  (use-package evil
+    :init
+    (setq evil-want-keybinding nil
+	  evil-disable-insert-state-bindings t
+	  evil-want-C-u-scroll t
+	  evil-want-integration t)
+    :config
+    (evil-mode 1)
+    ;; set leader key in normal state
+    (evil-set-leader 'normal (kbd "SPC"))
+    ;; set local leader
+    (evil-set-leader 'normal "," t)
+    (setq evil-motion-state-cursor 'box
+	  evil-visual-state-cursor 'box
+	  evil-normal-state-cursor 'box
+	  evil-insert-state-cursor 'bar)
+    (evil-ex-define-cmd "q" 'kill-this-buffer)
+    (evil-ex-define-cmd "Q" 'kill-this-buffer)
+    (evil-ex-define-cmd "W" 'save-buffer)
+    (evil-ex-define-cmd "Wq" 'evil-save-and-close)
+    (evil-ex-define-cmd "WQ" 'evil-save-and-close)
+    (evil-ex-define-cmd "E" 'evil-edit)
+    (setq evil-vsplit-window-right t
+	  evil-split-window-below t)
+    (evil-define-key 'normal 'global (kbd "C-w DEL") 'evil-window-left)
+    (evil-define-key 'normal 'global (kbd "C-w C-j") 'evil-window-down)
+    (evil-define-key 'normal 'global (kbd "C-w C-k") 'evil-window-up)
+    (evil-define-key 'normal 'global (kbd "C-w C-l") 'evil-window-right)
+    (unbind-key (kbd "C-@"))
+    (unbind-key (kbd "M-SPC"))
+    (defalias #'forward-evil-word #'forward-evil-symbol)
+    ;; make evil-search-word look for symbol rather than word boundaries
+    (setq-default evil-symbol-word-search t)
+
+    (defun evil-toggle-input-method ()
+      "when toggle on input method, switch to evil-insert-state if possible.
+    when toggle off input method, switch to evil-normal-state if current state is evil-insert-state"
+      (interactive)
+      (if (not current-input-method)
+	  (if (not (string= evil-state "insert"))
+	      (evil-insert-state))
+	(if (string= evil-state "insert")
+	    (evil-normal-state)))
+      (toggle-input-method)))
+
+  (use-package evil-collection
+    :after (evil)
+    :config
+    (evil-collection-init)
+    (setq evil-collection-calendar-want-org-bindings t))
+
+  (use-package evil-surround
+    :after evil
+    :config (global-evil-surround-mode 1))
+
+  (use-package evil-anzu
+    :after evil)
+
+  (use-package evil-commentary
+    :after evil
+    :config (evil-commentary-mode))
+#+end_src
+
+*** Configure =load-path= to Load Custom Lisp Files
+
+#+begin_src emacs-lisp
+  (setq custom-lisp-directory (concat user-emacs-directory "lisp/"))
+  (setq global-cache-directory (concat user-emacs-directory "cache/"))
+
+  (dolist (dir (list custom-lisp-directory global-cache-directory))
+    (unless (file-directory-p dir)
+      (make-directory dir))
+    (add-to-list 'load-path dir))
+
+  (add-to-list 'load-path
+	       (concat user-emacs-directory
+		       "straight/repos/vertico/extensions/"))
+
+  (defun cache: (subpath)
+    "Concatenate the SUBPATH to the global-cache-directory."
+    (concat global-cache-directory (s-chop-prefix "/" subpath)))
+#+end_src
+
+*** GPG Configuration
+
+#+begin_src emacs-lisp
+  (setq epg-gpg-program "gpg")
+  (when terminal-p
+    (setq epg-pinentry-mode 'loopback))
+#+end_src
+
+*** Korean Environment
+
+#+begin_src emacs-lisp
+  (set-language-environment "Korean")
+  (prefer-coding-system 'utf-8)
+  (global-set-key (kbd "<f6>") 'toggle-korean-input-method)
+  (unbind-key (kbd "C-d"))
+  (unbind-key (kbd "C-d C-d"))
+  (unbind-key (kbd "C-d C-l"))
+  (global-set-key (kbd "C-d C-d") 'toggle-input-method)
+  (global-set-key (kbd "C-d C-l") 'toggle-input-method)
+  (global-set-key (kbd "C-\\") 'toggle-input-method)
+#+end_src
+
+*** Tell Emacs: No Littering!
+
+#+begin_src emacs-lisp
+  (use-package no-littering
+    :config
+    (setq auto-save-file-name-transforms
+	  `((".*" ,(no-littering-expand-var-file-name "auto-save/") t)))
+    (setq custom-file (no-littering-expand-etc-file-name "custom.el"))
+    (when (fboundp 'startup-redirect-eln-cache)
+      (startup-redirect-eln-cache
+       (convert-standard-filename
+	(expand-file-name  "var/eln-cache/" user-emacs-directory)))))
+#+end_src
+
+*** Keybindings made easy with ~general.el~
+
+#+begin_src emacs-lisp
+  (use-package general
+    :config
+    (general-override-mode)
+    (general-auto-unbind-keys)
+    (setq general-use-package-emit-autoloads t)
+
+    ;; global-leader-prefixed major mode bindings
+    (general-create-definer global-leader
+      :keymaps 'override
+      :states  '(insert emacs normal hybrid motion visual operator)
+      :prefix  "SPC"
+      :non-normal-prefix "S-SPC")
+
+    ;; local-leader-prefixed major mode bindings
+    (general-create-definer local-leader
+      :keymaps 'override
+      :states  '(emacs normal hybrid motion visual operator)
+      :prefix  ","
+      "" '(:ignore t :which-key
+		   (lambda (arg)
+		     (cons
+		      (cadr (split-string (car arg) " "))
+		      (replace-regexp-in-string
+		       "-mode$" ""
+		       (symbol-name major-mode))))))
+
+    ;; works everywhere irrelevant of evil state
+    (general-create-definer agnostic-key
+      :keymaps 'override
+      :states  '(insert emacs normal hybrid motion visual operator)
+      :prefix  ""
+      "" '(:ignore t))
+
+    ;; extends basic emacs mode for a major mode
+    (general-create-definer insert-mode-major-mode
+      :keymaps 'override
+      :states  '(insert)
+      :prefix  "")
+
+    ;; extends evil mode for a major mode
+    (general-create-definer normal-mode-major-mode
+      :keymaps 'override
+      :states  '(normal visual operator)
+      :prefix  ""))
+#+end_src
