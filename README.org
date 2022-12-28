@@ -298,6 +298,23 @@ Variables/functions/macros are too small to be dedicated a space for their own
 
 *** Keybindings made easy with ~general.el~
 
+=general.el= is used to define spacemacs-like keybindings and is very well integrated with ~use-package~. In contrast to =which-key= which makes it very difficult to declare custom prefix labels (you need to do some acrobatics to set the prefix label), declaring custom keybindings using :general is a joy to use.
+
+We define five different definers:
+
+- Definers with leader keys
+  - ~global-leader~
+    - A major-mode-agnostic trie with global leader as its prefix
+  - ~local-leader~
+    - A major-mode-specific trie with local leader as its prefix
+- Definers without leader keys
+  - ~normal-mode-major-mode~
+    - extends evil state for a major mode
+  - ~insert-mode-major-mode~
+    - extends insert state for a major mode
+  - ~agnostic-key~
+    - adds keybindings that works irrelevant of evil state
+
 #+begin_src emacs-lisp
   (use-package general
     :config
@@ -305,14 +322,12 @@ Variables/functions/macros are too small to be dedicated a space for their own
     (general-auto-unbind-keys)
     (setq general-use-package-emit-autoloads t)
 
-    ;; global-leader-prefixed major mode bindings
     (general-create-definer global-leader
       :keymaps 'override
       :states  '(insert emacs normal hybrid motion visual operator)
       :prefix  "SPC"
       :non-normal-prefix "S-SPC")
 
-    ;; local-leader-prefixed major mode bindings
     (general-create-definer local-leader
       :keymaps 'override
       :states  '(emacs normal hybrid motion visual operator)
@@ -325,22 +340,19 @@ Variables/functions/macros are too small to be dedicated a space for their own
 		       "-mode$" ""
 		       (symbol-name major-mode))))))
 
-    ;; works everywhere irrelevant of evil state
-    (general-create-definer agnostic-key
+    (general-create-definer normal-mode-major-mode
       :keymaps 'override
-      :states  '(insert emacs normal hybrid motion visual operator)
-      :prefix  ""
-      "" '(:ignore t))
+      :states  '(normal visual operator)
+      :prefix  "")
 
-    ;; extends basic emacs mode for a major mode
     (general-create-definer insert-mode-major-mode
       :keymaps 'override
       :states  '(insert)
       :prefix  "")
 
-    ;; extends evil mode for a major mode
-    (general-create-definer normal-mode-major-mode
+    (general-create-definer agnostic-key
       :keymaps 'override
-      :states  '(normal visual operator)
-      :prefix  ""))
+      :states  '(insert emacs normal hybrid motion visual operator)
+      :prefix  ""
+      "" '(:ignore t)))
 #+end_src
