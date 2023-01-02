@@ -121,12 +121,6 @@ Variables/functions/macros are too small to be dedicated a space for their own
 	 symbol-name
 	 (s-chop-prefix ":")))
 
-  (defun which-key-prefix (label)
-    "Create a which-key prefix with LABEL."
-    (list
-     :ignore t
-     :which-key (if (keywordp label) (keyword-to-string label) label)))
-
   (defvar macOS-p (equal system-type 'darwin)
     "Am I in macOS?")
 
@@ -173,7 +167,13 @@ Variables/functions/macros are too small to be dedicated a space for their own
       (eval-buffer)))
 #+end_src
 
-*** Evil mode
+*** Evil and its friends
+
+Ah Evil! Giving Emacs the best editor it deserves.
+
+**** Giving mercy to lazy fingers
+
+I always type :Q instead of :q, :W instead of :w, and so on. Who has time for retyping those? This is Emacs, and we're going to change that (actually, (neo)vim can do this, too, but that's out of the point). Also, we rebind ~C-w h~ and friends to work without lifting the control key, that is, rebind their commands to ~C-w C-h~.
 
 #+begin_src emacs-lisp
   (setq evil-undo-system 'undo-tree)
@@ -182,38 +182,39 @@ Variables/functions/macros are too small to be dedicated a space for their own
     (setq evil-want-keybinding nil
 	  evil-disable-insert-state-bindings t
 	  evil-want-C-u-scroll t
-	  evil-want-integration t)
+	  evil-want-integration t
+	  evil-vsplit-window-right t
+	  evil-split-window-below t)
     :config
     (evil-mode 1)
-    ;; set leader key in normal state
     (evil-set-leader 'normal (kbd "SPC"))
-    ;; set local leader
     (evil-set-leader 'normal "," t)
     (setq evil-motion-state-cursor 'box
 	  evil-visual-state-cursor 'box
 	  evil-normal-state-cursor 'box
-	  evil-insert-state-cursor 'bar)
-    (evil-ex-define-cmd "q" 'kill-this-buffer)
-    (evil-ex-define-cmd "Q" 'kill-this-buffer)
-    (evil-ex-define-cmd "W" 'save-buffer)
+	  evil-insert-state-cursor 'bar
+	  evil-emacs-state-cursor  'bar)
+    (evil-ex-define-cmd "q"  'kill-this-buffer)
+    (evil-ex-define-cmd "Q"  'kill-this-buffer)
+    (evil-ex-define-cmd "W"  'save-buffer)
     (evil-ex-define-cmd "Wq" 'evil-save-and-close)
     (evil-ex-define-cmd "WQ" 'evil-save-and-close)
-    (evil-ex-define-cmd "E" 'evil-edit)
-    (setq evil-vsplit-window-right t
-	  evil-split-window-below t)
-    (evil-define-key 'normal 'global (kbd "C-w DEL") 'evil-window-left)
+    (evil-ex-define-cmd "E"  'evil-edit)
+    (when macOS-p
+      (evil-define-key 'normal 'global (kbd "C-w DEL") 'evil-window-left))
+    (evil-define-key 'normal 'global (kbd "C-w C-h") 'evil-window-left)
     (evil-define-key 'normal 'global (kbd "C-w C-j") 'evil-window-down)
     (evil-define-key 'normal 'global (kbd "C-w C-k") 'evil-window-up)
     (evil-define-key 'normal 'global (kbd "C-w C-l") 'evil-window-right)
     (unbind-key (kbd "C-@"))
     (unbind-key (kbd "M-SPC"))
-    (defalias #'forward-evil-word #'forward-evil-symbol)
     ;; make evil-search-word look for symbol rather than word boundaries
+    (defalias #'forward-evil-word #'forward-evil-symbol)
     (setq-default evil-symbol-word-search t)
 
     (defun evil-toggle-input-method ()
       "when toggle on input method, switch to evil-insert-state if possible.
-    when toggle off input method, switch to evil-normal-state if current state is evil-insert-state"
+      when toggle off input method, switch to evil-normal-state if current state is evil-insert-state"
       (interactive)
       (if (not current-input-method)
 	  (if (not (string= evil-state "insert"))
@@ -304,16 +305,20 @@ We define five different definers:
 
 - Definers with leader keys
   - ~global-leader~
-    - A major-mode-agnostic trie with global leader as its prefix
+    - A major-mode-agnostic trie with global leader as its prefix.
+    - Just pressing the global leader shows a string ~"Global"~.
   - ~local-leader~
-    - A major-mode-specific trie with local leader as its prefix
+    - A major-mode-specific trie with local leader as its prefix.
+    - Just pressing the local leader shows the current major mode without the ~"-mode"~.
 - Definers without leader keys
   - ~normal-mode-major-mode~
-    - extends evil state for a major mode
+    - Extends evil state for a major mode.
   - ~insert-mode-major-mode~
-    - extends insert state for a major mode
+    - Extends insert state for a major mode.
   - ~agnostic-key~
-    - adds keybindings that works irrelevant of evil state
+    - Adds keybindings that works irrelevant of evil state.
+
+Since typing out ~'(:ignore t :which-key "some prefix")~ is cumbersome, we make a simple function for that whose calls can be inlined inside the definers.
 
 #+begin_src emacs-lisp
   (use-package general
@@ -326,7 +331,8 @@ We define five different definers:
       :keymaps 'override
       :states  '(insert emacs normal hybrid motion visual operator)
       :prefix  "SPC"
-      :non-normal-prefix "S-SPC")
+      :non-normal-prefix "S-SPC"
+      "" '(:ignore t :which-key "Global"))
 
     (general-create-definer local-leader
       :keymaps 'override
@@ -355,4 +361,10 @@ We define five different definers:
       :states  '(insert emacs normal hybrid motion visual operator)
       :prefix  ""
       "" '(:ignore t)))
+
+  (defun which-key-prefix (label)
+    "Create a which-key prefix with LABEL."
+    (list
+     :ignore t
+     :which-key (if (keywordp label) (keyword-to-string label) label)))
 #+end_src
