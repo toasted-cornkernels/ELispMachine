@@ -140,7 +140,8 @@
   (setq evil-motion-state-cursor 'box
 	evil-visual-state-cursor 'box
 	evil-normal-state-cursor 'box
-	evil-insert-state-cursor 'bar)
+	evil-insert-state-cursor 'bar
+	evil-emacs-state-cursor  'bar)
   (evil-ex-define-cmd "q" 'kill-this-buffer)
   (evil-ex-define-cmd "Q" 'kill-this-buffer)
   (evil-ex-define-cmd "W" 'save-buffer)
@@ -149,6 +150,7 @@
   (evil-ex-define-cmd "E" 'evil-edit)
   (setq evil-vsplit-window-right t
 	evil-split-window-below t)
+  
   (evil-define-key 'normal 'global (kbd "C-w DEL") 'evil-window-left)
   (evil-define-key 'normal 'global (kbd "C-w C-j") 'evil-window-down)
   (evil-define-key 'normal 'global (kbd "C-w C-k") 'evil-window-up)
@@ -253,7 +255,8 @@
     :keymaps 'override
     :states  '(insert emacs normal hybrid motion visual operator)
     :prefix  "SPC"
-    :non-normal-prefix "S-SPC")
+    :non-normal-prefix "S-SPC"
+    "" '(:ignore t :which-key "Global"))
 
   ;; local-leader-prefixed major mode bindings
   (general-create-definer local-leader
