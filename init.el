@@ -739,6 +739,10 @@
     "k" 'org-edit-src-abort
     "'" 'org-edit-src-exit))
 
+(use-package org-habit
+  :straight nil
+  :after org)
+
 (use-package org-compat
   :straight nil
   :after org
@@ -2485,7 +2489,7 @@
 
 (use-package menu-bar
   :straight nil
-  :when terminal-p)
+  :when (not terminal-p))
 
 (use-package tab-bar
   :straight nil
@@ -2494,10 +2498,13 @@
     "Hide the tab bar if there is only one tab left."
     (when (= (length (tab-bar-tabs)) 1)
       (tab-bar-mode -1)))
+
   (advice-add 'tab-close :after #'disable-tab-bar-if-unnecessary)
+  
   (defun tab-move-previous ()
     (interactive)
     (tab-move -1))
+
   (agnostic-key
     "s-{" 'tab-move-previous
     "s-}" 'tab-move
