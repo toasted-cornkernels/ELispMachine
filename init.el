@@ -3479,14 +3479,15 @@
   (normal-mode-major-mode
     :major-modes '(tetris-mode t)
     :keymaps     '(tetris-mode-map)
-    "q" 'tetris-end-game
-    "h" 'tetris-move-left
-    "j" 'tetris-move-down
-    "k" 'tetris-rotate-prev
-    "l" 'tetris-move-right
-    "i" 'tetris-rotate-next
-    "m" 'tetris-move-bottom
-    "n" 'tetris-start-game))
+    "q"   'tetris-end-game
+    "h"   'tetris-move-left
+    "j"   'tetris-move-down
+    "k"   'tetris-rotate-prev
+    "l"   'tetris-move-right
+    "i"   'tetris-rotate-next
+    "m"   'tetris-move-bottom
+    "SPC" 'tetris-move-bottom		; not working
+    "n"   'tetris-start-game))
 
 ;; Misc =============================================
 ;; ==================================================
