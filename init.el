@@ -293,8 +293,6 @@
 ;; Emoji config =====================================
 ;; ==================================================
 
-(use-package emoji-cheat-sheet-plus) ; TODO: add general
-
 (use-package emojify
   :hook (after-init . global-emojify-mode))
 
@@ -310,7 +308,7 @@
 
 (use-package org
   :straight (:type built-in)
-  :defer    t
+  :demand t
   :init
   (defmacro org-emphasize-this (fname char)
     "Make function called FNAME for setting the emphasis (signified by CHAR) in org mode."
@@ -567,7 +565,7 @@
 
 (use-package org-keys
   :straight nil
-  :after    org
+  :defer    t
   :config
   (defun calendar-one-day-forward ()
     (interactive)
@@ -616,45 +614,43 @@
 
 ;; TODO
 (use-package org-superstar
-  :after org
+  :defer t
   :config
   (setq org-superstar-bullet-list '("■" "◆" "▲" "▶")))
 
 (use-package org-wild-notifier
-  :after org)
+  :defer t)
 
 (use-package org-contrib
-  :after org)
+  :defer t)
 
 (use-package org-pomodoro
-  :defer t
-  :after org)
+  :defer t)
 
 (use-package org-present
-  :defer t
-  :after org)
+  :defer t)
 
 (use-package org-cliplink
-  :after org)
+  :defer t)
 
 (use-package org-rich-yank
-  :after org)
+  :defer t)
 
 (use-package org-projectile
-  :after org)
+  :defer t)
 
 (use-package valign
-  :after org)
+  :defer t)
 
 (use-package org-appear
-  :after org
+  :defer t
   :hook  (org-mode . org-appear-mode))
 
-(use-package org-sticky-header :after org)
+(use-package org-sticky-header :defer t)
 
-(use-package org-transclusion :after org)
+(use-package org-transclusion :defer t)
 
-(use-package htmlize :after org)
+(use-package htmlize :defer t)
 
 (use-package verb :defer t)
 
@@ -668,7 +664,6 @@
 
 (use-package ob
   :straight (:type built-in)
-  :after    org
   :defer    t
   :init
   (add-hook 'org-mode-hook
@@ -692,7 +687,7 @@
 
 (use-package org-capture
   :straight nil
-  :demand   t
+  :defer    t
   :general
   (local-leader
     :major-modes '(org-capture-mode t)
@@ -702,6 +697,7 @@
     "c" 'org-capture-finalize
     "k" 'org-capture-kill
     "r" 'org-capture-refile)
+
   :config
   (setq org-capture-templates
 	`(,(when work-machine-p
@@ -723,7 +719,6 @@
 
 (use-package org-agenda
   :straight nil
-  :after    org
   :defer    t
   :config
   (setq org-agenda-files `(,(concat org-work-directory "/WorkTODO.org")
@@ -731,7 +726,7 @@
 
 (use-package org-src
   :straight nil
-  :after    org
+  :defer    t
   :general
   (local-leader
     :major-modes '(org-src-mode t)
@@ -740,11 +735,13 @@
     "a" 'org-edit-src-abort
     "c" 'org-edit-src-exit
     "k" 'org-edit-src-abort
-    "'" 'org-edit-src-exit))
+    "'" 'org-edit-src-exit)
+  :config
+  (setq org-src-window-setup 'current-window))
 
 (use-package org-compat
   :straight nil
-  :after org
+  :defer t
   :config
   (setq org-latex-create-formula-image-program 'dvisvgm))
 
@@ -753,19 +750,20 @@
   :config
   (setq org-roam-completion-everywhere t))
 
-(use-package org-roam-ui :defer t)
+(use-package org-roam-ui
+  :defer t)
 
 (use-package org-indent
   :straight nil
-  :after    org)
+  :defer    t)
 
 (use-package org-clock
   :straight nil
-  :after    org
+  :defer    t
   :commands (org-clock-jump-to-current-clock))
 
 (use-package org-remark
-  :after org)
+  :defer t)
 
 ;; exporters
 (use-package ox-latex    :straight nil :defer t)
@@ -938,6 +936,7 @@
    (clojure-mode . eglot-ensure)
    (python-mode  . eglot-ensure)
    (tuareg-mode  . eglot-ensure)
+   (cpp-mode     . eglot-ensure)
    (ql-tree-sitter-mode . eglot-ensure))
 
   :general
@@ -2941,6 +2940,7 @@
 	 (kill-buffer (get-buffer "*Help*")))
   "bs" (lambda ()
 	 (interactive)
+	 (setq initial-major-mode 'org-mode)
 	 (switch-to-buffer "*scratch*")))
 
 (global-leader
