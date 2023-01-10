@@ -739,6 +739,10 @@
   :config
   (setq org-src-window-setup 'current-window))
 
+(use-package org-habit
+  :straight nil
+  :after org)
+
 (use-package org-compat
   :straight nil
   :defer t
@@ -2487,7 +2491,7 @@
 
 (use-package menu-bar
   :straight nil
-  :when terminal-p)
+  :when (not terminal-p))
 
 (use-package tab-bar
   :straight nil
@@ -2496,10 +2500,13 @@
     "Hide the tab bar if there is only one tab left."
     (when (= (length (tab-bar-tabs)) 1)
       (tab-bar-mode -1)))
+
   (advice-add 'tab-close :after #'disable-tab-bar-if-unnecessary)
+  
   (defun tab-move-previous ()
     (interactive)
     (tab-move -1))
+
   (agnostic-key
     "s-{" 'tab-move-previous
     "s-}" 'tab-move
@@ -3472,14 +3479,15 @@
   (normal-mode-major-mode
     :major-modes '(tetris-mode t)
     :keymaps     '(tetris-mode-map)
-    "q" 'tetris-end-game
-    "h" 'tetris-move-left
-    "j" 'tetris-move-down
-    "k" 'tetris-rotate-prev
-    "l" 'tetris-move-right
-    "i" 'tetris-rotate-next
-    "m" 'tetris-move-bottom
-    "n" 'tetris-start-game))
+    "q"   'tetris-end-game
+    "h"   'tetris-move-left
+    "j"   'tetris-move-down
+    "k"   'tetris-rotate-prev
+    "l"   'tetris-move-right
+    "i"   'tetris-rotate-next
+    "m"   'tetris-move-bottom
+    "SPC" 'tetris-move-bottom		; not working
+    "n"   'tetris-start-game))
 
 ;; Misc =============================================
 ;; ==================================================
