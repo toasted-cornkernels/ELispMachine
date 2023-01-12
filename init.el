@@ -1921,10 +1921,10 @@
   :mode ("\\.html\\'" . web-mode))
 
 (use-package tagedit
-  :after (web-mode))
+  :defer t)
 
 (use-package emmet-mode
-  :after (web-mode))
+  :defer t)
 
 ;; Markdown config ==================================
 ;; ==================================================
@@ -2048,6 +2048,7 @@
     "gk"         'outline-backward-same-level
     "gh"         'outline-up-heading
     "gl"         'outline-next-visible-heading
+
     "M-<down>"   'markdown-move-down
     "M-<left>"   'markdown-promote
     "M-<right>"  'markdown-demote
@@ -2130,6 +2131,7 @@
 ;; ==================================================
 
 (defun set-newline-and-indent ()
+  "Auto-indentation on pressing RET."
   (local-set-key (kbd "RET") 'newline-and-indent))
 (add-hook 'prog-mode-hook 'set-newline-and-indent)
 
@@ -3587,7 +3589,7 @@
 		      (emms-playlist-current-selected-track)))
 	   (splitted (s-split "/" fullname))
 	   (filename (car (last splitted))))
-      (concat "🎧 " (car (s-split "\\.[mp3|wma|m4a]" filename)))))
+      (concat "🎵 " (car (s-split "\\.[mp3|wma|m4a]" filename)))))
 
   :general
   (global-leader
