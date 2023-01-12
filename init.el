@@ -3274,7 +3274,7 @@
 (global-leader
   "s-o"  'reveal-in-osx-finder
   "s-c"  'compile
-  "s-v"  'variable-pitch-mode
+  "s-v"  'mixed-pitch-mode
   "s-u"  'emacs-uptime
   "s-g"  'cleanup-emacs
   "s-i"  'insert-current-time
