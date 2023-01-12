@@ -85,7 +85,7 @@
 (defvar chromeOS-p (string= (system-name) "penguin")
   "Am I in chromeOS?")
 
-(defvar GUI-p (window-system)
+(defvar GUI-p (display-graphic-p)
   "Am I in a GUI Client?")
 
 (defvar terminal-p (not GUI-p)
@@ -150,7 +150,7 @@
   (evil-ex-define-cmd "E" 'evil-edit)
   (setq evil-vsplit-window-right t
 	evil-split-window-below t)
-  
+
   (evil-define-key 'normal 'global (kbd "C-w DEL") 'evil-window-left)
   (evil-define-key 'normal 'global (kbd "C-w C-j") 'evil-window-down)
   (evil-define-key 'normal 'global (kbd "C-w C-k") 'evil-window-up)
@@ -315,7 +315,7 @@
     `(defun ,fname ()
        (interactive)
        (org-emphasize ,char)))
-  
+
   :general
   (local-leader
     :major-modes '(org-mode t)
@@ -409,7 +409,7 @@
     "iT"    'org-set-tags-command
 
     "iD"    (which-key-prefix :download)
-    
+
     "m"     (which-key-prefix :more)
 
     "p"     'org-priority
@@ -502,7 +502,7 @@
     :major-modes '(org-mode t)
     :keymaps     '(org-mode-map)
     "RET" 'org-open-at-point)
-  
+
   :config
   (defun org-insert-current-time ()
     "insert the curren time at the cursor position."
@@ -514,7 +514,7 @@
 	 (when (or (and (org-entry-is-todo-p) (= n-not-done 0))
 		   (and (org-entry-is-done-p) (> n-not-done 0)))
 	   (org-todo))))
-  
+
   (defmacro org-insert-structure (fname code)
     "Make function called FNAME for inserting structure (signified by CODE) in org mode."
     `(defun ,fname ()
@@ -522,7 +522,7 @@
        (org-insert-structure-template ,code)))
 
   (add-hook 'org-after-todo-statistics-hook #'cycle-todo-state)
-  
+
   (setq org-clock-persist-file (cache: "org-clock-save.el")
 	org-id-locations-file (cache: ".org-id-locations")
 	org-publish-timestamp-directory (cache: ".org-timestamps/")
@@ -582,7 +582,7 @@
   (defun calendar-one-week-backward ()
     (interactive)
     (org-eval-in-calendar '(calendar-backward-week 1)))
-  
+
   (defun calendar-one-month-forward ()
     (interactive)
     (org-eval-in-calendar '(calendar-forward-month 1)))
@@ -941,6 +941,7 @@
    (python-mode  . eglot-ensure)
    (tuareg-mode  . eglot-ensure)
    (cpp-mode     . eglot-ensure)
+   (c-mode       . eglot-ensure)
    (ql-tree-sitter-mode . eglot-ensure))
 
   :general
@@ -1001,11 +1002,11 @@
 
 (use-package sh-script
   :straight nil
-  :mode (("\\.sh\\'" . sh-mode)
+  :mode (("\\.sh\\'"           . sh-mode)
 	 ("\\.(ba|z)shrc.*\\'" . sh-mode)
-	 ("\\.zshenv.*\\'" . sh-mode)
+	 ("\\.zshenv.*\\'"     . sh-mode)
 	 ("\\.bash_profile\\'" . sh-mode)
-	 ("\\.zprofile\\'" . sh-mode)))
+	 ("\\.zprofile\\'"     . sh-mode)))
 
 ;; Perl config ======================================
 ;; ==================================================
@@ -1030,7 +1031,7 @@
   (defun run-hammerspoon ()
     (interactive)
     (comint-run "hs" '()))
-  
+
   (when macOS-p
     (defun toggle-lua-process-buffer ()
       "Swap between *lua* and *hs*, depending on the current lua process."
@@ -1256,7 +1257,7 @@
     (if (executable-find "nbb")
 	(make-comint "node-babashka" "nbb")
       (message "nbb not installed")))
-  
+
   (cider-register-cljs-repl-type 'nbb "(+ 1 2 3)")
 
   (defun cider-connected-hook ()
@@ -1355,7 +1356,7 @@
     "mS"   (which-key-prefix "sibling sessions")
     "mSj"  'cider-connect-sibling-clj
     "mSs"  'cider-connect-sibling-cljs
-    
+
     "mq"   (which-key-prefix "quit/restart")
     "mqq"  'sesman-quit
     "mqr"  'sesman-restart
@@ -1483,7 +1484,7 @@
     "ef"  'lisp-eval-defun
     "ee"  'lisp-eval-last-sexp
     "eE"  'lisp-eval-form-and-next
-    
+
     "d"   (which-key-prefix "documentation")
     "dd"  'fennel-show-documentation
     "dv"  'fennel-show-variable-documentation
@@ -1509,7 +1510,7 @@
     "'"  'fennel-repl
     "rq" 'fennel-repl-quit
     "r0" 'fennel-repl-move-beginning-of-line)
-  
+
   :config
   (defun fennel-show-arglist-at-point ()
     (interactive)
@@ -1928,7 +1929,197 @@
 ;; Markdown config ==================================
 ;; ==================================================
 
-(use-package markdown-mode :mode "\\.md\\'")
+(use-package markdown-mode
+  :mode
+  (("\\.md\\'"  . gfm-mode)
+   ("\\.mkd\\'" . markdown-mode)
+   ("\\.mdk\\'" . markdown-mode)
+   ("\\.mdx\\'" . markdown-mode))
+
+  :config
+  (setq markdown-fontify-code-blocks-natively t)
+  (defun insert-keybinding-markdown (key)
+    "Ask for a key then insert its description.
+     Will work on both org-mode and any mode that accepts plain html."
+    (interactive "kType key sequence: ")
+    (let* ((tag "~%s~"))
+      (if (null (equal key "\r"))
+	  (insert
+	   (format tag (help-key-description key nil)))
+	(insert (format tag ""))
+	(forward-char -6))))
+
+  :general
+  (local-leader
+    :major-modes '(markdown-mode t)
+    :keymaps     '(markdown-mode-map)
+    "M-RET"      'markdown-insert-list-item
+    "{"          'markdown-backward-paragraph
+    "}"          'markdown-forward-paragraph
+    "]"          'markdown-complete
+    ">"          'markdown-indent-region
+    "<"          'markdown-outdent-region
+    "-"          'markdown-insert-hr
+    
+    "c"          (which-key-prefix "command")
+    "c]"         'markdown-complete-buffer
+    "cc"         'markdown-check-refs
+    "ce"         'markdown-export
+    "cm"         'markdown-other-window
+    "cn"         'markdown-cleanup-list-numbers
+    "co"         'markdown-open
+    "cp"         'markdown-preview
+    "cv"         'markdown-export-and-preview
+    "cw"         'markdown-kill-ring-save
+    
+    "h"          (which-key-prefix "header")
+    "hi"         'markdown-insert-header-dwim
+    "hI"         'markdown-insert-header-setext-dwim
+    "h1"         'markdown-insert-header-atx-1
+    "h2"         'markdown-insert-header-atx-2
+    "h3"         'markdown-insert-header-atx-3
+    "h4"         'markdown-insert-header-atx-4
+    "h5"         'markdown-insert-header-atx-5
+    "h6"         'markdown-insert-header-atx-6
+    "h!"         'markdown-insert-header-setext-1
+    "h@"         'markdown-insert-header-setext-2
+    
+    "i"          (which-key-prefix "insert")
+    "if"         'markdown-insert-footnote
+    "ii"         'markdown-insert-image
+    "ik"         'insert-keybinding-markdown
+    "il"         'markdown-insert-link
+    "iw"         'markdown-insert-wiki-link
+    "iu"         'markdown-insert-uri
+    "iT"         'markdown-insert-table
+    
+    "k"          'markdown-kill-thing-at-point
+    
+    "l"          (which-key-prefix "lists")
+    "li"         'markdown-insert-list-item
+    
+    "t"          (which-key-prefix "table")
+    "ta"         'markdown-table-align
+    "tp"         'markdown-table-move-row-up
+    "tn"         'markdown-table-move-row-down
+    "tf"         'markdown-table-move-column-right
+    "tb"         'markdown-table-move-column-left
+    "tr"         'markdown-table-insert-row
+    "tR"         'markdown-table-delete-row
+    "tc"         'markdown-table-insert-column
+    "tC"         'markdown-table-delete-column
+    "ts"         'markdown-table-sort-lines
+    "td"         'markdown-table-convert-region
+    "tt"         'markdown-table-transpose
+    
+    "T"          (which-key-prefix "toggle")
+    "Ti"         'markdown-toggle-inline-images
+    "Tl"         'markdown-toggle-url-hiding
+    "Tm"         'markdown-toggle-markup-hiding
+    "Tt"         'markdown-toggle-gfm-checkbox
+    "Tw"         'markdown-toggle-wiki-links
+    
+    "x"          (which-key-prefix "text")
+    "xb"         'markdown-insert-bold
+    "xB"         'markdown-insert-gfm-checkbox
+    "xc"         'markdown-insert-code
+    "xC"         'markdown-insert-gfm-code-block
+    "xi"         'markdown-insert-italic
+    "xk"         'markdown-insert-kbd
+    "xp"         'markdown-insert-pre
+    "xq"         'markdown-insert-blockquote
+    "xs"         'markdown-insert-strike-through
+    "xQ"         'markdown-blockquote-region
+    "xP"         'markdown-pre-region
+    
+    "N"          'markdown-next-link
+    "f"          'markdown-follow-thing-at-point
+    "P"          'markdown-previous-link
+    "<RET>"      'markdown-do
+    
+    "c"          (which-key-prefix "preview")
+    "cP"         'markdown-live-preview-mode)
+
+  ;; Header navigation in normal state movements
+  (normal-mode-major-mode
+    :major-modes '(markdown-mode t)
+    :keymaps     '(markdown-mode-map)
+    "gj"         'outline-forward-same-level
+    "gk"         'outline-backward-same-level
+    "gh"         'outline-up-heading
+    "gl"         'outline-next-visible-heading
+    "M-<down>"   'markdown-move-down
+    "M-<left>"   'markdown-promote
+    "M-<right>"  'markdown-demote
+    "M-<up>"     'markdown-move-up
+    "M-h"        'markdown-promote
+    "M-j"        'markdown-move-down
+    "M-k"        'markdown-move-up
+    "M-l"        'markdown-demote)
+
+  (insert-mode-major-mode
+    :major-modes '(markdown-mode t)
+    :keymaps     '(markdown-mode-map)
+    "M-<down>"   'markdown-move-down
+    "M-<left>"   'markdown-promote
+    "M-<right>"  'markdown-demote
+    "M-<up>"     'markdown-move-up
+    "M-h"        'markdown-promote
+    "M-j"        'markdown-move-down
+    "M-k"        'markdown-move-up
+    "M-l"        'markdown-demote))
+
+(use-package gh-md
+  :defer t
+  :general
+  (local-leader
+    :major-modes '(markdown-mode gfm-mode t)
+    :keymaps     '(markdown-mode-map gfm-mode-map)
+    "cr" 'gh-md-render-buffer))
+
+(use-package markdown-toc
+  :defer t
+  :general
+  (local-leader
+    :major-modes '(markdown-mode gfm-mode t)
+    :keymaps     '(markdown-mode-map gfm-mode-map)
+    "it"  'markdown-toc-generate-toc))
+
+(use-package mmm-mode
+  :commands mmm-mode
+  :init
+  (defun activate-mmm-mode ()
+    (unless (bound-and-true-p git-commit-mode)
+      (mmm-mode 1)))
+  (add-hook 'markdown-mode-hook 'activate-mmm-mode)
+  :config
+  ;; from Jason Blevins http://jblevins.org/log/mmm
+  (defvar markdown-mmm-auto-modes
+    '("c" "c++" "css" "java" "javascript" "python" "ruby" "rust" "scala"
+      ("elisp" "emacs-lisp") ("ess" "R") ("ini" "conf-unix") ("html" "web"))
+    "List of language names or lists of language and mode names for which to generate mmm classes.")
+  (defun markdown/mmm-auto-class (lang)
+    (let* ((l       (if (listp lang) (car lang)  lang))
+	   (s       (if (listp lang) (cadr lang) lang))
+	   (class   (intern (concat "markdown-" l)))
+	   (submode (intern (concat s "-mode")))
+	   (front   (concat "^```" l "[\n\r]+"))
+	   (back    "^```$"))
+      (mmm-add-classes (list (list class
+				   :submode submode
+				   :front front
+				   :back back)))
+      (dolist (mode markdown--key-bindings-modes)
+	(mmm-add-mode-ext-class mode nil class))))
+  (mapc 'markdown/mmm-auto-class markdown-mmm-auto-modes))
+
+(use-package vmd-mode
+  :defer t
+  :init
+  (local-leader
+    :major-modes '(markdown-mode gfm-mode t)
+    :keymaps     '(markdown-mode-map gfm-mode-map)
+    "cP"         'vmd-mode))
 
 ;; CSharp config ====================================
 ;; ==================================================
@@ -1942,7 +2133,7 @@
   (local-set-key (kbd "RET") 'newline-and-indent))
 (add-hook 'prog-mode-hook 'set-newline-and-indent)
 
-;; exec-path-from-shell config ======================
+;; exec-path-from-shell =============================
 ;; ==================================================
 
 (setq explicit-shell-file-name "/bin/zsh")
@@ -1956,7 +2147,7 @@
 	exec-path-from-shell-arguments '("-l"))
   (exec-path-from-shell-initialize))
 
-;; Hide-mode-line config ============================
+;; Hide-mode-line ===================================
 ;; ==================================================
 
 (use-package hide-mode-line)
@@ -1968,10 +2159,10 @@
 (use-package vertico
   :init
   (vertico-mode)
-  (setq vertico-scroll-margin 0)
-  (setq vertico-count 20)
-  (setq vertico-resize t)
-  (setq vertico-cycle t))
+  (setq vertico-scroll-margin 0
+	vertico-count 20
+	vertico-resize t
+	vertico-cycle t))
 
 (use-package savehist
   :straight nil
@@ -2502,7 +2693,7 @@
       (tab-bar-mode -1)))
 
   (advice-add 'tab-close :after #'disable-tab-bar-if-unnecessary)
-  
+
   (defun tab-move-previous ()
     (interactive)
     (tab-move -1))
@@ -2705,9 +2896,9 @@
 	      (evil-insert-state)))
 
   (define-key vterm-mode-map (kbd "<return>") #'vterm-send-return)
-  
+
   (setq vterm-keymap-exceptions nil)
-  
+
   :general
   (insert-mode-major-mode
     :major-modes '(vterm-mode vterm-copy-mode t)
@@ -3014,7 +3205,7 @@
 
   "aC"   (which-key-prefix :clock)
   "aCw"  'world-clock
-  
+
   "at"   (which-key-prefix :terminal)
   "atr"  (which-key-prefix :repls)
   "atrb" 'run-bb
