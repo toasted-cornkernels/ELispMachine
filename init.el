@@ -300,8 +300,10 @@
 ;; ==================================================
 
 (use-package mixed-pitch
-  :hook ((org-mode . mixed-pitch-mode)
-	 (w3m-mode . mixed-pitch-mode)))
+  :hook ((org-mode      . mixed-pitch-mode)
+	 (w3m-mode      . mixed-pitch-mode)
+	 (markdown-mode . mixed-pitch-mode)
+	 (gfm-mode      . mixed-pitch-mode)))
 
 ;; Org config =======================================
 ;; ==================================================
@@ -640,7 +642,7 @@
   :defer t)
 
 (use-package valign
-  :defer t)
+  :after (markdown-mode org-mode))
 
 (use-package org-appear
   :defer t
@@ -1935,6 +1937,10 @@
    ("\\.mdk\\'" . markdown-mode)
    ("\\.mdx\\'" . markdown-mode))
 
+  :hook
+  ((markdown-mode . markdown-toggle-markup-hiding)
+   (markdown-mode . valign-mode))
+
   :config
   (setq markdown-fontify-code-blocks-natively t)
   (defun insert-keybinding-markdown (key)
@@ -1952,7 +1958,7 @@
   (local-leader
     :major-modes '(markdown-mode t)
     :keymaps     '(markdown-mode-map)
-    "M-RET"      'markdown-insert-list-item
+    "M-RET"      'markdown-do
     "{"          'markdown-backward-paragraph
     "}"          'markdown-forward-paragraph
     "]"          'markdown-complete
@@ -2034,7 +2040,6 @@
     "N"          'markdown-next-link
     "f"          'markdown-follow-thing-at-point
     "P"          'markdown-previous-link
-    "<RET>"      'markdown-do
     
     "c"          (which-key-prefix "preview")
     "cP"         'markdown-live-preview-mode)
@@ -2822,14 +2827,14 @@
 	  (load-modus-operandi)))	; light mode!
     (load-modus-vivendi))
 
+  ;; make terminal transparent
+  
   (when terminal-p
     (defun make-terminal-transparent ()
       (unless (display-graphic-p (selected-frame))
 	(set-face-background 'default "unspecified-bg" (selected-frame))))
     (add-hook 'window-setup-hook 'make-terminal-transparent)
     (make-terminal-transparent)))
-
-;; make terminal transparent
 
 ;; hl-todo config ==================================
 ;; =================================================
@@ -3312,8 +3317,8 @@
   (define-key woman-mode-map  "o" 'link-hint-open-link)
   (define-key eww-link-keymap "o" 'ace-link-eww)
   (define-key eww-mode-map    "o" 'ace-link-eww)
-  (define-key eww-link-keymap "o" 'ace-link-eww)
-  (define-key eww-mode-map    "o" 'ace-link-eww))
+  (define-key w3m-link-map    "o" 'ace-link-w3m)
+  (define-key w3m-mode-map    "o" 'ace-link-w3m))
 
 (use-package ace-window
   :defer t
