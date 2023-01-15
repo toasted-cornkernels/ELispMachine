@@ -310,7 +310,7 @@
 
 (use-package org
   :straight (:type built-in)
-  :demand t
+  :demand   t
   :init
   (defmacro org-emphasize-this (fname char)
     "Make function called FNAME for setting the emphasis (signified by CHAR) in org mode."
@@ -322,183 +322,183 @@
   (local-leader
     :major-modes '(org-mode t)
     :keymaps     '(org-mode-map)
-    "'"     'org-edit-special
-    ","     'org-ctrl-c-ctrl-c
-    "*"     'org-ctrl-c-star
-    "-"     'org-ctrl-c-minus
-    "#"     'org-update-statistics-cookies
-    "RET"   'org-ctrl-c-ret
-    "M-RET" 'org-meta-return
-    "A"     'org-attach
-    "a"     'org-agenda
-    "["     'org-agenda-file-to-front
-    "]"     'org-remove-file
-    "c"     'org-capture
-
-    "b"     (which-key-prefix :babel)
-    "bp"    'org-babel-previous-src-block
-    "bn"    'org-babel-next-src-block
-    "be"    'org-babel-execute-maybe
-    "bo"    'org-babel-open-src-block-result
-    "bv"    'org-babel-expand-src-block
-    "bu"    'org-babel-goto-src-block-head
-    "bg"    'org-babel-goto-named-src-block
-    "br"    'org-babel-goto-named-result
-    "bb"    'org-babel-execute-buffer
-    "bs"    'org-babel-execute-subtree
-    "bd"    'org-babel-demarcate-block
-    "bt"    'org-babel-tangle
-    "bf"    'org-babel-tangle-file
-    "bc"    'org-babel-check-src-block
-    "bj"    'org-babel-insert-header-arg
-    "bl"    'org-babel-load-in-session
-    "bi"    'org-babel-lob-ingest
-    "bI"    'org-babel-view-src-block-info
-    "bz"    'org-babel-switch-to-session
-    "bZ"    'org-babel-switch-to-session-with-code
-    "ba"    'org-babel-sha1-hash
-    "bx"    'org-babel-do-key-sequence-in-edit-buffer
-    "b."    'org-babel-transient-state/body
-
-    "C"     (which-key-prefix :clock)
-    "Cc"    'org-clock-cancel
-    "Cd"    'org-clock-display
-    "Ce"    'org-evaluate-time-range
-    "Cg"    'org-clock-goto
-    "Ci"    'org-clock-in
-    "CI"    'org-clock-in-last
-    "Cj"    'org-clock-jump-to-current-clock
-    "Co"    'org-clock-out
-    "CR"    'org-clock-report
-    "Cr"    'org-resolve-clocks
-
-    "d"     (which-key-prefix :dates)
-    "dd"    'org-deadline
-    "ds"    'org-schedule
-    "dt"    'org-time-stamp
-    "dT"    'org-time-stamp-inactive
-
-    "e"     (which-key-prefix :export)
-    "ee"    'org-export-dispatch
-
-    "f"     (which-key-prefix :feeds)
-    "fi"    'org-feed-goto-inbox
-    "fu"    'org-feed-update-all
-
-    "i"     (which-key-prefix :insert)
-    "ita"   (org-insert-structure org-insert-ascii "ascii")
-    "itc"   (org-insert-structure org-insert-center "center")
-    "itC"   (org-insert-structure org-insert-comment "comment")
-    "ite"   (org-insert-structure org-insert-example "example")
-    "itE"   (org-insert-structure org-insert-export "export")
-    "ith"   (org-insert-structure org-insert-export-html "html")
-    "itl"   (org-insert-structure org-insert-export-latex "latex")
-    "itq"   (org-insert-structure org-insert-quote "quote")
-    "its"   (org-insert-structure org-insert-src "src")
-    "itv"   (org-insert-structure org-insert-verse "verse")
-    "iT"    'org-insert-current-time
-    "id"    'org-insert-drawer
-    "ie"    'org-set-effort
-    "if"    'org-footnote-new
-    "ih"    'org-insert-heading
-    "iH"    'org-insert-heading-after-current
-    "ii"    'org-insert-item
-    "iK"    'insert-keybinding-org
-    "il"    'org-insert-link
-    "in"    'org-add-note
-    "ip"    'org-set-property
-    "is"    'org-insert-subheading
-    "iT"    'org-set-tags-command
-
-    "iD"    (which-key-prefix :download)
-
-    "m"     (which-key-prefix :more)
-
-    "p"     'org-priority
-
-    "s"     (which-key-prefix :trees/subtrees)
-    "sa"    'org-toggle-archive-tag
-    "sA"    'org-archive-subtree-default
-    "sb"    'org-tree-to-indirect-buffer
-    "sd"    'org-cut-subtree
-    "sy"    'org-copy-subtree
-    "sp"    'org-paste-subtree
-    "sh"    'org-promote-subtree
-    "sj"    'org-move-subtree-down
-    "sk"    'org-move-subtree-up
-    "sl"    'org-demote-subtree
-    "sn"    'org-narrow-to-subtree
-    "sw"    'widen
-    "sr"    'org-refile
-    "ss"    'org-sparse-tree
-    "sS"    'org-sort
-
-    "S"     (which-key-prefix :shift)
-    "Sh"    'org-shiftcontrolleft
-    "Sj"    'org-shiftcontroldown
-    "Sk"    'org-shiftcontrolup
-    "Sl"    'org-shiftcontrolright
-
-    "T"     (which-key-prefix :toggles)
-    "Tc"    'org-toggle-checkbox
-    "Te"    'org-toggle-pretty-entities
-    "Ti"    'org-toggle-inline-images
-    "Tn"    'org-num-mode
-    "Tl"    'org-toggle-link-display
-    "Tt"    'org-show-todo-tree
-    "TT"    'org-todo
-    "TV"    'space-doc-mode
-    "Tx"    'org-latex-preview
-    "L"     'org-shiftright
-    "H"     'org-shiftleft
-    "J"     'org-shiftdown
-    "K"     'org-shiftup
-
-    "t"     (which-key-prefix :tables)
-    "ta"    'org-table-align
-    "tb"    'org-table-blank-field
-    "tc"    'org-table-convert
-    "te"    'org-table-eval-formula
-    "tE"    'org-table-export
-    "tf"    'org-table-field-info
-    "th"    'org-table-previous-field
-    "tH"    'org-table-move-column-left
-    "tI"    'org-table-import
-    "tj"    'org-table-next-row
-    "tJ"    'org-table-move-row-down
-    "tK"    'org-table-move-row-up
-    "tl"    'org-table-next-field
-    "tL"    'org-table-move-column-right
-    "tn"    'org-table-create
-    "tN"    'org-table-create-with-table.el
-    "tr"    'org-table-recalculate
-    "tR"    'org-table-recalculate-buffer-tables
-    "ts"    'org-table-sort-lines
-    "tw"    'org-table-wrap-region
-
-    "td"    (which-key-prefix :delete)
-    "tdc"   'org-table-delete-column
-    "tdr"   'org-table-kill-row
-
-    "ti"    (which-key-prefix :insert)
-    "tic"   'org-table-insert-column
-    "tih"   'org-table-insert-hline
-    "tiH"   'org-table-hline-and-move
-    "tir"   'org-table-insert-row
-
-    "tt"    (which-key-prefix :toggle)
-    "ttf"   'org-table-toggle-formula-debugger
-    "tto"   'org-table-toggle-coordinate-overlays
-
-    "x"     (which-key-prefix :text)
-    "xo"    'org-open-at-point
-    "xb"    (org-emphasize-this org-bold ?*)
-    "xc"    (org-emphasize-this org-code ?~)
-    "xi"    (org-emphasize-this org-italic ?/)
-    "xr"    (org-emphasize-this org-clear ? )
-    "xs"    (org-emphasize-this org-strike-through ?+)
-    "xu"    (org-emphasize-this org-underline ?_)
-    "xv"    (org-emphasize-this org-verbatim ?=))
+    "'"          'org-edit-special
+    ","          'org-ctrl-c-ctrl-c
+    "*"          'org-ctrl-c-star
+    "-"          'org-ctrl-c-minus
+    "#"          'org-update-statistics-cookies
+    "RET"        'org-ctrl-c-ret
+    "M-RET"      'org-meta-return
+    "A"          'org-attach
+    "a"          'org-agenda
+    "["          'org-agenda-file-to-front
+    "]"          'org-remove-file
+    "c"          'org-capture
+	         
+    "b"          (which-key-prefix :babel)
+    "bp"         'org-babel-previous-src-block
+    "bn"         'org-babel-next-src-block
+    "be"         'org-babel-execute-maybe
+    "bo"         'org-babel-open-src-block-result
+    "bv"         'org-babel-expand-src-block
+    "bu"         'org-babel-goto-src-block-head
+    "bg"         'org-babel-goto-named-src-block
+    "br"         'org-babel-goto-named-result
+    "bb"         'org-babel-execute-buffer
+    "bs"         'org-babel-execute-subtree
+    "bd"         'org-babel-demarcate-block
+    "bt"         'org-babel-tangle
+    "bf"         'org-babel-tangle-file
+    "bc"         'org-babel-check-src-block
+    "bj"         'org-babel-insert-header-arg
+    "bl"         'org-babel-load-in-session
+    "bi"         'org-babel-lob-ingest
+    "bI"         'org-babel-view-src-block-info
+    "bz"         'org-babel-switch-to-session
+    "bZ"         'org-babel-switch-to-session-with-code
+    "ba"         'org-babel-sha1-hash
+    "bx"         'org-babel-do-key-sequence-in-edit-buffer
+    "b."         'org-babel-transient-state/body
+	         
+    "C"          (which-key-prefix :clock)
+    "Cc"         'org-clock-cancel
+    "Cd"         'org-clock-display
+    "Ce"         'org-evaluate-time-range
+    "Cg"         'org-clock-goto
+    "Ci"         'org-clock-in
+    "CI"         'org-clock-in-last
+    "Cj"         'org-clock-jump-to-current-clock
+    "Co"         'org-clock-out
+    "CR"         'org-clock-report
+    "Cr"         'org-resolve-clocks
+	         
+    "d"          (which-key-prefix :dates)
+    "dd"         'org-deadline
+    "ds"         'org-schedule
+    "dt"         'org-time-stamp
+    "dT"         'org-time-stamp-inactive
+	         
+    "e"          (which-key-prefix :export)
+    "ee"         'org-export-dispatch
+	         
+    "f"          (which-key-prefix :feeds)
+    "fi"         'org-feed-goto-inbox
+    "fu"         'org-feed-update-all
+	         
+    "i"          (which-key-prefix :insert)
+    "ita"        (org-insert-structure org-insert-ascii "ascii")
+    "itc"        (org-insert-structure org-insert-center "center")
+    "itC"        (org-insert-structure org-insert-comment "comment")
+    "ite"        (org-insert-structure org-insert-example "example")
+    "itE"        (org-insert-structure org-insert-export "export")
+    "ith"        (org-insert-structure org-insert-export-html "html")
+    "itl"        (org-insert-structure org-insert-export-latex "latex")
+    "itq"        (org-insert-structure org-insert-quote "quote")
+    "its"        (org-insert-structure org-insert-src "src")
+    "itv"        (org-insert-structure org-insert-verse "verse")
+    "iT"         'org-insert-current-time
+    "id"         'org-insert-drawer
+    "ie"         'org-set-effort
+    "if"         'org-footnote-new
+    "ih"         'org-insert-heading
+    "iH"         'org-insert-heading-after-current
+    "ii"         'org-insert-item
+    "iK"         'insert-keybinding-org
+    "il"         'org-insert-link
+    "in"         'org-add-note
+    "ip"         'org-set-property
+    "is"         'org-insert-subheading
+    "iT"         'org-set-tags-command
+	         
+    "iD"         (which-key-prefix :download)
+	         
+    "m"          (which-key-prefix :more)
+	         
+    "p"          'org-priority
+	         
+    "s"          (which-key-prefix :trees/subtrees)
+    "sa"         'org-toggle-archive-tag
+    "sA"         'org-archive-subtree-default
+    "sb"         'org-tree-to-indirect-buffer
+    "sd"         'org-cut-subtree
+    "sy"         'org-copy-subtree
+    "sp"         'org-paste-subtree
+    "sh"         'org-promote-subtree
+    "sj"         'org-move-subtree-down
+    "sk"         'org-move-subtree-up
+    "sl"         'org-demote-subtree
+    "sn"         'org-narrow-to-subtree
+    "sw"         'widen
+    "sr"         'org-refile
+    "ss"         'org-sparse-tree
+    "sS"         'org-sort
+	         
+    "S"          (which-key-prefix :shift)
+    "Sh"         'org-shiftcontrolleft
+    "Sj"         'org-shiftcontroldown
+    "Sk"         'org-shiftcontrolup
+    "Sl"         'org-shiftcontrolright
+	         
+    "T"          (which-key-prefix :toggles)
+    "Tc"         'org-toggle-checkbox
+    "Te"         'org-toggle-pretty-entities
+    "Ti"         'org-toggle-inline-images
+    "Tn"         'org-num-mode
+    "Tl"         'org-toggle-link-display
+    "Tt"         'org-show-todo-tree
+    "TT"         'org-todo
+    "TV"         'space-doc-mode
+    "Tx"         'org-latex-preview
+    "L"          'org-shiftright
+    "H"          'org-shiftleft
+    "J"          'org-shiftdown
+    "K"          'org-shiftup
+	         
+    "t"          (which-key-prefix :tables)
+    "ta"         'org-table-align
+    "tb"         'org-table-blank-field
+    "tc"         'org-table-convert
+    "te"         'org-table-eval-formula
+    "tE"         'org-table-export
+    "tf"         'org-table-field-info
+    "th"         'org-table-previous-field
+    "tH"         'org-table-move-column-left
+    "tI"         'org-table-import
+    "tj"         'org-table-next-row
+    "tJ"         'org-table-move-row-down
+    "tK"         'org-table-move-row-up
+    "tl"         'org-table-next-field
+    "tL"         'org-table-move-column-right
+    "tn"         'org-table-create
+    "tN"         'org-table-create-with-table.el
+    "tr"         'org-table-recalculate
+    "tR"         'org-table-recalculate-buffer-tables
+    "ts"         'org-table-sort-lines
+    "tw"         'org-table-wrap-region
+	         
+    "td"         (which-key-prefix :delete)
+    "tdc"        'org-table-delete-column
+    "tdr"        'org-table-kill-row
+	         
+    "ti"         (which-key-prefix :insert)
+    "tic"        'org-table-insert-column
+    "tih"        'org-table-insert-hline
+    "tiH"        'org-table-hline-and-move
+    "tir"        'org-table-insert-row
+	         
+    "tt"         (which-key-prefix :toggle)
+    "ttf"        'org-table-toggle-formula-debugger
+    "tto"        'org-table-toggle-coordinate-overlays
+	         
+    "x"          (which-key-prefix :text)
+    "xo"         'org-open-at-point
+    "xb"         (org-emphasize-this org-bold ?*)
+    "xc"         (org-emphasize-this org-code ?~)
+    "xi"         (org-emphasize-this org-italic ?/)
+    "xr"         (org-emphasize-this org-clear ? )
+    "xs"         (org-emphasize-this org-strike-through ?+)
+    "xu"         (org-emphasize-this org-underline ?_)
+    "xv"         (org-emphasize-this org-verbatim ?=))
 
   (normal-mode-major-mode
     :major-modes '(org-mode t)
@@ -2161,7 +2161,6 @@
 ;; Vertico config ===================================
 ;; ==================================================
 
-;; Enable vertico
 (use-package vertico
   :init
   (vertico-mode)
@@ -2273,6 +2272,7 @@
 	 ("M-s u" . consult-focus-lines)
 
 	 ("M-s e" . consult-isearch-history)
+	 
 	 :map isearch-mode-map
 	 ("M-e" . consult-isearch-history)
 	 ("M-s e" . consult-isearch-history)
@@ -2526,11 +2526,72 @@
 ;; ==================================================
 
 (use-package magit
+  :defer t
+  :custom
+  (magit-bury-buffer-function #'magit-restore-window-configuration)
+
+  :init
+  (setq magit-completing-read-function 'magit-builtin-completing-read
+	magit-revision-show-gravatars  '("^Author:     " . "^Commit:     "))
+  ;; TODO The git-blame transient mode is under construction.
+
   :config
+  (require 'git-rebase)
+  ;; bind function keys
+  ;; full screen magit-status
+  (when git-magit-status-fullscreen
+    (setq magit-display-buffer-function
+	  'magit-display-buffer-fullframe-status-v1))
+  (add-hook 'with-editor-mode-hook 'evil-normalize-keymaps)
+
+  :general
+  (normal-mode-major-mode
+    :major-modes '(magit-blame-read-only-mode t)
+    :keymaps     '(magit-blame-read-only-mode-hook)
+    "RET"        'magit-show-commit)
+
+  (define-key magit-status-mode-map (kbd "C-S-w")
+    'spacemacs/magit-toggle-whitespace)
+
   (add-hook 'magit-mode-hook
 	    (lambda ()
 	      (evil-define-key 'normal
-		magit-mode-map (kbd "SPC") nil))))
+		magit-mode-map (kbd "SPC") nil)))
+  
+  (normal-mode-major-mode
+    :major-modes '(magit-section-mode t)
+    :keymaps     '(magit-section-mode-map)
+    "M-1"        'winum-select-window-1
+    "M-2"        'winum-select-window-2
+    "M-3"        'winum-select-window-3
+    "M-4"        'winum-select-window-4
+    "M-5"        'winum-select-window-5
+    "M-6"        'winum-select-window-6
+    "M-7"        'winum-select-window-7
+    "M-8"        'winum-select-window-8
+    "M-9"        'winum-select-window-9)
+  
+  (normal-mode-major-mode
+    :major-modes '(magit-repolist-mode t)
+    :keymaps     '(magit-repolist-mode-map)
+    "gr"         'magit-list-repositories
+    "RET"        'magit-repolist-status)
+  
+  (local-leader
+    :major-modes '(with-editor-mode t)
+    :keymaps     '(with-editor-mode-map)
+    ","          'with-editor-finish
+    "a"          'with-editor-cancel
+    "c"          'with-editor-finish
+    "k"          'with-editor-cancel)
+  
+  (local-leader
+    :major-modes '(magit-log-select-mode t)
+    :keymaps     '(magit-log-select-mode-map)
+    ","          'magit-log-select-pick
+    "a"          'magit-log-select-quit
+    "c"          'magit-log-select-pick
+    "k"          'magit-log-select-quit))
 
 ;; vc config ========================================
 ;; ==================================================
@@ -3157,14 +3218,24 @@
   "\\" 'flycheck-previous-error)
 
 (global-leader
-  "g"  (which-key-prefix :magit)
-  "gs" 'magit
-  "ga" 'magit-stage-file
-  "gc" 'magit-commit-create
-  "gC" 'magit-clone
-  "gp" 'magit-push
-  "gd" 'magit-diff-dwim
-  "gt" 'magit-dispatch)
+  "g"   (which-key-prefix :git)
+  "gb"  'magit-blame	   ; 'spacemacs/git-blame-transient-state/body
+  "gf"  (which-key-prefix "file")
+  "gfF" 'magit-find-file
+  "gfl" 'magit-log-buffer-file
+  "gfd" 'magit-diff-dwim
+  "gfm" 'magit-file-dispatch
+  "gi"  'magit-init
+  "gL"  'magit-list-repositories
+  "gm"  'magit-dispatch
+  "gs"  'magit-status
+  "gU"  'magit-unstage-file
+  "gs"  'magit
+  "ga"  'magit-stage-file
+  "gc"  'magit-commit-create
+  "gC"  'magit-clone
+  "gp"  'magit-push
+  "gd"  'magit-diff-dwim)
 
 (global-leader
   "a"    (which-key-prefix :utilities)
