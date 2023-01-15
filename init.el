@@ -916,7 +916,6 @@
 ;; CodeQL config ====================================
 ;; ==================================================
 
-
 (use-package emacs-codeql
   :straight
   (emacs-codeql :type git
@@ -2684,7 +2683,8 @@
 
 (use-package menu-bar
   :straight nil
-  :when (not terminal-p))
+  :config
+  (when terminal-p (menu-bar-mode -1)))
 
 (use-package tab-bar
   :straight nil
