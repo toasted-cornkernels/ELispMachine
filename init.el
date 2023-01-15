@@ -2562,23 +2562,14 @@
   ;;       ("Q" nil :exit t))
   :config
   (require 'git-rebase)
-  ;; bind function keys
-  ;; full screen magit-status
-  (when git-magit-status-fullscreen
-    (setq magit-display-buffer-function
-	  'magit-display-buffer-fullframe-status-v1))
-  (add-hook 'with-editor-mode-hook 'evil-normalize-keymaps)
   (add-hook 'magit-mode-hook
 	    (lambda ()
 	      (evil-define-key 'normal
-		magit-mode-map (kbd "SPC") nil)))
+		magit-mode-map (kbd "SPC") nil))))
 
+(use-package magit-section
+  :after magit
   :general
-  (normal-mode-major-mode
-    :major-modes '(magit-blame-read-only-mode t)
-    :keymaps     '(magit-blame-read-only-mode-hook)
-    "RET"        'magit-show-commit)
-  
   (normal-mode-major-mode
     :major-modes '(magit-section-mode t)
     :keymaps     '(magit-section-mode-map)
@@ -2590,22 +2581,31 @@
     "M-6"        'winum-select-window-6
     "M-7"        'winum-select-window-7
     "M-8"        'winum-select-window-8
-    "M-9"        'winum-select-window-9)
-  
+    "M-9"        'winum-select-window-9))
+
+(use-package magit-blame
+  :straight nil
+  :after magit
+  :general
+  (normal-mode-major-mode
+    :major-modes '(magit-blame-read-only-mode t)
+    :keymaps     '(magit-blame-read-only-mode-hook)
+    "RET"        'magit-show-commit))
+
+(use-package magit-repos
+  :straight nil
+  :after magit
+  :general
   (normal-mode-major-mode
     :major-modes '(magit-repolist-mode t)
     :keymaps     '(magit-repolist-mode-map)
     "gr"         'magit-list-repositories
-    "RET"        'magit-repolist-status)
-  
-  (local-leader
-    :major-modes '(with-editor-mode t)
-    :keymaps     '(with-editor-mode-map)
-    ","          'with-editor-finish
-    "a"          'with-editor-cancel
-    "c"          'with-editor-finish
-    "k"          'with-editor-cancel)
-  
+    "RET"        'magit-repolist-status))
+
+(use-package magit-log
+  :straight nil
+  :after magit
+  :general
   (local-leader
     :major-modes '(magit-log-select-mode t)
     :keymaps     '(magit-log-select-mode-map)
@@ -2613,6 +2613,20 @@
     "a"          'magit-log-select-quit
     "c"          'magit-log-select-pick
     "k"          'magit-log-select-quit))
+
+(use-package with-editor
+  :straight nil
+  :after magit
+  :config
+  (add-hook 'with-editor-mode-hook 'evil-normalize-keymaps)
+  :general
+  (local-leader
+    :major-modes '(with-editor-mode t)
+    :keymaps     '(with-editor-mode-map)
+    ","          'with-editor-finish
+    "a"          'with-editor-cancel
+    "c"          'with-editor-finish
+    "k"          'with-editor-cancel))
 
 (use-package git-commit
   :defer t)
