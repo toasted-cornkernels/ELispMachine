@@ -1479,31 +1479,31 @@
   (local-leader
     :major-modes '(fennel-mode fennel-repl-mode t)
     :keymaps     '(fennel-mode-map fennel-repl-mode-map)
-    "e"   (which-key-prefix "eval")
-    "ep"  'lisp-eval-paragraph
-    "er"  'lisp-eval-region
-    "ef"  'lisp-eval-defun
-    "ee"  'lisp-eval-last-sexp
-    "eE"  'lisp-eval-form-and-next
-
-    "d"   (which-key-prefix "documentation")
-    "dd"  'fennel-show-documentation
-    "dv"  'fennel-show-variable-documentation
-
-    "df"  (which-key-prefix "find")
-    "dff" 'fennel-find-definition
-    "dfm" 'fennel-find-module-definition
-    "dfp" 'fennel-find-definition-pop
-
-    "h"   (which-key-prefix "help")
-    "ha"  'fennel-show-arglist-at-point
-    "hA"  'fennel-show-arglist
-    "hc"  'fennel-view-compilation
-    "m"   'fennel-macroexpand
-    "="   'fennel-format
-
-    "'"   'fennel-repl
-    "r"   'fennel-reload)
+    "e"          (which-key-prefix "eval")
+    "ep"         'lisp-eval-paragraph
+    "er"         'lisp-eval-region
+    "ef"         'lisp-eval-defun
+    "ee"         'lisp-eval-last-sexp
+    "eE"         'lisp-eval-form-and-next
+	         
+    "d"          (which-key-prefix "documentation")
+    "dd"         'fennel-show-documentation
+    "dv"         'fennel-show-variable-documentation
+	         
+    "df"         (which-key-prefix "find")
+    "dff"        'fennel-find-definition
+    "dfm"        'fennel-find-module-definition
+    "dfp"        'fennel-find-definition-pop
+	         
+    "h"          (which-key-prefix "help")
+    "ha"         'fennel-show-arglist-at-point
+    "hA"         'fennel-show-arglist
+    "hc"         'fennel-view-compilation
+    "m"          'fennel-macroexpand
+    "="          'fennel-format
+	         
+    "'"          'fennel-repl
+    "r"          'fennel-reload)
 
   (local-leader
     :major-modes '(fennel-repl-mode t)
@@ -1531,35 +1531,35 @@
     :keymaps     '(racket-mode-map
 		   racket-repl-mode-map
 		   racket-xp-mode-map)
-    "E"  (which-key-prefix "error")
-    "En" 'racket-xp-next-error
-    "EN" 'racket-xp-previous-error
-    "g"  (which-key-prefix "goto")
-    "g`" 'racket-unvisit
-    "gg" 'racket-xp-visit-definition
-    "gn" 'racket-xp-next-definition
-    "gN" 'racket-xp-previous-definition
-    "gm" 'racket-visit-module
-    "gr" 'racket-open-require-path
-    "gu" 'racket-xp-next-use
-    "gU" 'racket-xp-previous-use
-    "h"  (which-key-prefix "help")
-    "ha" 'racket-xp-annotate
-    "hd" 'racket-xp-describe
-    "hh" 'racket-xp-documentation
-    "i"  (which-key-prefix "insert")
-    "il" 'racket-insert-lambda
-    "m"  (which-key-prefix "refactor")
-    "mr" 'racket-xp-rename
-    "e"  (which-key-prefix "eval")
-    "'"  'racket-repl
-    "eb" 'racket-run
-    "ee" 'racket-send-last-sexp
-    "ef" 'racket-send-definition
-    "ei" 'racket-repl
-    "er" 'racket-send-region
-    "t"  (which-key-prefix "test")
-    "tb" 'racket-test))
+    "E"          (which-key-prefix "error")
+    "En"         'racket-xp-next-error
+    "EN"         'racket-xp-previous-error
+    "g"          (which-key-prefix "goto")
+    "g`"         'racket-unvisit
+    "gg"         'racket-xp-visit-definition
+    "gn"         'racket-xp-next-definition
+    "gN"         'racket-xp-previous-definition
+    "gm"         'racket-visit-module
+    "gr"         'racket-open-require-path
+    "gu"         'racket-xp-next-use
+    "gU"         'racket-xp-previous-use
+    "h"          (which-key-prefix "help")
+    "ha"         'racket-xp-annotate
+    "hd"         'racket-xp-describe
+    "hh"         'racket-xp-documentation
+    "i"          (which-key-prefix "insert")
+    "il"         'racket-insert-lambda
+    "m"          (which-key-prefix "refactor")
+    "mr"         'racket-xp-rename
+    "e"          (which-key-prefix "eval")
+    "'"          'racket-repl
+    "eb"         'racket-run
+    "ee"         'racket-send-last-sexp
+    "ef"         'racket-send-definition
+    "ei"         'racket-repl
+    "er"         'racket-send-region
+    "t"          (which-key-prefix "test")
+    "tb"         'racket-test))
 
 ;; Scheme config ====================================
 ;; ==================================================
@@ -1570,11 +1570,11 @@
   :defer t
   :hook  (geiser-mode . evil-cleverparens-mode))
 
-(use-package geiser-chicken :after geiser :defer t)
-(use-package geiser-chez :after geiser :defer t)
-(use-package geiser-gambit :after geiser :defer t)
-(use-package geiser-guile :after geiser :defer t)
-(use-package geiser-mit :after geiser :defer t)
+(use-package geiser-chicken :defer t)
+(use-package geiser-chez    :defer t)
+(use-package geiser-gambit  :defer t)
+(use-package geiser-guile   :defer t)
+(use-package geiser-mit     :defer t)
 
 ;; Janet config =====================================
 ;; ==================================================
@@ -2229,7 +2229,6 @@
 ;; Consult config ===================================
 ;; ==================================================
 
-;; Example configuration for Consult
 (use-package consult
   ;; Replace bindings. Lazily loaded due by `use-package'.
   :bind (("C-c h" . consult-history)
@@ -2310,7 +2309,7 @@
   (autoload 'projectile-project-root "projectile")
   (setq consult-project-function (lambda (_) (projectile-project-root))))
 
-;; company config ===================================
+;; Company config ===================================
 ;; ==================================================
 
 (use-package company
@@ -2376,15 +2375,6 @@
 
 (setq initial-scratch-message ""
       initial-major-mode 'emacs-lisp-mode)
-
-;; dash configs =====================================
-;; ==================================================
-
-(use-package dash
-  :defer t
-  :config
-  (function-put '-> 'lisp-indent-function nil)
-  (function-put '->> 'lisp-indent-function nil))
 
 ;; LaTeX config =====================================
 ;; ==================================================
