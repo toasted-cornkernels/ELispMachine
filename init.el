@@ -334,7 +334,7 @@
     "["          'org-agenda-file-to-front
     "]"          'org-remove-file
     "c"          'org-capture
-	         
+    
     "b"          (which-key-prefix :babel)
     "bp"         'org-babel-previous-src-block
     "bn"         'org-babel-next-src-block
@@ -359,7 +359,7 @@
     "ba"         'org-babel-sha1-hash
     "bx"         'org-babel-do-key-sequence-in-edit-buffer
     "b."         'org-babel-transient-state/body
-	         
+    
     "C"          (which-key-prefix :clock)
     "Cc"         'org-clock-cancel
     "Cd"         'org-clock-display
@@ -371,20 +371,20 @@
     "Co"         'org-clock-out
     "CR"         'org-clock-report
     "Cr"         'org-resolve-clocks
-	         
+    
     "d"          (which-key-prefix :dates)
     "dd"         'org-deadline
     "ds"         'org-schedule
     "dt"         'org-time-stamp
     "dT"         'org-time-stamp-inactive
-	         
+    
     "e"          (which-key-prefix :export)
     "ee"         'org-export-dispatch
-	         
+    
     "f"          (which-key-prefix :feeds)
     "fi"         'org-feed-goto-inbox
     "fu"         'org-feed-update-all
-	         
+    
     "i"          (which-key-prefix :insert)
     "ita"        (org-insert-structure org-insert-ascii "ascii")
     "itc"        (org-insert-structure org-insert-center "center")
@@ -409,13 +409,13 @@
     "ip"         'org-set-property
     "is"         'org-insert-subheading
     "iT"         'org-set-tags-command
-	         
+    
     "iD"         (which-key-prefix :download)
-	         
+    
     "m"          (which-key-prefix :more)
-	         
+    
     "p"          'org-priority
-	         
+    
     "s"          (which-key-prefix :trees/subtrees)
     "sa"         'org-toggle-archive-tag
     "sA"         'org-archive-subtree-default
@@ -432,13 +432,13 @@
     "sr"         'org-refile
     "ss"         'org-sparse-tree
     "sS"         'org-sort
-	         
+    
     "S"          (which-key-prefix :shift)
     "Sh"         'org-shiftcontrolleft
     "Sj"         'org-shiftcontroldown
     "Sk"         'org-shiftcontrolup
     "Sl"         'org-shiftcontrolright
-	         
+    
     "T"          (which-key-prefix :toggles)
     "Tc"         'org-toggle-checkbox
     "Te"         'org-toggle-pretty-entities
@@ -453,7 +453,7 @@
     "H"          'org-shiftleft
     "J"          'org-shiftdown
     "K"          'org-shiftup
-	         
+    
     "t"          (which-key-prefix :tables)
     "ta"         'org-table-align
     "tb"         'org-table-blank-field
@@ -475,21 +475,21 @@
     "tR"         'org-table-recalculate-buffer-tables
     "ts"         'org-table-sort-lines
     "tw"         'org-table-wrap-region
-	         
+    
     "td"         (which-key-prefix :delete)
     "tdc"        'org-table-delete-column
     "tdr"        'org-table-kill-row
-	         
+    
     "ti"         (which-key-prefix :insert)
     "tic"        'org-table-insert-column
     "tih"        'org-table-insert-hline
     "tiH"        'org-table-hline-and-move
     "tir"        'org-table-insert-row
-	         
+    
     "tt"         (which-key-prefix :toggle)
     "ttf"        'org-table-toggle-formula-debugger
     "tto"        'org-table-toggle-coordinate-overlays
-	         
+    
     "x"          (which-key-prefix :text)
     "xo"         'org-open-at-point
     "xb"         (org-emphasize-this org-bold ?*)
@@ -1296,14 +1296,14 @@
     "d"          (which-key-prefix "debug")
     "db"         'cider-debug-defun-at-point
     "de"         'cider-display-error-buffer
-	         
+    
     "dv"         (which-key-prefix "inspect values")
     "dve"        'cider-inspect-last-sexp
     "dvf"        'cider-inspect-defun-at-point
     "dvi"        'cider-inspect
     "dvl"        'cider-inspect-last-result
     "dvv"        'cider-inspect-expr
-	         
+    
     "e"          (which-key-prefix "evaluation")
     "e;"         'cider-eval-defun-to-comment
     "e$"         'cider-eval-sexp-end-of-line
@@ -1332,39 +1332,39 @@
     "ep:"        'cider-pprint-eval-last-sexp-to-comment
     "epf"        'cider-pprint-eval-defun-at-point
     "epe"        'cider-pprint-eval-last-sexp
-	         
+    
     "en"         (which-key-prefix "namespace")
     "ena"        'cider-ns-reload-all
     "enn"        'cider-eval-ns-form
     "enr"        'cider-ns-refresh
     "enl"        'cider-ns-reload ;; SPC u for cider-ns-reload-all
-	         
+    
     "ep"         (which-key-prefix "pretty print")
     "ep;"        'cider-pprint-eval-defun-to-comment
     "ep:"        'cider-pprint-eval-last-sexp-to-comment
     "epf"        'cider-pprint-eval-defun-at-point
     "epe"        'cider-pprint-eval-last-sexp
-	         
+    
     "m"          (which-key-prefix "manage repls")
     "mb"         'sesman-browser
     "mi"         'sesman-info
     "mg"         'sesman-goto
     "ms"         'sesman-start
-	         
+    
     "ml"         (which-key-prefix "link session")
     "mlp"        'sesman-link-with-project
     "mlb"        'sesman-link-with-buffer
     "mld"        'sesman-link-with-directory
     "mlu"        'sesman-unlink
-	         
+    
     "mS"         (which-key-prefix "sibling sessions")
     "mSj"        'cider-connect-sibling-clj
     "mSs"        'cider-connect-sibling-cljs
-	         
+    
     "mq"         (which-key-prefix "quit/restart")
     "mqq"        'sesman-quit
     "mqr"        'sesman-restart
-	         
+    
     "p"          (which-key-prefix "profile")
     "p+"         'cider-profile-samples
     "pc"         'cider-profile-clear
@@ -1373,7 +1373,7 @@
     "pS"         'cider-profile-summary
     "pt"         'cider-profile-toggle
     "pv"         'cider-profile-var-profiled-p
-	         
+    
     "s"          (which-key-prefix "send to repl")
     "sb"         'cider-load-buffer
     "sB"         'cider-send-buffer-in-repl-and-focus
@@ -1382,23 +1382,23 @@
     "sf"         'cider-send-function-to-repl
     "sF"         'cider-send-function-to-repl-focus
     "si"         'sesman-start
-	         
+    
     "sc"         (which-key-prefix "connect external repl")
     "scj"        'cider-connect-clj
     "scm"        'cider-connect-clj&cljs
     "scs"        'cider-connect-cljs
-	         
+    
     "sj"         (which-key-prefix "jack-in")
     "sjj"        'cider-jack-in-clj
     "sjm"        'cider-jack-in-clj&cljs
     "sjs"        'cider-jack-in-cljs
-	         
+    
     "sq"         (which-key-prefix "quit/restart repl")
     "sqq"        'cider-quit
     "sqr"        'cider-restart
     "sqn"        'cider-ns-reload
     "sqN"        'cider-ns-reload-all
-	         
+    
     "t"          (which-key-prefix "test")
     "ta"         'cider-test-run-all-tests
     "tb"         'cider-test-show-report
@@ -1407,7 +1407,7 @@
     "tp"         'cider-test-run-project-tests
     "tr"         'cider-test-rerun-failed-tests
     "tt"         'cider-test-run-focused-test
-	         
+    
     "="          (which-key-prefix "format")
     "=="         'cider-format-buffer
     "=f"         'cider-format-defun
@@ -1416,13 +1416,13 @@
     "=eb"        'cider-format-edn-buffer
     "=ee"        'cider-format-edn-last-sexp
     "=er"        'cider-format-edn-region
-	         
+    
     "g"          (which-key-prefix "goto")
     "gb"         'cider-pop-back
     "gc"         'cider-classpath
     "gg"         'clj-find-var
     "gn"         'cider-find-ns
-	         
+    
     "h"          (which-key-prefix "documentation")
     "ha"         'cider-apropos
     "hc"         'cider-cheatsheet
@@ -1432,7 +1432,7 @@
     "hN"         'cider-browse-ns-all
     "hs"         'cider-browse-spec
     "hS"         'cider-browse-spec-all
-	         
+    
     "T"          (which-key-prefix "toggle")
     "Te"         'cider-enlighten-mode
     "Tf"         'cider-toggle-repl-font-locking
@@ -1492,23 +1492,23 @@
     "ef"         'lisp-eval-defun
     "ee"         'lisp-eval-last-sexp
     "eE"         'lisp-eval-form-and-next
-	         
+    
     "d"          (which-key-prefix "documentation")
     "dd"         'fennel-show-documentation
     "dv"         'fennel-show-variable-documentation
-	         
+    
     "df"         (which-key-prefix "find")
     "dff"        'fennel-find-definition
     "dfm"        'fennel-find-module-definition
     "dfp"        'fennel-find-definition-pop
-	         
+    
     "h"          (which-key-prefix "help")
     "ha"         'fennel-show-arglist-at-point
     "hA"         'fennel-show-arglist
     "hc"         'fennel-view-compilation
     "m"          'fennel-macroexpand
     "="          'fennel-format
-	         
+    
     "'"          'fennel-repl
     "r"          'fennel-reload)
 
@@ -2530,8 +2530,36 @@
   :init
   (setq magit-completing-read-function 'magit-builtin-completing-read
 	magit-revision-show-gravatars  '("^Author:     " . "^Commit:     "))
-  ;; TODO The git-blame transient mode is under construction.
-
+  ;; TODO
+  ;; (spacemacs|define-transient-state git-blame
+  ;;       :title "Git Blame Transient State"
+  ;;       :hint-is-doc t
+  ;;       :dynamic-hint (spacemacs//git-blame-ts-hint)
+  ;;       :on-enter (let (golden-ratio-mode)
+  ;;                   (unless (bound-and-true-p magit-blame-mode)
+  ;;                     (call-interactively 'magit-blame-addition)))
+  ;;       :bindings
+  ;;       ("?" spacemacs//git-blame-ts-toggle-hint)
+  ;;       ;; chunks
+  ;;       ("p" magit-blame-previous-chunk)
+  ;;       ("P" magit-blame-previous-chunk-same-commit)
+  ;;       ("n" magit-blame-next-chunk)
+  ;;       ("N" magit-blame-next-chunk-same-commit)
+  ;;       ("RET" magit-show-commit)
+  ;;       ;; commits
+  ;;       ("b" magit-blame-addition)
+  ;;       ("r" magit-blame-removal)
+  ;;       ("f" magit-blame-reverse)
+  ;;       ("e" magit-blame-echo)
+  ;;       ;; q closes any open blame buffers, one at a time,
+  ;;       ;; closing the last blame buffer disables magit-blame-mode,
+  ;;       ;; pressing q in this state closes the git blame TS
+  ;;       ("q" magit-blame-quit :exit (not (bound-and-true-p magit-blame-mode)))
+  ;;       ;; other
+  ;;       ("c" magit-blame-cycle-style)
+  ;;       ("Y" magit-blame-copy-hash)
+  ;;       ("B" magit-blame :exit t)
+  ;;       ("Q" nil :exit t))
   :config
   (require 'git-rebase)
   ;; bind function keys
@@ -2540,20 +2568,16 @@
     (setq magit-display-buffer-function
 	  'magit-display-buffer-fullframe-status-v1))
   (add-hook 'with-editor-mode-hook 'evil-normalize-keymaps)
+  (add-hook 'magit-mode-hook
+	    (lambda ()
+	      (evil-define-key 'normal
+		magit-mode-map (kbd "SPC") nil)))
 
   :general
   (normal-mode-major-mode
     :major-modes '(magit-blame-read-only-mode t)
     :keymaps     '(magit-blame-read-only-mode-hook)
     "RET"        'magit-show-commit)
-
-  (define-key magit-status-mode-map (kbd "C-S-w")
-    'spacemacs/magit-toggle-whitespace)
-
-  (add-hook 'magit-mode-hook
-	    (lambda ()
-	      (evil-define-key 'normal
-		magit-mode-map (kbd "SPC") nil)))
   
   (normal-mode-major-mode
     :major-modes '(magit-section-mode t)
@@ -2628,11 +2652,11 @@
   :defer t
   :general
   (normal-mode-major-mode
-    ; :major-modes '(git-messenger-mode)
+    ;; :major-modes   '(git-messenger-mode)
     :keymaps       '(git-messenger-map)
     [escape]       'git-messenger:popup-close)
   (insert-mode-major-mode
-    ; :major-modes '(git-messenger-mode)
+    ;; :major-modes   '(git-messenger-mode)
     :keymaps       '(git-messenger-map)
     [escape]       'git-messenger:popup-close)
   
@@ -2714,7 +2738,6 @@
 (use-package smeargle
   :defer t
   :init
-  (spacemacs/declare-prefix "gH" "highlight")
   (let ((descr '(("smeargle"         . "highlight by last update time")
 		 ("smeargle-commits" . "highlight by age of changes")
 		 ("smeargle-clear"   . "clear"))))
