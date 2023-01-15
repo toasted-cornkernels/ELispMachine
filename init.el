@@ -1240,8 +1240,8 @@
 (use-package cider
   :mode "\\.clj(s|c)?\\'"
   :config
-  (setq cider-use-xref nil)
-  (setq cider-repl-display-help-banner nil
+  (setq cider-use-xref nil
+	cider-repl-display-help-banner nil
 	cider-repl-buffer-size-limit 100
 	cider-pprint-fn 'fipp
 	cider-result-overlay-position 'at-point
@@ -1291,149 +1291,153 @@
   (local-leader
     :major-modes '(clojure-mode t)
     :keymaps     '(clojure-mode-map)
-    "'"    'sesman-start
-    "d"    (which-key-prefix "debug")
-    "db"   'cider-debug-defun-at-point
-    "de"   'cider-display-error-buffer
+    "'"          'sesman-start
 
-    "dv"   (which-key-prefix "inspect values")
-    "dve"  'cider-inspect-last-sexp
-    "dvf"  'cider-inspect-defun-at-point
-    "dvi"  'cider-inspect
-    "dvl"  'cider-inspect-last-result
-    "dvv"  'cider-inspect-expr
+    "d"          (which-key-prefix "debug")
+    "db"         'cider-debug-defun-at-point
+    "de"         'cider-display-error-buffer
+	         
+    "dv"         (which-key-prefix "inspect values")
+    "dve"        'cider-inspect-last-sexp
+    "dvf"        'cider-inspect-defun-at-point
+    "dvi"        'cider-inspect
+    "dvl"        'cider-inspect-last-result
+    "dvv"        'cider-inspect-expr
+	         
+    "e"          (which-key-prefix "evaluation")
+    "e;"         'cider-eval-defun-to-comment
+    "e$"         'cider-eval-sexp-end-of-line
+    "e("         'cider-eval-list-at-point
+    "eb"         'cider-eval-buffer
+    "ee"         'cider-eval-last-sexp
+    "ef"         'cider-eval-defun-at-point
+    "ei"         'cider-interrupt
+    "el"         'cider-eval-sexp-end-of-line
+    "em"         'cider-macroexpand-1
+    "eM"         'cider-macroexpand-all
+    "er"         'cider-eval-region
+    "eu"         'cider-undef
+    "ev"         'cider-eval-sexp-at-point
+    "eV"         'cider-eval-sexp-up-to-point
+    "ew"         'cider-eval-last-sexp-and-replace
 
-    "e"    (which-key-prefix "evaluation")
-    "e;"   'cider-eval-defun-to-comment
-    "e$"   'cider-eval-sexp-end-of-line
-    "e("   'cider-eval-list-at-point
-    "eb"   'cider-eval-buffer
-    "ee"   'cider-eval-last-sexp
-    "ef"   'cider-eval-defun-at-point
-    "ei"   'cider-interrupt
-    "el"   'cider-eval-sexp-end-of-line
-    "em"   'cider-macroexpand-1
-    "eM"   'cider-macroexpand-all
-    "er"   'cider-eval-region
-    "eu"   'cider-undef
-    "ev"   'cider-eval-sexp-at-point
-    "eV"   'cider-eval-sexp-up-to-point
-    "ew"   'cider-eval-last-sexp-and-replace
-    "en"   (which-key-prefix "ns")
-    "ena"  'cider-ns-reload-all
-    "enn"  'cider-eval-ns-form
-    "enr"  'cider-ns-refresh
-    "enl"  'cider-ns-reload
-    "ep"   (which-key-prefix "pprint")
-    "ep;"  'cider-pprint-eval-defun-to-comment
-    "ep:"  'cider-pprint-eval-last-sexp-to-comment
-    "epf"  'cider-pprint-eval-defun-at-point
-    "epe"  'cider-pprint-eval-last-sexp
+    "en"         (which-key-prefix "ns")
+    "ena"        'cider-ns-reload-all
+    "enn"        'cider-eval-ns-form
+    "enr"        'cider-ns-refresh
+    "enl"        'cider-ns-reload
 
-    "en"   (which-key-prefix "namespace")
-    "ena"  'cider-ns-reload-all
-    "enn"  'cider-eval-ns-form
-    "enr"  'cider-ns-refresh
-    "enl"  'cider-ns-reload ;; SPC u for cider-ns-reload-all
+    "ep"         (which-key-prefix "pprint")
+    "ep;"        'cider-pprint-eval-defun-to-comment
+    "ep:"        'cider-pprint-eval-last-sexp-to-comment
+    "epf"        'cider-pprint-eval-defun-at-point
+    "epe"        'cider-pprint-eval-last-sexp
+	         
+    "en"         (which-key-prefix "namespace")
+    "ena"        'cider-ns-reload-all
+    "enn"        'cider-eval-ns-form
+    "enr"        'cider-ns-refresh
+    "enl"        'cider-ns-reload ;; SPC u for cider-ns-reload-all
+	         
+    "ep"         (which-key-prefix "pretty print")
+    "ep;"        'cider-pprint-eval-defun-to-comment
+    "ep:"        'cider-pprint-eval-last-sexp-to-comment
+    "epf"        'cider-pprint-eval-defun-at-point
+    "epe"        'cider-pprint-eval-last-sexp
+	         
+    "m"          (which-key-prefix "manage repls")
+    "mb"         'sesman-browser
+    "mi"         'sesman-info
+    "mg"         'sesman-goto
+    "ms"         'sesman-start
+	         
+    "ml"         (which-key-prefix "link session")
+    "mlp"        'sesman-link-with-project
+    "mlb"        'sesman-link-with-buffer
+    "mld"        'sesman-link-with-directory
+    "mlu"        'sesman-unlink
+	         
+    "mS"         (which-key-prefix "sibling sessions")
+    "mSj"        'cider-connect-sibling-clj
+    "mSs"        'cider-connect-sibling-cljs
+	         
+    "mq"         (which-key-prefix "quit/restart")
+    "mqq"        'sesman-quit
+    "mqr"        'sesman-restart
+	         
+    "p"          (which-key-prefix "profile")
+    "p+"         'cider-profile-samples
+    "pc"         'cider-profile-clear
+    "pn"         'cider-profile-ns-toggle
+    "ps"         'cider-profile-var-summary
+    "pS"         'cider-profile-summary
+    "pt"         'cider-profile-toggle
+    "pv"         'cider-profile-var-profiled-p
+	         
+    "s"          (which-key-prefix "send to repl")
+    "sb"         'cider-load-buffer
+    "sB"         'cider-send-buffer-in-repl-and-focus
+    "se"         'cider-send-last-sexp-to-repl
+    "sE"         'cider-send-last-sexp-to-repl-focus
+    "sf"         'cider-send-function-to-repl
+    "sF"         'cider-send-function-to-repl-focus
+    "si"         'sesman-start
+	         
+    "sc"         (which-key-prefix "connect external repl")
+    "scj"        'cider-connect-clj
+    "scm"        'cider-connect-clj&cljs
+    "scs"        'cider-connect-cljs
+	         
+    "sj"         (which-key-prefix "jack-in")
+    "sjj"        'cider-jack-in-clj
+    "sjm"        'cider-jack-in-clj&cljs
+    "sjs"        'cider-jack-in-cljs
+	         
+    "sq"         (which-key-prefix "quit/restart repl")
+    "sqq"        'cider-quit
+    "sqr"        'cider-restart
+    "sqn"        'cider-ns-reload
+    "sqN"        'cider-ns-reload-all
+	         
+    "t"          (which-key-prefix "test")
+    "ta"         'cider-test-run-all-tests
+    "tb"         'cider-test-show-report
+    "tl"         'cider-test-run-loaded-tests
+    "tn"         'cider-test-run-ns-tests
+    "tp"         'cider-test-run-project-tests
+    "tr"         'cider-test-rerun-failed-tests
+    "tt"         'cider-test-run-focused-test
+	         
+    "="          (which-key-prefix "format")
+    "=="         'cider-format-buffer
+    "=f"         'cider-format-defun
 
-    "ep"   (which-key-prefix "pretty print")
-    "ep;"  'cider-pprint-eval-defun-to-comment
-    "ep:"  'cider-pprint-eval-last-sexp-to-comment
-    "epf"  'cider-pprint-eval-defun-at-point
-    "epe"  'cider-pprint-eval-last-sexp
-
-    "m"    (which-key-prefix "manage repls")
-    "mb"   'sesman-browser
-    "mi"   'sesman-info
-    "mg"   'sesman-goto
-    "ms"   'sesman-start
-
-    "ml"   (which-key-prefix "link session")
-    "mlp"  'sesman-link-with-project
-    "mlb"  'sesman-link-with-buffer
-    "mld"  'sesman-link-with-directory
-    "mlu"  'sesman-unlink
-
-    "mS"   (which-key-prefix "sibling sessions")
-    "mSj"  'cider-connect-sibling-clj
-    "mSs"  'cider-connect-sibling-cljs
-
-    "mq"   (which-key-prefix "quit/restart")
-    "mqq"  'sesman-quit
-    "mqr"  'sesman-restart
-
-    "p"    (which-key-prefix "profile")
-    "p+"   'cider-profile-samples
-    "pc"   'cider-profile-clear
-    "pn"   'cider-profile-ns-toggle
-    "ps"   'cider-profile-var-summary
-    "pS"   'cider-profile-summary
-    "pt"   'cider-profile-toggle
-    "pv"   'cider-profile-var-profiled-p
-
-    "s"    (which-key-prefix "send to repl")
-    "sb"   'cider-load-buffer
-    "sB"   'cider-send-buffer-in-repl-and-focus
-    "se"   'cider-send-last-sexp-to-repl
-    "sE"   'cider-send-last-sexp-to-repl-focus
-    "sf"   'cider-send-function-to-repl
-    "sF"   'cider-send-function-to-repl-focus
-    "si"   'sesman-start
-
-    "sc"   (which-key-prefix "connect external repl")
-    "scj"  'cider-connect-clj
-    "scm"  'cider-connect-clj&cljs
-    "scs"  'cider-connect-cljs
-
-    "sj"   (which-key-prefix "jack-in")
-    "sjj"  'cider-jack-in-clj
-    "sjm"  'cider-jack-in-clj&cljs
-    "sjs"  'cider-jack-in-cljs
-
-    "sq"   (which-key-prefix "quit/restart repl")
-    "sqq"  'cider-quit
-    "sqr"  'cider-restart
-    "sqn"  'cider-ns-reload
-    "sqN"  'cider-ns-reload-all
-
-    "t"    (which-key-prefix "test")
-    "ta"   'cider-test-run-all-tests
-    "tb"   'cider-test-show-report
-    "tl"   'cider-test-run-loaded-tests
-    "tn"   'cider-test-run-ns-tests
-    "tp"   'cider-test-run-project-tests
-    "tr"   'cider-test-rerun-failed-tests
-    "tt"   'cider-test-run-focused-test
-
-    "="    (which-key-prefix "format")
-    "=="   'cider-format-buffer
-    "=f"   'cider-format-defun
-    "=e"   (which-key-prefix "edn")
-    "=eb"  'cider-format-edn-buffer
-    "=ee"  'cider-format-edn-last-sexp
-    "=er"  'cider-format-edn-region
-
-    "g"    (which-key-prefix "goto")
-    "gb"   'cider-pop-back
-    "gc"   'cider-classpath
-    "gg"   'clj-find-var
-    "gn"   'cider-find-ns
-
-    "h"    (which-key-prefix "documentation")
-    "ha"   'cider-apropos
-    "hc"   'cider-cheatsheet
-    "hd"   'cider-clojuredocs
-    "hj"   'cider-javadoc
-    "hn"   'cider-browse-ns
-    "hN"   'cider-browse-ns-all
-    "hs"   'cider-browse-spec
-    "hS"   'cider-browse-spec-all
-
-    "T"    (which-key-prefix "toggle")
-    "Te"   'cider-enlighten-mode
-    "Tf"   'cider-toggle-repl-font-locking
-    "Tp"   'cider-toggle-repl-pretty-printing
-    "Tt"   'cider-auto-test-mode))
+    "=e"         (which-key-prefix "edn")
+    "=eb"        'cider-format-edn-buffer
+    "=ee"        'cider-format-edn-last-sexp
+    "=er"        'cider-format-edn-region
+	         
+    "g"          (which-key-prefix "goto")
+    "gb"         'cider-pop-back
+    "gc"         'cider-classpath
+    "gg"         'clj-find-var
+    "gn"         'cider-find-ns
+	         
+    "h"          (which-key-prefix "documentation")
+    "ha"         'cider-apropos
+    "hc"         'cider-cheatsheet
+    "hd"         'cider-clojuredocs
+    "hj"         'cider-javadoc
+    "hn"         'cider-browse-ns
+    "hN"         'cider-browse-ns-all
+    "hs"         'cider-browse-spec
+    "hS"         'cider-browse-spec-all
+	         
+    "T"          (which-key-prefix "toggle")
+    "Te"         'cider-enlighten-mode
+    "Tf"         'cider-toggle-repl-font-locking
+    "Tp"         'cider-toggle-repl-pretty-printing
+    "Tt"         'cider-auto-test-mode))
 
 ;; Hy config ========================================
 ;; ==================================================
@@ -1441,14 +1445,17 @@
 (use-package hy-mode
   :defer t
   :hook  (hy-mode . evil-cleverparens-mode)
+
   :general
   (local-leader
     :major-modes '(hy-mode inferior-hy-mode t)
     :keymaps     '(hy-mode-map inferior-hy-mode-map)
-    "e" (which-key-prefix "eval")
-    "ec" 'hy-shell-eval-current-form
-    "er" 'hy-shell-eval-region
-    "eb" 'hy-shell-eval-buffer)
+
+    "e"          (which-key-prefix "eval")
+    "ec"         'hy-shell-eval-current-form
+    "er"         'hy-shell-eval-region
+    "eb"         'hy-shell-eval-buffer)
+
   :config
   (defun my-hy-shell-eval-current-form ()
     (interactive)
@@ -2617,6 +2624,105 @@
   ;; default is to open the generated link
   (setq git-link-open-in-browser t))
 
+(use-package git-messenger
+  :defer t
+  :general
+  (normal-mode-major-mode
+    ; :major-modes '(git-messenger-mode)
+    :keymaps       '(git-messenger-map)
+    [escape]       'git-messenger:popup-close)
+  (insert-mode-major-mode
+    ; :major-modes '(git-messenger-mode)
+    :keymaps       '(git-messenger-map)
+    [escape]       'git-messenger:popup-close)
+  
+  (define-key git-messenger-map [escape] 'git-messenger:popup-close))
+
+;; TODO
+;; (use-package git-timemachine
+;;   :defer t
+;;   :commands spacemacs/time-machine-transient-state/body
+;;   :init
+;;   (spacemacs/set-leader-keys
+;;    "gt" 'spacemacs/time-machine-transient-state/body)
+;;   :config
+;;   (spacemacs|define-transient-state time-machine
+;; 				    :title "Git Timemachine Transient State"
+;; 				    :doc "
+;;   [_p_/_N_] previous [_n_] next [_c_] current [_g_] goto nth rev [_Y_] copy hash [_q_] quit"
+;; 				    :on-enter (let (golden-ratio-mode)
+;; 						(unless (bound-and-true-p git-timemachine-mode)
+;; 						  (call-interactively 'git-timemachine)))
+;; 				    :on-exit (when (bound-and-true-p git-timemachine-mode)
+;; 					       (git-timemachine-quit))
+;; 				    :foreign-keys run
+;; 				    :bindings
+;; 				    ("c" git-timemachine-show-current-revision)
+;; 				    ("g" git-timemachine-show-nth-revision)
+;; 				    ("p" git-timemachine-show-previous-revision)
+;; 				    ("n" git-timemachine-show-next-revision)
+;; 				    ("N" git-timemachine-show-previous-revision)
+;; 				    ("Y" git-timemachine-kill-revision)
+;; 				    ("q" nil :exit t)))
+
+(use-package git-modes
+  :defer t)
+
+(use-package gitignore-snippets
+  :defer t)
+
+(use-package gitignore-templates
+  :defer t
+  :general
+  (local-leader
+    :major-modes '(gitignore-mode t)
+    :keymaps     '(gitignore-mode-map)
+    "i"          'gitignore-templates-insert))
+
+(use-package magit-delta
+  :hook (magit-mode . magit-delta-mode))
+
+(use-package magit-gitflow
+  :hook (magit-mode . magit-gitflow-mode)
+  :init
+  (setq magit-gitflow-popup-key "%")
+
+  :general
+  (normal-mode-major-mode
+    :major-modes '(magit-mode t)
+    :keymaps     '(magit-mode-map)
+    "%"          'magit-gitflow-popup)
+  
+  (insert-mode-major-mode
+    :major-modes '(magit-mode t)
+    :keymaps     '(magit-mode-map)
+    "%"          'magit-gitflow-popup))
+
+(use-package magit-section
+  :defer t)
+
+(use-package magit-todos
+  :hook (magit-mode . magit-todos-mode))
+
+(use-package orgit
+  :defer t)
+
+(use-package orgit-forge
+  :after forge
+  :defer t)
+
+(use-package smeargle
+  :defer t
+  :init
+  (spacemacs/declare-prefix "gH" "highlight")
+  (let ((descr '(("smeargle"         . "highlight by last update time")
+		 ("smeargle-commits" . "highlight by age of changes")
+		 ("smeargle-clear"   . "clear"))))
+    (dolist (nd descr)
+      (push (cons (cons nil (concat "\\`" (car nd) "\\'"))
+		  (cons nil (cdr nd)))
+	    which-key-replacement-alist))))
+
 (use-package forge
   :after magit
   :init
@@ -2649,1211 +2755,1221 @@
     "k"          'forge-post-cancel
     "a"          'forge-post-cancel))
 
-  ;; vc config ========================================
-  ;; ==================================================
+;; vc config ========================================
+;; ==================================================
 
-  (use-package vc-git
-    :straight nil
-    :config
-    (setq vc-follow-symlinks t))
+(use-package vc-git
+  :straight nil
+  :config
+  (setq vc-follow-symlinks t))
 
-  ;; eldoc-mode config ================================
-  ;; ==================================================
+;; eldoc-mode config ================================
+;; ==================================================
 
-  (use-package eldoc
-    :straight nil
-    :hook ((emacs-lisp-mode lisp-interaction-mode ielm-mode) . turn-on-eldoc-mode))
+(use-package eldoc
+  :straight nil
+  :hook ((emacs-lisp-mode lisp-interaction-mode ielm-mode) . turn-on-eldoc-mode))
 
-  ;; Newcomment =======================================
-  ;; ==================================================
+;; Newcomment =======================================
+;; ==================================================
 
-  (use-package newcomment
-    :straight nil
-    :config
-    (agnostic-key "M-;" 'comment-dwim))
+(use-package newcomment
+  :straight nil
+  :config
+  (agnostic-key "M-;" 'comment-dwim))
 
-  ;; save-place configs ===============================
-  ;; ==================================================
+;; save-place configs ===============================
+;; ==================================================
 
-  (use-package saveplace
-    :straight nil
-    :config
-    (setq-default save-place t)
-    (setq save-place-file (concat user-emacs-directory "places")))
+(use-package saveplace
+  :straight nil
+  :config
+  (setq-default save-place t)
+  (setq save-place-file (concat user-emacs-directory "places")))
 
-  ;; winner-mode configs ==============================
-  ;; ==================================================
+;; winner-mode configs ==============================
+;; ==================================================
 
-  (use-package winner
-    :config
-    (winner-mode 1))
+(use-package winner
+  :config
+  (winner-mode 1))
 
-  ;; which-key configs ================================
-  ;; ==================================================
+;; which-key configs ================================
+;; ==================================================
 
-  (use-package which-key
-    :config
-    (setq which-key-add-column-padding 1
-	  which-key-echo-keystrokes 0.02
-	  which-key-idle-delay 0.2
-	  which-key-idle-secondary-delay 0.01
-	  which-key-max-description-length 32
-	  which-key-max-display-columns nil
-	  which-key-min-display-lines 6
-	  which-key-prevent-C-h-from-cycling t
-	  which-key-sort-order 'which-key-prefix-then-key-order
-	  which-key-sort-uppercase-first nil
-	  which-key-special-keys nil
-	  which-key-use-C-h-for-paging t
-	  which-key-allow-evil-operators t)
-    (which-key-mode))
+(use-package which-key
+  :config
+  (setq which-key-add-column-padding 1
+	which-key-echo-keystrokes 0.02
+	which-key-idle-delay 0.2
+	which-key-idle-secondary-delay 0.01
+	which-key-max-description-length 32
+	which-key-max-display-columns nil
+	which-key-min-display-lines 6
+	which-key-prevent-C-h-from-cycling t
+	which-key-sort-order 'which-key-prefix-then-key-order
+	which-key-sort-uppercase-first nil
+	which-key-special-keys nil
+	which-key-use-C-h-for-paging t
+	which-key-allow-evil-operators t)
+  (which-key-mode))
 
-  ;; isearch configs ==================================
-  ;; ==================================================
+;; isearch configs ==================================
+;; ==================================================
 
-  (use-package isearch
-    :straight nil
-    :general
-    (agnostic-key
-      "C-s" 'isearch-forward-regexp))
+(use-package isearch
+  :straight nil
+  :general
+  (agnostic-key
+    "C-s" 'isearch-forward-regexp))
 
-  ;; hippie-expand configs ============================
-  ;; ==================================================
+;; hippie-expand configs ============================
+;; ==================================================
 
-  (global-set-key (kbd "M-/") 'hippie-expand)
+(global-set-key (kbd "M-/") 'hippie-expand)
 
-  (setq hippie-expand-try-functions-list
-	'(try-expand-dabbrev
-	  try-expand-dabbrev-all-buffers
-	  try-expand-dabbrev-from-kill
-	  try-complete-lisp-symbol-partially
-	  try-complete-lisp-symbol))
+(setq hippie-expand-try-functions-list
+      '(try-expand-dabbrev
+	try-expand-dabbrev-all-buffers
+	try-expand-dabbrev-from-kill
+	try-complete-lisp-symbol-partially
+	try-complete-lisp-symbol))
 
-  ;; Uniquify configs =================================
-  ;; ==================================================
+;; Uniquify configs =================================
+;; ==================================================
 
-  (use-package uniquify
-    :straight nil
-    :config
-    (setq uniquify-buffer-name-style 'forward))
+(use-package uniquify
+  :straight nil
+  :config
+  (setq uniquify-buffer-name-style 'forward))
 
-  ;; Flycheck configs =================================
-  ;; ==================================================
+;; Flycheck configs =================================
+;; ==================================================
 
-  (use-package flycheck
-    :config
-    (global-flycheck-mode)
-    (setq flycheck-checker-error-threshold 1000))
+(use-package flycheck
+  :config
+  (global-flycheck-mode)
+  (setq flycheck-checker-error-threshold 1000))
 
-  ;; Helpful ==========================================
-  ;; ==================================================
+;; Helpful ==========================================
+;; ==================================================
 
-  (use-package helpful)
+(use-package helpful)
 
-  ;; recentf configs ==================================
-  ;; ==================================================
+;; recentf configs ==================================
+;; ==================================================
 
-  (use-package recentf
-    :straight nil
-    :commands (consult-recent-file)
-    :init
-    (setq recentf-keep '(file-remote-p file-readable-p)
-	  recentf-save-file (concat user-emacs-directory ".recentf")
-	  recentf-auto-cleanup 'never)
-    :config
-    (recentf-mode 1)
-    (setq recentf-max-menu-items 40)
-    (add-to-list 'recentf-exclude "/private/var/folders/.*")
-    (add-to-list 'recentf-exclude "/var/folders/.*"))
+(use-package recentf
+  :straight nil
+  :commands (consult-recent-file)
+  :init
+  (setq recentf-keep '(file-remote-p file-readable-p)
+	recentf-save-file (concat user-emacs-directory ".recentf")
+	recentf-auto-cleanup 'never)
+  :config
+  (recentf-mode 1)
+  (setq recentf-max-menu-items 40)
+  (add-to-list 'recentf-exclude "/private/var/folders/.*")
+  (add-to-list 'recentf-exclude "/var/folders/.*"))
 
-  (defun cleanup-emacs ()
+(defun cleanup-emacs ()
+  (interactive)
+  (garbage-collect)
+  (when (featurep 'helpful)
+    (helpful-kill-buffers))
+  (recentf-cleanup)
+  (message "no more garbage! yay!"))
+
+;; ibuffer configs ==================================
+;; ==================================================
+
+(use-package ibuffer
+  :straight nil
+  :config
+  (add-hook 'ibuffer-mode-hook #'ibuffer-set-filter-groups-by-mode))
+
+;; projectile configs ===============================
+;; ==================================================
+
+(use-package projectile
+  :config
+  (projectile-mode)
+  (setq projectile-mode-line            "Projectile"
+	anaconda-mode-localhost-address "localhost"
+	projectile-enable-caching       t))
+
+;; minions config ===================================
+;; ==================================================
+
+(use-package minions
+  :config
+  (minions-mode 1)
+  (setq minions-hidden-modes t))
+
+;; visuals ==========================================
+;; ==================================================
+
+(use-package menu-bar
+  :straight nil
+  :config
+  (when terminal-p (menu-bar-mode -1)))
+
+(use-package tab-bar
+  :straight nil
+  :config
+  (defun disable-tab-bar-if-unnecessary (_)
+    "Hide the tab bar if there is only one tab left."
+    (when (= (length (tab-bar-tabs)) 1)
+      (tab-bar-mode -1)))
+
+  (advice-add 'tab-close :after #'disable-tab-bar-if-unnecessary)
+
+  (defun tab-move-previous ()
     (interactive)
-    (garbage-collect)
-    (when (featurep 'helpful)
-      (helpful-kill-buffers))
-    (recentf-cleanup)
-    (message "no more garbage! yay!"))
+    (tab-move -1))
 
-  ;; ibuffer configs ==================================
-  ;; ==================================================
+  (agnostic-key
+    "s-{" 'tab-move-previous
+    "s-}" 'tab-move
+    "s-[" 'tab-previous
+    "s-]" 'tab-next
+    "s-." 'tab-new
+    "s-," 'tab-close))
 
-  (use-package ibuffer
-    :straight nil
-    :config
-    (add-hook 'ibuffer-mode-hook #'ibuffer-set-filter-groups-by-mode))
+(use-package tool-bar
+  :straight nil
+  :when GUI-p)
 
-  ;; projectile configs ===============================
-  ;; ==================================================
-
-  (use-package projectile
-    :config
-    (projectile-mode)
-    (setq projectile-mode-line            "Projectile"
-	  anaconda-mode-localhost-address "localhost"
-	  projectile-enable-caching       t))
-
-  ;; minions config ===================================
-  ;; ==================================================
-
-  (use-package minions
-    :config
-    (minions-mode 1)
-    (setq minions-hidden-modes t))
-
-  ;; visuals ==========================================
-  ;; ==================================================
-
-  (use-package menu-bar
-    :straight nil
-    :config
-    (when terminal-p (menu-bar-mode -1)))
-
-  (use-package tab-bar
-    :straight nil
-    :config
-    (defun disable-tab-bar-if-unnecessary (_)
-      "Hide the tab bar if there is only one tab left."
-      (when (= (length (tab-bar-tabs)) 1)
-	(tab-bar-mode -1)))
-
-    (advice-add 'tab-close :after #'disable-tab-bar-if-unnecessary)
-
-    (defun tab-move-previous ()
-      (interactive)
-      (tab-move -1))
-
-    (agnostic-key
-      "s-{" 'tab-move-previous
-      "s-}" 'tab-move
-      "s-[" 'tab-previous
-      "s-]" 'tab-next
-      "s-." 'tab-new
-      "s-," 'tab-close))
-
-  (use-package tool-bar
-    :straight nil
-    :when GUI-p)
-
-  (blink-cursor-mode 0)
-  (global-visual-line-mode t)
-  (dolist (hook '(doc-view-mode-hook
-		  pdf-view-mode-hook
-		  w3m-mode-hook
-		  eww-mode-hook
-		  comint-mode-hook))
-    (add-hook hook (lambda () (display-line-numbers-mode -1))))
+(blink-cursor-mode 0)
+(global-visual-line-mode t)
+(dolist (hook '(doc-view-mode-hook
+		pdf-view-mode-hook
+		w3m-mode-hook
+		eww-mode-hook
+		comint-mode-hook))
+  (add-hook hook (lambda () (display-line-numbers-mode -1))))
 
 
-  (when (fboundp 'scroll-bar-mode)
-    (scroll-bar-mode -1))
-  (setq ring-bell-function 'ignore)
+(when (fboundp 'scroll-bar-mode)
+  (scroll-bar-mode -1))
+(setq ring-bell-function 'ignore)
 
-  ;; font
-  (if (not chromeOS-p)
-      (set-face-attribute 'default nil
-			  :font "Fira Code"
-			  :weight 'light
-			  :height 180)
-    (set-face-attribute 'default nil :height 140))
+;; font
+(if (not chromeOS-p)
+    (set-face-attribute 'default nil
+			:font "Fira Code"
+			:weight 'light
+			:height 180)
+  (set-face-attribute 'default nil :height 140))
 
-  (use-package modus-themes
-    :init
-    (setq custom--inhibit-theme-enable nil)
-    (defun mac-dark-mode-p ()
-      (s-contains? "Dark" (plist-get
-			   (mac-application-state) :appearance)))
+(use-package modus-themes
+  :init
+  (setq custom--inhibit-theme-enable nil)
+  (defun mac-dark-mode-p ()
+    (s-contains? "Dark" (plist-get
+			 (mac-application-state) :appearance)))
 
-    (defun general-dark-mode-p ()
-      (let ((current-time (read (format-time-string "%H"))))
-	(not (<= 7 current-time 17))))
+  (defun general-dark-mode-p ()
+    (let ((current-time (read (format-time-string "%H"))))
+      (not (<= 7 current-time 17))))
 
-    :demand t
-    :config
-    (require 'modus-operandi-theme)
-    (require 'modus-vivendi-theme)
-    (defun load-modus-operandi ()
-      (interactive)
-      (disable-theme 'modus-vivendi)
-      (load-theme 'modus-operandi t)
-      (custom-theme-set-faces
-       'modus-operandi
-       '(tool-bar ((default
-		     :box (:line-width 1 :style released-button)
-		     :foreground "black")
-		   (((type x w32 mac ns) (class color))
-		    :background "grey75")
-		   (((type x) (class mono))
-		    :background "grey")))
-       '(tab-bar ((((class color) (min-colors 88))
-		   :inherit variable-pitch
-		   :background "grey85"
+  :demand t
+  :config
+  (require 'modus-operandi-theme)
+  (require 'modus-vivendi-theme)
+  (defun load-modus-operandi ()
+    (interactive)
+    (disable-theme 'modus-vivendi)
+    (load-theme 'modus-operandi t)
+    (custom-theme-set-faces
+     'modus-operandi
+     '(tool-bar ((default
+		   :box (:line-width 1 :style released-button)
 		   :foreground "black")
-		  (((class mono))
-		   :background "grey")
-		  (t
-		   :inverse-video t)))
-       '(tab-line ((((class color) (min-colors 88))
-		    ;; :inherit variable-pitch
-		    :height 0.9
-		    :background "grey85"
-		    :foreground "black")
-		   (((class mono))
-		    :background "grey")
-		   (t
-		    :inverse-video t)))
-       '(tab-bar-tab ((default
-			:inherit tab-bar)
-		      (((class color) (min-colors 88))
-		       :box (:line-width 1 :style released-button))
-		      (t
-		       :inverse-video nil)))
-       '(tab-bar-tab-inactive ((default
-				 :inherit tab-bar-tab)
-			       (((class color) (min-colors 88))
-				:background "grey75")
-			       (t
-				:inverse-video t)))
-       '(tab-bar-tab-group-current ((t :inherit tab-bar-tab :box nil :weight bold)))
-       '(tab-bar-tab-group-inactive ((t :inherit (shadow tab-bar-tab-inactive))))
-       '(tab-bar-tab-ungrouped ((t :inherit (shadow tab-bar-tab-inactive))))
-       '(fringe ((t (:foreground "#FFFFFF" :background "#FFFFFF"))))))
+		 (((type x w32 mac ns) (class color))
+		  :background "grey75")
+		 (((type x) (class mono))
+		  :background "grey")))
+     '(tab-bar ((((class color) (min-colors 88))
+		 :inherit variable-pitch
+		 :background "grey85"
+		 :foreground "black")
+		(((class mono))
+		 :background "grey")
+		(t
+		 :inverse-video t)))
+     '(tab-line ((((class color) (min-colors 88))
+		  ;; :inherit variable-pitch
+		  :height 0.9
+		  :background "grey85"
+		  :foreground "black")
+		 (((class mono))
+		  :background "grey")
+		 (t
+		  :inverse-video t)))
+     '(tab-bar-tab ((default
+		      :inherit tab-bar)
+		    (((class color) (min-colors 88))
+		     :box (:line-width 1 :style released-button))
+		    (t
+		     :inverse-video nil)))
+     '(tab-bar-tab-inactive ((default
+			       :inherit tab-bar-tab)
+			     (((class color) (min-colors 88))
+			      :background "grey75")
+			     (t
+			      :inverse-video t)))
+     '(tab-bar-tab-group-current ((t :inherit tab-bar-tab :box nil :weight bold)))
+     '(tab-bar-tab-group-inactive ((t :inherit (shadow tab-bar-tab-inactive))))
+     '(tab-bar-tab-ungrouped ((t :inherit (shadow tab-bar-tab-inactive))))
+     '(fringe ((t (:foreground "#FFFFFF" :background "#FFFFFF"))))))
 
-    (defun load-modus-vivendi ()
-      (interactive)
-      (disable-theme 'modus-operandi)
-      (load-theme 'modus-vivendi t)
-      (custom-theme-set-faces
-       'modus-vivendi
-       '(tool-bar ((t (:foreground "#000000" :background "#000000" :box nil))))
-       '(fringe   ((t (:foreground "#000000" :background "#000000"))))))
-
-    (defun modus-themes-toggle- ()
-      (interactive)
-      (let ((modus-operandi-p (string= (modus-themes--current-theme) "modus-operandi"))
-	    (modus-vivendi-p  (string= (modus-themes--current-theme) "modus-vivendi")))
-	(cond (modus-operandi-p (load-modus-vivendi))
-	      (modus-vivendi-p  (load-modus-operandi))
-	      (:else            (load-modus-operandi)))))
-
-    (if GUI-p
-	(let ((dark-mode-p (if macOS-p
-			       (mac-dark-mode-p)
-			     (general-dark-mode-p))))
-	  (if dark-mode-p
-	      (load-modus-vivendi)	; dark mode!
-	    (load-modus-operandi)))	; light mode!
-      (load-modus-vivendi))
-
-    ;; make terminal transparent
-    
-    (when terminal-p
-      (defun make-terminal-transparent ()
-	(unless (display-graphic-p (selected-frame))
-	  (set-face-background 'default "unspecified-bg" (selected-frame))))
-      (add-hook 'window-setup-hook 'make-terminal-transparent)
-      (make-terminal-transparent)))
-
-  ;; hl-todo config ==================================
-  ;; =================================================
-
-  (use-package hl-todo
-    :demand t
-    :config
-    (global-hl-todo-mode)
-    (setq hl-todo-keyword-faces
-	  '(("HOLD"    . "#d0bf8f")
-	    ("TODO"    . "#cc9393")
-	    ("NEXT"    . "#dca3a3")
-	    ("THEM"    . "#dc8cc3")
-	    ("WORKING" . "#7cb8bb")
-	    ("PROG"    . "#7cb8bb")
-	    ("OKAY"    . "#7cb8bb")
-	    ("DONT"    . "#5f7f5f")
-	    ("FAIL"    . "#8c5353")
-	    ("DONE"    . "#afd8af")
-	    ("NOTE"    . "#d0bf8f")
-	    ("KLUDGE"  . "#d0bf8f")
-	    ("HACK"    . "#d0bf8f")
-	    ("TEMP"    . "#d0bf8f")
-	    ("FIXME"   . "#cc9393")
-	    ("UNSURE"  . "#cc9393")
-	    ("XXX+"    . "#cc9393"))))
-
-  ;; line numbers ====================================
-  ;; =================================================
-
-  (use-package display-line-numbers
-    :straight nil
-    :config
-    (let ((hooks '(doc-view-mode-hook
-		   pdf-view-mode-hook
-		   w3m-mode-hook
-		   eww-mode-hook
-		   inferior-hy-mode-hook
-		   inferior-python-mode-hook
-		   vterm-mode-hook)))
-      (dolist (hook hooks)
-	(add-hook hook
-		  (lambda ()
-		    (display-line-numbers-mode -1))))))
-
-  ;; Eshell config ====================================
-  ;; ==================================================
-
-  (use-package eshell
-    :straight nil
-    :config
-    (add-hook 'eshell-mode-hook (lambda () (company-mode -1))))
-
-  ;; vterm config =====================================
-  ;; ==================================================
-
-  (use-package vterm
-    :when (not chromeOS-p))
-
-  (use-package multi-vterm
-    :after (vterm projectile)
-    :config
-    (add-hook 'vterm-mode-hook
-	      (lambda ()
-		(setq-local evil-insert-state-cursor 'box)
-		(evil-insert-state)))
-
-    (define-key vterm-mode-map (kbd "<return>") #'vterm-send-return)
-
-    (setq vterm-keymap-exceptions nil)
-
-    :general
-    (insert-mode-major-mode
-      :major-modes '(vterm-mode vterm-copy-mode t)
-      :keymaps     '(vterm-mode-map vterm-copy-mode-map)
-      "C-e"   'vterm--self-insert
-      "C-f"   'vterm--self-insert
-      "C-a"   'vterm--self-insert
-      "C-v"   'vterm--self-insert
-      "C-b"   'vterm--self-insert
-      "C-w"   'vterm--self-insert
-      "C-u"   'vterm--self-insert
-      "C-d"   'vterm--self-insert
-      "C-n"   'vterm--self-insert
-      "C-m"   'vterm--self-insert
-      "C-p"   'vterm--self-insert
-      "C-j"   'vterm--self-insert
-      "C-k"   'vterm--self-insert
-      "C-r"   'vterm--self-insert
-      "C-t"   'vterm--self-insert
-      "C-g"   'vterm--self-insert
-      "C-c"   'vterm--self-insert
-      "C-SPC" 'vterm--self-insert
-      "C-d"   'vterm--self-insert)
-
-    (local-leader
-      :major-modes '(vterm-mode vterm-copy-mode t)
-      :keymaps     '(vterm-mode-map vterm-copy-mode-map)
-      "c" 'multi-vterm
-      "n" 'multi-vterm-next
-      "p" 'multi-vterm-prev)
-
-    (normal-mode-major-mode
-      :major-modes '(vterm-mode vterm-copy-mode t)
-      :keymaps     '(vterm-mode-map vterm-copy-mode-map)
-      "i"   'evil-insert-resume
-      "o"   'evil-insert-resume
-      "RET" 'evil-insert-resume))
-
-  ;; world clock config ===============================
-  ;; ==================================================
-
-  (use-package time
-    :straight nil
-    :config
-    (setq world-clock-list t
-	  zoneinfo-style-world-list '(("America/Los_Angeles" "Los Angeles")
-				      ("America/New_York" "New York")
-				      ("Asia/Seoul" "Seoul"))))
-
-  ;; custom functions =================================
-  ;; ==================================================
-
-  (defun display-current-time ()
-    "Display the current time in the buffer."
+  (defun load-modus-vivendi ()
     (interactive)
-    (message (format-time-string "%Y-%m-%d %H:%M:%S")))
+    (disable-theme 'modus-operandi)
+    (load-theme 'modus-vivendi t)
+    (custom-theme-set-faces
+     'modus-vivendi
+     '(tool-bar ((t (:foreground "#000000" :background "#000000" :box nil))))
+     '(fringe   ((t (:foreground "#000000" :background "#000000"))))))
 
-  (defun insert-current-time ()
-    "Insert the current time at point."
+  (defun modus-themes-toggle- ()
     (interactive)
-    (insert (format-time-string "%Y-%m-%d %H:%M:%S")))
+    (let ((modus-operandi-p (string= (modus-themes--current-theme) "modus-operandi"))
+	  (modus-vivendi-p  (string= (modus-themes--current-theme) "modus-vivendi")))
+      (cond (modus-operandi-p (load-modus-vivendi))
+	    (modus-vivendi-p  (load-modus-operandi))
+	    (:else            (load-modus-operandi)))))
 
-  ;; Mode-agnostic keybindings ==========================
-  ;; ====================================================
+  (if GUI-p
+      (let ((dark-mode-p (if macOS-p
+			     (mac-dark-mode-p)
+			   (general-dark-mode-p))))
+	(if dark-mode-p
+	    (load-modus-vivendi)	; dark mode!
+	  (load-modus-operandi)))	; light mode!
+    (load-modus-vivendi))
 
-  ;; emacs key remappings
-  (agnostic-key
-    "C-x C-l" 'count-lines-page
-    "C-x C-b" 'ibuffer)
+  ;; make terminal transparent
+  
+  (when terminal-p
+    (defun make-terminal-transparent ()
+      (unless (display-graphic-p (selected-frame))
+	(set-face-background 'default "unspecified-bg" (selected-frame))))
+    (add-hook 'window-setup-hook 'make-terminal-transparent)
+    (make-terminal-transparent)))
 
-  ;; s-shortcuts
-  (agnostic-key
-    "s-1" 'winum-select-window-1
-    "s-2" 'winum-select-window-2
-    "s-3" 'winum-select-window-3
-    "s-4" 'winum-select-window-4
-    "s-5" 'winum-select-window-5
-    "s-6" 'winum-select-window-6
-    "s-7" 'winum-select-window-7
-    "s-8" 'winum-select-window-8
-    "s-9" 'winum-select-window-9
-    "s-0" 'winum-select-window-0)
+;; hl-todo config ==================================
+;; =================================================
 
-  (agnostic-key
-    "s-="   'text-scale-increase
-    "s--"   'text-scale-decrease
-    "s-0"   'text-scale-adjust		; meh
-    "s-p"   'projectile-find-file-dwim
-    "s-P"   'consult-recent-file
-    "s-o"   'find-file
-    "s-f"   'ace-window
-    "s-RET" 'toggle-frame-maximized
-    "s-m"   'w3m-browse-url
-    "s-b"   'switch-to-buffer
-    "s-e"   'eww
-    "s-x"   'xwidget-new-window
-    "s-;"   'evil-window-vsplit
-    "s-'"   'evil-window-split
-    "s-h"   'evil-window-left
-    "s-j"   'evil-window-down
-    "s-k"   'evil-window-up
-    "s-l"   'evil-window-right
-    "s-u"   'winner-undo
-    "s-d"   'kill-this-buffer
-    "s-D"   'kill-buffer-and-window
-    "s-g"   'magit
-    "s-r"   'winner-redo
-    "s-t"   'tool-bar-mode
-    "s-T"   'tab-bar-mode
-    "s-i"   'comment-dwim
-    "s-a"   'org-agenda
-    "s-y"   'mu4e-update-mail-and-index
-    "s-/"   'flycheck-next-error
-    "s-\\"  'flycheck-previous-error
-    "s-?"   'yas-next-field
-    "s->"   'yas-prev-field)
+(use-package hl-todo
+  :demand t
+  :config
+  (global-hl-todo-mode)
+  (setq hl-todo-keyword-faces
+	'(("HOLD"    . "#d0bf8f")
+	  ("TODO"    . "#cc9393")
+	  ("NEXT"    . "#dca3a3")
+	  ("THEM"    . "#dc8cc3")
+	  ("WORKING" . "#7cb8bb")
+	  ("PROG"    . "#7cb8bb")
+	  ("OKAY"    . "#7cb8bb")
+	  ("DONT"    . "#5f7f5f")
+	  ("FAIL"    . "#8c5353")
+	  ("DONE"    . "#afd8af")
+	  ("NOTE"    . "#d0bf8f")
+	  ("KLUDGE"  . "#d0bf8f")
+	  ("HACK"    . "#d0bf8f")
+	  ("TEMP"    . "#d0bf8f")
+	  ("FIXME"   . "#cc9393")
+	  ("UNSURE"  . "#cc9393")
+	  ("XXX+"    . "#cc9393"))))
 
-  (defun insert-pipe ()
+;; line numbers ====================================
+;; =================================================
+
+(use-package display-line-numbers
+  :straight nil
+  :config
+  (let ((hooks '(doc-view-mode-hook
+		 pdf-view-mode-hook
+		 w3m-mode-hook
+		 eww-mode-hook
+		 inferior-hy-mode-hook
+		 inferior-python-mode-hook
+		 vterm-mode-hook)))
+    (dolist (hook hooks)
+      (add-hook hook
+		(lambda ()
+		  (display-line-numbers-mode -1))))))
+
+;; Eshell config ====================================
+;; ==================================================
+
+(use-package eshell
+  :straight nil
+  :config
+  (add-hook 'eshell-mode-hook (lambda () (company-mode -1))))
+
+;; vterm config =====================================
+;; ==================================================
+
+(use-package vterm
+  :when (not chromeOS-p))
+
+(use-package multi-vterm
+  :after (vterm projectile)
+  :config
+  (add-hook 'vterm-mode-hook
+	    (lambda ()
+	      (setq-local evil-insert-state-cursor 'box)
+	      (evil-insert-state)))
+
+  (define-key vterm-mode-map (kbd "<return>") #'vterm-send-return)
+
+  (setq vterm-keymap-exceptions nil)
+
+  :general
+  (insert-mode-major-mode
+    :major-modes '(vterm-mode vterm-copy-mode t)
+    :keymaps     '(vterm-mode-map vterm-copy-mode-map)
+    "C-e"   'vterm--self-insert
+    "C-f"   'vterm--self-insert
+    "C-a"   'vterm--self-insert
+    "C-v"   'vterm--self-insert
+    "C-b"   'vterm--self-insert
+    "C-w"   'vterm--self-insert
+    "C-u"   'vterm--self-insert
+    "C-d"   'vterm--self-insert
+    "C-n"   'vterm--self-insert
+    "C-m"   'vterm--self-insert
+    "C-p"   'vterm--self-insert
+    "C-j"   'vterm--self-insert
+    "C-k"   'vterm--self-insert
+    "C-r"   'vterm--self-insert
+    "C-t"   'vterm--self-insert
+    "C-g"   'vterm--self-insert
+    "C-c"   'vterm--self-insert
+    "C-SPC" 'vterm--self-insert
+    "C-d"   'vterm--self-insert)
+
+  (local-leader
+    :major-modes '(vterm-mode vterm-copy-mode t)
+    :keymaps     '(vterm-mode-map vterm-copy-mode-map)
+    "c" 'multi-vterm
+    "n" 'multi-vterm-next
+    "p" 'multi-vterm-prev)
+
+  (normal-mode-major-mode
+    :major-modes '(vterm-mode vterm-copy-mode t)
+    :keymaps     '(vterm-mode-map vterm-copy-mode-map)
+    "i"   'evil-insert-resume
+    "o"   'evil-insert-resume
+    "RET" 'evil-insert-resume))
+
+;; world clock config ===============================
+;; ==================================================
+
+(use-package time
+  :straight nil
+  :config
+  (setq world-clock-list t
+	zoneinfo-style-world-list '(("America/Los_Angeles" "Los Angeles")
+				    ("America/New_York" "New York")
+				    ("Asia/Seoul" "Seoul"))))
+
+;; custom functions =================================
+;; ==================================================
+
+(defun display-current-time ()
+  "Display the current time in the buffer."
+  (interactive)
+  (message (format-time-string "%Y-%m-%d %H:%M:%S")))
+
+(defun insert-current-time ()
+  "Insert the current time at point."
+  (interactive)
+  (insert (format-time-string "%Y-%m-%d %H:%M:%S")))
+
+;; Mode-agnostic keybindings ==========================
+;; ====================================================
+
+;; emacs key remappings
+(agnostic-key
+  "C-x C-l" 'count-lines-page
+  "C-x C-b" 'ibuffer)
+
+;; s-shortcuts
+(agnostic-key
+  "s-1" 'winum-select-window-1
+  "s-2" 'winum-select-window-2
+  "s-3" 'winum-select-window-3
+  "s-4" 'winum-select-window-4
+  "s-5" 'winum-select-window-5
+  "s-6" 'winum-select-window-6
+  "s-7" 'winum-select-window-7
+  "s-8" 'winum-select-window-8
+  "s-9" 'winum-select-window-9
+  "s-0" 'winum-select-window-0)
+
+(agnostic-key
+  "s-="   'text-scale-increase
+  "s--"   'text-scale-decrease
+  "s-0"   'text-scale-adjust		; meh
+  "s-p"   'projectile-find-file-dwim
+  "s-P"   'consult-recent-file
+  "s-o"   'find-file
+  "s-f"   'ace-window
+  "s-RET" 'toggle-frame-maximized
+  "s-m"   'w3m-browse-url
+  "s-b"   'switch-to-buffer
+  "s-e"   'eww
+  "s-x"   'xwidget-new-window
+  "s-;"   'evil-window-vsplit
+  "s-'"   'evil-window-split
+  "s-h"   'evil-window-left
+  "s-j"   'evil-window-down
+  "s-k"   'evil-window-up
+  "s-l"   'evil-window-right
+  "s-u"   'winner-undo
+  "s-d"   'kill-this-buffer
+  "s-D"   'kill-buffer-and-window
+  "s-g"   'magit
+  "s-r"   'winner-redo
+  "s-t"   'tool-bar-mode
+  "s-T"   'tab-bar-mode
+  "s-i"   'comment-dwim
+  "s-a"   'org-agenda
+  "s-y"   'mu4e-update-mail-and-index
+  "s-/"   'flycheck-next-error
+  "s-\\"  'flycheck-previous-error
+  "s-?"   'yas-next-field
+  "s->"   'yas-prev-field)
+
+(defun insert-pipe ()
+  (interactive)
+  (insert-char ?|))
+
+(defun insert-ampersand ()
+  (interactive)
+  (insert-char ?&))
+
+(defun youtube-viewer-start ()
+  (interactive)
+  (if (executable-find "youtube-viewer")
+      (comint-run "youtube-viewer" '("-n"))
+    (message "youtube-viewer not found")))
+
+;; c-s-shortcuts
+(agnostic-key
+  "C-s-o" 'insert-pipe
+  "C-s-a" 'insert-ampersand
+  "C-s-e" 'eshell
+  "C-s-t" 'modus-themes-toggle-
+  "C-s-r" 'eradio-toggle
+  "C-s-f" 'toggle-frame-fullscreen
+  "C-s-s" 'ace-swap-window
+  "C-s-g" 'ag-dired-regexp
+  "C-s-v" 'multi-vterm
+  "C-s-u" 'emms-pause
+  "C-s-," 'emms-seek-backward
+  "C-s-." 'emms-seek-forward
+  "C-s-p" 'previous-buffer
+  "C-s-n" 'next-buffer
+  "C-s-b" 'ibuffer
+  "C-s-9" 'emms-volume-lower
+  "C-s-0" 'emms-volume-raise
+  "C-s-=" 'balance-windows
+  "C-s-i" 'imenu-list
+  "C-s-x" 'xwidget-new-window
+  "C-s-y" 'youtube-viewer-start
+  "C-s-;" 'previous-error
+  "C-s-'" 'next-error
+  "C-s-." 'hl-todo-occur
+  "C-s-;" 'flycheck-previous-error
+  "C-s-'" 'flycheck-next-error
+  "C-s-p" 'previous-buffer
+  "C-s-n" 'next-buffer)
+
+;; c-m-shortcuts
+(agnostic-key
+  "C-M-;" 'completion-at-point)
+
+;; SPC-Leader bindings ==============================
+;; ==================================================
+
+(global-leader
+  "SPC" 'execute-extended-command
+  "TAB" 'evil-switch-to-windows-last-buffer
+  "C-r" 'revert-buffer)
+
+(global-leader
+  "S"   (which-key-prefix :straight)
+  "Sp"  (which-key-prefix :package)
+  "Spu" 'straight-use-package
+  "Spp" 'straight-pull-package
+  "SpP" 'straight-pull-all)
+
+(global-leader
+  "w"  (which-key-prefix :window)
+  "wd" 'delete-window
+  "wD" 'ace-delete-window
+  "wh" 'evil-window-left
+  "wj" 'evil-window-down
+  "wk" 'evil-window-up
+  "wl" 'evil-window-right
+  "wL" 'evil-window-bottom-right
+
+  "wM" 'ace-swap-window
+
+  "wt" 'transpose-frame
+  "wr" 'evil-window-rotate-downwards
+  "wR" 'evil-window-rotate-upwards
+
+  "w=" 'balance-windows
+  "wu" 'winner-undo
+  "wU" 'winner-redo
+  "w;" 'evil-window-vsplit
+  "w'" 'evil-window-split
+
+  ";"  'evil-window-vsplit
+  "'"  'evil-window-split
+
+  "1"  'winum-select-window-1
+  "2"  'winum-select-window-2
+  "3"  'winum-select-window-3
+  "4"  'winum-select-window-4
+  "5"  'winum-select-window-5
+  "6"  'winum-select-window-6
+  "7"  'winum-select-window-7
+  "8"  'winum-select-window-8
+  "9"  'winum-select-window-9
+  "0"  'winum-select-window-0)
+
+(global-leader
+  "f"   (which-key-prefix :file)
+  "ff"  'find-file
+  "fs"  'save-buffer
+  "fed" 'visit-init-dot-el
+  "feR" 'eval-init-dot-el
+  "fr"  'consult-recent-file
+  "fj"  'dired-jump
+  "fF"  'find-name-dired
+  "o"   'find-file)
+
+(global-leader
+  "b"  (which-key-prefix :buffer)
+  "bd" 'kill-this-buffer
+  "bb" 'switch-to-buffer
+  "bp" 'previous-buffer
+  "bn" 'next-buffer
+  "bh" (lambda ()
+	 (interactive)
+	 (kill-buffer (get-buffer "*Help*")))
+  "bs" (lambda ()
+	 (interactive)
+	 (setq initial-major-mode 'org-mode)
+	 (switch-to-buffer "*scratch*")))
+
+(global-leader
+  "."  'tab-new
+  ","  'tab-close
+  "["  'tab-previous
+  "]"  'tab-next
+  "/"  'flycheck-next-error
+  "\\" 'flycheck-previous-error)
+
+(global-leader
+  "g"   (which-key-prefix :git)
+  "gb"  'magit-blame	   ; 'spacemacs/git-blame-transient-state/body
+
+  "gf"  (which-key-prefix :file)
+  "gfF" 'magit-find-file
+  "gfl" 'magit-log-buffer-file
+  "gfd" 'magit-diff-dwim
+  "gfm" 'magit-file-dispatch
+  "gfi" 'gitignore-templates-new-file
+
+  "gi"  'magit-init
+  "gL"  'magit-list-repositories
+  "gm"  'magit-dispatch
+  "gs"  'magit-status
+  "gU"  'magit-unstage-file
+  "gs"  'magit
+  "ga"  'magit-stage-file
+  "gc"  'magit-commit-create
+  "gC"  'magit-clone
+  "gp"  'magit-push
+  "gd"  'magit-diff-dwim
+  
+  "gl"  (which-key-prefix :links)
+  "glc" 'git-link-commit
+  "glC" 'git-link-commit-copy-url-only
+  "gll" 'git-link
+  "glL" 'git-link-copy-url-only
+  "glp" 'git-permalink
+  "glP" 'git-permalink-copy-url-only
+
+  "gM"  'git-messenger:popup-message
+
+  "gH"  (which-key-prefix :smeargle)
+  "gHt" 'smeargle
+  "gHc" 'smeargle-clear
+  "gHh" 'smeargle-commits)
+
+(global-leader
+  "a"    (which-key-prefix :utilities)
+  "ai"   'display-current-time
+  "ab"   'battery
+  "al"   'launchctl
+
+  "ao"   (which-key-prefix :org)
+  "aof"  (which-key-prefix :feeds)
+  "ao#"  'org-agenda-list-stuck-projects
+  "aoa"  'org-agenda-list
+  "aoo"  'org-agenda
+  "aoc"  'org-capture
+  "aoe"  'org-store-agenda-views
+  "aofi" 'org-feed-goto-inbox
+  "aofu" 'org-feed-update-all
+  "aoC"  (which-key-prefix :clocks)
+  "aoCc" 'org-clock-cancel
+  "aoCg" 'org-clock-goto
+  "aoCi" 'org-clock-in
+  "aoCI" 'org-clock-in-last
+  "aoCj" 'spacemacs/org-clock-jump-to-current-clock
+  "aoCo" 'org-clock-out
+  "aoCr" 'org-resolve-clocks
+  "aol"  'org-store-link
+  "aom"  'org-tags-view
+  "aos"  'org-search-view
+  "aot"  'org-todo-list
+
+  "aw"   (which-key-prefix :web)
+  "aww"  (which-key-prefix :eww)
+  "awww" 'eww
+  "awws" 'eww-search-words
+  "awwM" 'eww-open-w3m-current-url
+  "awwn" 'eww-search-namu-wiki
+
+  "awm"  (which-key-prefix :w3m)
+  "awmm" 'w3m
+  "awmx" 'xwidget-webkit-open-w3m-current-url
+  "awmW" 'eww-open-w3m-current-url
+
+  "awx"  (which-key-prefix :xwidget-webkit)
+  "awxx" 'xwidget-new-window
+  "awxf" 'xwidget-webkit-find-file
+
+  "aC"   (which-key-prefix :clock)
+  "aCw"  'world-clock
+
+  "at"   (which-key-prefix :terminal)
+  "atr"  (which-key-prefix :repls)
+  "atrb" 'run-bb
+  "atrn" 'run-nbb
+  "atro" 'run-ocaml
+  "atru" 'utop
+  "atrl" 'run-lua
+  "atrh" 'run-hammerspoon
+  "ats"  (which-key-prefix :shells)
+  "atsa" 'async-shell-command
+  "atst" 'multi-term
+
+  "aR"   (which-key-prefix :radio)
+  "aRp"  'eradio-play
+  "aRs"  'eradio-stop
+  "aRR"  'eradio-toggle)
+
+(global-leader
+  "Cc"   'org-capture)
+
+(global-leader
+  "q"    (which-key-prefix :quit)
+  "qq"   'kill-emacs
+  "qf"   'delete-frame)
+
+(global-leader
+  "h"    (which-key-prefix :help)
+  "hd"   (which-key-prefix :describe)
+  "hdb"  'describe-bindings
+  "hdf"  'describe-function
+  "hdk"  'describe-key
+  "hdv"  'describe-variable
+  "hdm"  'describe-mode
+  "hdp"  'describe-package
+  "hdM"  'describe-keymap)
+
+(global-leader
+  "H"    (which-key-prefix :helpful)
+  "Hc"   'helpful-callable
+  "Hf"   'helpful-function
+  "Hm"   'helpful-macro
+  "Hc"   'helpful-command
+  "Hk"   'helpful-key
+  "Hv"   'helpful-variable
+  "Hp"   'helpful-at-point)
+
+(global-leader
+  "p"  (which-key-prefix "project")
+  "p/" 'projectile-ripgrep
+  "pf" 'projectile-find-file
+  "pp" 'projectile-switch-project
+  "pP" 'projectile-switch-open-project
+  "pc" 'projectile-compile-project)
+
+(global-leader
+  "x"     (which-key-prefix "text")
+  "x TAB" 'indent-rigidly
+  "xwd"   'osx-dictionary-search-pointer)
+
+(global-leader
+  "t"    (which-key-prefix "toggle")
+  "tD"   'toggle-debug-on-error)
+
+(global-leader
+  "s-o"  'reveal-in-osx-finder
+  "s-c"  'compile
+  "s-v"  'mixed-pitch-mode
+  "s-u"  'emacs-uptime
+  "s-g"  'cleanup-emacs
+  "s-i"  'insert-current-time
+  "s-y"  'youtube-viewer-start
+  "s-k"  'consult-yank-from-kill-ring
+  "s-x"  'delete-trailing-whitespace
+  "s-m"  'consult-bookmark
+  "s-j"  'join-line
+  "s-b"  'consult-bookmark
+  "s-s"  'save-buffer)
+
+;; enable mouse scroll in terminal ==================
+;; ==================================================
+
+(unless window-system
+  (global-set-key (kbd "<mouse-4>") 'mwheel-scroll)
+  (global-set-key (kbd "<mouse-5>") 'mwheel-scroll)
+  (setq mouse-wheel-up-event 'mouse-5
+	mouse-wheel-down-event 'mouse-4))
+
+;; graphviz-dot-mode ================================
+;; ==================================================
+
+(use-package graphviz-dot-mode
+  :config
+  (setq graphviz-dot-indent-width 4))
+
+;; ace-link config ==================================
+;; ==================================================
+
+(use-package ace-link
+  :init
+  (define-key Info-mode-map   "o" 'ace-link-info)
+  (define-key help-mode-map   "o" 'ace-link-help)
+  (define-key woman-mode-map  "o" 'link-hint-open-link)
+  (define-key eww-link-keymap "o" 'ace-link-eww)
+  (define-key eww-mode-map    "o" 'ace-link-eww)
+  (define-key w3m-link-map    "o" 'ace-link-w3m)
+  (define-key w3m-mode-map    "o" 'ace-link-w3m))
+
+(use-package ace-window
+  :defer t
+  :init
+  (setq aw-keys '(?q ?w ?e ?r ?t ?y ?u ?i ?o ?p)
+	aw-background nil))
+
+(use-package ace-jump-mode
+  :defer t)
+
+;; w3m config =======================================
+;; ==================================================
+
+(use-package w3m
+  :init
+  (defun xwidget-webkit-open-w3m-current-url ()
     (interactive)
-    (insert-char ?|))
+    (require 'xwidget)
+    (xwidget-webkit-new-session w3m-current-url))
 
-  (defun insert-ampersand ()
+  (defun eww-open-w3m-current-url ()
     (interactive)
-    (insert-char ?&))
+    (eww-browse-url w3m-current-url))
 
-  (defun youtube-viewer-start ()
+  (defun w3m-copy-current-url ()
     (interactive)
-    (if (executable-find "youtube-viewer")
-	(comint-run "youtube-viewer" '("-n"))
-      (message "youtube-viewer not found")))
+    (kill-new w3m-current-url)
+    (message "Copied current URL."))
 
-  ;; c-s-shortcuts
-  (agnostic-key
-    "C-s-o" 'insert-pipe
-    "C-s-a" 'insert-ampersand
-    "C-s-e" 'eshell
-    "C-s-t" 'modus-themes-toggle-
-    "C-s-r" 'eradio-toggle
-    "C-s-f" 'toggle-frame-fullscreen
-    "C-s-s" 'ace-swap-window
-    "C-s-g" 'ag-dired-regexp
-    "C-s-v" 'multi-vterm
-    "C-s-u" 'emms-pause
-    "C-s-," 'emms-seek-backward
-    "C-s-." 'emms-seek-forward
-    "C-s-p" 'previous-buffer
-    "C-s-n" 'next-buffer
-    "C-s-b" 'ibuffer
-    "C-s-9" 'emms-volume-lower
-    "C-s-0" 'emms-volume-raise
-    "C-s-=" 'balance-windows
-    "C-s-i" 'imenu-list
-    "C-s-x" 'xwidget-new-window
-    "C-s-y" 'youtube-viewer-start
-    "C-s-;" 'previous-error
-    "C-s-'" 'next-error
-    "C-s-." 'hl-todo-occur
-    "C-s-;" 'flycheck-previous-error
-    "C-s-'" 'flycheck-next-error
-    "C-s-p" 'previous-buffer
-    "C-s-n" 'next-buffer)
+  (defun w3m-open-this-file ()
+    (interactive)
+    (let ((current-filename (buffer-file-name)))
+      (w3m-find-file current-filename)))
 
-  ;; c-m-shortcuts
-  (agnostic-key
-    "C-M-;" 'completion-at-point)
+  ;; shameless ripoffs from `venmos/w3m-layer`
+  (defun w3m-save-buffer-to-file ()
+    (interactive)
+    (let* ((curr (buffer-file-name))
+	   (new (read-file-name
+		 "Save to file: " nil nil nil
+		 (and curr (file-name-nondirectory curr))))
+	   (mustbenew (if (and curr (file-equal-p new curr)) 'excl t)))
+      (if (use-region-p)
+	  (write-region (region-beginning) (region-end) new nil nil nil mustbenew)
+	(save-restriction
+	  (widen)
+	  (write-region (point-min) (point-max) new nil nil nil mustbenew)))))
 
-  ;; SPC-Leader bindings ==============================
-  ;; ==================================================
+  (defun w3m-player-movie ()
+    (interactive)
+    (let ((link (w3m-anchor)))
+      (if (not link)
+	  (message "Thing on point is not a link.")
+	(cond ((string-match "/\\/www\\.youtube\\.com\\/watch\/?" link)
+	       (message (concat "loading from youtube..." link))
+	       (call-process "mpv" nil nil nil link)))
+	(message "Sorry, playback error. Please check the url."))))
 
+  (defun w3m-copy-link ()
+    (interactive)
+    (let ((link (w3m-anchor)))
+      (if (not link)
+	  (message "")
+	(kill-new link)
+	(message "Copy \"%s\" to clipboard." link))))
+
+  (defun w3m-open-url-with (fn url)
+    "Open url according to w3m url open function 'fn', and auto handle url prefix"
+    (cond ((string-prefix-p "http://" url) (funcall fn url))
+	  ((string-prefix-p "https://" url) (funcall fn url))
+	  (t (funcall fn (concat "http://" url)))))
+
+  (defun w3m-open-url (url)
+    "Opens url in new w3m session with `http://` appended"
+    (interactive
+     (list (read-string "Enter website address (default: google.com):" nil nil "google.com" nil )))
+    (w3m-open-url-with 'w3m-goto-url url))
+
+  (defun w3m-open-url-new-session (url)
+    "Opens url in new w3m session with `http://` appended"
+    (interactive
+     (list (read-string "Enter website address (default: google.com):" nil nil "google.com" nil )))
+    (w3m-open-url-with 'w3m-goto-url-new-session url))
+
+  (setq browse-url-browser-function 'w3m-goto-url-new-session
+	w3m-user-agent "Mozilla/5.0 (Linux; U; Android 2.3.3; zh-tw; HTC_Pyramid Build/GRI40) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533."
+	w3m-coding-system 'utf-8
+	w3m-file-coding-system 'utf-8
+	w3m-file-name-coding-system 'utf-8
+	w3m-input-coding-system 'utf-8
+	w3m-output-coding-system 'utf-8
+	w3m-terminal-coding-system 'utf-8)
+
+  :general
+  (local-leader
+    :major-modes '(w3m-mode t)
+    :keymaps     '(w3m-mode-map)
+    "p" 'w3m-player-movie
+    "y" 'w3m-copy-link
+    "f" 'w3m-find-file
+    "o" 'w3m-open-url
+    "O" 'w3m-open-url-new-session
+    "t" 'w3m-view-this-url-new-session
+    "T" 'w3m-create-empty-session
+    "s" 'w3m-search
+    "S" 'w3m-search-new-session
+    "l" 'w3m-next-buffer
+    "h" 'w3m-previous-buffer
+    "x" 'w3m-delete-buffer
+    "d" 'w3m-save-buffer-to-file
+    "D" 'w3m-save-buffer
+    "e" 'w3m-bookmark-edit
+    "a" 'w3m-bookmark-add-current-url
+    "m" 'w3m-view-url-with-external-browser
+    "b" 'w3m-bookmark-view
+    "c" 'w3m-copy-current-url)
+
+  (normal-mode-major-mode
+    :major-modes '(w3m-mode t)
+    :keymaps     '(w3m-mode-map)
+    "SPC" nil
+    "o"   'ace-link-w3m
+    "C-f" 'evil-scroll-page-down
+    "C-b" 'evil-scroll-page-up
+    "wp"  'w3m-player-movie
+    "wy"  'w3m-copy-link
+    "wf"  'w3m-find-file
+    "wo"  'w3m-open-url
+    "wO"  'w3m-open-url-new-session
+    "wt"  'w3m-view-this-url-new-session
+    "wT"  'w3m-create-empty-session
+    "ws"  'w3m-search
+    "wS"  'w3m-search-new-session
+    "wl"  'w3m-next-buffer
+    "wh"  'w3m-previous-buffer
+    "wx"  'w3m-delete-buffer
+    "wd"  'w3m-save-buffer-to-file
+    "wD"  'w3m-save-buffer
+    "we"  'w3m-bookmark-edit
+    "wa"  'w3m-bookmark-add-current-url
+    "wm"  'w3m-view-url-with-external-browser
+    "wb"  'w3m-bookmark-view
+    "wc"  'w3m-copy-current-url)
+
+  :config
+  (if GUI-p
+      (setq browse-url-browser-function 'browse-url-default-browser)
+    (setq browse-url-browser-function 'w3m-browse-url))
+  (setq w3m-default-display-inline-images t
+	w3m-session-load-crashed-sessions 'never
+	w3m-search-word-at-point nil))
+
+;; eww config =======================================
+;; ==================================================
+
+(use-package eww
+  :straight nil
+  :init
+  (defun eww-open-w3m-current-url ()
+    (interactive)
+    (w3m-browse-url (eww-copy-page-url)))
+  (defun eww-search-namu-wiki ()
+    (interactive)
+    (let ((url (read-from-minibuffer "URL: " "https://namu.wiki/w/")))
+      (eww-browse-url url)))
+
+  :config
+  (evil-define-key 'normal eww-mode-map (kbd "c") 'eww-copy-page-url)
+  (setq eww-search-prefix "https://www.google.com/search?q=")
+  (setq browse-url-browser-function (lambda (url session)
+				      (if (or (string-match ".*youtube.com.*" url)
+					      (string-match ".*youtu.be.*" url))
+					  (xwidget-webkit-browse-url url session)
+					(eww-browse-url url)))))
+
+;; reddigg config ===================================
+;; ==================================================
+
+(use-package reddigg
+  :general
   (global-leader
-    "SPC" 'execute-extended-command
-    "TAB" 'evil-switch-to-windows-last-buffer
-    "C-r" 'revert-buffer)
+    "awr"  (which-key-prefix "reddit")
+    "awrm" 'reddigg-view-main
+    "awrs" 'reddigg-view-sub)
 
+  :config
+  (setq reddigg-subs '(emacs clojure orgmode lisp commandline
+			     mechkeyboard scala haskell HHKB clojure
+			     vim kotlin programmerhumor orgmode
+			     commandline CityPorn OrgRoam)
+	org-confirm-elisp-link-function nil))
+
+;; hnreader config ==================================
+;; ==================================================
+
+(use-package hnreader
+  :general
   (global-leader
-    "S"   (which-key-prefix :straight)
-    "Sp"  (which-key-prefix :package)
-    "Spu" 'straight-use-package
-    "Spp" 'straight-pull-package
-    "SpP" 'straight-pull-all)
+    "awh" (which-key-prefix "hackernews")
+    "awhn" 'hnreader-news
+    "awhp" 'hnreader-past
+    "awhN" 'hnreader-newest
+    "awha" 'hnreader-ask
+    "awhs" 'hnreader-show
+    "awhj" 'hnreader-jobs
+    "awhb" 'hnreader-best
+    "awhm" 'hnreader-more)
 
+  :config
+  (setq org-confirm-elisp-link-function nil))
+
+;; eradio config ====================================
+;; ==================================================
+
+(use-package eradio
+  :defer t
+  :config
+  (setq eradio-player '("mpv" "--no-video" "--no-terminal" "--really-quiet")
+	eradio-channels '(("MBC FM4U"    . "http://serpent0.duckdns.org:8088/mbcfm.pls")
+			  ("MBC 표준FM"   . "http://serpent0.duckdns.org:8088/mbcsfm.pls")
+			  ("KBS 쿨FM"     . "http://serpent0.duckdns.org:8088/kbs2fm.pls")
+			  ("KBS 해피FM"   . "http://serpent0.duckdns.org:8088/kbs2radio.pls")
+			  ("KBS 클래식 FM" . "http://serpent0.duckdns.org:8088/kbsfm.pls")
+			  ("SBS 파워FM"   . "http://serpent0.duckdns.org:8088/sbsfm.pls")
+			  ("SBS 러브FM"   . "http://serpent0.duckdns.org:8088/sbs2fm.pls")
+			  ("TBS 교통방송"  . "http://tbs.hscdn.com/tbsradio/fm/playlist.m3u8")
+			  ("TBS eFM"     . "http://tbs.hscdn.com/tbsradio/efm/playlist.m3u8")
+			  ("CBS 음악방송"  . "http://aac.cbs.co.kr/cbs939/cbs939.stream/playlist.m3u8"))))
+
+;; Elfeed config ====================================
+;; ==================================================
+
+(use-package elfeed-org
+  :commands elfeed
+  :defer    t
+  :config
+  (setq rmh-elfeed-org-files '("~/.emacs.d/elfeed.org")))
+
+(use-package elfeed
+  :after elfeed-org
+  :defer t
+  :config
+  (elfeed-org)
+  ;; play the podcast at elfeed podcast entry
+  (defun elfeed-player ()
+    (interactive)
+    (let ((enclosure-link (elfeed-entry-enclosures (elfeed-search-selected :single)))
+	  (entry-link     (elfeed-entry-link       (elfeed-search-selected :single))))
+      (if enclosure-link
+	  (emms-play-url (caar enclosure-link))
+	(emms-play-url entry-link))
+      (elfeed-search-untag-all-unread)))
+
+  (defun elfeed-youtube-player ()
+    (interactive)
+    (let ((entry-link (elfeed-entry-link (elfeed-search-selected :single))))
+      (async-shell-command (concat "mpv " "'" entry-link "'") nil nil)
+      (elfeed-search-untag-all-unread)))
+
+  (define-key elfeed-search-mode-map (kbd "P") #'elfeed-player)
+  (define-key elfeed-search-mode-map (kbd "Y") #'elfeed-youtube-player))
+
+;; Emms config ======================================
+;; ==================================================
+
+(use-package emms
+  :defer t
+
+  :init
+  (defun emms-mode-line-only-filename ()
+    "Format the currently playing song."
+    (let* ((fullname (emms-track-description
+		      (emms-playlist-current-selected-track)))
+	   (splitted (s-split "/" fullname))
+	   (filename (car (last splitted))))
+      (concat "🎵 " (car (s-split "\\.[mp3|wma|m4a]" filename)))))
+
+  :general
   (global-leader
-    "w"  (which-key-prefix :window)
-    "wd" 'delete-window
-    "wD" 'ace-delete-window
-    "wh" 'evil-window-left
-    "wj" 'evil-window-down
-    "wk" 'evil-window-up
-    "wl" 'evil-window-right
-    "wL" 'evil-window-bottom-right
-
-    "wM" 'ace-swap-window
-
-    "wt" 'transpose-frame
-    "wr" 'evil-window-rotate-downwards
-    "wR" 'evil-window-rotate-upwards
-
-    "w=" 'balance-windows
-    "wu" 'winner-undo
-    "wU" 'winner-redo
-    "w;" 'evil-window-vsplit
-    "w'" 'evil-window-split
-
-    ";"  'evil-window-vsplit
-    "'"  'evil-window-split
-
-    "1"  'winum-select-window-1
-    "2"  'winum-select-window-2
-    "3"  'winum-select-window-3
-    "4"  'winum-select-window-4
-    "5"  'winum-select-window-5
-    "6"  'winum-select-window-6
-    "7"  'winum-select-window-7
-    "8"  'winum-select-window-8
-    "9"  'winum-select-window-9
-    "0"  'winum-select-window-0)
-
-  (global-leader
-    "f"   (which-key-prefix :file)
-    "ff"  'find-file
-    "fs"  'save-buffer
-    "fed" 'visit-init-dot-el
-    "feR" 'eval-init-dot-el
-    "fr"  'consult-recent-file
-    "fj"  'dired-jump
-    "fF"  'find-name-dired
-    "o"   'find-file)
-
-  (global-leader
-    "b"  (which-key-prefix :buffer)
-    "bd" 'kill-this-buffer
-    "bb" 'switch-to-buffer
-    "bp" 'previous-buffer
-    "bn" 'next-buffer
-    "bh" (lambda ()
-	   (interactive)
-	   (kill-buffer (get-buffer "*Help*")))
-    "bs" (lambda ()
-	   (interactive)
-	   (setq initial-major-mode 'org-mode)
-	   (switch-to-buffer "*scratch*")))
-
-  (global-leader
-    "."  'tab-new
-    ","  'tab-close
-    "["  'tab-previous
-    "]"  'tab-next
-    "/"  'flycheck-next-error
-    "\\" 'flycheck-previous-error)
-
-  (global-leader
-    "g"   (which-key-prefix :git)
-    "gb"  'magit-blame	   ; 'spacemacs/git-blame-transient-state/body
-    "gf"  (which-key-prefix :file)
-    "gfF" 'magit-find-file
-    "gfl" 'magit-log-buffer-file
-    "gfd" 'magit-diff-dwim
-    "gfm" 'magit-file-dispatch
-    "gi"  'magit-init
-    "gL"  'magit-list-repositories
-    "gm"  'magit-dispatch
-    "gs"  'magit-status
-    "gU"  'magit-unstage-file
-    "gs"  'magit
-    "ga"  'magit-stage-file
-    "gc"  'magit-commit-create
-    "gC"  'magit-clone
-    "gp"  'magit-push
-    "gd"  'magit-diff-dwim
-    
-    "gl"  (which-key-prefix "links")
-    "glc" 'git-link-commit
-    "glC" 'git-link-commit-copy-url-only
-    "gll" 'git-link
-    "glL" 'git-link-copy-url-only
-    "glp" 'git-permalink
-    "glP" 'git-permalink-copy-url-only)
-
-  (global-leader
-    "a"    (which-key-prefix :utilities)
-    "ai"   'display-current-time
-    "ab"   'battery
-    "al"   'launchctl
-
-    "ao"   (which-key-prefix :org)
-    "aof"  (which-key-prefix :feeds)
-    "ao#"  'org-agenda-list-stuck-projects
-    "aoa"  'org-agenda-list
-    "aoo"  'org-agenda
-    "aoc"  'org-capture
-    "aoe"  'org-store-agenda-views
-    "aofi" 'org-feed-goto-inbox
-    "aofu" 'org-feed-update-all
-    "aoC"  (which-key-prefix :clocks)
-    "aoCc" 'org-clock-cancel
-    "aoCg" 'org-clock-goto
-    "aoCi" 'org-clock-in
-    "aoCI" 'org-clock-in-last
-    "aoCj" 'spacemacs/org-clock-jump-to-current-clock
-    "aoCo" 'org-clock-out
-    "aoCr" 'org-resolve-clocks
-    "aol"  'org-store-link
-    "aom"  'org-tags-view
-    "aos"  'org-search-view
-    "aot"  'org-todo-list
-
-    "aw"   (which-key-prefix :web)
-    "aww"  (which-key-prefix :eww)
-    "awww" 'eww
-    "awws" 'eww-search-words
-    "awwM" 'eww-open-w3m-current-url
-    "awwn" 'eww-search-namu-wiki
-
-    "awm"  (which-key-prefix :w3m)
-    "awmm" 'w3m
-    "awmx" 'xwidget-webkit-open-w3m-current-url
-    "awmW" 'eww-open-w3m-current-url
-
-    "awx"  (which-key-prefix :xwidget-webkit)
-    "awxx" 'xwidget-new-window
-    "awxf" 'xwidget-webkit-find-file
-
-    "aC"   (which-key-prefix :clock)
-    "aCw"  'world-clock
-
-    "at"   (which-key-prefix :terminal)
-    "atr"  (which-key-prefix :repls)
-    "atrb" 'run-bb
-    "atrn" 'run-nbb
-    "atro" 'run-ocaml
-    "atru" 'utop
-    "atrl" 'run-lua
-    "atrh" 'run-hammerspoon
-    "ats"  (which-key-prefix :shells)
-    "atsa" 'async-shell-command
-    "atst" 'multi-term
-
-    "aR"   (which-key-prefix :radio)
-    "aRp"  'eradio-play
-    "aRs"  'eradio-stop
-    "aRR"  'eradio-toggle)
-
-  (global-leader
-    "Cc"   'org-capture)
-
-  (global-leader
-    "q"    (which-key-prefix :quit)
-    "qq"   'kill-emacs
-    "qf"   'delete-frame)
-
-  (global-leader
-    "h"    (which-key-prefix :help)
-    "hd"   (which-key-prefix :describe)
-    "hdb"  'describe-bindings
-    "hdf"  'describe-function
-    "hdk"  'describe-key
-    "hdv"  'describe-variable
-    "hdm"  'describe-mode
-    "hdp"  'describe-package
-    "hdM"  'describe-keymap)
-
-  (global-leader
-    "H"    (which-key-prefix :helpful)
-    "Hc"   'helpful-callable
-    "Hf"   'helpful-function
-    "Hm"   'helpful-macro
-    "Hc"   'helpful-command
-    "Hk"   'helpful-key
-    "Hv"   'helpful-variable
-    "Hp"   'helpful-at-point)
-
-  (global-leader
-    "p"  (which-key-prefix "project")
-    "p/" 'projectile-ripgrep
-    "pf" 'projectile-find-file
-    "pp" 'projectile-switch-project
-    "pP" 'projectile-switch-open-project
-    "pc" 'projectile-compile-project)
-
-  (global-leader
-    "x"     (which-key-prefix "text")
-    "x TAB" 'indent-rigidly
-    "xwd"   'osx-dictionary-search-pointer)
-
-  (global-leader
-    "t"    (which-key-prefix "toggle")
-    "tD"   'toggle-debug-on-error)
-
-  (global-leader
-    "s-o"  'reveal-in-osx-finder
-    "s-c"  'compile
-    "s-v"  'mixed-pitch-mode
-    "s-u"  'emacs-uptime
-    "s-g"  'cleanup-emacs
-    "s-i"  'insert-current-time
-    "s-y"  'youtube-viewer-start
-    "s-k"  'consult-yank-from-kill-ring
-    "s-x"  'delete-trailing-whitespace
-    "s-m"  'consult-bookmark
-    "s-j"  'join-line
-    "s-b"  'consult-bookmark
-    "s-s"  'save-buffer)
-
-  ;; enable mouse scroll in terminal ==================
-  ;; ==================================================
-
-  (unless window-system
-    (global-set-key (kbd "<mouse-4>") 'mwheel-scroll)
-    (global-set-key (kbd "<mouse-5>") 'mwheel-scroll)
-    (setq mouse-wheel-up-event 'mouse-5
-	  mouse-wheel-down-event 'mouse-4))
-
-  ;; graphviz-dot-mode ================================
-  ;; ==================================================
-
-  (use-package graphviz-dot-mode
-    :config
-    (setq graphviz-dot-indent-width 4))
-
-  ;; ace-link config ==================================
-  ;; ==================================================
-
-  (use-package ace-link
-    :init
-    (define-key Info-mode-map   "o" 'ace-link-info)
-    (define-key help-mode-map   "o" 'ace-link-help)
-    (define-key woman-mode-map  "o" 'link-hint-open-link)
-    (define-key eww-link-keymap "o" 'ace-link-eww)
-    (define-key eww-mode-map    "o" 'ace-link-eww)
-    (define-key w3m-link-map    "o" 'ace-link-w3m)
-    (define-key w3m-mode-map    "o" 'ace-link-w3m))
-
-  (use-package ace-window
-    :defer t
-    :init
-    (setq aw-keys '(?q ?w ?e ?r ?t ?y ?u ?i ?o ?p)
-	  aw-background nil))
-
-  (use-package ace-jump-mode
-    :defer t)
-
-  ;; w3m config =======================================
-  ;; ==================================================
-
-  (use-package w3m
-    :init
-    (defun xwidget-webkit-open-w3m-current-url ()
-      (interactive)
-      (require 'xwidget)
-      (xwidget-webkit-new-session w3m-current-url))
-
-    (defun eww-open-w3m-current-url ()
-      (interactive)
-      (eww-browse-url w3m-current-url))
-
-    (defun w3m-copy-current-url ()
-      (interactive)
-      (kill-new w3m-current-url)
-      (message "Copied current URL."))
-
-    (defun w3m-open-this-file ()
-      (interactive)
-      (let ((current-filename (buffer-file-name)))
-	(w3m-find-file current-filename)))
-
-    ;; shameless ripoffs from `venmos/w3m-layer`
-    (defun w3m-save-buffer-to-file ()
-      (interactive)
-      (let* ((curr (buffer-file-name))
-	     (new (read-file-name
-		   "Save to file: " nil nil nil
-		   (and curr (file-name-nondirectory curr))))
-	     (mustbenew (if (and curr (file-equal-p new curr)) 'excl t)))
-	(if (use-region-p)
-	    (write-region (region-beginning) (region-end) new nil nil nil mustbenew)
-	  (save-restriction
-	    (widen)
-	    (write-region (point-min) (point-max) new nil nil nil mustbenew)))))
-
-    (defun w3m-player-movie ()
-      (interactive)
-      (let ((link (w3m-anchor)))
-	(if (not link)
-	    (message "Thing on point is not a link.")
-	  (cond ((string-match "/\\/www\\.youtube\\.com\\/watch\/?" link)
-		 (message (concat "loading from youtube..." link))
-		 (call-process "mpv" nil nil nil link)))
-	  (message "Sorry, playback error. Please check the url."))))
-
-    (defun w3m-copy-link ()
-      (interactive)
-      (let ((link (w3m-anchor)))
-	(if (not link)
-	    (message "")
-	  (kill-new link)
-	  (message "Copy \"%s\" to clipboard." link))))
-
-    (defun w3m-open-url-with (fn url)
-      "Open url according to w3m url open function 'fn', and auto handle url prefix"
-      (cond ((string-prefix-p "http://" url) (funcall fn url))
-	    ((string-prefix-p "https://" url) (funcall fn url))
-	    (t (funcall fn (concat "http://" url)))))
-
-    (defun w3m-open-url (url)
-      "Opens url in new w3m session with `http://` appended"
-      (interactive
-       (list (read-string "Enter website address (default: google.com):" nil nil "google.com" nil )))
-      (w3m-open-url-with 'w3m-goto-url url))
-
-    (defun w3m-open-url-new-session (url)
-      "Opens url in new w3m session with `http://` appended"
-      (interactive
-       (list (read-string "Enter website address (default: google.com):" nil nil "google.com" nil )))
-      (w3m-open-url-with 'w3m-goto-url-new-session url))
-
-    (setq browse-url-browser-function 'w3m-goto-url-new-session
-	  w3m-user-agent "Mozilla/5.0 (Linux; U; Android 2.3.3; zh-tw; HTC_Pyramid Build/GRI40) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533."
-	  w3m-coding-system 'utf-8
-	  w3m-file-coding-system 'utf-8
-	  w3m-file-name-coding-system 'utf-8
-	  w3m-input-coding-system 'utf-8
-	  w3m-output-coding-system 'utf-8
-	  w3m-terminal-coding-system 'utf-8)
-
-    :general
-    (local-leader
-      :major-modes '(w3m-mode t)
-      :keymaps     '(w3m-mode-map)
-      "p" 'w3m-player-movie
-      "y" 'w3m-copy-link
-      "f" 'w3m-find-file
-      "o" 'w3m-open-url
-      "O" 'w3m-open-url-new-session
-      "t" 'w3m-view-this-url-new-session
-      "T" 'w3m-create-empty-session
-      "s" 'w3m-search
-      "S" 'w3m-search-new-session
-      "l" 'w3m-next-buffer
-      "h" 'w3m-previous-buffer
-      "x" 'w3m-delete-buffer
-      "d" 'w3m-save-buffer-to-file
-      "D" 'w3m-save-buffer
-      "e" 'w3m-bookmark-edit
-      "a" 'w3m-bookmark-add-current-url
-      "m" 'w3m-view-url-with-external-browser
-      "b" 'w3m-bookmark-view
-      "c" 'w3m-copy-current-url)
-
-    (normal-mode-major-mode
-      :major-modes '(w3m-mode t)
-      :keymaps     '(w3m-mode-map)
-      "SPC" nil
-      "o"   'ace-link-w3m
-      "C-f" 'evil-scroll-page-down
-      "C-b" 'evil-scroll-page-up
-      "wp"  'w3m-player-movie
-      "wy"  'w3m-copy-link
-      "wf"  'w3m-find-file
-      "wo"  'w3m-open-url
-      "wO"  'w3m-open-url-new-session
-      "wt"  'w3m-view-this-url-new-session
-      "wT"  'w3m-create-empty-session
-      "ws"  'w3m-search
-      "wS"  'w3m-search-new-session
-      "wl"  'w3m-next-buffer
-      "wh"  'w3m-previous-buffer
-      "wx"  'w3m-delete-buffer
-      "wd"  'w3m-save-buffer-to-file
-      "wD"  'w3m-save-buffer
-      "we"  'w3m-bookmark-edit
-      "wa"  'w3m-bookmark-add-current-url
-      "wm"  'w3m-view-url-with-external-browser
-      "wb"  'w3m-bookmark-view
-      "wc"  'w3m-copy-current-url)
-
-    :config
-    (if GUI-p
-	(setq browse-url-browser-function 'browse-url-default-browser)
-      (setq browse-url-browser-function 'w3m-browse-url))
-    (setq w3m-default-display-inline-images t
-	  w3m-session-load-crashed-sessions 'never
-	  w3m-search-word-at-point nil))
-
-  ;; eww config =======================================
-  ;; ==================================================
-
-  (use-package eww
-    :straight nil
-    :init
-    (defun eww-open-w3m-current-url ()
-      (interactive)
-      (w3m-browse-url (eww-copy-page-url)))
-    (defun eww-search-namu-wiki ()
-      (interactive)
-      (let ((url (read-from-minibuffer "URL: " "https://namu.wiki/w/")))
-	(eww-browse-url url)))
-
-    :config
-    (evil-define-key 'normal eww-mode-map (kbd "c") 'eww-copy-page-url)
-    (setq eww-search-prefix "https://www.google.com/search?q=")
-    (setq browse-url-browser-function (lambda (url session)
-					(if (or (string-match ".*youtube.com.*" url)
-						(string-match ".*youtu.be.*" url))
-					    (xwidget-webkit-browse-url url session)
-					  (eww-browse-url url)))))
-
-  ;; reddigg config ===================================
-  ;; ==================================================
-
-  (use-package reddigg
-    :general
-    (global-leader
-      "awr"  (which-key-prefix "reddit")
-      "awrm" 'reddigg-view-main
-      "awrs" 'reddigg-view-sub)
-
-    :config
-    (setq reddigg-subs '(emacs clojure orgmode lisp commandline
-			       mechkeyboard scala haskell HHKB clojure
-			       vim kotlin programmerhumor orgmode
-			       commandline CityPorn OrgRoam)
-	  org-confirm-elisp-link-function nil))
-
-  ;; hnreader config ==================================
-  ;; ==================================================
-
-  (use-package hnreader
-    :general
-    (global-leader
-      "awh" (which-key-prefix "hackernews")
-      "awhn" 'hnreader-news
-      "awhp" 'hnreader-past
-      "awhN" 'hnreader-newest
-      "awha" 'hnreader-ask
-      "awhs" 'hnreader-show
-      "awhj" 'hnreader-jobs
-      "awhb" 'hnreader-best
-      "awhm" 'hnreader-more)
-
-    :config
-    (setq org-confirm-elisp-link-function nil))
-
-  ;; eradio config ====================================
-  ;; ==================================================
-
-  (use-package eradio
-    :defer t
-    :config
-    (setq eradio-player '("mpv" "--no-video" "--no-terminal" "--really-quiet")
-	  eradio-channels '(("MBC FM4U"    . "http://serpent0.duckdns.org:8088/mbcfm.pls")
-			    ("MBC 표준FM"   . "http://serpent0.duckdns.org:8088/mbcsfm.pls")
-			    ("KBS 쿨FM"     . "http://serpent0.duckdns.org:8088/kbs2fm.pls")
-			    ("KBS 해피FM"   . "http://serpent0.duckdns.org:8088/kbs2radio.pls")
-			    ("KBS 클래식 FM" . "http://serpent0.duckdns.org:8088/kbsfm.pls")
-			    ("SBS 파워FM"   . "http://serpent0.duckdns.org:8088/sbsfm.pls")
-			    ("SBS 러브FM"   . "http://serpent0.duckdns.org:8088/sbs2fm.pls")
-			    ("TBS 교통방송"  . "http://tbs.hscdn.com/tbsradio/fm/playlist.m3u8")
-			    ("TBS eFM"     . "http://tbs.hscdn.com/tbsradio/efm/playlist.m3u8")
-			    ("CBS 음악방송"  . "http://aac.cbs.co.kr/cbs939/cbs939.stream/playlist.m3u8"))))
-
-  ;; Elfeed config ====================================
-  ;; ==================================================
-
-  (use-package elfeed-org
-    :commands elfeed
-    :defer    t
-    :config
-    (setq rmh-elfeed-org-files '("~/.emacs.d/elfeed.org")))
-
-  (use-package elfeed
-    :after elfeed-org
-    :defer t
-    :config
-    (elfeed-org)
-    ;; play the podcast at elfeed podcast entry
-    (defun elfeed-player ()
-      (interactive)
-      (let ((enclosure-link (elfeed-entry-enclosures (elfeed-search-selected :single)))
-	    (entry-link     (elfeed-entry-link       (elfeed-search-selected :single))))
-	(if enclosure-link
-	    (emms-play-url (caar enclosure-link))
-	  (emms-play-url entry-link))
-	(elfeed-search-untag-all-unread)))
-
-    (defun elfeed-youtube-player ()
-      (interactive)
-      (let ((entry-link (elfeed-entry-link (elfeed-search-selected :single))))
-	(async-shell-command (concat "mpv " "'" entry-link "'") nil nil)
-	(elfeed-search-untag-all-unread)))
-
-    (define-key elfeed-search-mode-map (kbd "P") #'elfeed-player)
-    (define-key elfeed-search-mode-map (kbd "Y") #'elfeed-youtube-player))
-
-  ;; Emms config ======================================
-  ;; ==================================================
-
-  (use-package emms
-    :defer t
-
-    :init
-    (defun emms-mode-line-only-filename ()
-      "Format the currently playing song."
-      (let* ((fullname (emms-track-description
-			(emms-playlist-current-selected-track)))
-	     (splitted (s-split "/" fullname))
-	     (filename (car (last splitted))))
-	(concat "🎵 " (car (s-split "\\.[mp3|wma|m4a]" filename)))))
-
-    :general
-    (global-leader
-      "am" (which-key-prefix "emms")
-      "amee" 'emms
-      "ames" 'emms-pause
-      "amep" 'emms-previous
-      "amen" 'emms-next
-      "amed" 'emms-play-directory
-      "amef" 'emms-play-file
-      "ameu" 'emms-play-url)
-
-    :config
-    (require 'emms-setup)
-    (emms-all)
-    (emms-default-players)
-    (setq emms-player-mpv-parameters '("--really-quiet" "--no-audio-display" "--no-video"))
-    (setq emms-source-file-default-directory "~/Music/"
-	  emms-playlist-buffer-name "*Music*"
-	  emms-info-asynchronously t)
-    (require 'emms-mode-line)
-    (emms-mode-line-enable)
-    (emms-mode-line 1)
-    (setq emms-mode-line-mode-line-function #'emms-mode-line-only-filename)
-    (require 'emms-playing-time)
-    (emms-playing-time nil))
-
-  ;; Streamlink config ================================
-  ;; ==================================================
-
-  (use-package streamlink
-    ;; TODO
-    :config
-    (setq streamlink-player "mpv --no-video"))
-
-  ;; TRAMP config =====================================
-  ;; ==================================================
-
-  (use-package tramp
-    :straight nil
-    :config
-    (setq tramp-copy-size-limit 10000000
-	  tramp-inline-compress-start-size 10000000))
-
-  (use-package git-gutter+
-    :defer t
-    :config
-    (defun git-gutter+-remote-default-directory (dir file)
-      (let* ((vec (tramp-dissect-file-name file))
-	     (method (tramp-file-name-method vec))
-	     (user (tramp-file-name-user vec))
-	     (domain (tramp-file-name-domain vec))
-	     (host (tramp-file-name-host vec))
-	     (port (tramp-file-name-port vec)))
-	(tramp-make-tramp-file-name method user domain host port dir)))
-
-    (defun git-gutter+-remote-file-path (dir file)
-      (let ((file (tramp-file-name-localname (tramp-dissect-file-name file))))
-	(replace-regexp-in-string (concat "\\`" dir) "" file))))
-
-  ;; killing ==========================================
-  ;; ==================================================
-
-  (setq select-enable-clipboard t
-	select-enable-primary t
-	save-interprogram-paste-before-kill t
-	apropos-do-all t
-	mouse-yank-at-point t)
-
-  (evil-define-key 'insert 'global-map (kbd "C-h") 'backward-delete-char)
-  (evil-define-key 'insert 'company-mode-map (kbd "C-h") 'backward-delete-char)
-
-  ;; Tetris config ====================================
-  ;; ==================================================
-
-  (use-package tetris
-    :straight nil
-    :defer t
-    :general
-    (normal-mode-major-mode
-      :major-modes '(tetris-mode t)
-      :keymaps     '(tetris-mode-map)
-      "q"   'tetris-end-game
-      "h"   'tetris-move-left
-      "j"   'tetris-move-down
-      "k"   'tetris-rotate-prev
-      "l"   'tetris-move-right
-      "i"   'tetris-rotate-next
-      "m"   'tetris-move-bottom
-      "SPC" 'tetris-move-bottom		; not working
-      "n"   'tetris-start-game))
-
-  ;; Misc =============================================
-  ;; ==================================================
-
-  (setq inhibit-splash-screen t
-	inhibit-startup-echo-area-message ""
-	inhibit-startup-message t
-	inhibit-splash-screen t)
-
-  (fset 'yes-or-no-p 'y-or-n-p)
-
-  (add-hook 'after-init-hook (lambda () (setq gc-cons-threshold 800000)))
-  (message "config loaded!")
-
-  ;; config end =======================================
-  ;; ==================================================
-
-  (custom-set-variables
-   ;; custom-set-variables was added by Custom.
-   ;; If you edit it by hand, you could mess it up, so be careful.
-   ;; Your init file should contain only one such instance.
-   ;; If there is more than one, they won't work right.
-   '(coffee-tab-width 2)
-   '(custom-safe-themes
-     '("a8950f7287870cd993d7e56991a45e1414a09d97e4fbf08f48973a1381bc7aaf" "92d350334df87fe61a682518ff214c773625c6d5ace8060d128adc550bc60c9b" default))
-   '(package-selected-packages
-     '(no-littering multi-vterm minions xwidget lispy git-gutter clipetty zones yasnippet-classic-snippets treemacs-evil which-key evil-commentary anzu json-mode evil-surround tuareg flycheck tagedit cider))
-   '(recentf-auto-cleanup 'never t))
-  (custom-set-faces
-   ;; custom-set-faces was added by Custom.
-   ;; If you edit it by hand, you could mess it up, so be careful.
-   ;; Your init file should contain only one such instance.
-   ;; If there is more than one, they won't work right.
-   )
-  (put 'narrow-to-region 'disabled nil)
-  (put 'dired-find-alternate-file 'disabled nil)
+    "am" (which-key-prefix "emms")
+    "amee" 'emms
+    "ames" 'emms-pause
+    "amep" 'emms-previous
+    "amen" 'emms-next
+    "amed" 'emms-play-directory
+    "amef" 'emms-play-file
+    "ameu" 'emms-play-url)
+
+  :config
+  (require 'emms-setup)
+  (emms-all)
+  (emms-default-players)
+  (setq emms-player-mpv-parameters '("--really-quiet" "--no-audio-display" "--no-video"))
+  (setq emms-source-file-default-directory "~/Music/"
+	emms-playlist-buffer-name "*Music*"
+	emms-info-asynchronously t)
+  (require 'emms-mode-line)
+  (emms-mode-line-enable)
+  (emms-mode-line 1)
+  (setq emms-mode-line-mode-line-function #'emms-mode-line-only-filename)
+  (require 'emms-playing-time)
+  (emms-playing-time nil))
+
+;; Streamlink config ================================
+;; ==================================================
+
+(use-package streamlink
+  ;; TODO
+  :config
+  (setq streamlink-player "mpv --no-video"))
+
+;; TRAMP config =====================================
+;; ==================================================
+
+(use-package tramp
+  :straight nil
+  :config
+  (setq tramp-copy-size-limit 10000000
+	tramp-inline-compress-start-size 10000000))
+
+(use-package git-gutter+
+  :defer t
+  :config
+  (defun git-gutter+-remote-default-directory (dir file)
+    (let* ((vec (tramp-dissect-file-name file))
+	   (method (tramp-file-name-method vec))
+	   (user (tramp-file-name-user vec))
+	   (domain (tramp-file-name-domain vec))
+	   (host (tramp-file-name-host vec))
+	   (port (tramp-file-name-port vec)))
+      (tramp-make-tramp-file-name method user domain host port dir)))
+
+  (defun git-gutter+-remote-file-path (dir file)
+    (let ((file (tramp-file-name-localname (tramp-dissect-file-name file))))
+      (replace-regexp-in-string (concat "\\`" dir) "" file))))
+
+;; killing ==========================================
+;; ==================================================
+
+(setq select-enable-clipboard t
+      select-enable-primary t
+      save-interprogram-paste-before-kill t
+      apropos-do-all t
+      mouse-yank-at-point t)
+
+(evil-define-key 'insert 'global-map (kbd "C-h") 'backward-delete-char)
+(evil-define-key 'insert 'company-mode-map (kbd "C-h") 'backward-delete-char)
+
+;; Tetris config ====================================
+;; ==================================================
+
+(use-package tetris
+  :straight nil
+  :defer t
+  :general
+  (normal-mode-major-mode
+    :major-modes '(tetris-mode t)
+    :keymaps     '(tetris-mode-map)
+    "q"   'tetris-end-game
+    "h"   'tetris-move-left
+    "j"   'tetris-move-down
+    "k"   'tetris-rotate-prev
+    "l"   'tetris-move-right
+    "i"   'tetris-rotate-next
+    "m"   'tetris-move-bottom
+    "SPC" 'tetris-move-bottom		; not working
+    "n"   'tetris-start-game))
+
+;; Misc =============================================
+;; ==================================================
+
+(setq inhibit-splash-screen t
+      inhibit-startup-echo-area-message ""
+      inhibit-startup-message t
+      inhibit-splash-screen t)
+
+(fset 'yes-or-no-p 'y-or-n-p)
+
+(add-hook 'after-init-hook (lambda () (setq gc-cons-threshold 800000)))
+(message "config loaded!")
+
+;; config end =======================================
+;; ==================================================
+
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(coffee-tab-width 2)
+ '(custom-safe-themes
+   '("a8950f7287870cd993d7e56991a45e1414a09d97e4fbf08f48973a1381bc7aaf" "92d350334df87fe61a682518ff214c773625c6d5ace8060d128adc550bc60c9b" default))
+ '(package-selected-packages
+   '(no-littering multi-vterm minions xwidget lispy git-gutter clipetty zones yasnippet-classic-snippets treemacs-evil which-key evil-commentary anzu json-mode evil-surround tuareg flycheck tagedit cider))
+ '(recentf-auto-cleanup 'never t))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
+(put 'narrow-to-region 'disabled nil)
+(put 'dired-find-alternate-file 'disabled nil)
