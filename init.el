@@ -2589,7 +2589,7 @@
   :general
   (insert-mode-major-mode
     :major-modes '(magit-blame-read-only-mode t)
-    :keymaps     '(magit-blame-read-only-mode-hook)
+    :keymaps     '(magit-blame-read-only-mode-map)
     "RET"        'magit-show-commit))
 
 (use-package magit-repos
