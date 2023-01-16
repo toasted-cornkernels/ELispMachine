@@ -2568,9 +2568,9 @@
 		magit-mode-map (kbd "SPC") nil))))
 
 (use-package magit-section
-  :after magit
+  :defer t
   :general
-  (normal-mode-major-mode
+  (insert-mode-major-mode
     :major-modes '(magit-section-mode t)
     :keymaps     '(magit-section-mode-map)
     "M-1"        'winum-select-window-1
@@ -2585,18 +2585,18 @@
 
 (use-package magit-blame
   :straight nil
-  :after magit
+  :defer t
   :general
-  (normal-mode-major-mode
+  (insert-mode-major-mode
     :major-modes '(magit-blame-read-only-mode t)
     :keymaps     '(magit-blame-read-only-mode-hook)
     "RET"        'magit-show-commit))
 
 (use-package magit-repos
   :straight nil
-  :after magit
+  :defer t
   :general
-  (normal-mode-major-mode
+  (insert-mode-major-mode
     :major-modes '(magit-repolist-mode t)
     :keymaps     '(magit-repolist-mode-map)
     "gr"         'magit-list-repositories
@@ -2604,7 +2604,7 @@
 
 (use-package magit-log
   :straight nil
-  :after magit
+  :defer t
   :general
   (local-leader
     :major-modes '(magit-log-select-mode t)
@@ -2616,7 +2616,7 @@
 
 (use-package with-editor
   :straight nil
-  :after magit
+  :defer t
   :config
   (add-hook 'with-editor-mode-hook 'evil-normalize-keymaps)
   :general
