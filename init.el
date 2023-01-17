@@ -2745,9 +2745,9 @@
 (use-package orgit
   :defer t)
 
-(use-package orgit-forge
-  :after forge
-  :defer t)
+;; (use-package orgit-forge
+;;   :after forge
+;;   :defer t)
 
 (use-package smeargle
   :defer t
@@ -2760,37 +2760,37 @@
 		  (cons nil (cdr nd)))
 	    which-key-replacement-alist))))
 
-(use-package forge
-  :after magit
-  :init
-  (setq forge-database-file "forge-database.sqlite"
-	forge-add-default-bindings nil)
+;; (use-package forge
+;;   :after magit
+;;   :init
+;;   (setq forge-database-file "forge-database.sqlite"
+;; 	forge-add-default-bindings nil)
 
-  :general
-  (local-leader
-    :major-modes '(forge-topic-mode t)
-    :keymaps     '(forge-topic-mode-map)
-    "a"          'forge-edit-topic-assignees
-    "c"          'forge-create-post
-    "C"          'forge-checkout-pullreq
-    "b"          'forge-browse-topic
-    "d"          'forge-delete-comment
-    "e"          'forge-edit-post
-    "m"          'forge-edit-topic-marks
-    "M"          'forge-create-mark
-    "n"          'forge-edit-topic-note
-    "r"          'forge-edit-topic-review-requests
-    "s"          'forge-edit-topic-state
-    "t"          'forge-edit-topic-title
-    "u"          'forge-copy-url-at-point-as-kill)
+;;   :general
+;;   (local-leader
+;;     :major-modes '(forge-topic-mode t)
+;;     :keymaps     '(forge-topic-mode-map)
+;;     "a"          'forge-edit-topic-assignees
+;;     "c"          'forge-create-post
+;;     "C"          'forge-checkout-pullreq
+;;     "b"          'forge-browse-topic
+;;     "d"          'forge-delete-comment
+;;     "e"          'forge-edit-post
+;;     "m"          'forge-edit-topic-marks
+;;     "M"          'forge-create-mark
+;;     "n"          'forge-edit-topic-note
+;;     "r"          'forge-edit-topic-review-requests
+;;     "s"          'forge-edit-topic-state
+;;     "t"          'forge-edit-topic-title
+;;     "u"          'forge-copy-url-at-point-as-kill)
   
-  (local-leader
-    :major-modes '(forge-post-mode t)
-    :keymaps     '(forge-post-mode-map)
-    ","          'forge-post-submit
-    "c"          'forge-post-submit
-    "k"          'forge-post-cancel
-    "a"          'forge-post-cancel))
+;;   (local-leader
+;;     :major-modes '(forge-post-mode t)
+;;     :keymaps     '(forge-post-mode-map)
+;;     ","          'forge-post-submit
+;;     "c"          'forge-post-submit
+;;     "k"          'forge-post-cancel
+;;     "a"          'forge-post-cancel))
 
 ;; vc config ========================================
 ;; ==================================================
@@ -3079,9 +3079,10 @@
 	    (:else            (load-modus-operandi)))))
 
   (if GUI-p
-      (let ((dark-mode-p (if macOS-p
-			     (mac-dark-mode-p)
-			   (general-dark-mode-p))))
+      (let ((dark-mode-p ;; (if macOS-p
+			 ;;     (mac-dark-mode-p)
+			 ;;   (general-dark-mode-p))
+			 (general-dark-mode-p)))
 	(if dark-mode-p
 	    (load-modus-vivendi)	; dark mode!
 	  (load-modus-operandi)))	; light mode!
@@ -3530,12 +3531,13 @@
   "h"    (which-key-prefix :help)
   "hd"   (which-key-prefix :describe)
   "hdb"  'describe-bindings
-  "hdf"  'describe-function
+  "hdf"  'helpful-callable
   "hdk"  'describe-key
-  "hdv"  'describe-variable
+  "hdv"  'helpful-variable
   "hdm"  'describe-mode
   "hdp"  'describe-package
-  "hdM"  'describe-keymap)
+  "hdM"  'describe-keymap
+  "hdc"  'helpful-command)
 
 (global-leader
   "H"    (which-key-prefix :helpful)
