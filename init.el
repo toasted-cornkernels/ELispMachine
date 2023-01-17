@@ -708,6 +708,9 @@
 	  ,(when work-machine-p
 	     `("N" "Work Notes" entry (file+headline ,(concat org-work-directory "/WorkTODO.org") "Notes")
 	       "*** %?\n%i\nEntered on %U\n%a"))
+	  ,(when work-machine-p
+	     `("N" "Work Clipboard" entry (file+headline ,(concat org-work-directory "/WorkTODO.org") "Clipboard")
+ 	       "*** %?          :%^{Tag}:\n\nEntered on %U\n%i\n%a\n"))
 	  ("t" "TODO" entry (file+headline ,(concat org-directory "/TODO.org") "Tasks")
 	   "** TODO %?          :%^{Tag}:\n\nEntered on %U\n%i\n%a\n")
 	  ("l" "TIL" entry (file+headline ,(concat org-directory "/TIL.org") "TIL")
