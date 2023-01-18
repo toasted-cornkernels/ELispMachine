@@ -709,8 +709,11 @@
 	     `("N" "Work Notes" entry (file+headline ,(concat org-work-directory "/WorkTODO.org") "Notes")
 	       "*** %?\n%i\nEntered on %U\n%a"))
 	  ,(when work-machine-p
-	     `("N" "Work Clipboard" entry (file+headline ,(concat org-work-directory "/WorkTODO.org") "Clipboard")
+	     `("C" "Work Clipboard" entry (file+headline ,(concat org-work-directory "/WorkTODO.org") "Clipboard")
  	       "*** %?          :%^{Tag}:\n\nEntered on %U\n%i\n%a\n"))
+	  ,(when work-machine-p
+	     `("L" "Work TIL" entry (file+headline ,(concat org-work-directory "/WorkTODO.org") "TIL")
+ 	       "** %?          :%^{Tag}:\n\nEntered on %U\n%i\n%a\n"))
 	  ("t" "TODO" entry (file+headline ,(concat org-directory "/TODO.org") "Tasks")
 	   "** TODO %?          :%^{Tag}:\n\nEntered on %U\n%i\n%a\n")
 	  ("l" "TIL" entry (file+headline ,(concat org-directory "/TIL.org") "TIL")
@@ -3082,10 +3085,9 @@
 	    (:else            (load-modus-operandi)))))
 
   (if GUI-p
-      (let ((dark-mode-p ;; (if macOS-p
-			 ;;     (mac-dark-mode-p)
-			 ;;   (general-dark-mode-p))
-			 (general-dark-mode-p)))
+      (let ((dark-mode-p (if macOS-p
+			     (mac-dark-mode-p)
+			   (general-dark-mode-p))))
 	(if dark-mode-p
 	    (load-modus-vivendi)	; dark mode!
 	  (load-modus-operandi)))	; light mode!
