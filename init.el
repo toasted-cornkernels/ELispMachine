@@ -713,7 +713,7 @@
  	       "*** %?          :%^{Tag}:\n\nEntered on %U\n%i\n%a\n"))
 	  ,(when work-machine-p
 	     `("L" "Work TIL" entry (file+headline ,(concat org-work-directory "/WorkTODO.org") "TIL")
- 	       "** %?          :%^{Tag}:\n\nEntered on %U\n%i\n%a\n"))
+ 	       "*** %?          :%^{Tag}:\n\nEntered on %U\n%i\n%a\n"))
 	  ("t" "TODO" entry (file+headline ,(concat org-directory "/TODO.org") "Tasks")
 	   "** TODO %?          :%^{Tag}:\n\nEntered on %U\n%i\n%a\n")
 	  ("l" "TIL" entry (file+headline ,(concat org-directory "/TIL.org") "TIL")
