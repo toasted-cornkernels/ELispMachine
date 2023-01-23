@@ -1189,9 +1189,9 @@
 ;; ==================================================
 
 (use-package kbd-mode
-  :when linux-p
+  :when     linux-p
   :straight (kbd-mode :type git :host github :repo "kmonad/kbd-mode")
-  :mode "\\.kbd\\'"
+  :mode     "\\.kbd\\'"
   :hook     (kbd-mode . evil-cleverparens-mode)
   :commands kbd-mode)
 
