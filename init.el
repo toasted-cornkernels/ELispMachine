@@ -704,16 +704,16 @@
   (setq org-capture-templates
 	`(,(when work-machine-p
 	     `("T" "Work TODO" entry (file+headline ,(concat org-work-directory "/WorkTODO.org") "Todos")
-	       "*** TODO %?\n%i\nEntered on %U\n%a"))
+	       "*** TODO %?\n%i\nEntered on %U\n"))
 	  ,(when work-machine-p
 	     `("N" "Work Notes" entry (file+headline ,(concat org-work-directory "/WorkTODO.org") "Notes")
-	       "*** %?\n%i\nEntered on %U\n%a"))
+	       "*** %?\n%i\nEntered on %U\n"))
 	  ,(when work-machine-p
 	     `("C" "Work Clipboard" entry (file+headline ,(concat org-work-directory "/WorkTODO.org") "Clipboard")
- 	       "*** %?          :%^{Tag}:\n\nEntered on %U\n%i\n%a\n"))
+ 	       "*** %?          :%^{Tag}:\n\nEntered on %U\n%i\n\n"))
 	  ,(when work-machine-p
 	     `("L" "Work TIL" entry (file+headline ,(concat org-work-directory "/WorkTODO.org") "TIL")
- 	       "*** %?          :%^{Tag}:\n\nEntered on %U\n%i\n%a\n"))
+ 	       "*** %?          :%^{Tag}:\n\nEntered on %U\n%i\n\n"))
 	  ("t" "TODO" entry (file+headline ,(concat org-directory "/TODO.org") "Tasks")
 	   "** TODO %?          :%^{Tag}:\n\nEntered on %U\n%i\n%a\n")
 	  ("l" "TIL" entry (file+headline ,(concat org-directory "/TIL.org") "TIL")
@@ -2981,7 +2981,8 @@
 
 (use-package tool-bar
   :straight nil
-  :when GUI-p)
+  :when     GUI-p
+  :config   (tool-bar-mode -1))
 
 (blink-cursor-mode 0)
 (global-visual-line-mode t)
@@ -3002,7 +3003,7 @@
     (set-face-attribute 'default nil
 			:font "Fira Code"
 			:weight 'light
-			:height 180)
+			:height 160)
   (set-face-attribute 'default nil :height 140))
 
 (use-package modus-themes
@@ -3065,7 +3066,8 @@
      '(tab-bar-tab-group-current ((t :inherit tab-bar-tab :box nil :weight bold)))
      '(tab-bar-tab-group-inactive ((t :inherit (shadow tab-bar-tab-inactive))))
      '(tab-bar-tab-ungrouped ((t :inherit (shadow tab-bar-tab-inactive))))
-     '(fringe ((t (:foreground "#FFFFFF" :background "#FFFFFF"))))))
+     '(fringe ((t (:foreground "#FFFFFF" :background "#FFFFFF"))))
+     '(nonbreak-space ((t ())))))
 
   (defun load-modus-vivendi ()
     (interactive)
@@ -3342,8 +3344,8 @@
 ;; ==================================================
 
 (global-leader
-  "SPC" 'execute-extended-command
-  "TAB" 'evil-switch-to-windows-last-buffer
+  "SPC" '(execute-extended-command :which-key "M-x")
+  "TAB" '(evil-switch-to-windows-last-buffer :which-key "Last Buffer")
   "C-r" 'revert-buffer)
 
 (global-leader
