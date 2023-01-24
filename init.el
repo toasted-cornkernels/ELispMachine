@@ -1189,9 +1189,9 @@
 ;; ==================================================
 
 (use-package kbd-mode
-  :when linux-p
+  :when     linux-p
   :straight (kbd-mode :type git :host github :repo "kmonad/kbd-mode")
-  :mode "\\.kbd\\'"
+  :mode     "\\.kbd\\'"
   :hook     (kbd-mode . evil-cleverparens-mode)
   :commands kbd-mode)
 
@@ -1816,58 +1816,66 @@
 ;; ==================================================
 
 (use-package tuareg
-  :bind (:map tuareg-mode-map
-	      ;; Workaround to preserve vim backspace in normal mode
-	      ([backspace] . nil))
+  ;; :bind (:map tuareg-mode-map
+  ;; 	      ([backspace] . nil))
   :mode (("\\.ml[ily]?$" . tuareg-mode)
 	 ("\\.topml$" . tuareg-mode))
   :defer t
   :init
-  (/init-ocaml-opam)
-  (set-leader-keys-for-major-mode 'tuareg-mode
-				  "ga" 'tuareg-find-alternate-file
-				  "cc" 'compile)
-  ;; Make OCaml-generated files invisible to filename completion
+  :general
+  (local-leader
+    :major-modes '(tuareg-mode t)
+    :keymaps     '(tuareg-mode-map)
+    "ga"         'tuareg-find-alternate-file
+    "cc"         'compile
+    "t"          (which-key-prefix :test)
+    "tP"         'dune-promote
+    "tp"         'dune-runtest-and-promote)
   (dolist (ext '(".cmo" ".cmx" ".cma" ".cmxa" ".cmi" ".cmxs" ".cmt" ".cmti" ".annot"))
     (add-to-list 'completion-ignored-extensions ext)))
 
 (use-package dune
   :defer t
-  :init
-  (set-leader-keys-for-major-mode 'tuareg-mode
-				  "tP" 'dune-promote
-				  "tp" 'dune-runtest-and-promote)
-  (declare-prefix-for-mode 'tuareg-mode "mt" "test")
-  (declare-prefix-for-mode 'dune-mode "mc" "compile/check")
-  (declare-prefix-for-mode 'dune-mode "mi" "insert-form")
-  (declare-prefix-for-mode 'dune-mode "mt" "test")
-  (set-leader-keys-for-major-mode 'dune-mode
-				  "cc" 'compile
-				  "ia" 'dune-insert-alias-form
-				  "ic" 'dune-insert-copyfiles-form
-				  "id" 'dune-insert-ignored-subdirs-form
-				  "ie" 'dune-insert-executable-form
-				  "ii" 'dune-insert-install-form
-				  "il" 'dune-insert-library-form
-				  "im" 'dune-insert-menhir-form
-				  "ip" 'dune-insert-ocamllex-form
-				  "ir" 'dune-insert-rule-form
-				  "it" 'dune-insert-tests-form
-				  "iv" 'dune-insert-env-form
-				  "ix" 'dune-insert-executables-form
-				  "iy" 'dune-insert-ocamlyacc-form
-				  "tP" 'dune-promote
-				  "tp" 'dune-runtest-and-promote))
+  :general
+  (local-leader
+    :major-modes '(tuareg-mode t)
+    :keymaps     '(tuareg-mode-map)
+    "t"          (which-key-prefix :test)
+    "tP"         'dune-promote
+    "tp"         'dune-runtest-and-promote)
+  
+  (local-leader
+    :major-modes '(dune-mode t)
+    :keymaps     '(dune-mode-map)
+    "c"          (which-key-prefix :compile/check)
+    "cc"         'compile
+    	         
+    "i"          (which-key-prefix :insert-form)
+    "ia"         'dune-insert-alias-form
+    "ic"         'dune-insert-copyfiles-form
+    "id"         'dune-insert-ignored-subdirs-form
+    "ie"         'dune-insert-executable-form
+    "ii"         'dune-insert-install-form
+    "il"         'dune-insert-library-form
+    "im"         'dune-insert-menhir-form
+    "ip"         'dune-insert-ocamllex-form
+    "ir"         'dune-insert-rule-form
+    "it"         'dune-insert-tests-form
+    "iv"         'dune-insert-env-form
+    "ix"         'dune-insert-executables-form
+    "iy"         'dune-insert-ocamlyacc-form
+	         
+    "t"          (which-key-prefix :test)
+    "tP"         'dune-promote
+    "tp"         'dune-runtest-and-promote))
 
 (use-package utop
   :defer t
   :init
   (add-hook 'tuareg-mode-hook 'utop-minor-mode)
-  (register-repl 'utop 'utop "ocaml")
   :config
-  (if (executable-find "opam")
-      (setq utop-command "opam config exec -- utop -emacs")
-    (spacemacs-buffer/warning "Cannot find \"opam\" executable."))
+  (when (executable-find "opam")
+      (setq utop-command "opam config exec -- utop -emacs"))
 
   (defun utop-eval-phrase-and-go ()
     "Send phrase to REPL and evaluate it and switch to the REPL in
@@ -2331,10 +2339,10 @@
   :commands (company-mode)
   :config
   ;; (global-company-mode)
-  (setq company-idle-delay 0)
-  (setq company-echo-delay 0)
-  (setq company-tooltip-idle-delay 0)
-  (setq company-async-redisplay-delay 0)
+  (setq company-idle-delay (if chromeOS-p 0.2 0)
+	company-echo-delay (if chromeOS-p 0.2 0)
+	company-tooltip-idle-delay 0
+	company-async-redisplay-delay 0)
   (define-key company-active-map (kbd "<return>") nil)
   (define-key company-active-map (kbd "RET") nil)
   (define-key company-active-map (kbd "<tab>") #'company-complete-selection)
