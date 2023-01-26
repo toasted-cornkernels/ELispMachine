@@ -1304,18 +1304,18 @@
     :keymaps     '(clojure-mode-map)
     "'"          'sesman-start
 
-    "d"          (which-key-prefix "debug")
+    "d"          (which-key-prefix :debug)
     "db"         'cider-debug-defun-at-point
     "de"         'cider-display-error-buffer
     
-    "dv"         (which-key-prefix "inspect values")
+    "dv"         (which-key-prefix :inspect)
     "dve"        'cider-inspect-last-sexp
     "dvf"        'cider-inspect-defun-at-point
     "dvi"        'cider-inspect
     "dvl"        'cider-inspect-last-result
     "dvv"        'cider-inspect-expr
     
-    "e"          (which-key-prefix "evaluation")
+    "e"          (which-key-prefix :evaluation)
     "e;"         'cider-eval-defun-to-comment
     "e$"         'cider-eval-sexp-end-of-line
     "e("         'cider-eval-list-at-point
@@ -1332,51 +1332,51 @@
     "eV"         'cider-eval-sexp-up-to-point
     "ew"         'cider-eval-last-sexp-and-replace
 
-    "en"         (which-key-prefix "ns")
+    "en"         (which-key-prefix :ns)
     "ena"        'cider-ns-reload-all
     "enn"        'cider-eval-ns-form
     "enr"        'cider-ns-refresh
     "enl"        'cider-ns-reload
 
-    "ep"         (which-key-prefix "pprint")
+    "ep"         (which-key-prefix :pprint)
     "ep;"        'cider-pprint-eval-defun-to-comment
     "ep:"        'cider-pprint-eval-last-sexp-to-comment
     "epf"        'cider-pprint-eval-defun-at-point
     "epe"        'cider-pprint-eval-last-sexp
     
-    "en"         (which-key-prefix "namespace")
+    "en"         (which-key-prefix :namespace)
     "ena"        'cider-ns-reload-all
     "enn"        'cider-eval-ns-form
     "enr"        'cider-ns-refresh
     "enl"        'cider-ns-reload ;; SPC u for cider-ns-reload-all
     
-    "ep"         (which-key-prefix "pretty print")
+    "ep"         (which-key-prefix :pretty-print)
     "ep;"        'cider-pprint-eval-defun-to-comment
     "ep:"        'cider-pprint-eval-last-sexp-to-comment
     "epf"        'cider-pprint-eval-defun-at-point
     "epe"        'cider-pprint-eval-last-sexp
     
-    "m"          (which-key-prefix "manage repls")
+    "m"          (which-key-prefix :manage-repls)
     "mb"         'sesman-browser
     "mi"         'sesman-info
     "mg"         'sesman-goto
     "ms"         'sesman-start
     
-    "ml"         (which-key-prefix "link session")
+    "ml"         (which-key-prefix :link-session)
     "mlp"        'sesman-link-with-project
     "mlb"        'sesman-link-with-buffer
     "mld"        'sesman-link-with-directory
     "mlu"        'sesman-unlink
     
-    "mS"         (which-key-prefix "sibling sessions")
+    "mS"         (which-key-prefix :sibling-sessions)
     "mSj"        'cider-connect-sibling-clj
     "mSs"        'cider-connect-sibling-cljs
     
-    "mq"         (which-key-prefix "quit/restart")
+    "mq"         (which-key-prefix :quit/restart)
     "mqq"        'sesman-quit
     "mqr"        'sesman-restart
     
-    "p"          (which-key-prefix "profile")
+    "p"          (which-key-prefix :profile)
     "p+"         'cider-profile-samples
     "pc"         'cider-profile-clear
     "pn"         'cider-profile-ns-toggle
@@ -1385,7 +1385,7 @@
     "pt"         'cider-profile-toggle
     "pv"         'cider-profile-var-profiled-p
     
-    "s"          (which-key-prefix "send to repl")
+    "s"          (which-key-prefix :send-to-repl)
     "sb"         'cider-load-buffer
     "sB"         'cider-send-buffer-in-repl-and-focus
     "se"         'cider-send-last-sexp-to-repl
@@ -1394,23 +1394,23 @@
     "sF"         'cider-send-function-to-repl-focus
     "si"         'sesman-start
     
-    "sc"         (which-key-prefix "connect external repl")
+    "sc"         (which-key-prefix :connect-external-repl)
     "scj"        'cider-connect-clj
     "scm"        'cider-connect-clj&cljs
     "scs"        'cider-connect-cljs
     
-    "sj"         (which-key-prefix "jack-in")
+    "sj"         (which-key-prefix :jack-in)
     "sjj"        'cider-jack-in-clj
     "sjm"        'cider-jack-in-clj&cljs
     "sjs"        'cider-jack-in-cljs
     
-    "sq"         (which-key-prefix "quit/restart repl")
+    "sq"         (which-key-prefix :quit/restart)
     "sqq"        'cider-quit
     "sqr"        'cider-restart
     "sqn"        'cider-ns-reload
     "sqN"        'cider-ns-reload-all
     
-    "t"          (which-key-prefix "test")
+    "t"          (which-key-prefix :test)
     "ta"         'cider-test-run-all-tests
     "tb"         'cider-test-show-report
     "tl"         'cider-test-run-loaded-tests
@@ -1419,22 +1419,22 @@
     "tr"         'cider-test-rerun-failed-tests
     "tt"         'cider-test-run-focused-test
     
-    "="          (which-key-prefix "format")
+    "="          (which-key-prefix :format)
     "=="         'cider-format-buffer
     "=f"         'cider-format-defun
 
-    "=e"         (which-key-prefix "edn")
+    "=e"         (which-key-prefix :edn)
     "=eb"        'cider-format-edn-buffer
     "=ee"        'cider-format-edn-last-sexp
     "=er"        'cider-format-edn-region
     
-    "g"          (which-key-prefix "goto")
+    "g"          (which-key-prefix :goto)
     "gb"         'cider-pop-back
     "gc"         'cider-classpath
     "gg"         'clj-find-var
     "gn"         'cider-find-ns
     
-    "h"          (which-key-prefix "documentation")
+    "h"          (which-key-prefix :documentation)
     "ha"         'cider-apropos
     "hc"         'cider-cheatsheet
     "hd"         'cider-clojuredocs
@@ -1444,7 +1444,7 @@
     "hs"         'cider-browse-spec
     "hS"         'cider-browse-spec-all
     
-    "T"          (which-key-prefix "toggle")
+    "T"          (which-key-prefix :toggle)
     "Te"         'cider-enlighten-mode
     "Tf"         'cider-toggle-repl-font-locking
     "Tp"         'cider-toggle-repl-pretty-printing
