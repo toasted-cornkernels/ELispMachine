@@ -1470,21 +1470,18 @@
   :config
   (defun my-hy-shell-eval-current-form ()
     (interactive)
-    (progn
-      (hy-shell-eval-current-form)
-      (previous-buffer)))
+    (hy-shell-eval-current-form)
+    (previous-buffer))
 
   (defun my-hy-shell-eval-region ()
     (interactive)
-    (progn
-      (hy-shell-eval-region)
-      (previous-buffer)))
+    (hy-shell-eval-region)
+    (previous-buffer))
 
   (defun my-hy-shell-eval-buffer ()
     (interactive)
-    (progn
-      (hy-shell-eval-buffer)
-      (previous-buffer))))
+    (hy-shell-eval-buffer)
+    (previous-buffer)))
 
 ;; Fennel config ====================================
 ;; ==================================================
@@ -1854,7 +1851,7 @@
     :keymaps     '(dune-mode-map)
     "c"          (which-key-prefix :compile/check)
     "cc"         'compile
-    	         
+    
     "i"          (which-key-prefix :insert-form)
     "ia"         'dune-insert-alias-form
     "ic"         'dune-insert-copyfiles-form
@@ -1869,7 +1866,7 @@
     "iv"         'dune-insert-env-form
     "ix"         'dune-insert-executables-form
     "iy"         'dune-insert-ocamlyacc-form
-	         
+    
     "t"          (which-key-prefix :test)
     "tP"         'dune-promote
     "tp"         'dune-runtest-and-promote))
@@ -1880,7 +1877,7 @@
   (add-hook 'tuareg-mode-hook 'utop-minor-mode)
   :config
   (when (executable-find "opam")
-      (setq utop-command "opam config exec -- utop -emacs"))
+    (setq utop-command "opam config exec -- utop -emacs"))
 
   (defun utop-eval-phrase-and-go ()
     "Send phrase to REPL and evaluate it and switch to the REPL in
@@ -2810,7 +2807,7 @@
 ;;     "s"          'forge-edit-topic-state
 ;;     "t"          'forge-edit-topic-title
 ;;     "u"          'forge-copy-url-at-point-as-kill)
-  
+
 ;;   (local-leader
 ;;     :major-modes '(forge-post-mode t)
 ;;     :keymaps     '(forge-post-mode-map)
