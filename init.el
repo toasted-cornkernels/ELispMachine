@@ -3618,8 +3618,8 @@
 ;; ==================================================
 
 (unless window-system
-  (global-set-key (kbd "<mouse-4>") 'mwheel-scroll)
-  (global-set-key (kbd "<mouse-5>") 'mwheel-scroll)
+  (global-set-key (kbd "<mouse-4>") 'scroll-down-line)
+  (global-set-key (kbd "<mouse-5>") 'scroll-up-line)
   (setq mouse-wheel-up-event 'mouse-5
 	mouse-wheel-down-event 'mouse-4))
 
