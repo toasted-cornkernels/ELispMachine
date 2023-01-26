@@ -241,6 +241,11 @@
      (convert-standard-filename
       (expand-file-name  "var/eln-cache/" user-emacs-directory)))))
 
+;; Manage-minor-mode ================================
+;; ==================================================
+
+(use-package manage-minor-mode)
+
 ;; General.el config ================================
 ;; ==================================================
 
@@ -932,9 +937,9 @@
 		:branch "main")
   :demand t
   :init
-  (setq codeql-transient-binding "C-c q")
-  (setq codeql-configure-eglot-lsp t)
-  (setq codeql-configure-projectile t)
+  (setq codeql-transient-binding "C-c q"
+	codeql-configure-eglot-lsp t
+	codeql-configure-projectile t)
   :config
   (setq codeql-search-paths '("./")))
 
@@ -959,7 +964,7 @@
     "aa" 'eglot-code-actions
     "r"  'eglot-rename)
 
-  :config
+  :init
   (defvar-local flycheck-eglot-current-errors nil)
 
   ;; use flycheck instead of flymake.
@@ -2491,6 +2496,14 @@
 
 (use-package json-mode :mode "\\.json\\'")
 
+;; yaml config =====================================
+;; =================================================
+
+(use-package yaml-mode
+  :mode (("\\.yaml\\'" . yaml-mode)
+	 ("\\.yml\\'"  . yaml-mode)
+	 ("\\.qls\\'"  . yaml-mode)))
+
 ;; kotlin config ===================================
 ;; =================================================
 
@@ -3247,6 +3260,18 @@
 ;; Mode-agnostic keybindings ==========================
 ;; ====================================================
 
+(defun contextual-previous-error ()
+  (interactive)
+  (if (member 'eglot--managed-mode (manage-minor-mode--active-list))
+      (flymake-goto-prev-error)
+    (flycheck-previous-error)))
+
+(defun contextual-next-error ()
+  (interactive)
+  (if (member 'eglot--managed-mode (manage-minor-mode--active-list))
+      (flymake-goto-next-error)
+    (flycheck-next-error)))
+
 ;; emacs key remappings
 (agnostic-key
   "C-x C-l" 'count-lines-page
@@ -3294,8 +3319,8 @@
   "s-i"   'comment-dwim
   "s-a"   'org-agenda
   "s-y"   'mu4e-update-mail-and-index
-  "s-/"   'flycheck-next-error
-  "s-\\"  'flycheck-previous-error
+  "s-/"   'contextual-next-error
+  "s-\\"  'contextual-previous-error
   "s-?"   'yas-next-field
   "s->"   'yas-prev-field)
 
@@ -3327,8 +3352,6 @@
   "C-s-u" 'emms-pause
   "C-s-," 'emms-seek-backward
   "C-s-." 'emms-seek-forward
-  "C-s-p" 'previous-buffer
-  "C-s-n" 'next-buffer
   "C-s-b" 'ibuffer
   "C-s-9" 'emms-volume-lower
   "C-s-0" 'emms-volume-raise
@@ -3336,11 +3359,9 @@
   "C-s-i" 'imenu-list
   "C-s-x" 'xwidget-new-window
   "C-s-y" 'youtube-viewer-start
-  "C-s-;" 'previous-error
-  "C-s-'" 'next-error
+  "C-s-;" 'contextual-previous-error
+  "C-s-'" 'contextual-next-error
   "C-s-." 'hl-todo-occur
-  "C-s-;" 'flycheck-previous-error
-  "C-s-'" 'flycheck-next-error
   "C-s-p" 'previous-buffer
   "C-s-n" 'next-buffer)
 
