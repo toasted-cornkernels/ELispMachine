@@ -934,7 +934,8 @@
   (emacs-codeql :type git
 		:host github
 		:repo "anticomputer/emacs-codeql"
-		:branch "main")
+		:branch "main"
+		:files (:defaults "bin"))
   :demand t
   :init
   (setq codeql-transient-binding "C-c q"
@@ -3004,13 +3005,6 @@
 
 (blink-cursor-mode 0)
 (global-visual-line-mode t)
-(dolist (hook '(doc-view-mode-hook
-		pdf-view-mode-hook
-		w3m-mode-hook
-		eww-mode-hook
-		comint-mode-hook))
-  (add-hook hook (lambda () (display-line-numbers-mode -1))))
-
 
 (when (fboundp 'scroll-bar-mode)
   (scroll-bar-mode -1))
