@@ -3233,6 +3233,7 @@
   (setq world-clock-list t
 	zoneinfo-style-world-list '(("America/Los_Angeles" "Los Angeles")
 				    ("America/New_York" "New York")
+				    ("Europe/Oxford" "Oxford")
 				    ("Asia/Seoul" "Seoul"))))
 
 ;; custom functions =================================
