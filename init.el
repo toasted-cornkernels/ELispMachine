@@ -959,56 +959,10 @@
 
   :general
   (local-leader
-    :keymaps
-    '(eglot-mode-map)
+    :keymaps '(eglot-mode-map)
     "a"  (which-key-prefix "LSP")
     "aa" 'eglot-code-actions
-    "r"  'eglot-rename)
-
-  :init
-  (defvar-local flycheck-eglot-current-errors nil)
-
-  ;; use flycheck instead of flymake.
-  (defun flycheck-eglot-report-fn (diags &rest _)
-    (setq flycheck-eglot-current-errors
-	  (mapcar (lambda (diag)
-		    (save-excursion
-		      (goto-char (flymake--diag-beg diag))
-		      (flycheck-error-new-at (line-number-at-pos)
-					     (1+ (- (point) (line-beginning-position)))
-					     (pcase (flymake--diag-type diag)
-					       ('eglot-error 'error)
-					       ('eglot-warning 'warning)
-					       ('eglot-note 'info)
-					       (_ (error "Unknown diag type, %S" diag)))
-					     (flymake--diag-text diag)
-					     :checker 'eglot)))
-		  diags))
-    (flycheck-buffer))
-
-  (defun flycheck-eglot--start (checker callback)
-    (funcall callback 'finished flycheck-eglot-current-errors))
-
-  (defun flycheck-eglot--available-p ()
-    (bound-and-true-p eglot--managed-mode))
-
-  (flycheck-define-generic-checker 'eglot
-    "Report `eglot' diagnostics using `flycheck'."
-    :start     #'flycheck-eglot--start
-    :predicate #'flycheck-eglot--available-p
-    :modes     '(prog-mode text-mode))
-
-  (push 'eglot flycheck-checkers)
-
-  (defun eglot-prefer-flycheck ()
-    (when eglot--managed-mode
-      (flycheck-add-mode 'eglot major-mode)
-      (flycheck-select-checker 'eglot)
-      (flycheck-mode)
-      (flymake-mode -1)
-      (setq eglot--current-flymake-report-fn 'flycheck-eglot-report-fn)))
-
-  (add-hook 'eglot--managed-mode-hook 'eglot-prefer-flycheck))
+    "r"  'eglot-rename))
 
 ;; Shell config =====================================
 ;; ==================================================
@@ -1154,6 +1108,9 @@
 ;; Lisp config ======================================
 ;; ==================================================
 
+(use-package eval-sexp-fu
+  :defer t)
+
 (use-package paren
   :straight nil
   :init
@@ -1163,22 +1120,24 @@
 
 (use-package smartparens
   :hook (prog-mode minibuffer-mode)
-  :bind (:map smartparens-mode-map
-	      ("M-p" . sp-previous-sexp)
-	      ("M-n" . sp-next-sexp))
+  ;; :bind (:map smartparens-mode-map
+  ;; 	      ("M-p" . sp-previous-sexp)
+  ;; 	      ("M-n" . sp-next-sexp))
   :config
   (smartparens-global-mode)
+  ;; Regular quote
   (sp-local-pair '(fennel-mode hy-mode clojure-mode lisp-mode emacs-lisp-mode
 			       geiser-mode scheme-mode racket-mode
 			       newlisp-mode picolisp-mode janet-mode
 			       lisp-interaction-mode ielm-mode minibuffer-mode
-			       fennel-repl-mode)
+			       fennel-repl-mode cider-repl-mode)
 		 "'" "'" :actions nil)
+  ;; Backquote
   (sp-local-pair '(fennel-mode hy-mode clojure-mode lisp-mode emacs-lisp-mode
 			       geiser-mode scheme-mode racket-mode
 			       newlisp-mode picolisp-mode janet-mode
 			       lisp-interaction-mode ielm-mode minibuffer-mode
-			       fennel-repl-mode)
+			       fennel-repl-mode cider-repl-mode)
 		 "`" "`" :actions nil))
 
 (use-package evil-cleverparens
@@ -1238,218 +1197,594 @@
 ;; Clojure config ===================================
 ;; ==================================================
 
-(use-package clojure-mode
-  :mode (("\\.clj\\'" . clojure-mode)
-	 ("\\.cljs\\'" . clojurescript-mode)
-	 ("\\.cljc\\'" . clojurec-mode))
-  :hook     (clojure-mode
-	     . evil-cleverparens-mode)
-  :init
-  (setq clojure-indent-style 'align-arguments
-	clojure-align-forms-automatically t
-	clojure-toplevel-inside-comment-form t))
-
 (use-package cider
-  :mode "\\.clj(s|c)?\\'"
-  :config
-  (setq cider-use-xref nil
-	cider-repl-display-help-banner nil
-	cider-repl-buffer-size-limit 100
-	cider-pprint-fn 'fipp
-	cider-result-overlay-position 'at-point
-	cider-overlays-use-font-lock t)
+  :defer t
+  :init
+  (setq cider-stacktrace-default-filters '(tooling dup)
+	cider-repl-pop-to-buffer-on-connect nil
+	cider-prompt-save-file-on-load nil
+	cider-repl-use-clojure-font-lock t)
+  (dolist (clojure-hook (list 'clojure-mode-hook
+			      'clojurescript-mode-hook
+			      'clojurec-mode-hook))
+    (add-hook 'clojure-hook 'cider-mode))
 
-  (defun run-bb ()
+  (defun cider-eval-sexp-end-of-line ()
+    "Evaluate the last sexp at the end of the current line."
     (interactive)
-    (if (executable-find "bb")
-	(make-comint "babashka" "bb")
-      (message "bb not installed")))
+    (save-excursion
+      (end-of-line)
+      (cider-eval-last-sexp)))
 
-  (defun run-nbb ()
+  (defun cider-eval-in-repl-no-focus (form)
+    "Insert FORM in the REPL buffer and eval it."
+    (while (string-match "\\`[ \t\n\r]+\\|[ \t\n\r]+\\'" form)
+      (setq form (replace-match "" t t form)))
+    (with-current-buffer (cider-current-connection)
+      (let ((pt-max (point-max)))
+	(goto-char pt-max)
+	(insert form)
+	(indent-region pt-max (point))
+	(cider-repl-return)
+	(with-selected-window (get-buffer-window (cider-current-connection))
+	  (goto-char (point-max))))))
+
+  (defun cider-send-last-sexp-to-repl ()
+    "Send last sexp to REPL and evaluate it without changing
+the focus."
     (interactive)
-    (if (executable-find "nbb")
-	(make-comint "node-babashka" "nbb")
-      (message "nbb not installed")))
+    (cider-eval-in-repl-no-focus (cider-last-sexp)))
 
-  (cider-register-cljs-repl-type 'nbb "(+ 1 2 3)")
+  (defun cider-send-last-sexp-to-repl-focus ()
+    "Send last sexp to REPL and evaluate it and switch to the REPL in
+`insert state'."
+    (interactive)
+    (cider-insert-last-sexp-in-repl t)
+    (evil-insert-state))
 
-  (defun cider-connected-hook ()
-    (when (eq 'nbb cider-cljs-repl-type)
-      (setq-local cider-show-error-buffer nil)
-      (cider-set-repl-type 'cljs)))
+  (defun cider-send-region-to-repl (start end)
+    "Send region to REPL and evaluate it without changing
+the focus."
+    (interactive "r")
+    (cider-eval-in-repl-no-focus
+     (buffer-substring-no-properties start end)))
 
-  (add-hook 'cider-connected-hook #'cider-connected-hook)
+  (defun cider-send-region-to-repl-focus (start end)
+    "Send region to REPL and evaluate it and switch to the REPL in
+`insert state'."
+    (interactive "r")
+    (cider-insert-in-repl
+     (buffer-substring-no-properties start end) t)
+    (evil-insert-state))
 
-  (setq cider-check-cljs-repl-requirements nil)
+  (defun cider-send-function-to-repl ()
+    "Send current function to REPL and evaluate it without changing
+the focus."
+    (interactive)
+    (cider-eval-in-repl-no-focus (cider-defun-at-point)))
 
-  (define-clojure-indent
-    (defroutes 'defun)
-    (GET 2)
-    (POST 2)
-    (PUT 2)
-    (DELETE 2)
-    (HEAD 2)
-    (ANY 2)
-    (OPTIONS 2)
-    (PATCH 2)
-    (rfn 2)
-    (let-routes 1)
-    (context 2)
-    (use-like-this 'defun)
-    (match 'defun)
-    (comment 'defun))
+  (defun cider-send-function-to-repl-focus ()
+    "Send current function to REPL and evaluate it and switch to the REPL in
+`insert state'."
+    (interactive)
+    (cider-insert-defun-in-repl t)
+    (evil-insert-state))
 
+  (defun cider-send-ns-form-to-repl ()
+    "Send buffer's ns form to REPL and evaluate it without changing
+the focus."
+    (interactive)
+    (cider-eval-in-repl-no-focus (cider-ns-form)))
+
+  (defun cider-send-ns-form-to-repl-focus ()
+    "Send ns form to REPL and evaluate it and switch to the REPL in
+`insert state'."
+    (interactive)
+    (cider-insert-ns-form-in-repl t)
+    (evil-insert-state))
+
+  (defun cider-send-buffer-in-repl-and-focus (&optional set-namespace)
+    "Send the current buffer in the REPL and switch to the REPL in
+`insert state'. When set-namespace, also change into the namespace of the buffer."
+    (interactive "P")
+    (cider-load-buffer)
+    (cider-switch-to-repl-buffer set-namespace)
+    (evil-insert-state))
+
+  (defun cider-test-run-focused-test ()
+    "Run test around point."
+    (interactive)
+    (cider-load-buffer)
+    (cider-test-run-test))
+
+  (defalias 'cider-test-run-all-tests #'cider-test-run-project-tests
+    "Runs all tests in all project namespaces.")
+
+  (defun cider-test-run-ns-tests ()
+    "Run namespace test."
+    (interactive)
+    (cider-load-buffer)
+    (call-interactively #'cider-test-run-ns-tests))
+
+  (defun cider-test-run-loaded-tests ()
+    "Run loaded tests."
+    (interactive)
+    (cider-load-buffer)
+    (call-interactively #'cider-test-run-loaded-tests))
+
+  (defun cider-test-run-project-tests ()
+    "Run project tests."
+    (interactive)
+    (cider-load-buffer)
+    (call-interactively #'cider-test-run-project-tests))
+
+  (defun cider-test-rerun-failed-tests ()
+    "Rerun failed tests."
+    (interactive)
+    (cider-load-buffer)
+    (cider-test-rerun-failed-tests))
+
+  (defun cider-display-error-buffer (&optional arg)
+    "Displays the *cider-error* buffer in the current window.
+If called with a prefix argument, uses the other-window instead."
+    (interactive "P")
+    (let ((buffer (get-buffer cider-error-buffer)))
+      (when buffer
+	(funcall (if (equal arg '(4))
+		     'switch-to-buffer-other-window
+		   'switch-to-buffer)
+		 buffer))))
+
+  (defun cider-toggle-repl-pretty-printing ()
+    "Toggle REPL pretty printing on and off."
+    (interactive)
+    (setq cider-repl-use-pretty-printing
+	  (if cider-repl-use-pretty-printing nil t))
+    (message "Cider REPL pretty printing: %s"
+	     (if cider-repl-use-pretty-printing "ON" "OFF")))
+
+  (defun cider-toggle-repl-font-locking ()
+    "Toggle font locking in REPL."
+    (interactive)
+    (setq cider-repl-use-clojure-font-lock
+	  (if cider-repl-use-pretty-printing nil t))
+    (message "Cider REPL clojure-mode font-lock: %s"
+	     (if cider-repl-use-clojure-font-lock "ON" "OFF")))
+
+  (defun cider-debug-setup ()
+    "Initialize debug mode."
+    (when (memq dotspacemacs-editing-style '(hybrid vim))
+      (evil-make-overriding-map cider--debug-mode-map 'normal)
+      (evil-normalize-keymaps)))
+
+  (defun clj-find-var (sym-name &optional arg)
+    "Attempts to jump-to-definition of the symbol-at-point.
+
+If CIDER fails, or not available, falls back to dumb-jump's xref interface."
+    (interactive (list (cider-symbol-at-point)))
+    (if (and (cider-connected-p) (cider-var-info sym-name))
+	(unless (symbolp (cider-find-var nil sym-name))
+	  (xref-find-definitions sym-name))
+      (xref-find-definitions sym-name)))
+
+  (defun cider-find-and-clear-repl-buffer ()
+    "Calls cider-find-and-clear-repl-output interactively with C-u prefix
+set so that it clears the whole REPL buffer, not just the output."
+    (interactive)
+    (let ((current-prefix-arg '(4)))
+      (call-interactively 'cider-find-and-clear-repl-output)))
+  
   :general
   (local-leader
-    :major-modes '(clojure-mode t)
-    :keymaps     '(clojure-mode-map)
-    "'"          'sesman-start
+    :major-modes '(clojure-mode
+		   clojurec-mode
+		   clojurescript-mode
+		   clojurex-mode
+		   cider-repl-mode
+		   cider-clojure-interaction-mode t)
+    :keymaps '(clojure-mode-map
+	       clojurec-mode-map
+	       clojurescript-mode-map
+	       clojurex-mode-map
+	       cider-repl-mode-map
+	       cider-clojure-interaction-mode-map)
+    "'"  'sesman-start
 
-    "d"          (which-key-prefix :debug)
-    "db"         'cider-debug-defun-at-point
-    "de"         'cider-display-error-buffer
+    "="  (which-key-prefix "format")
+    "=r" 'cider-format-region
+    "=f" 'cider-format-defun
     
-    "dv"         (which-key-prefix :inspect)
-    "dve"        'cider-inspect-last-sexp
-    "dvf"        'cider-inspect-defun-at-point
-    "dvi"        'cider-inspect
-    "dvl"        'cider-inspect-last-result
-    "dvv"        'cider-inspect-expr
-    
-    "e"          (which-key-prefix :evaluation)
-    "e;"         'cider-eval-defun-to-comment
-    "e$"         'cider-eval-sexp-end-of-line
-    "e("         'cider-eval-list-at-point
-    "eb"         'cider-eval-buffer
-    "ee"         'cider-eval-last-sexp
-    "ef"         'cider-eval-defun-at-point
-    "ei"         'cider-interrupt
-    "el"         'cider-eval-sexp-end-of-line
-    "em"         'cider-macroexpand-1
-    "eM"         'cider-macroexpand-all
-    "er"         'cider-eval-region
-    "eu"         'cider-undef
-    "ev"         'cider-eval-sexp-at-point
-    "eV"         'cider-eval-sexp-up-to-point
-    "ew"         'cider-eval-last-sexp-and-replace
+    "=e"  (which-key-prefix "edn")
+    "=eb" 'cider-format-edn-buffer
+    "=ee" 'cider-format-edn-last-sexp
+    "=er" 'cider-format-edn-region
 
-    "en"         (which-key-prefix :ns)
-    "ena"        'cider-ns-reload-all
-    "enn"        'cider-eval-ns-form
-    "enr"        'cider-ns-refresh
-    "enl"        'cider-ns-reload
+    "d"  (which-key-prefix  "debug")
+    "db" 'cider-debug-defun-at-point
+    "de" 'cider-display-error-buffer
 
-    "ep"         (which-key-prefix :pprint)
-    "ep;"        'cider-pprint-eval-defun-to-comment
-    "ep:"        'cider-pprint-eval-last-sexp-to-comment
-    "epf"        'cider-pprint-eval-defun-at-point
-    "epe"        'cider-pprint-eval-last-sexp
+    "dv"  (which-key-prefix "inspect values")
+    "dve" 'cider-inspect-last-sexp
+    "dvf" 'cider-inspect-defun-at-point
+    "dvi" 'cider-inspect
+    "dvl" 'cider-inspect-last-result
+    "dvv" 'cider-inspect-expr
     
-    "en"         (which-key-prefix :namespace)
-    "ena"        'cider-ns-reload-all
-    "enn"        'cider-eval-ns-form
-    "enr"        'cider-ns-refresh
-    "enl"        'cider-ns-reload ;; SPC u for cider-ns-reload-all
-    
-    "ep"         (which-key-prefix :pretty-print)
-    "ep;"        'cider-pprint-eval-defun-to-comment
-    "ep:"        'cider-pprint-eval-last-sexp-to-comment
-    "epf"        'cider-pprint-eval-defun-at-point
-    "epe"        'cider-pprint-eval-last-sexp
-    
-    "m"          (which-key-prefix :manage-repls)
-    "mb"         'sesman-browser
-    "mi"         'sesman-info
-    "mg"         'sesman-goto
-    "ms"         'sesman-start
-    
-    "ml"         (which-key-prefix :link-session)
-    "mlp"        'sesman-link-with-project
-    "mlb"        'sesman-link-with-buffer
-    "mld"        'sesman-link-with-directory
-    "mlu"        'sesman-unlink
-    
-    "mS"         (which-key-prefix :sibling-sessions)
-    "mSj"        'cider-connect-sibling-clj
-    "mSs"        'cider-connect-sibling-cljs
-    
-    "mq"         (which-key-prefix :quit/restart)
-    "mqq"        'sesman-quit
-    "mqr"        'sesman-restart
-    
-    "p"          (which-key-prefix :profile)
-    "p+"         'cider-profile-samples
-    "pc"         'cider-profile-clear
-    "pn"         'cider-profile-ns-toggle
-    "ps"         'cider-profile-var-summary
-    "pS"         'cider-profile-summary
-    "pt"         'cider-profile-toggle
-    "pv"         'cider-profile-var-profiled-p
-    
-    "s"          (which-key-prefix :send-to-repl)
-    "sb"         'cider-load-buffer
-    "sB"         'cider-send-buffer-in-repl-and-focus
-    "se"         'cider-send-last-sexp-to-repl
-    "sE"         'cider-send-last-sexp-to-repl-focus
-    "sf"         'cider-send-function-to-repl
-    "sF"         'cider-send-function-to-repl-focus
-    "si"         'sesman-start
-    
-    "sc"         (which-key-prefix :connect-external-repl)
-    "scj"        'cider-connect-clj
-    "scm"        'cider-connect-clj&cljs
-    "scs"        'cider-connect-cljs
-    
-    "sj"         (which-key-prefix :jack-in)
-    "sjj"        'cider-jack-in-clj
-    "sjm"        'cider-jack-in-clj&cljs
-    "sjs"        'cider-jack-in-cljs
-    
-    "sq"         (which-key-prefix :quit/restart)
-    "sqq"        'cider-quit
-    "sqr"        'cider-restart
-    "sqn"        'cider-ns-reload
-    "sqN"        'cider-ns-reload-all
-    
-    "t"          (which-key-prefix :test)
-    "ta"         'cider-test-run-all-tests
-    "tb"         'cider-test-show-report
-    "tl"         'cider-test-run-loaded-tests
-    "tn"         'cider-test-run-ns-tests
-    "tp"         'cider-test-run-project-tests
-    "tr"         'cider-test-rerun-failed-tests
-    "tt"         'cider-test-run-focused-test
-    
-    "="          (which-key-prefix :format)
-    "=="         'cider-format-buffer
-    "=f"         'cider-format-defun
+    "e"  (which-key-prefix "evaluation")
+    "e;" 'cider-eval-defun-to-comment
+    "e$" 'cider-eval-sexp-end-of-line
+    "e(" 'cider-eval-list-at-point
+    "eb" 'cider-eval-buffer
+    "ee" 'cider-eval-last-sexp
+    "ef" 'cider-eval-defun-at-point
+    "ei" 'cider-interrupt
+    "el" 'cider-eval-sexp-end-of-line
+    "em" 'cider-macroexpand-1
+    "eM" 'cider-macroexpand-all
+    "er" 'cider-eval-region
+    "eu" 'cider-undef
+    "ev" 'cider-eval-sexp-at-point
+    "eV" 'cider-eval-sexp-up-to-point
+    "ew" 'cider-eval-last-sexp-and-replace
 
-    "=e"         (which-key-prefix :edn)
-    "=eb"        'cider-format-edn-buffer
-    "=ee"        'cider-format-edn-last-sexp
-    "=er"        'cider-format-edn-region
+    "en"  (which-key-prefix "namespace")
+    "ena" 'cider-ns-reload-all
+    "enn" 'cider-eval-ns-form
+    "enr" 'cider-ns-refresh
+    "enl" 'cider-ns-reload
     
-    "g"          (which-key-prefix :goto)
-    "gb"         'cider-pop-back
-    "gc"         'cider-classpath
-    "gg"         'clj-find-var
-    "gn"         'cider-find-ns
+    "ep"  (which-key-prefix "pretty print")
+    "ep;" 'cider-pprint-eval-defun-to-comment
+    "ep:" 'cider-pprint-eval-last-sexp-to-comment
+    "epf" 'cider-pprint-eval-defun-at-point
+    "epe" 'cider-pprint-eval-last-sexp
+
+    "m"  (which-key-prefix "manage repls")
+    "mb" 'sesman-browser
+    "mi" 'sesman-info
+    "mg" 'sesman-goto
+    "ms" 'sesman-start
     
-    "h"          (which-key-prefix :documentation)
-    "ha"         'cider-apropos
-    "hc"         'cider-cheatsheet
-    "hd"         'cider-clojuredocs
-    "hj"         'cider-javadoc
-    "hn"         'cider-browse-ns
-    "hN"         'cider-browse-ns-all
-    "hs"         'cider-browse-spec
-    "hS"         'cider-browse-spec-all
+    "ml"  (which-key-prefix "link session")
+    "mlb" 'sesman-link-with-buffer
+    "mld" 'sesman-link-with-directory
+    "mlu" 'sesman-unlink
+    "mlp" 'sesman-link-with-project
+
+    "mS"  (which-key-prefix "sibling sessions")
+    "mSj" 'cider-connect-sibling-clj
+    "mSs" 'cider-connect-sibling-cljs
+
+    "mq"  (which-key-prefix "quit/restart")
+    "mqq" 'sesman-quit
+    "mqr" 'sesman-restart
+
+    "p"  (which-key-prefix "profile")
+    "p+" 'cider-profile-samples
+    "pc" 'cider-profile-clear
+    "pn" 'cider-profile-ns-toggle
+    "ps" 'cider-profile-var-summary
+    "pS" 'cider-profile-summary
+    "pt" 'cider-profile-toggle
+    "pv" 'cider-profile-var-profiled-p
+
+    "s"  (which-key-prefix "send to repl")
+    "sa" (if (eq major-mode 'cider-repl-mode)
+	     'cider-switch-to-last-clojure-buffer
+	   'cider-switch-to-repl-buffer)
+    "sb" 'cider-load-buffer
+    "sB" 'cider-send-buffer-in-repl-and-focus
+    "se" 'cider-send-last-sexp-to-repl
+    "sE" 'cider-send-last-sexp-to-repl-focus
+    "sf" 'cider-send-function-to-repl
+    "sF" 'cider-send-function-to-repl-focus
+    "si" 'sesman-start
+    "sl" 'cider-find-and-clear-repl-buffer
+    "sL" 'cider-find-and-clear-repl-output
+    "sn" 'cider-send-ns-form-to-repl
+    "sN" 'cider-send-ns-form-to-repl-focus
+    "so" 'cider-repl-switch-to-other
+    "sr" 'cider-send-region-to-repl
+    "sR" 'cider-send-region-to-repl-focus
+    "su" 'cider-repl-require-repl-utils
     
-    "T"          (which-key-prefix :toggle)
-    "Te"         'cider-enlighten-mode
-    "Tf"         'cider-toggle-repl-font-locking
-    "Tp"         'cider-toggle-repl-pretty-printing
-    "Tt"         'cider-auto-test-mode))
+    "sc"  (which-key-prefix "connect external repl")
+    "scj" 'cider-connect-clj
+    "scm" 'cider-connect-clj&cljs
+    "scs" 'cider-connect-cljs
+    
+    "sj"  (which-key-prefix "jack-in")
+    "sjj" 'cider-jack-in-clj
+    "sjm" 'cider-jack-in-clj&cljs
+    "sjs" 'cider-jack-in-cljs
+
+    "sq"  (which-key-prefix "quit/restart repl")
+    "sqq" 'cider-quit
+    "sqr" 'cider-restart
+    "sqn" 'cider-ns-reload
+    "sqN" 'cider-ns-reload-all
+    
+    "t"  (which-key-prefix "test")
+    "ta" 'cider-test-run-all-tests
+    "tb" 'cider-test-show-report
+    "tl" 'cider-test-run-loaded-tests
+    "tn" 'cider-test-run-ns-tests
+    "tp" 'cider-test-run-project-tests
+    "tr" 'cider-test-rerun-failed-tests
+    "tt" 'cider-test-run-focused-test
+
+    "g"  (which-key-prefix "goto")
+    "gb" 'cider-pop-back
+    "gc" 'cider-classpath
+    "gg" 'clj-find-var
+    "gn" 'cider-find-ns
+    "ge" 'cider-jump-to-compilation-error
+    "gr" 'cider-find-resource
+    "gs" 'cider-browse-spec
+    "gS" 'cider-browse-spec-all
+    
+    "h"  (which-key-prefix "documentation")
+    "ha" 'cider-apropos
+    "hc" 'cider-cheatsheet
+    "hd" 'cider-clojuredocs
+    "hj" 'cider-javadoc
+    "hn" 'cider-browse-ns
+    "hN" 'cider-browse-ns-all
+    "hs" 'cider-browse-spec
+    "hS" 'cider-browse-spec-all
+    "hh" 'cider-doc
+
+    "T"  (which-key-prefix "toggle")
+    "Te" 'cider-enlighten-mode
+    "Tf" 'cider-toggle-repl-font-locking
+    "Tp" 'cider-toggle-repl-pretty-printing
+    "Tt" 'cider-auto-test-mode)
+
+  (local-leader
+    :major-modes '(cider-repl-mode t)
+    :keymaps '(cider-repl-mode-map)
+    "," 'cider-repl-handle-shortcut)
+
+  (local-leader
+    :major-modes '(cider-clojure-interaction-mode t)
+    :keymaps '(cider-clojure-interaction-mode-map)
+    "epl" 'cider-eval-print-last-sexp)
+
+  (normal-mode-major-mode
+    :major-modes '(cider-stacktrace-mode t)
+    :keymaps '(cider-stacktrace-mode-map)
+    "C-j" 'cider-stacktrace-next-cause
+    "C-k" 'cider-stacktrace-previous-cause
+    "TAB" 'cider-stacktrace-cycle-current-cause
+    "0"   'cider-stacktrace-cycle-all-causes
+    "1"   'cider-stacktrace-cycle-cause-1
+    "2"   'cider-stacktrace-cycle-cause-2
+    "3"   'cider-stacktrace-cycle-cause-3
+    "4"   'cider-stacktrace-cycle-cause-4
+    "5"   'cider-stacktrace-cycle-cause-5
+    "a"   'cider-stacktrace-toggle-all
+    "c"   'cider-stacktrace-toggle-clj
+    "d"   'cider-stacktrace-toggle-duplicates
+    "J"   'cider-stacktrace-toggle-java
+    "r"   'cider-stacktrace-toggle-repl
+    "T"   'cider-stacktrace-toggle-tooling)
+  
+  (normal-mode-major-mode
+    :major-modes '(cider-docview-mode t)
+    :keymaps '(cider-docview-mode-map)
+    "q" 'cider-popup-buffer-quit)
+  
+  (normal-mode-major-mode
+    :major-modes '(cider-inspector-mode t)
+    :keymaps '(cider-inspector-mode-map)
+    "L" 'cider-inspector-pop
+    "n" 'cider-inspector-next-page
+    "N" 'cider-inspector-prev-page
+    "p" 'cider-inspector-prev-page
+    "r" 'cider-inspector-refresh)
+
+  (normal-mode-major-mode
+    :major-modes '(cider-test-report-mode t)
+    :keymaps '(cider-test-report-mode-map)
+    (kbd "C-j") 'cider-test-next-result
+    (kbd "C-k") 'cider-test-previous-result
+    (kbd "RET") 'cider-test-jump
+    (kbd "d")   'cider-test-ediff
+    (kbd "e")   'cider-test-stacktrace
+    (kbd "q")   'cider-popup-buffer-quit
+    (kbd "r")   'cider-test-rerun-tests
+    (kbd "t")   'cider-test-run-test
+    (kbd "T")   'cider-test-run-ns-tests)
+  
+  (normal-mode-major-mode
+    :major-modes '(cider-repl-history-mode t)
+    :keymaps '(cider-repl-history-mode-map)
+    "j" 'cider-repl-history-forward
+    "k" 'cider-repl-history-previous
+    "s" 'cider-repl-history-occur
+    "r" 'cider-repl-history-update)
+
+  (local-leader
+    :major-modes '(cider-repl-history-mode t)
+    :keymaps '(cider-repl-history-mode-map)
+    "s" 'cider-repl-history-save)
+
+  (normal-mode-major-mode
+    :major-modes '(cider-repl-mode t)
+    :keymaps '(cider-repl-mode-map)
+    "C-j" 'cider-repl-next-input
+    "C-k" 'cider-repl-previous-input
+    "RET" 'cider-repl-return)
+
+  (insert-mode-major-mode
+    :major-modes '(cider-repl-mode t)
+    :keymaps '(cider-repl-mode-map)
+    "C-j" 'cider-repl-next-input
+    "C-k" 'cider-repl-previous-input
+    "C-RET" 'cider-repl-newline-and-indent
+    "C-r" 'cider-repl-history)
+
+  
+  :config
+  (evil-set-initial-state 'cider-stacktrace-mode 'motion)
+  (evil-set-initial-state 'cider-popup-buffer-mode 'motion)
+  (add-hook 'cider--debug-mode-hook 'cider-debug-setup)
+  (setq cider-prompt-for-symbol t)
+  (defadvice cider-find-var (before add-evil-jump activate)
+    (evil-set-jump)))
+
+(use-package cider-eval-sexp-fu
+  :after cider)
+
+(use-package clj-refactor
+  :defer t
+  :hook (clj-refactor-mode . clojure-mode-hook)
+  :config
+  (cljr-add-keybindings-with-prefix "C-c C-f")
+  ;; Usually we do not set keybindings in :config, however this must be done
+  ;; here because it reads the variable `cljr--all-helpers'. Since
+  ;; `clj-refactor-mode' is added to the hook, this should trigger when a
+  ;; clojure buffer is opened anyway, so there's no "keybinding delay".
+  )
+
+
+
+(use-package clojure-mode
+  :defer t
+  :general
+  (local-leader
+    :major-modes '(clojure-mode
+		   clojurec-mode
+		   clojurescript-mode
+		   clojurex-mode
+		   cider-repl-mode
+		   cider-clojure-interaction-mode t)
+    :keymaps '(clojure-mode-map
+	       clojurec-mode-map
+	       clojurescript-mode-map
+	       clojurex-mode-map
+	       cider-repl-mode-map
+	       cider-clojure-interaction-mode-map)
+    "=l" 'clojure-align
+    "ra" (which-key-prefix "add")
+    "ran" 'clojure-insert-ns-form
+    "raN" 'clojure-insert-ns-form-at-point
+    "rc" (which-key-prefix "cycle/clean/convert")
+    "rci" 'clojure-cycle-if
+    "rcp" 'clojure-cycle-privacy
+    "rc#" 'clojure-convert-collection-to-set
+    "rc'" 'clojure-convert-collection-to-quoted-list
+    "rc(" 'clojure-convert-collection-to-list
+    "rc[" 'clojure-convert-collection-to-vector
+    "rc{" 'clojure-convert-collection-to-map
+    "rc:" 'clojure-toggle-keyword-string
+    "rd" (which-key-prefix "destructure")
+    "re" (which-key-prefix "extract/expand")
+    "rf" (which-key-prefix "find/function")
+    "rh" (which-key-prefix "hotload")
+    "ri" (which-key-prefix "introduce/inline")
+    "rm" (which-key-prefix "move")
+    "rp" (which-key-prefix "project/promote")
+    "rr" (which-key-prefix "remove/rename/replace")
+    "rs" (which-key-prefix "show/sort/stop")
+    "rsn" 'clojure-sort-ns
+    "rt" (which-key-prefix "thread")
+    "rtf" 'clojure-thread-first-all
+    "rth" 'clojure-thread
+    "rtl" 'clojure-thread-last-all
+    "ru" (which-key-prefix "unwind/update")
+    "rua" 'clojure-unwind-all
+    "ruw" 'clojure-unwind))
+
+(use-package clojure-snippets
+  :defer t)
+
+(use-package kaocha-runner
+  :defer t
+  :general
+  (local-leader
+    :major-modes '(clojure-mode
+		   clojurec-mode
+		   clojurescript-mode
+		   clojurex-mode
+		   cider-repl-mode
+		   cider-clojure-interaction-mode t)
+    :keymaps '(clojure-mode-map
+	       clojurec-mode-map
+	       clojurescript-mode-map
+	       clojurex-mode-map
+	       cider-repl-mode-map
+	       cider-clojure-interaction-mode-map)
+    "tk"  (which-key-prefix :kaocha)
+    "tka" 'kaocha-runner-run-all-tests
+    "tkt" 'kaocha-runner-run-test-at-point
+    "tkn" 'kaocha-runner-run-tests
+    "tkw" 'kaocha-runner-show-warnings
+    "tkh" 'kaocha-runner-hide-windows))
+
+(use-package sayid
+  :defer t
+  :general
+  (local-leader
+    :major-modes '(clojure-mode
+		   clojurec-mode
+		   clojurescript-mode
+		   clojurex-mode
+		   cider-repl-mode
+		   cider-clojure-interaction-mode t)
+    :keymaps '(clojure-mode-map
+	       clojurec-mode-map
+	       clojurescript-mode-map
+	       clojurex-mode-map
+	       cider-repl-mode-map
+	       cider-clojure-interaction-mode-map)
+    "d!" 'sayid-load-enable-clear
+    "dE" 'sayid-eval-last-sexp ;in default sayid bindings this is lowercase e, but that was already used in clojure mode
+    "dc" 'sayid-clear-log
+    "df" 'sayid-query-form-at-point
+    "dh" 'sayid-show-help
+    "ds" 'sayid-show-traced
+    "dS" 'sayid-show-traced-ns
+    "dV" 'sayid-set-view
+    "dw" 'sayid-get-workspace
+    "dx" 'sayid-reset-workspace
+    "dt" (which-key-prefix :trace)
+    "dtb" 'sayid-trace-ns-in-file
+    "dtd" 'sayid-trace-fn-disable
+    "dtD" 'sayid-trace-disable-all
+    "dte" 'sayid-trace-fn-enable
+    "dtE" 'sayid-trace-enable-all
+    "dtK" 'sayid-kill-all-traces
+    "dtn" 'sayid-inner-trace-fn
+    "dto" 'sayid-outer-trace-fn
+    "dtp" 'sayid-trace-ns-by-pattern
+    "dtr" 'sayid-remove-trace-fn
+    "dty" 'sayid-trace-all-ns-in-dir)
+  
+  (normal-mode-major-mode
+    :major-modes '(sayid-mode t)
+    :keymaps     '(sayid-mode-map)
+    "H" 'sayid-buf-show-help
+    "n" 'sayid-buffer-nav-to-next
+    "N" 'sayid-buffer-nav-to-prev
+    "C-s v" 'sayid-toggle-view
+    "C-s V" 'sayid-set-view
+    "L" 'sayid-buf-back
+    "e" 'sayid-gen-instance-expr)
+  
+  (normal-mode-major-mode
+    :major-modes '(sayid-pprint-mode t)
+    :keymaps '(sayid-pprint-mode-map)
+    "h" 'sayid-pprint-buf-show-help
+    "n" 'sayid-pprint-buf-next
+    "N" 'sayid-pprint-buf-prev
+    "l" 'sayid-pprint-buf-exit)
+
+  (normal-mode-major-mode
+    :major-modes '(sayid-traced-mode t)
+    :keymaps '(sayid-traced-mode-map)
+    "l" 'sayid-show-traced
+    "h" 'sayid-traced-buf-show-help))
 
 ;; Hy config ========================================
 ;; ==================================================
@@ -1462,7 +1797,6 @@
   (local-leader
     :major-modes '(hy-mode inferior-hy-mode t)
     :keymaps     '(hy-mode-map inferior-hy-mode-map)
-
     "e"          (which-key-prefix "eval")
     "ec"         'hy-shell-eval-current-form
     "er"         'hy-shell-eval-region
@@ -1927,11 +2261,11 @@
 	    (lambda () (setq indent-tabs-mode nil)))
   (define-key rust-mode-map (kbd "C-c C-c") 'rust-run))
 
-(use-package flycheck-rust
-  :after (rust-mode)
-  :config
-  (with-eval-after-load 'rust-mode
-    (add-hook 'flycheck-mode-hook #'flycheck-rust-setup)))
+;; (use-package flycheck-rust
+;;   :after (rust-mode)
+;;   :config
+;;   (with-eval-after-load 'rust-mode
+;;     (add-hook 'flycheck-mode-hook #'flycheck-rust-setup)))
 
 ;; VimScript config =================================
 ;; ==================================================
