@@ -3116,6 +3116,12 @@
     (add-hook 'window-setup-hook 'make-terminal-transparent)
     (make-terminal-transparent)))
 
+(use-package auto-dark
+  :init
+  (setq auto-dark-light-theme 'modus-operandi
+	auto-dark-dark-theme  'modus-vivendi)
+  (auto-dark-mode t))
+
 ;; hl-todo config ==================================
 ;; =================================================
 
