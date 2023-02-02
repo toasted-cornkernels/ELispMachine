@@ -3164,10 +3164,10 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; format-all =======================================
 ;; ==================================================
 
-(use-package format-all
-  :general
-  (agnostic-key
-    "C-=" 'format-all-buffer))
+;; (use-package format-all
+;;   :general
+;;   (agnostic-key
+;;     "C-M-=" 'format-all-buffer))
 
 ;; eldoc-mode config ================================
 ;; ==================================================
@@ -3618,6 +3618,13 @@ set so that it clears the whole REPL buffer, not just the output."
 (agnostic-key
   "C-x C-l" 'count-lines-page
   "C-x C-b" 'ibuffer)
+
+(agnostic-key
+  "C-=" 'eglot-format-buffer)
+
+(agnostic-key
+  "s-<wheel-up>" 'text-scale-increase
+  "s-<wheel-down>" 'text-scale-decrease)
 
 ;; s-shortcuts
 (agnostic-key
