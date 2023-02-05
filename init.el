@@ -789,6 +789,7 @@
 (use-package ox-pandoc   :defer t)
 (use-package ox-gfm      :defer t)
 (use-package ox-asciidoc :defer t)
+(use-package ox-pandoc   :defer t)
 
 ;; Emoji config =====================================
 ;; ==================================================
@@ -1424,6 +1425,7 @@ set so that it clears the whole REPL buffer, not just the output."
     "e(" 'cider-eval-list-at-point
     "eb" 'cider-eval-buffer
     "ee" 'cider-eval-last-sexp
+    "ec" 'cider-eval-last-sexp
     "ef" 'cider-eval-defun-at-point
     "ei" 'cider-interrupt
     "el" 'cider-eval-sexp-end-of-line
@@ -2484,6 +2486,30 @@ set so that it clears the whole REPL buffer, not just the output."
     :major-modes '(markdown-mode gfm-mode t)
     :keymaps     '(markdown-mode-map gfm-mode-map)
     "cP"         'vmd-mode))
+
+;; Pandoc config ====================================
+;; ==================================================
+
+(use-package pandoc-mode
+  :defer t
+  :commands run-pandoc
+  :hook (pandoc-mode . pandoc-load-default-settings)
+  :init
+  (defun run-pandoc ()
+    "Start pandoc for the buffer and open the menu"
+    (interactive)
+    ;; only run pandoc-mode if not active, as it resets
+    ;; pandoc--local-settings
+    (if (not (bound-and-true-p pandoc-mode)) (pandoc-mode))
+    (pandoc-main-hydra/body))
+
+  :general
+  (global-leader
+    "P"  (which-key-prefix "pandoc")
+    "P/" 'spacemacs/run-pandoc)
+
+  :config
+  (setq pandoc-data-dir (concat spacemacs-cache-directory "pandoc/")))
 
 ;; CSharp config ====================================
 ;; ==================================================
