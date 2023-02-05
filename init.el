@@ -786,7 +786,6 @@
 (use-package ox-latex    :straight nil :defer t)
 (use-package ox-publish  :straight nil :defer t)
 (use-package ox-epub     :defer t)
-(use-package ox-pandoc   :defer t)
 (use-package ox-gfm      :defer t)
 (use-package ox-asciidoc :defer t)
 (use-package ox-pandoc   :defer t)
@@ -1362,9 +1361,8 @@ If called with a prefix argument, uses the other-window instead."
 
   (defun cider-debug-setup ()
     "Initialize debug mode."
-    (when (memq dotspacemacs-editing-style '(hybrid vim))
-      (evil-make-overriding-map cider--debug-mode-map 'normal)
-      (evil-normalize-keymaps)))
+    (evil-make-overriding-map cider--debug-mode-map 'normal)
+    (evil-normalize-keymaps))
 
   (defun clj-find-var (sym-name &optional arg)
     "Attempts to jump-to-definition of the symbol-at-point.
@@ -2506,10 +2504,10 @@ set so that it clears the whole REPL buffer, not just the output."
   :general
   (global-leader
     "P"  (which-key-prefix "pandoc")
-    "P/" 'spacemacs/run-pandoc)
+    "P/" 'run-pandoc)
 
   :config
-  (setq pandoc-data-dir (concat spacemacs-cache-directory "pandoc/")))
+  (setq pandoc-data-dir (concat user-emacs-directory "pandoc/")))
 
 ;; CSharp config ====================================
 ;; ==================================================
