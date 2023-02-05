@@ -1655,10 +1655,9 @@ set so that it clears the whole REPL buffer, not just the output."
   ;; clojure buffer is opened anyway, so there's no "keybinding delay".
   )
 
-
-
 (use-package clojure-mode
   :defer t
+  :hook  (clojure-mode . evil-cleverparens-mode)
   :general
   (local-leader
     :major-modes '(clojure-mode
@@ -3451,6 +3450,7 @@ set so that it clears the whole REPL buffer, not just the output."
     (make-terminal-transparent)))
 
 (use-package auto-dark
+  :when macOS-p
   :init
   (setq auto-dark-light-theme 'modus-operandi
 	auto-dark-dark-theme  'modus-vivendi)
