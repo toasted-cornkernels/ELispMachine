@@ -339,7 +339,7 @@
     "["          'org-agenda-file-to-front
     "]"          'org-remove-file
     "c"          'org-capture
-    
+
     "b"          (which-key-prefix :babel)
     "bp"         'org-babel-previous-src-block
     "bn"         'org-babel-next-src-block
@@ -364,7 +364,7 @@
     "ba"         'org-babel-sha1-hash
     "bx"         'org-babel-do-key-sequence-in-edit-buffer
     "b."         'org-babel-transient-state/body
-    
+
     "C"          (which-key-prefix :clock)
     "Cc"         'org-clock-cancel
     "Cd"         'org-clock-display
@@ -376,20 +376,20 @@
     "Co"         'org-clock-out
     "CR"         'org-clock-report
     "Cr"         'org-resolve-clocks
-    
+
     "d"          (which-key-prefix :dates)
     "dd"         'org-deadline
     "ds"         'org-schedule
     "dt"         'org-time-stamp
     "dT"         'org-time-stamp-inactive
-    
+
     "e"          (which-key-prefix :export)
     "ee"         'org-export-dispatch
-    
+
     "f"          (which-key-prefix :feeds)
     "fi"         'org-feed-goto-inbox
     "fu"         'org-feed-update-all
-    
+
     "i"          (which-key-prefix :insert)
     "ita"        (org-insert-structure org-insert-ascii "ascii")
     "itc"        (org-insert-structure org-insert-center "center")
@@ -414,13 +414,13 @@
     "ip"         'org-set-property
     "is"         'org-insert-subheading
     "iT"         'org-set-tags-command
-    
+
     "iD"         (which-key-prefix :download)
-    
+
     "m"          (which-key-prefix :more)
-    
+
     "p"          'org-priority
-    
+
     "s"          (which-key-prefix :trees/subtrees)
     "sa"         'org-toggle-archive-tag
     "sA"         'org-archive-subtree-default
@@ -437,13 +437,13 @@
     "sr"         'org-refile
     "ss"         'org-sparse-tree
     "sS"         'org-sort
-    
+
     "S"          (which-key-prefix :shift)
     "Sh"         'org-shiftcontrolleft
     "Sj"         'org-shiftcontroldown
     "Sk"         'org-shiftcontrolup
     "Sl"         'org-shiftcontrolright
-    
+
     "T"          (which-key-prefix :toggles)
     "Tc"         'org-toggle-checkbox
     "Te"         'org-toggle-pretty-entities
@@ -458,7 +458,7 @@
     "H"          'org-shiftleft
     "J"          'org-shiftdown
     "K"          'org-shiftup
-    
+
     "t"          (which-key-prefix :tables)
     "ta"         'org-table-align
     "tb"         'org-table-blank-field
@@ -480,21 +480,21 @@
     "tR"         'org-table-recalculate-buffer-tables
     "ts"         'org-table-sort-lines
     "tw"         'org-table-wrap-region
-    
+
     "td"         (which-key-prefix :delete)
     "tdc"        'org-table-delete-column
     "tdr"        'org-table-kill-row
-    
+
     "ti"         (which-key-prefix :insert)
     "tic"        'org-table-insert-column
     "tih"        'org-table-insert-hline
     "tiH"        'org-table-hline-and-move
     "tir"        'org-table-insert-row
-    
+
     "tt"         (which-key-prefix :toggle)
     "ttf"        'org-table-toggle-formula-debugger
     "tto"        'org-table-toggle-coordinate-overlays
-    
+
     "x"          (which-key-prefix :text)
     "xo"         'org-open-at-point
     "xb"         (org-emphasize-this org-bold ?*)
@@ -942,7 +942,9 @@
 	codeql-configure-eglot-lsp t
 	codeql-configure-projectile t)
   :config
-  (setq codeql-search-paths '("./")))
+  (setq codeql-search-paths '("./"))
+  ;; below defalias is not working...
+  (defalias 'codeql-mode 'ql-tree-sitter-mode))
 
 ;; Eglot config =====================================
 ;; ==================================================
@@ -1373,7 +1375,7 @@ set so that it clears the whole REPL buffer, not just the output."
     (interactive)
     (let ((current-prefix-arg '(4)))
       (call-interactively 'cider-find-and-clear-repl-output)))
-  
+
   :general
   (local-leader
     :major-modes '(clojure-mode
@@ -1393,7 +1395,7 @@ set so that it clears the whole REPL buffer, not just the output."
     "="  (which-key-prefix "format")
     "=r" 'cider-format-region
     "=f" 'cider-format-defun
-    
+
     "=e"  (which-key-prefix "edn")
     "=eb" 'cider-format-edn-buffer
     "=ee" 'cider-format-edn-last-sexp
@@ -1409,7 +1411,7 @@ set so that it clears the whole REPL buffer, not just the output."
     "dvi" 'cider-inspect
     "dvl" 'cider-inspect-last-result
     "dvv" 'cider-inspect-expr
-    
+
     "e"  (which-key-prefix "evaluation")
     "e;" 'cider-eval-defun-to-comment
     "e$" 'cider-eval-sexp-end-of-line
@@ -1432,7 +1434,7 @@ set so that it clears the whole REPL buffer, not just the output."
     "enn" 'cider-eval-ns-form
     "enr" 'cider-ns-refresh
     "enl" 'cider-ns-reload
-    
+
     "ep"  (which-key-prefix "pretty print")
     "ep;" 'cider-pprint-eval-defun-to-comment
     "ep:" 'cider-pprint-eval-last-sexp-to-comment
@@ -1444,7 +1446,7 @@ set so that it clears the whole REPL buffer, not just the output."
     "mi" 'sesman-info
     "mg" 'sesman-goto
     "ms" 'sesman-start
-    
+
     "ml"  (which-key-prefix "link session")
     "mlb" 'sesman-link-with-buffer
     "mld" 'sesman-link-with-directory
@@ -1487,12 +1489,12 @@ set so that it clears the whole REPL buffer, not just the output."
     "sr" 'cider-send-region-to-repl
     "sR" 'cider-send-region-to-repl-focus
     "su" 'cider-repl-require-repl-utils
-    
+
     "sc"  (which-key-prefix "connect external repl")
     "scj" 'cider-connect-clj
     "scm" 'cider-connect-clj&cljs
     "scs" 'cider-connect-cljs
-    
+
     "sj"  (which-key-prefix "jack-in")
     "sjj" 'cider-jack-in-clj
     "sjm" 'cider-jack-in-clj&cljs
@@ -1503,7 +1505,7 @@ set so that it clears the whole REPL buffer, not just the output."
     "sqr" 'cider-restart
     "sqn" 'cider-ns-reload
     "sqN" 'cider-ns-reload-all
-    
+
     "t"  (which-key-prefix "test")
     "ta" 'cider-test-run-all-tests
     "tb" 'cider-test-show-report
@@ -1522,7 +1524,7 @@ set so that it clears the whole REPL buffer, not just the output."
     "gr" 'cider-find-resource
     "gs" 'cider-browse-spec
     "gS" 'cider-browse-spec-all
-    
+
     "h"  (which-key-prefix "documentation")
     "ha" 'cider-apropos
     "hc" 'cider-cheatsheet
@@ -1568,12 +1570,12 @@ set so that it clears the whole REPL buffer, not just the output."
     "J"   'cider-stacktrace-toggle-java
     "r"   'cider-stacktrace-toggle-repl
     "T"   'cider-stacktrace-toggle-tooling)
-  
+
   (normal-mode-major-mode
     :major-modes '(cider-docview-mode t)
     :keymaps '(cider-docview-mode-map)
     "q" 'cider-popup-buffer-quit)
-  
+
   (normal-mode-major-mode
     :major-modes '(cider-inspector-mode t)
     :keymaps '(cider-inspector-mode-map)
@@ -1595,7 +1597,7 @@ set so that it clears the whole REPL buffer, not just the output."
     (kbd "r")   'cider-test-rerun-tests
     (kbd "t")   'cider-test-run-test
     (kbd "T")   'cider-test-run-ns-tests)
-  
+
   (normal-mode-major-mode
     :major-modes '(cider-repl-history-mode t)
     :keymaps '(cider-repl-history-mode-map)
@@ -1624,7 +1626,7 @@ set so that it clears the whole REPL buffer, not just the output."
     "C-RET" 'cider-repl-newline-and-indent
     "C-r" 'cider-repl-history)
 
-  
+
   :config
   (evil-set-initial-state 'cider-stacktrace-mode 'motion)
   (evil-set-initial-state 'cider-popup-buffer-mode 'motion)
@@ -1759,7 +1761,7 @@ set so that it clears the whole REPL buffer, not just the output."
     "dtp" 'sayid-trace-ns-by-pattern
     "dtr" 'sayid-remove-trace-fn
     "dty" 'sayid-trace-all-ns-in-dir)
-  
+
   (normal-mode-major-mode
     :major-modes '(sayid-mode t)
     :keymaps     '(sayid-mode-map)
@@ -1770,7 +1772,7 @@ set so that it clears the whole REPL buffer, not just the output."
     "C-s V" 'sayid-set-view
     "L" 'sayid-buf-back
     "e" 'sayid-gen-instance-expr)
-  
+
   (normal-mode-major-mode
     :major-modes '(sayid-pprint-mode t)
     :keymaps '(sayid-pprint-mode-map)
@@ -1834,23 +1836,23 @@ set so that it clears the whole REPL buffer, not just the output."
     "ef"         'lisp-eval-defun
     "ee"         'lisp-eval-last-sexp
     "eE"         'lisp-eval-form-and-next
-    
+
     "d"          (which-key-prefix "documentation")
     "dd"         'fennel-show-documentation
     "dv"         'fennel-show-variable-documentation
-    
+
     "df"         (which-key-prefix "find")
     "dff"        'fennel-find-definition
     "dfm"        'fennel-find-module-definition
     "dfp"        'fennel-find-definition-pop
-    
+
     "h"          (which-key-prefix "help")
     "ha"         'fennel-show-arglist-at-point
     "hA"         'fennel-show-arglist
     "hc"         'fennel-view-compilation
     "m"          'fennel-macroexpand
     "="          'fennel-format
-    
+
     "'"          'fennel-repl
     "r"          'fennel-reload)
 
@@ -2179,13 +2181,13 @@ set so that it clears the whole REPL buffer, not just the output."
     "t"          (which-key-prefix :test)
     "tP"         'dune-promote
     "tp"         'dune-runtest-and-promote)
-  
+
   (local-leader
     :major-modes '(dune-mode t)
     :keymaps     '(dune-mode-map)
     "c"          (which-key-prefix :compile/check)
     "cc"         'compile
-    
+
     "i"          (which-key-prefix :insert-form)
     "ia"         'dune-insert-alias-form
     "ic"         'dune-insert-copyfiles-form
@@ -2200,7 +2202,7 @@ set so that it clears the whole REPL buffer, not just the output."
     "iv"         'dune-insert-env-form
     "ix"         'dune-insert-executables-form
     "iy"         'dune-insert-ocamlyacc-form
-    
+
     "t"          (which-key-prefix :test)
     "tP"         'dune-promote
     "tp"         'dune-runtest-and-promote))
@@ -2322,7 +2324,7 @@ set so that it clears the whole REPL buffer, not just the output."
     ">"          'markdown-indent-region
     "<"          'markdown-outdent-region
     "-"          'markdown-insert-hr
-    
+
     "c"          (which-key-prefix "command")
     "c]"         'markdown-complete-buffer
     "cc"         'markdown-check-refs
@@ -2333,7 +2335,7 @@ set so that it clears the whole REPL buffer, not just the output."
     "cp"         'markdown-preview
     "cv"         'markdown-export-and-preview
     "cw"         'markdown-kill-ring-save
-    
+
     "h"          (which-key-prefix "header")
     "hi"         'markdown-insert-header-dwim
     "hI"         'markdown-insert-header-setext-dwim
@@ -2345,7 +2347,7 @@ set so that it clears the whole REPL buffer, not just the output."
     "h6"         'markdown-insert-header-atx-6
     "h!"         'markdown-insert-header-setext-1
     "h@"         'markdown-insert-header-setext-2
-    
+
     "i"          (which-key-prefix "insert")
     "if"         'markdown-insert-footnote
     "ii"         'markdown-insert-image
@@ -2354,12 +2356,12 @@ set so that it clears the whole REPL buffer, not just the output."
     "iw"         'markdown-insert-wiki-link
     "iu"         'markdown-insert-uri
     "iT"         'markdown-insert-table
-    
+
     "k"          'markdown-kill-thing-at-point
-    
+
     "l"          (which-key-prefix "lists")
     "li"         'markdown-insert-list-item
-    
+
     "t"          (which-key-prefix "table")
     "ta"         'markdown-table-align
     "tp"         'markdown-table-move-row-up
@@ -2373,14 +2375,14 @@ set so that it clears the whole REPL buffer, not just the output."
     "ts"         'markdown-table-sort-lines
     "td"         'markdown-table-convert-region
     "tt"         'markdown-table-transpose
-    
+
     "T"          (which-key-prefix "toggle")
     "Ti"         'markdown-toggle-inline-images
     "Tl"         'markdown-toggle-url-hiding
     "Tm"         'markdown-toggle-markup-hiding
     "Tt"         'markdown-toggle-gfm-checkbox
     "Tw"         'markdown-toggle-wiki-links
-    
+
     "x"          (which-key-prefix "text")
     "xb"         'markdown-insert-bold
     "xB"         'markdown-insert-gfm-checkbox
@@ -2393,11 +2395,11 @@ set so that it clears the whole REPL buffer, not just the output."
     "xs"         'markdown-insert-strike-through
     "xQ"         'markdown-blockquote-region
     "xP"         'markdown-pre-region
-    
+
     "N"          'markdown-next-link
     "f"          'markdown-follow-thing-at-point
     "P"          'markdown-previous-link
-    
+
     "c"          (which-key-prefix "preview")
     "cP"         'markdown-live-preview-mode)
 
@@ -2628,7 +2630,7 @@ set so that it clears the whole REPL buffer, not just the output."
 	 ("M-s u" . consult-focus-lines)
 
 	 ("M-s e" . consult-isearch-history)
-	 
+
 	 :map isearch-mode-map
 	 ("M-e" . consult-isearch-history)
 	 ("M-s e" . consult-isearch-history)
@@ -3031,7 +3033,7 @@ set so that it clears the whole REPL buffer, not just the output."
     ;; :major-modes   '(git-messenger-mode)
     :keymaps       '(git-messenger-map)
     [escape]       'git-messenger:popup-close)
-  
+
   (define-key git-messenger-map [escape] 'git-messenger:popup-close))
 
 ;; TODO
@@ -3088,7 +3090,7 @@ set so that it clears the whole REPL buffer, not just the output."
     :major-modes '(magit-mode t)
     :keymaps     '(magit-mode-map)
     "%"          'magit-gitflow-popup)
-  
+
   (insert-mode-major-mode
     :major-modes '(magit-mode t)
     :keymaps     '(magit-mode-map)
@@ -3158,6 +3160,14 @@ set so that it clears the whole REPL buffer, not just the output."
   :config
   (setq vc-follow-symlinks t))
 
+;; format-all =======================================
+;; ==================================================
+
+;; (use-package format-all
+;;   :general
+;;   (agnostic-key
+;;     "C-M-=" 'format-all-buffer))
+
 ;; eldoc-mode config ================================
 ;; ==================================================
 
@@ -3170,7 +3180,7 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (use-package newcomment
   :straight nil
-  :config
+  :general
   (agnostic-key "M-;" 'comment-dwim))
 
 ;; save-place configs ===============================
@@ -3441,13 +3451,20 @@ set so that it clears the whole REPL buffer, not just the output."
     (load-modus-vivendi))
 
   ;; make terminal transparent
-  
+
   (when terminal-p
     (defun make-terminal-transparent ()
       (unless (display-graphic-p (selected-frame))
 	(set-face-background 'default "unspecified-bg" (selected-frame))))
     (add-hook 'window-setup-hook 'make-terminal-transparent)
     (make-terminal-transparent)))
+
+(use-package auto-dark
+  :when macOS-p
+  :init
+  (setq auto-dark-light-theme 'modus-operandi
+	auto-dark-dark-theme  'modus-vivendi)
+  (auto-dark-mode t))
 
 ;; hl-todo config ==================================
 ;; =================================================
@@ -3601,6 +3618,13 @@ set so that it clears the whole REPL buffer, not just the output."
 (agnostic-key
   "C-x C-l" 'count-lines-page
   "C-x C-b" 'ibuffer)
+
+(agnostic-key
+  "C-=" 'eglot-format-buffer)
+
+(agnostic-key
+  "s-<wheel-up>" 'text-scale-increase
+  "s-<wheel-down>" 'text-scale-decrease)
 
 ;; s-shortcuts
 (agnostic-key
@@ -3800,7 +3824,7 @@ set so that it clears the whole REPL buffer, not just the output."
   "gC"  'magit-clone
   "gp"  'magit-push
   "gd"  'magit-diff-dwim
-  
+
   "gl"  (which-key-prefix :links)
   "glc" 'git-link-commit
   "glC" 'git-link-commit-copy-url-only
