@@ -1647,10 +1647,9 @@ set so that it clears the whole REPL buffer, not just the output."
   ;; clojure buffer is opened anyway, so there's no "keybinding delay".
   )
 
-
-
 (use-package clojure-mode
   :defer t
+  :hook  (clojure-mode . evil-cleverparens-mode)
   :general
   (local-leader
     :major-modes '(clojure-mode
