@@ -920,11 +920,17 @@
 (use-package yasnippet
   :hook (prog-mode . yas-minor-mode))
 
-;; Ripgrep and ap config ============================
+;; Search Functionalities ===========================
 ;; ==================================================
 
 (use-package ripgrep :defer t)
+(use-package deadgrep :defer t)
+(use-package rg
+  :defer t
+  :init
+  (rg-enable-default-bindings))
 (use-package ag :defer t)
+(use-package wgrep :defer t)
 
 ;; CodeQL config ====================================
 ;; ==================================================
@@ -2263,12 +2269,6 @@ set so that it clears the whole REPL buffer, not just the output."
 	    (lambda () (setq indent-tabs-mode nil)))
   (define-key rust-mode-map (kbd "C-c C-c") 'rust-run))
 
-;; (use-package flycheck-rust
-;;   :after (rust-mode)
-;;   :config
-;;   (with-eval-after-load 'rust-mode
-;;     (add-hook 'flycheck-mode-hook #'flycheck-rust-setup)))
-
 ;; VimScript config =================================
 ;; ==================================================
 
@@ -2506,10 +2506,8 @@ set so that it clears the whole REPL buffer, not just the output."
 (use-package exec-path-from-shell
   :if (or macOS-p chromeOS-p)
   :config
-  (setq exec-path-from-shell-variables
-	(if chromeOS-p
-	    '("PATH" "JAVA_HOME" "BROWSER" "OPAMCLI")
-	  '("JAVA_HOME" "BROWSER" "OPAMCLI" "WORK_MACHINE"))
+  (setq exec-path-from-shell-variables '("PATH" "JAVA_HOME" "BROWSER"
+					 "OPAMCLI" "WORK_MACHINE")
 	exec-path-from-shell-arguments '("-l"))
   (exec-path-from-shell-initialize))
 
@@ -3164,10 +3162,10 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; format-all =======================================
 ;; ==================================================
 
-;; (use-package format-all
-;;   :general
-;;   (agnostic-key
-;;     "C-M-=" 'format-all-buffer))
+(use-package format-all
+  :general
+  (agnostic-key
+    "C-M-=" 'format-all-buffer))
 
 ;; eldoc-mode config ================================
 ;; ==================================================
@@ -3248,14 +3246,6 @@ set so that it clears the whole REPL buffer, not just the output."
   :straight nil
   :config
   (setq uniquify-buffer-name-style 'forward))
-
-;; Flycheck configs =================================
-;; ==================================================
-
-(use-package flycheck
-  :config
-  (global-flycheck-mode)
-  (setq flycheck-checker-error-threshold 1000))
 
 ;; Helpful ==========================================
 ;; ==================================================
@@ -3602,18 +3592,6 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; Mode-agnostic keybindings ==========================
 ;; ====================================================
 
-(defun contextual-previous-error ()
-  (interactive)
-  (if (member 'eglot--managed-mode (manage-minor-mode--active-list))
-      (flymake-goto-prev-error)
-    (flycheck-previous-error)))
-
-(defun contextual-next-error ()
-  (interactive)
-  (if (member 'eglot--managed-mode (manage-minor-mode--active-list))
-      (flymake-goto-next-error)
-    (flycheck-next-error)))
-
 ;; emacs key remappings
 (agnostic-key
   "C-x C-l" 'count-lines-page
@@ -3668,8 +3646,8 @@ set so that it clears the whole REPL buffer, not just the output."
   "s-i"   'comment-dwim
   "s-a"   'org-agenda
   "s-y"   'mu4e-update-mail-and-index
-  "s-/"   'contextual-next-error
-  "s-\\"  'contextual-previous-error
+  "s-/"   'flymake-goto-next-error
+  "s-\\"  'flymake-goto-prev-error
   "s-?"   'yas-next-field
   "s->"   'yas-prev-field)
 
@@ -3708,8 +3686,8 @@ set so that it clears the whole REPL buffer, not just the output."
   "C-s-i" 'imenu-list
   "C-s-x" 'xwidget-new-window
   "C-s-y" 'youtube-viewer-start
-  "C-s-;" 'contextual-previous-error
-  "C-s-'" 'contextual-next-error
+  "C-s-;" 'flymake-goto-prev-error
+  "C-s-'" 'flymake-goto-next-error
   "C-s-." 'hl-todo-occur
   "C-s-p" 'previous-buffer
   "C-s-n" 'next-buffer)
@@ -3799,8 +3777,8 @@ set so that it clears the whole REPL buffer, not just the output."
   ","  'tab-close
   "["  'tab-previous
   "]"  'tab-next
-  "/"  'flycheck-next-error
-  "\\" 'flycheck-previous-error)
+  "/"  'flymake-goto-next-error
+  "\\" 'flymake-goto-prev-error)
 
 (global-leader
   "g"   (which-key-prefix :git)
@@ -4387,7 +4365,7 @@ set so that it clears the whole REPL buffer, not just the output."
  '(custom-safe-themes
    '("a8950f7287870cd993d7e56991a45e1414a09d97e4fbf08f48973a1381bc7aaf" "92d350334df87fe61a682518ff214c773625c6d5ace8060d128adc550bc60c9b" default))
  '(package-selected-packages
-   '(no-littering multi-vterm minions xwidget lispy git-gutter clipetty zones yasnippet-classic-snippets treemacs-evil which-key evil-commentary anzu json-mode evil-surround tuareg flycheck tagedit cider))
+   '(no-littering multi-vterm minions xwidget lispy git-gutter clipetty zones yasnippet-classic-snippets treemacs-evil which-key evil-commentary anzu json-mode evil-surround tuareg tagedit cider))
  '(recentf-auto-cleanup 'never t))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
