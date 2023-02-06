@@ -2509,6 +2509,14 @@ set so that it clears the whole REPL buffer, not just the output."
   :config
   (setq pandoc-data-dir (concat user-emacs-directory "pandoc/")))
 
+;; Spell-Check ======================================
+;; ==================================================
+
+(use-package ispell
+  :straight nil
+  :config
+  (setq ispell-program-name "aspell"))
+
 ;; CSharp config ====================================
 ;; ==================================================
 
