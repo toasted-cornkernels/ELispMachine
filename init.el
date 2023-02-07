@@ -380,8 +380,8 @@
     "d"          (which-key-prefix :dates)
     "dd"         'org-deadline
     "ds"         'org-schedule
-    "dt"         'org-time-stamp
-    "dT"         'org-time-stamp-inactive
+    "dt"         'org-time-stamp-inactive
+    "dT"         'org-time-stamp
 
     "e"          (which-key-prefix :export)
     "ee"         'org-export-dispatch
@@ -2294,8 +2294,7 @@ set so that it clears the whole REPL buffer, not just the output."
    ("\\.mdx\\'" . markdown-mode))
 
   :hook
-  ((markdown-mode . markdown-toggle-markup-hiding)
-   (markdown-mode . valign-mode))
+  ((markdown-mode . valign-mode))
 
   :config
   (setq markdown-fontify-code-blocks-natively t)
