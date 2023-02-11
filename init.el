@@ -3697,6 +3697,7 @@ set so that it clears the whole REPL buffer, not just the output."
 (agnostic-key
   "C-s-o" 'insert-pipe
   "C-s-a" 'insert-ampersand
+  "C-s-c" 'world-clock
   "C-s-e" 'eshell
   "C-s-t" 'modus-themes-toggle-
   "C-s-r" 'eradio-toggle
@@ -4174,6 +4175,152 @@ set so that it clears the whole REPL buffer, not just the output."
 					      (string-match ".*youtu.be.*" url))
 					  (xwidget-webkit-browse-url url session)
 					(eww-browse-url url)))))
+
+;; PDF tools ========================================
+;; ==================================================
+
+(use-package pdf-tools
+  :defer t
+  :mode (("\\.pdf\\'" . pdf-view-mode))
+  :general
+  (local-leader
+    :major-modes '(pdf-view-mode t)
+    :keymaps     '(pdf-view-mode-map)
+    "a"  (which-key-prefix :annotations)
+    "aD" 'pdf-annot-delete
+    "at" 'pdf-annot-attachment-dired
+    "ah" 'pdf-annot-add-highlight-markup-annotation
+    "al" 'pdf-annot-list-annotations
+    "am" 'pdf-annot-add-markup-annotation
+    "ao" 'pdf-annot-add-strikeout-markup-annotation
+    "as" 'pdf-annot-add-squiggly-markup-annotation
+    "at" 'pdf-annot-add-text-annotation
+    "au" 'pdf-annot-add-underline-markup-annotation
+
+    "f"  (which-key-prefix :fit)
+    "fw" 'pdf-view-fit-width-to-window
+    "fh" 'pdf-view-fit-height-to-window
+    "fp" 'pdf-view-fit-page-to-window
+
+    "s"  (which-key-prefix :slice/search)
+    "sm" 'pdf-view-set-slice-using-mouse
+    "sb" 'pdf-view-set-slice-from-bounding-box
+    "sr" 'pdf-view-reset-slice
+    "ss" 'pdf-occur
+
+    "p"  'pdf-misc-print-document
+    "O"  'pdf-outline
+    "n"  'pdf-view-midnight-minor-mode)
+
+  (normal-mode-major-mode
+    :major-modes '(pdf-view-mode t)
+    :keymaps     '(pdf-view-mode-map)
+    "0"   'image-bol
+    "$"   'image-eol
+
+    "="   'pdf-view-enlarge
+    "+"   'pdf-view-enlarge
+    "-"   'pdf-view-shrink
+    
+    "j"   'pdf-view-next-line-or-next-page
+    "k"   'pdf-view-previous-line-or-previous-page
+    "l"   'image-forward-hscroll
+    "h"   'image-backward-hscroll
+    "J"   'pdf-view-next-page
+    "K"   'pdf-view-previous-page
+    "gg"  'pdf-view-first-page
+    "G"   'pdf-view-last-page
+    "gt"  'pdf-view-goto-page
+    "gl"  'pdf-view-goto-label
+    "u"   'pdf-view-scroll-down-or-previous-page
+    "d"   'pdf-view-scroll-up-or-next-page
+    "C-u" 'pdf-view-scroll-down-or-previous-page
+    "C-d" 'pdf-view-scroll-up-or-next-page
+    "``"  'pdf-history-backward
+    "["   'pdf-history-backward
+    "]"   'pdf-history-forward
+    "'"   'pdf-view-jump-to-register
+
+    "/"   'isearch-forward
+    "?"   'isearch-backward
+
+    "r"   'pdf-view-revert-buffer
+    "o"   'pdf-links-action-perform
+    "O"   'pdf-outline
+    "zr"  'pdf-view-scale-reset
+
+
+    "<"   'beginning-of-buffer
+          
+    "H"   'pdf-view-fit-height-to-window
+    "P"   'pdf-view-fit-page-to-window
+    "W"   'pdf-view-fit-width-to-window
+    "R"   'pdf-view-rotate
+    "b"   'image-previous-frame
+    "f"   'image-next-frame)
+
+  (normal-mode-major-mode
+    :major-modes '(pdf-outline-buffer-mode t)
+    :keymaps     '(pdf-outline-buffer-mode-map)
+    "-"               'negative-argument
+    "j"               'next-line
+    "k"               'previous-line
+    "gk"              'outline-backward-same-level
+    "gj"              'outline-forward-same-level
+    (kbd "<backtab>") (if (version< emacs-version "28.0")
+			  'outline-show-all
+			'outline-cycle-buffer)
+    "gh"              'pdf-outline-up-heading
+    "gg"              'beginning-of-buffer
+    "G"               'pdf-outline-end-of-buffer
+    (kbd "<tab>")     'outline-toggle-children
+    "RET"             'pdf-outline-follow-link
+    (kbd "M-RET")     'pdf-outline-follow-link-and-quit
+    "f"               'pdf-outline-display-link
+    [mouse-1]         'pdf-outline-mouse-display-link
+    "o"               'pdf-outline-select-pdf-window
+    "``"              'pdf-outline-move-to-current-page
+    "''"              'pdf-outline-move-to-current-page
+    "Q"               'pdf-outline-quit-and-kill
+    "q"               'quit-window
+    "F"               'pdf-outline-follow-mode)
+  
+  (normal-mode-major-mode
+    :major-modes '(pdf-annot-list-mode t)
+    :keymaps     '(pdf-annot-list-mode-map)
+    "f" 'pdf-annot-list-display-annotation-from-id
+    "d" 'tablist-flag-forward
+    "x" 'tablist-do-flagged-delete
+    "u" 'tablist-unmark-forward
+    "q" 'tablist-quit)
+  
+  (normal-mode-major-mode
+    :major-modes '(pdf-occur-buffer-mode t)
+    :keymaps     '(pdf-occur-buffer-mode-map)
+    "q" 'tablist-quit
+    "g" 'pdf-occur-revert-buffer-with-args
+    "r" 'pdf-occur-revert-buffer-with-args
+    "*" 'spacemacs/enter-ahs-forward
+    "?" 'evil-search-backward)
+  
+  (local-leader
+    :major-modes '(pdf-occur-buffer-mode t)
+    :keymaps     '(pdf-occur-buffer-mode-map)
+    "t"  (which-key-prefix :toggles)
+    "tf" 'next-error-follow-minor-mode)
+
+  :config
+  (evil-define-key 'visual pdf-view-mode-map
+    "y" 'pdf-view-kill-ring-save
+    (kbd "<C-down-mouse-1>") 'pdf-view-mouse-extend-region
+    (kbd "<M-down-mouse-1>") 'pdf-view-mouse-set-region-rectangle
+    (kbd "<down-mouse-1>")  'pdf-view-mouse-set-region))
+
+(use-package pdf-view-restore
+  :after pdf-tools
+  :defer t
+  :init
+  (add-hook 'pdf-view-mode-hook 'pdf-view-restore-mode))
 
 ;; reddigg config ===================================
 ;; ==================================================
