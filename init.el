@@ -2123,6 +2123,7 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (use-package hlint-refactor
   :defer t)
+
 ;; Nix config =======================================
 ;; ==================================================
 
@@ -2144,65 +2145,110 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; OCaml config =====================================
 ;; ==================================================
 
-;; TODO
-(use-package tuareg
-  ;; :bind (:map tuareg-mode-map
-  ;; 	      ([backspace] . nil))
-  :mode (("\\.ml[ily]?$" . tuareg-mode)
-	 ("\\.topml$" . tuareg-mode))
-  :defer t
-  :init
-  :general
-  (local-leader
-    :major-modes '(tuareg-mode t)
-    :keymaps     '(tuareg-mode-map)
-    "ga"         'tuareg-find-alternate-file
-    "cc"         'compile
-    "t"          (which-key-prefix :test)
-    "tP"         'dune-promote
-    "tp"         'dune-runtest-and-promote)
-  (dolist (ext '(".cmo" ".cmx" ".cma" ".cmxa" ".cmi" ".cmxs" ".cmt" ".cmti" ".annot"))
-    (add-to-list 'completion-ignored-extensions ext)))
-
 (use-package dune
   :defer t
   :general
   (local-leader
-    :major-modes '(tuareg-mode t)
-    :keymaps     '(tuareg-mode-map)
-    "t"          (which-key-prefix :test)
-    "tP"         'dune-promote
-    "tp"         'dune-runtest-and-promote)
-
-  (local-leader
     :major-modes '(dune-mode t)
     :keymaps     '(dune-mode-map)
-    "c"          (which-key-prefix :compile/check)
-    "cc"         'compile
+    "c"  (which-key-prefix :compile/check)
+    "cc" 'compile
 
-    "i"          (which-key-prefix :insert-form)
-    "ia"         'dune-insert-alias-form
-    "ic"         'dune-insert-copyfiles-form
-    "id"         'dune-insert-ignored-subdirs-form
-    "ie"         'dune-insert-executable-form
-    "ii"         'dune-insert-install-form
-    "il"         'dune-insert-library-form
-    "im"         'dune-insert-menhir-form
-    "ip"         'dune-insert-ocamllex-form
-    "ir"         'dune-insert-rule-form
-    "it"         'dune-insert-tests-form
-    "iv"         'dune-insert-env-form
-    "ix"         'dune-insert-executables-form
-    "iy"         'dune-insert-ocamlyacc-form
+    "i"  (which-key-prefix :insert-form)
+    "ia" 'dune-insert-alias-form
+    "ic" 'dune-insert-copyfiles-form
+    "id" 'dune-insert-ignored-subdirs-form
+    "ie" 'dune-insert-executable-form
+    "ii" 'dune-insert-install-form
+    "il" 'dune-insert-library-form
+    "im" 'dune-insert-menhir-form
+    "ip" 'dune-insert-ocamllex-form
+    "ir" 'dune-insert-rule-form
+    "it" 'dune-insert-tests-form
+    "iv" 'dune-insert-env-form
+    "ix" 'dune-insert-executables-form
+    "iy" 'dune-insert-ocamlyacc-form
 
-    "t"          (which-key-prefix :test)
-    "tP"         'dune-promote
-    "tp"         'dune-runtest-and-promote))
+    "t"  (which-key-prefix :test)
+    "tP" 'dune-promote
+    "tp" 'dune-runtest-and-promote))
+
+(use-package merlin
+  :defer t)
+
+(use-package merlin-iedit
+  :defer t)
+
+(use-package merlin-eldoc
+  :defer t
+  :hook (merlin-mode . merlin-eldoc-setup))
+
+(use-package ocamlformat
+  :defer t
+  :init
+  (add-hook 'before-save-hook 'ocamlformat-before-save))
+
+(use-package tuareg
+  :mode (("\\.ml[ily]?$" . tuareg-mode)
+	 ("\\.topml$" . tuareg-mode))
+  :defer t
+  :init
+  (defun merlin-locate-other-window ()
+    (interactive)
+    (let ((merlin-locate-in-new-window 'always))
+      (merlin-locate)))
+
+  :general
+  (local-leader
+    :major-modes '(tuareg-mode t)
+    :keymaps     '(tuareg-mode-map)
+    "'"  'utop
+    "E"  (which-key-prefix :errors)
+    "Ec" 'merlin-error-check
+    "En" 'merlin-error-next
+    "EN" 'merlin-error-prev
+  
+    "g"  (which-key-prefix :goto)
+    "ga" 'tuareg-find-alternate-file
+    "gb" 'merlin-pop-stack
+    "gG" 'merlin-locate-other-window
+    "gl" 'merlin-locate-ident
+    "gi" 'merlin-switch-to-ml
+    "gI" 'merlin-switch-to-mli
+    "go" 'merlin-occurrences
+    
+    "h"  (which-key-prefix :help)
+    "hh" 'merlin-document
+    "ht" 'merlin-type-enclosing
+    "hT" 'merlin-type-expr
+
+    "r"  (which-key-prefix :refactor)
+    "rd" 'merlin-destruct
+    "re" 'merlin-iedit-occurrences
+
+    "c"  (which-key-prefix :compile/check)
+    "cc" 'compile
+    
+    "t"  (which-key-prefix :test)
+    "tP" 'dune-promote
+    "tp" 'dune-runtest-and-promote
+
+    "s"  (which-key-prefix :utop-send)
+    "sb" 'utop-eval-buffer
+    "sB" 'utop-eval-buffer-and-go
+    "si" 'utop
+    "sp" 'utop-eval-phrase
+    "sP" 'utop-eval-phrase-and-go
+    "sr" 'utop-eval-region
+    "sR" 'utop-eval-region-and-go
+
+    "e"  (which-key-prefix :eval)
+    "eb" 'tuareg-eval-buffer
+    "ep" 'tuareg-eval-phrase
+    "er" 'tuareg-eval-region))
 
 (use-package utop
   :defer t
-  :init
-  (add-hook 'tuareg-mode-hook 'utop-minor-mode)
   :config
   (when (executable-find "opam")
     (setq utop-command "opam config exec -- utop -emacs"))
@@ -2231,18 +2277,12 @@ set so that it clears the whole REPL buffer, not just the output."
     (utop)
     (evil-insert-state))
 
-  (set-leader-keys-for-major-mode 'tuareg-mode
-				  "'"  'utop
-				  "sb" 'utop-eval-buffer
-				  "sB" 'utop-eval-buffer-and-go
-				  "si" 'utop
-				  "sp" 'utop-eval-phrase
-				  "sP" 'utop-eval-phrase-and-go
-				  "sr" 'utop-eval-region
-				  "sR" 'utop-eval-region-and-go)
-  (declare-prefix-for-mode 'tuareg-mode "ms" "send")
-  (define-key utop-mode-map (kbd "C-j") 'utop-history-goto-next)
-  (define-key utop-mode-map (kbd "C-k") 'utop-history-goto-prev))
+  :general
+  (agnostic-key
+    :major-modes (utop-mode t)
+    :keymaps (utop-mode-map)
+    "C-j" 'utop-history-goto-next
+    "C-k" 'utop-history-goto-prev))
 
 ;; Rust config ======================================
 ;; ==================================================
