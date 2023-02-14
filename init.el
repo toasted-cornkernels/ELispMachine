@@ -2848,7 +2848,7 @@ set so that it clears the whole REPL buffer, not just the output."
 
   (add-hook 'xwidget-webkit-mode-hook (lambda () (local-unset-key (kbd "<backspace>")))))
 
-(use-package xwwp :after xwidget)
+(use-package xwwp :defer t)
 
 ;; json config =====================================
 ;; =================================================
@@ -3993,6 +3993,7 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; ==================================================
 
 (use-package ace-link
+  :after (eww w3m)
   :init
   (define-key Info-mode-map   "o" 'ace-link-info)
   (define-key help-mode-map   "o" 'ace-link-help)
