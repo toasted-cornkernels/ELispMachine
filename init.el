@@ -301,6 +301,29 @@
 (use-package emojify
   :hook (after-init . global-emojify-mode))
 
+;; Align ============================================
+;; ==================================================
+
+(use-package align
+  :straight nil
+  :defer t
+  (add-to-list 'align-rules-list
+               '(haskell-types
+		 (regexp . "\\(\\s-+\\)\\(::\\|∷\\)\\s-+")
+		 (modes . haskell-modes)))
+  (add-to-list 'align-rules-list
+               '(haskell-assignment
+                 (regexp . "\\(\\s-+\\)=\\s-+")
+                 (modes . haskell-modes)))
+  (add-to-list 'align-rules-list
+               '(haskell-arrows
+                 (regexp . "\\(\\s-+\\)\\(->\\|→\\)\\s-+")
+                 (modes . haskell-modes)))
+  (add-to-list 'align-rules-list
+               '(haskell-left-arrows
+                 (regexp . "\\(\\s-+\\)\\(<-\\|←\\)\\s-+")
+                 (modes . haskell-modes))))
+
 ;; Mixed-Pitch ======================================
 ;; ==================================================
 
@@ -1956,185 +1979,150 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; Haskell config ===================================
 ;; ==================================================
 
-(use-package haskell-mode
-  :mode "\\.(hs|lhs|cabal)"
-  :init
-  ;; Haskell cabal files interact badly with electric-indent-mode
-  (add-hook 'haskell-cabal-mode-hook (lambda ()
-				       (when (fboundp 'electric-indent-local-mode)
-					 (electric-indent-local-mode -1))))
+(use-package cmm-mode
+  :defer t)
 
-  (setq
-   ;; Use notify.el (if you have it installed) at the end of running
-   ;; Cabal commands or generally things worth notifying.
-   haskell-notify-p t
-   ;; Remove annoying error popups
-   haskell-interactive-popup-errors nil
-   ;; Better import handling
-   haskell-process-suggest-remove-import-lines t
-   haskell-process-auto-import-loaded-modules t)
+(use-package dante
+  :defer t
+  :init
+  (defun dante-insert-type ()
+    (interactive)
+    (dante-type-at :insert))
+  
+  :general
+  (local-leader
+    :major-modes (haskell-mode haskell-literate-mode t)
+    :keymaps (haskell-mode-map haskell-literate-mode-map)
+    "gb" 'xref-pop-marker-stack
+    "ht" 'dante-type-at
+    "hT" 'dante-insert-type
+    "hi" 'dante-info
+    "rs" 'dante-auto-fix
+    "se" 'dante-eval-block
+    "sr" 'dante-restart))
+
+(use-package haskell-mode
+  :mode "\\.(hs|lhs|cabal)\\'"
+  :defer t
+  :init
+  (setq haskell-notify-p t
+	haskell-interactive-popup-errors nil
+	haskell-process-suggest-remove-import-lines t
+	haskell-process-auto-import-loaded-modules t
+	haskell-stylish-on-save nil)
+
   :config
   (defun haskell-interactive-bring ()
     "Bring up the interactive mode for this session without
-	 switching to it."
+         switching to it."
     (interactive)
     (let* ((session (haskell-session))
-	   (buffer (haskell-session-interactive-buffer session)))
+           (buffer (haskell-session-interactive-buffer session)))
       (display-buffer buffer)))
-
-  ;; hooks
-  (add-hook 'haskell-mode-hook #'spacemacs-haskell//disable-electric-indent)
-
-  ;; prefixes
-  (dolist (mode haskell-modes)
-    (declare-prefix-for-mode mode "mg" "haskell/navigation")
-    (declare-prefix-for-mode mode "ms" "haskell/repl")
-    (declare-prefix-for-mode mode "mc" "haskell/cabal")
-    (declare-prefix-for-mode mode "mh" "haskell/documentation")
-    (declare-prefix-for-mode mode "md" "haskell/debug")
-    (declare-prefix-for-mode mode "mr" "haskell/refactor"))
-  (declare-prefix-for-mode 'haskell-interactive-mode "ms" "haskell/repl")
-  (declare-prefix-for-mode 'haskell-cabal-mode "ms" "haskell/repl")
-
-  ;; key bindings
+  
   (defun haskell-process-do-type-on-prev-line ()
     (interactive)
     (haskell-process-do-type 1))
+  
+  (defun haskell-format-imports ()
+    "Sort and align import statements from anywhere in the source file."
+    (interactive)
+    (save-excursion
+      (haskell-navigate-imports)
+      (haskell-mode-format-imports)))
 
-  ;; repl key bindings
-  (evil-define-key 'insert haskell-interactive-mode-map
-    (kbd "C-j") 'haskell-interactive-mode-history-next
-    (kbd "C-k") 'haskell-interactive-mode-history-previous
-    (kbd "C-l") 'haskell-interactive-mode-clear)
+  :general
+  (local-leader
+    :major-modes (haskell-mode haskell-literate-mode t)
+    :keymaps (haskell-mode-map haskell-literate-mode-map)
+    "'"  'haskell-interactive-switch
+    "S"  'haskell-mode-stylish-buffer
+    "f"  'hindent-reformat-decl-or-fill
+    "F"  'haskell-mode-stylish-buffer
 
-  ;; Bind repl
-  (register-repl 'haskell
-		 'haskell-interactive-switch "haskell")
+    "c"  (which-key-prefix :haskell/cabal)
+    "ca" 'haskell-process-cabal
+    "cb" 'haskell-process-cabal-build
+    "cc" 'haskell-compile
+    "cv" 'haskell-cabal-visit-file
 
-  (dolist (mode haskell-modes)
-    (set-leader-keys-for-major-mode mode
-				    "sb"  'haskell-process-load-file
-				    "sc"  'haskell-interactive-mode-clear
-				    "sS"  'haskell-interactive-bring
-				    "ss"  'haskell-interactive-switch
-				    "st"  'haskell-session-change-target
-				    "'"   'haskell-interactive-switch
+    "g"  (which-key-prefix :haskell/navigation)
+    "gl" 'haskell-navigate-imports
+    "gi" 'haskell-navigate-imports
 
-				    "ca"  'haskell-process-cabal
-				    "cb"  'haskell-process-cabal-build
-				    "cc"  'haskell-compile
-				    "cv"  'haskell-cabal-visit-file
+    "s"  (which-key-prefix :haskell/repl)
+    "sb" 'haskell-process-load-file
+    "sc" 'haskell-interactive-mode-clear
+    "sS" 'haskell-interactive-bring
+    "ss" 'haskell-interactive-switch
+    "st" 'haskell-session-change-target
 
-				    "hd"  'inferior-haskell-find-haddock
-				    "hi"  'haskell-process-do-info
-				    "ht"  'haskell-process-do-type
-				    "hT"  'haskell-process-do-type-on-prev-line
+    "h"  (which-key-prefix :haskell/documentation)
+    "hh" 'hoogle
+    "hg" 'hoogle
+    "hG" 'haskell-hoogle-lookup-from-local
+    "hd" 'inferior-haskell-find-haddock
+    "hi" 'haskell-process-do-info
+    "ht" 'haskell-process-do-type
+    "hT" 'haskell-process-do-type-on-prev-line
 
-				    "da"  'haskell-debug/abandon
-				    "db"  'haskell-debug/break-on-function
-				    "dB"  'haskell-debug/delete
-				    "dc"  'haskell-debug/continue
-				    "dd"  'haskell-debug
-				    "dn"  'haskell-debug/next
-				    "dN"  'haskell-debug/previous
-				    "dp"  'haskell-debug/previous
-				    "dr"  'haskell-debug/refresh
-				    "ds"  'haskell-debug/step
-				    "dt"  'haskell-debug/trace
+    "r"  (which-key-prefix :haskell/refactor)
+    "ri" 'haskell-format-imports
+    "rb" 'hlint-refactor-refactor-buffer
+    "rr" 'hlint-refactor-refactor-at-point)
 
-				    "ri"  'haskell-format-imports)
-    (if (eq haskell-completion-backend 'lsp)
-	(set-leader-keys-for-major-mode mode
-					"gl"  'haskell-navigate-imports
-					"S"   'haskell-mode-stylish-buffer
+  (local-leader
+    :major-modes (haskell-interactive-mode t)
+    :keymaps (haskell-interactive-mode-map)
+    "s"  (which-key-prefix :haskell/repl)
+    "ss" 'haskell-interactive-switch-back)
 
-					"hg"  'hoogle
-					"hG"  'haskell-hoogle-lookup-from-local)
-      (set-leader-keys-for-major-mode mode
-				      "gi"  'haskell-navigate-imports
-				      "F"   'haskell-mode-stylish-buffer
+  (local-leader
+    :major-modes (haskell-cabal-mode t)
+    :keymaps (haskell-cabal-mode-map)
+    "C"  'haskell-compile
+    "d"  'haskell-cabal-add-dependency
+    "b"  'haskell-cabal-goto-benchmark-section
+    "e"  'haskell-cabal-goto-executable-section
+    "t"  'haskell-cabal-goto-test-suite-section
+    "m"  'haskell-cabal-goto-exposed-modules
+    "l"  'haskell-cabal-goto-library-section
+    "n"  'haskell-cabal-next-subsection
+    "p"  'haskell-cabal-previous-subsection
+    "N"  'haskell-cabal-next-section
+    "P"  'haskell-cabal-previous-section
+    "f"  'haskell-cabal-find-or-create-source-file
 
-				      "hh"  'hoogle
-				      "hG"  'haskell-hoogle-lookup-from-local)))
+    "s"  (which-key-prefix :haskell/repl)
+    "sc" 'haskell-interactive-mode-clear
+    "sS" 'haskell-interactive-bring
+    "ss" 'haskell-interactive-switch)
 
-  (evilified-state-evilify-map haskell-debug-mode-map
-			       :mode haskell-debug-mode
-			       :bindings
-			       "RET" 'haskell-debug/select
-			       "a" 'haskell-debug/abandon
-			       "b" 'haskell-debug/break-on-function
-			       "c" 'haskell-debug/continue
-			       "d" 'haskell-debug/delete
-			       "i" 'haskell-debug/step
-			       "s" 'haskell-debug/next
-			       "S" 'haskell-debug/previous
-			       "r" 'haskell-debug/refresh
-			       "t" 'haskell-debug/trace)
+  (insert-mode-major-mode
+    :major-modes (haskell-interactive-mode t)
+    :keymaps (haskell-interactive-mode-map)
+    "C-j" 'haskell-interactive-mode-history-next 
+    "C-k" 'haskell-interactive-mode-history-previous
+    "C-l" 'haskell-interactive-mode-clear
+    "RET" 'haskell-interactive-mode-return)
 
-  ;; configure C-c C-l so it doesn't throw any errors
-  (bind-key "C-c C-l" 'haskell-process-load-file haskell-mode-map)
-  (bind-key "C-c C-z" 'haskell-interactive-switch haskell-mode-map)
+  (normal-mode-major-mode
+    :major-modes (haskell-interactive-mode t)
+    :keymaps (haskell-interactive-mode-map)
+    "RET" 'haskell-interactive-mode-return)
+  
+  (insert-mode-major-mode
+    :major-modes (haskell-mode t)
+    :keymaps (haskell-mode-map)
+    "C-c C-l" 'haskell-process-load-file
+    "C-c C-z" 'haskell-interactive-switch))
 
-  ;; Switch back to editor from REPL
-  (set-leader-keys-for-major-mode 'haskell-interactive-mode
-				  "ss"  'haskell-interactive-switch-back)
-
-  ;; Compile
-  (set-leader-keys-for-major-mode 'haskell-cabal
-				  "C"  'haskell-compile)
-
-  ;; Cabal-file bindings
-  (set-leader-keys-for-major-mode 'haskell-cabal-mode
-				  ;; "="   'haskell-cabal-subsection-arrange-lines ;; Does a bad job, 'gg=G' works better
-				  "d"   'haskell-cabal-add-dependency
-				  "b"   'haskell-cabal-goto-benchmark-section
-				  "e"   'haskell-cabal-goto-executable-section
-				  "t"   'haskell-cabal-goto-test-suite-section
-				  "m"   'haskell-cabal-goto-exposed-modules
-				  "l"   'haskell-cabal-goto-library-section
-				  "n"   'haskell-cabal-next-subsection
-				  "p"   'haskell-cabal-previous-subsection
-				  "sc"  'haskell-interactive-mode-clear
-				  "sS"  'haskell-interactive-bring
-				  "ss"  'haskell-interactive-switch
-				  "N"   'haskell-cabal-next-section
-				  "P"   'haskell-cabal-previous-section
-				  "f"   'haskell-cabal-find-or-create-source-file)
-
-  ;; Make "RET" behaviour in REPL saner
-  (evil-define-key 'insert haskell-interactive-mode-map
-    (kbd "RET") 'haskell-interactive-mode-return)
-  (evil-define-key 'normal haskell-interactive-mode-map
-    (kbd "RET") 'haskell-interactive-mode-return)
-
-  ;; align rules for Haskell
-  (with-eval-after-load 'align
-    (add-to-list 'align-rules-list
-		 '(haskell-types
-		   (regexp . "\\(\\s-+\\)\\(::\\|∷\\)\\s-+")
-		   (modes . haskell-modes)))
-    (add-to-list 'align-rules-list
-		 '(haskell-assignment
-		   (regexp . "\\(\\s-+\\)=\\s-+")
-		   (modes . haskell-modes)))
-    (add-to-list 'align-rules-list
-		 '(haskell-arrows
-		   (regexp . "\\(\\s-+\\)\\(->\\|→\\)\\s-+")
-		   (modes . haskell-modes)))
-    (add-to-list 'align-rules-list
-		 '(haskell-left-arrows
-		   (regexp . "\\(\\s-+\\)\\(<-\\|←\\)\\s-+")
-		   (modes . haskell-modes)))))
-
-(use-package cmm-mode
+(use-package hindent
   :defer t
-  :config
-  'TODO)
+  :hook (haskell-mode . hindent-mode))
 
-(use-package haskell-snippets
-  :when (and (eq major-mode 'haskell-mode)
-	     (minor-mode-activated-p 'yas-minor-mode)))
-
+(use-package hlint-refactor
+  :defer t)
 ;; Nix config =======================================
 ;; ==================================================
 
@@ -2156,6 +2144,7 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; OCaml config =====================================
 ;; ==================================================
 
+;; TODO
 (use-package tuareg
   ;; :bind (:map tuareg-mode-map
   ;; 	      ([backspace] . nil))
