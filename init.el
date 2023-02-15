@@ -846,7 +846,7 @@
   (setq insert-directory-program gls))
 
 (use-package launchctl
-  :if macOS-p
+  :when macOS-p
   :defer t
   :init
   (add-to-list 'auto-mode-alist '("\\.plist\\'" . nxml-mode))
@@ -876,7 +876,7 @@
     "h" 'launchctl-help))
 
 (use-package osx-dictionary
-  :if macOS-p
+  :when macOS-p
   :commands
   (osx-dictionary-search-pointer
    osx-dictionary-search-input
@@ -891,11 +891,11 @@
     "o" 'osx-dictionary-open-dictionary.app))
 
 (use-package osx-trash
-  :if   (and macOS-p (not (boundp 'mac-system-move-file-to-trash-use-finder)))
+  :when (and macOS-p (not (boundp 'mac-system-move-file-to-trash-use-finder)))
   :init (osx-trash-setup))
 
 (use-package osx-clipboard
-  :if macOS-p
+  :when macOS-p
   :commands
   (osx-clipboard-paste-function osx-clipboard-cut-function)
   :init
@@ -909,7 +909,7 @@
 					(osx-clipboard-paste-function)))))
 
 (use-package reveal-in-osx-finder
-  :if macOS-p
+  :when macOS-p
   :commands reveal-in-osx-finder)
 
 (agnostic-key
@@ -1908,35 +1908,41 @@ set so that it clears the whole REPL buffer, not just the output."
     :keymaps     '(racket-mode-map
 		   racket-repl-mode-map
 		   racket-xp-mode-map)
-    "E"          (which-key-prefix "error")
-    "En"         'racket-xp-next-error
-    "EN"         'racket-xp-previous-error
-    "g"          (which-key-prefix "goto")
-    "g`"         'racket-unvisit
-    "gg"         'racket-xp-visit-definition
-    "gn"         'racket-xp-next-definition
-    "gN"         'racket-xp-previous-definition
-    "gm"         'racket-visit-module
-    "gr"         'racket-open-require-path
-    "gu"         'racket-xp-next-use
-    "gU"         'racket-xp-previous-use
-    "h"          (which-key-prefix "help")
-    "ha"         'racket-xp-annotate
-    "hd"         'racket-xp-describe
-    "hh"         'racket-xp-documentation
-    "i"          (which-key-prefix "insert")
-    "il"         'racket-insert-lambda
-    "m"          (which-key-prefix "refactor")
-    "mr"         'racket-xp-rename
-    "e"          (which-key-prefix "eval")
-    "'"          'racket-repl
-    "eb"         'racket-run
-    "ee"         'racket-send-last-sexp
-    "ef"         'racket-send-definition
-    "ei"         'racket-repl
-    "er"         'racket-send-region
-    "t"          (which-key-prefix "test")
-    "tb"         'racket-test))
+    "E"  (which-key-prefix :error)
+    "En" 'racket-xp-next-error
+    "EN" 'racket-xp-previous-error
+
+    "g"  (which-key-prefix :goto)
+    "g`" 'racket-unvisit
+    "gg" 'racket-xp-visit-definition
+    "gn" 'racket-xp-next-definition
+    "gN" 'racket-xp-previous-definition
+    "gm" 'racket-visit-module
+    "gr" 'racket-open-require-path
+    "gu" 'racket-xp-next-use
+    "gU" 'racket-xp-previous-use
+
+    "h"  (which-key-prefix :help)
+    "ha" 'racket-xp-annotate
+    "hd" 'racket-xp-describe
+    "hh" 'racket-xp-documentation
+
+    "i"  (which-key-prefix :insert)
+    "il" 'racket-insert-lambda
+
+    "m"  (which-key-prefix :refactor)
+    "mr" 'racket-xp-rename
+
+    "e"  (which-key-prefix :eval)
+    "'"  'racket-repl
+    "eb" 'racket-run
+    "ee" 'racket-send-last-sexp
+    "ef" 'racket-send-definition
+    "ei" 'racket-repl
+    "er" 'racket-send-region
+
+    "t"  (which-key-prefix :test)
+    "tb" 'racket-test))
 
 ;; Scheme config ====================================
 ;; ==================================================
@@ -2040,24 +2046,24 @@ set so that it clears the whole REPL buffer, not just the output."
     "f"  'hindent-reformat-decl-or-fill
     "F"  'haskell-mode-stylish-buffer
 
-    "c"  (which-key-prefix :haskell/cabal)
+    "c"  (which-key-prefix :cabal)
     "ca" 'haskell-process-cabal
     "cb" 'haskell-process-cabal-build
     "cc" 'haskell-compile
     "cv" 'haskell-cabal-visit-file
 
-    "g"  (which-key-prefix :haskell/navigation)
+    "g"  (which-key-prefix :navigation)
     "gl" 'haskell-navigate-imports
     "gi" 'haskell-navigate-imports
 
-    "s"  (which-key-prefix :haskell/repl)
+    "s"  (which-key-prefix :repl)
     "sb" 'haskell-process-load-file
     "sc" 'haskell-interactive-mode-clear
     "sS" 'haskell-interactive-bring
     "ss" 'haskell-interactive-switch
     "st" 'haskell-session-change-target
 
-    "h"  (which-key-prefix :haskell/documentation)
+    "h"  (which-key-prefix :documentation)
     "hh" 'hoogle
     "hg" 'hoogle
     "hG" 'haskell-hoogle-lookup-from-local
@@ -2066,7 +2072,7 @@ set so that it clears the whole REPL buffer, not just the output."
     "ht" 'haskell-process-do-type
     "hT" 'haskell-process-do-type-on-prev-line
 
-    "r"  (which-key-prefix :haskell/refactor)
+    "r"  (which-key-prefix :refactor)
     "ri" 'haskell-format-imports
     "rb" 'hlint-refactor-refactor-buffer
     "rr" 'hlint-refactor-refactor-at-point)
@@ -2074,7 +2080,7 @@ set so that it clears the whole REPL buffer, not just the output."
   (local-leader
     :major-modes (haskell-interactive-mode t)
     :keymaps (haskell-interactive-mode-map)
-    "s"  (which-key-prefix :haskell/repl)
+    "s"  (which-key-prefix :repl)
     "ss" 'haskell-interactive-switch-back)
 
   (local-leader
@@ -2093,7 +2099,7 @@ set so that it clears the whole REPL buffer, not just the output."
     "P"  'haskell-cabal-previous-section
     "f"  'haskell-cabal-find-or-create-source-file
 
-    "s"  (which-key-prefix :haskell/repl)
+    "s"  (which-key-prefix :repl)
     "sc" 'haskell-interactive-mode-clear
     "sS" 'haskell-interactive-bring
     "ss" 'haskell-interactive-switch)
@@ -2233,7 +2239,7 @@ set so that it clears the whole REPL buffer, not just the output."
     "tP" 'dune-promote
     "tp" 'dune-runtest-and-promote
 
-    "s"  (which-key-prefix :utop-send)
+    "s"  (which-key-prefix :send)
     "sb" 'utop-eval-buffer
     "sB" 'utop-eval-buffer-and-go
     "si" 'utop
@@ -2560,7 +2566,7 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (setq explicit-shell-file-name "/bin/zsh")
 (use-package exec-path-from-shell
-  :if (or macOS-p chromeOS-p)
+  :when (or macOS-p chromeOS-p)
   :config
   (setq exec-path-from-shell-variables '("PATH" "JAVA_HOME" "BROWSER"
 					 "OPAMCLI" "WORK_MACHINE")
