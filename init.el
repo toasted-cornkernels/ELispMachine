@@ -3748,7 +3748,7 @@ set so that it clears the whole REPL buffer, not just the output."
   "C-s-0" 'emms-volume-raise
   "C-s-=" 'balance-windows
   "C-s-i" 'imenu-list
-  "C-s-x" 'xwidget-new-window
+  "C-s-x" 'delete-trailing-whitespace
   "C-s-y" 'youtube-viewer-start
   "C-s-;" 'flymake-goto-prev-error
   "C-s-'" 'flymake-goto-next-error
