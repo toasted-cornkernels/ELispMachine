@@ -4480,10 +4480,6 @@ set so that it clears the whole REPL buffer, not just the output."
 (use-package elfeed-goodies
   :commands elfeed-goodies/setup)
 
-(use-package elfeed-web
-  :defer t
-  :commands elfeed-web-stop)
-
 ;; Emms config ======================================
 ;; ==================================================
 
