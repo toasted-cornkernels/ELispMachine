@@ -2009,7 +2009,6 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (use-package haskell-mode
   :mode "\\.(hs|lhs|cabal)\\'"
-  :defer t
   :init
   (setq haskell-notify-p t
 	haskell-interactive-popup-errors nil
@@ -2039,8 +2038,8 @@ set so that it clears the whole REPL buffer, not just the output."
 
   :general
   (local-leader
-    :major-modes (haskell-mode haskell-literate-mode t)
-    :keymaps (haskell-mode-map haskell-literate-mode-map)
+    :major-modes '(haskell-mode haskell-literate-mode t)
+    :keymaps '(haskell-mode-map haskell-literate-mode-map)
     "'"  'haskell-interactive-switch
     "S"  'haskell-mode-stylish-buffer
     "f"  'hindent-reformat-decl-or-fill
@@ -3684,8 +3683,8 @@ set so that it clears the whole REPL buffer, not just the output."
   "s-="   'text-scale-increase
   "s--"   'text-scale-decrease
   "s-0"   'text-scale-adjust		; meh
-  "s-p"   'projectile-find-file-dwim
-  "s-P"   'consult-recent-file
+  "s-p"   'consult-recent-file
+  "s-P"   'execute-extended-command
   "s-o"   'find-file
   "s-f"   'ace-window
   "s-RET" 'toggle-frame-maximized
@@ -3944,7 +3943,10 @@ set so that it clears the whole REPL buffer, not just the output."
   "aR"   (which-key-prefix :radio)
   "aRp"  'eradio-play
   "aRs"  'eradio-stop
-  "aRR"  'eradio-toggle)
+  "aRR"  'eradio-toggle
+
+  "ar"   (which-key-prefix :reader)
+  "are"  'elfeed)
 
 (global-leader
   "Cc"   'org-capture)
@@ -4416,18 +4418,19 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; ==================================================
 
 (use-package elfeed-org
-  :commands elfeed
-  :defer    t
+  :defer t
   :config
   (setq rmh-elfeed-org-files '("~/.emacs.d/elfeed.org")))
 
 (use-package elfeed
-  :after elfeed-org
   :defer t
-  :config
-  (elfeed-org)
-  ;; play the podcast at elfeed podcast entry
+  :hook ((elfeed-search-mode . elfeed-org)
+	 (elfeed-search-mode . elfeed-goodies/setup)
+	 (elfeed-search-mode . elfeed-web-start))
+  :init
+  ;; (elfeed-org)
   (defun elfeed-player ()
+    "Play the podcast at elfeed podcast entry."
     (interactive)
     (let ((enclosure-link (elfeed-entry-enclosures (elfeed-search-selected :single)))
 	  (entry-link     (elfeed-entry-link       (elfeed-search-selected :single))))
@@ -4437,13 +4440,44 @@ set so that it clears the whole REPL buffer, not just the output."
       (elfeed-search-untag-all-unread)))
 
   (defun elfeed-youtube-player ()
+    "Play YouTube videos at elfeed podcast entry."
     (interactive)
     (let ((entry-link (elfeed-entry-link (elfeed-search-selected :single))))
       (async-shell-command (concat "mpv " "'" entry-link "'") nil nil)
       (elfeed-search-untag-all-unread)))
+  :general
+  (normal-mode-major-mode
+    :major-modes '(elfeed-search-mode t)
+    :keymaps '(elfeed-search-mode-map)
+    "c"  'elfeed-db-compact
+    "gr" 'elfeed-update
+    "gR" 'elfeed-search-update--force
+    "gu" 'elfeed-unjam
+    "o"  'elfeed-load-opml
+    "w"  'elfeed-web-start
+    "W"  'elfeed-web-stop
+    "P"  'elfeed-player
+    "Y"  'elfeed-youtube-player)
 
-  (define-key elfeed-search-mode-map (kbd "P") #'elfeed-player)
-  (define-key elfeed-search-mode-map (kbd "Y") #'elfeed-youtube-player))
+  (normal-mode-major-mode
+    :major-modes '(elfeed-show-mode t)
+    :keymaps '(elfeed-show-mode-map)
+    "C-j" 'elfeed-show-next
+    "C-k" 'elfeed-show-prev)
+  
+  :config
+  (evil-define-key 'visual elfeed-search-mode-map
+    "+"  'elfeed-search-tag-all
+    "-"  'elfeed-search-untag-all
+    "b"  'elfeed-search-browse-url
+    "y"  'elfeed-search-yank))
+
+(use-package elfeed-goodies
+  :commands elfeed-goodies/setup)
+
+(use-package elfeed-web
+  :defer t
+  :commands elfeed-web-stop)
 
 ;; Emms config ======================================
 ;; ==================================================
