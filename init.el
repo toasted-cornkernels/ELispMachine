@@ -85,6 +85,11 @@
 (defvar chromeOS-p (string= (system-name) "penguin")
   "Am I in chromeOS?")
 
+(defvar android-p
+  (let ((uname-output
+	 (s-trim-right (shell-command-to-string "uname -o"))))
+    (string= uname-output "Android")))
+
 (defvar GUI-p (display-graphic-p)
   "Am I in a GUI Client?")
 
@@ -956,6 +961,7 @@
 ;; ==================================================
 
 (use-package emacs-codeql
+  :when (not android-p)
   :straight
   (emacs-codeql :type git
 		:host github
@@ -4428,7 +4434,9 @@ set so that it clears the whole REPL buffer, not just the output."
 	 (elfeed-search-mode . elfeed-goodies/setup)
 	 (elfeed-search-mode . elfeed-web-start))
   :init
-  ;; (elfeed-org)
+  (elfeed-org)
+  (elfeed-goodies/setup)
+  (elfeed-web-start)
   (defun elfeed-player ()
     "Play the podcast at elfeed podcast entry."
     (interactive)
