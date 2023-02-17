@@ -4430,9 +4430,9 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (use-package elfeed
   :defer t
-  :hook ((elfeed-search-mode . elfeed-org)
-	 (elfeed-search-mode . elfeed-goodies/setup)
-	 (elfeed-search-mode . elfeed-web-start))
+  ;; :hook ((elfeed-search-mode . elfeed-org)
+  ;; 	 (elfeed-search-mode . elfeed-goodies/setup)
+  ;; 	 (elfeed-search-mode . elfeed-web-start))
   :init
   (elfeed-org)
   (elfeed-goodies/setup)
