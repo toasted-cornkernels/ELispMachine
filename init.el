@@ -1231,17 +1231,62 @@
 ;; Clojure config ===================================
 ;; ==================================================
 
-(use-package cider
+(use-package clojure-mode
   :defer t
+  :hook  (clojure-mode . evil-cleverparens-mode)
+  :general
+  (local-leader
+    :major-modes '(clojure-mode
+		   clojurec-mode
+		   clojurescript-mode
+		   clojurex-mode
+		   cider-repl-mode
+		   cider-clojure-interaction-mode t)
+    :keymaps '(clojure-mode-map
+	       clojurec-mode-map
+	       clojurescript-mode-map
+	       clojurex-mode-map
+	       cider-repl-mode-map
+	       cider-clojure-interaction-mode-map)
+    "=l" 'clojure-align
+    "ra" (which-key-prefix "add")
+    "ran" 'clojure-insert-ns-form
+    "raN" 'clojure-insert-ns-form-at-point
+    "rc" (which-key-prefix "cycle/clean/convert")
+    "rci" 'clojure-cycle-if
+    "rcp" 'clojure-cycle-privacy
+    "rc#" 'clojure-convert-collection-to-set
+    "rc'" 'clojure-convert-collection-to-quoted-list
+    "rc(" 'clojure-convert-collection-to-list
+    "rc[" 'clojure-convert-collection-to-vector
+    "rc{" 'clojure-convert-collection-to-map
+    "rc:" 'clojure-toggle-keyword-string
+    "rd" (which-key-prefix "destructure")
+    "re" (which-key-prefix "extract/expand")
+    "rf" (which-key-prefix "find/function")
+    "rh" (which-key-prefix "hotload")
+    "ri" (which-key-prefix "introduce/inline")
+    "rm" (which-key-prefix "move")
+    "rp" (which-key-prefix "project/promote")
+    "rr" (which-key-prefix "remove/rename/replace")
+    "rs" (which-key-prefix "show/sort/stop")
+    "rsn" 'clojure-sort-ns
+    "rt" (which-key-prefix "thread")
+    "rtf" 'clojure-thread-first-all
+    "rth" 'clojure-thread
+    "rtl" 'clojure-thread-last-all
+    "ru" (which-key-prefix "unwind/update")
+    "rua" 'clojure-unwind-all
+    "ruw" 'clojure-unwind)
+  :config
+  (require 'cider))
+
+(use-package cider
   :init
   (setq cider-stacktrace-default-filters '(tooling dup)
 	cider-repl-pop-to-buffer-on-connect nil
 	cider-prompt-save-file-on-load nil
 	cider-repl-use-clojure-font-lock t)
-  (dolist (clojure-hook (list 'clojure-mode-hook
-			      'clojurescript-mode-hook
-			      'clojurec-mode-hook))
-    (add-hook 'clojure-hook 'cider-mode))
 
   (defun cider-eval-sexp-end-of-line ()
     "Evaluate the last sexp at the end of the current line."
@@ -1680,54 +1725,6 @@ set so that it clears the whole REPL buffer, not just the output."
   ;; `clj-refactor-mode' is added to the hook, this should trigger when a
   ;; clojure buffer is opened anyway, so there's no "keybinding delay".
   )
-
-(use-package clojure-mode
-  :defer t
-  :hook  (clojure-mode . evil-cleverparens-mode)
-  :general
-  (local-leader
-    :major-modes '(clojure-mode
-		   clojurec-mode
-		   clojurescript-mode
-		   clojurex-mode
-		   cider-repl-mode
-		   cider-clojure-interaction-mode t)
-    :keymaps '(clojure-mode-map
-	       clojurec-mode-map
-	       clojurescript-mode-map
-	       clojurex-mode-map
-	       cider-repl-mode-map
-	       cider-clojure-interaction-mode-map)
-    "=l" 'clojure-align
-    "ra" (which-key-prefix "add")
-    "ran" 'clojure-insert-ns-form
-    "raN" 'clojure-insert-ns-form-at-point
-    "rc" (which-key-prefix "cycle/clean/convert")
-    "rci" 'clojure-cycle-if
-    "rcp" 'clojure-cycle-privacy
-    "rc#" 'clojure-convert-collection-to-set
-    "rc'" 'clojure-convert-collection-to-quoted-list
-    "rc(" 'clojure-convert-collection-to-list
-    "rc[" 'clojure-convert-collection-to-vector
-    "rc{" 'clojure-convert-collection-to-map
-    "rc:" 'clojure-toggle-keyword-string
-    "rd" (which-key-prefix "destructure")
-    "re" (which-key-prefix "extract/expand")
-    "rf" (which-key-prefix "find/function")
-    "rh" (which-key-prefix "hotload")
-    "ri" (which-key-prefix "introduce/inline")
-    "rm" (which-key-prefix "move")
-    "rp" (which-key-prefix "project/promote")
-    "rr" (which-key-prefix "remove/rename/replace")
-    "rs" (which-key-prefix "show/sort/stop")
-    "rsn" 'clojure-sort-ns
-    "rt" (which-key-prefix "thread")
-    "rtf" 'clojure-thread-first-all
-    "rth" 'clojure-thread
-    "rtl" 'clojure-thread-last-all
-    "ru" (which-key-prefix "unwind/update")
-    "rua" 'clojure-unwind-all
-    "ruw" 'clojure-unwind))
 
 (use-package clojure-snippets
   :defer t)
