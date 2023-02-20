@@ -961,7 +961,7 @@
 ;; ==================================================
 
 (use-package emacs-codeql
-  :when (not android-p)
+  :when (not (or android-p chromeOS-p))
   :straight
   (emacs-codeql :type git
 		:host github
@@ -4429,11 +4429,9 @@ set so that it clears the whole REPL buffer, not just the output."
   (setq rmh-elfeed-org-files '("~/.emacs.d/elfeed.org")))
 
 (use-package elfeed
+  :commands elfeed
   :defer t
   :init
-  (elfeed-org)
-  (elfeed-goodies/setup)
-  (elfeed-web-start)
   (defun elfeed-player ()
     "Play the podcast at elfeed podcast entry."
     (interactive)
@@ -4471,6 +4469,9 @@ set so that it clears the whole REPL buffer, not just the output."
     "C-k" 'elfeed-show-prev)
   
   :config
+  (elfeed-org)
+  (elfeed-goodies/setup)
+  (elfeed-web-start)
   (evil-define-key 'visual elfeed-search-mode-map
     "+"  'elfeed-search-tag-all
     "-"  'elfeed-search-untag-all
