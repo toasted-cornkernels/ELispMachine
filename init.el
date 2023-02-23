@@ -4009,7 +4009,6 @@ set so that it clears the whole REPL buffer, not just the output."
   "s-g"  'cleanup-emacs
   "s-i"  'insert-current-time
   "s-y"  'youtube-viewer-start
-  "s-k"  'consult-yank-from-kill-ring
   "s-x"  'delete-trailing-whitespace
   "s-m"  'consult-bookmark
   "s-j"  'join-line
