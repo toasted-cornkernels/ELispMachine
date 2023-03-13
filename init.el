@@ -3407,7 +3407,8 @@ set so that it clears the whole REPL buffer, not just the output."
 (use-package menu-bar
   :straight nil
   :config
-  (when terminal-p (menu-bar-mode -1)))
+  (when (or terminal-p chromeOS-p)
+    (menu-bar-mode -1)))
 
 (use-package tab-bar
   :straight nil
