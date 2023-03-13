@@ -366,7 +366,6 @@
     "a"          'org-agenda
     "["          'org-agenda-file-to-front
     "]"          'org-remove-file
-    "c"          'org-capture
 
     "b"          (which-key-prefix :babel)
     "bp"         'org-babel-previous-src-block
@@ -393,17 +392,18 @@
     "bx"         'org-babel-do-key-sequence-in-edit-buffer
     "b."         'org-babel-transient-state/body
 
-    "C"          (which-key-prefix :clock)
-    "Cc"         'org-clock-cancel
-    "Cd"         'org-clock-display
-    "Ce"         'org-evaluate-time-range
-    "Cg"         'org-clock-goto
-    "Ci"         'org-clock-in
-    "CI"         'org-clock-in-last
-    "Cj"         'org-clock-jump-to-current-clock
-    "Co"         'org-clock-out
-    "CR"         'org-clock-report
-    "Cr"         'org-resolve-clocks
+    "c"          (which-key-prefix :clock)
+    "cc"         'org-clock-cancel
+    "cd"         'org-clock-display
+    "ce"         'org-evaluate-time-range
+    "cg"         'org-clock-goto
+    "ci"         'org-clock-in
+    "cI"         'org-clock-in-last
+    "cj"         'org-clock-jump-to-current-clock
+    "co"         'org-clock-out
+    "cr"         'org-clock-report
+    "cr"         'org-resolve-clocks
+    "ct"         'org-clock-modify-effort-estimate
 
     "d"          (which-key-prefix :dates)
     "dd"         'org-deadline
@@ -558,30 +558,63 @@
 
   (add-hook 'org-after-todo-statistics-hook #'cycle-todo-state)
 
-  (setq org-clock-persist-file (cache: "org-clock-save.el")
-	org-id-locations-file (cache: ".org-id-locations")
-	org-publish-timestamp-directory (cache: ".org-timestamps/")
-	org-directory "~/Dropbox/Org"
-	org-work-directory "~/Work/WorkNotes"
-	org-default-notes-file (expand-file-name
-				"notes.org" org-directory)
-	org-log-done 'time
-	org-startup-with-inline-images t
-	org-startup-latex-with-latex-preview t
-	org-format-latex-options (plist-put org-format-latex-options :scale 1.5)
-	org-latex-prefer-user-labels t
-	org-image-actual-width nil
-	org-src-fontify-natively t
-	org-src-tab-acts-natively t
-	org-imenu-depth 8
-	org-return-follows-link t
-	org-mouse-1-follows-link t
-	org-link-descriptive t
-	org-hide-emphasis-markers t
-	org-enforce-todo-dependencies t
-	org-todo-keywords
-	'((sequence "TODO" "WORKING" "|"
-		    "DONE" "ABORTED")))
+  ;; Resume clocking task when emacs is restarted
+  (org-clock-persistence-insinuate)
+  
+  (setq
+   ;; Save the running clock and all clock history when exiting Emacs, load it on startup
+   org-clock-persist t
+   ;; Resume clocking task on clock-in if the clock is open
+   org-clock-in-resume t
+   ;; Do not prompt to resume an active clock, just resume it
+   org-clock-persist-query-resume nil
+   ;; Change tasks to WORKING when clocking in
+   org-clock-in-switch-to-state "WORKING"
+   ;; Save clock data and state changes and notes in the LOGBOOK drawer
+   org-clock-into-drawer t
+   ;; Sometimes I change tasks I'm clocking quickly - this removes clocked tasks
+   ;; with 0:00 duration
+   org-clock-out-remove-zero-time-clocks t
+   ;; Clock out when moving task to a done state
+   org-clock-out-when-done t
+   ;; Enable auto clock resolution for finding open clocks
+   org-clock-auto-clock-resolution 'when-no-clock-is-running
+   ;; Include current clocking task in clock reports
+   org-clock-report-include-clocking-task t
+   ;; use pretty things for the clocktable
+   org-pretty-entities t
+   ;; global Effort estimate values
+   org-global-properties
+   '(("Effort_ALL" .
+      "0:15 0:30 0:45 1:00 2:00 3:00 4:00 5:00 6:00 0:00"))
+   ;;        1    2    3    4    5    6    7    8    9    0
+   ;; These are the hotkeys ^^
+   org-time-stamp-rounding-minutes '(0 5)
+   org-clock-idle-time nil
+   org-clock-persist-file (cache: "org-clock-save.el")
+   org-id-locations-file (cache: ".org-id-locations")
+   org-publish-timestamp-directory (cache: ".org-timestamps/")
+   org-directory "~/Dropbox/Org"
+   org-work-directory "~/Work/WorkNotes"
+   org-default-notes-file (expand-file-name
+			   "notes.org" org-directory)
+   org-log-done 'time
+   org-startup-with-inline-images t
+   org-startup-latex-with-latex-preview t
+   org-format-latex-options (plist-put org-format-latex-options :scale 1.5)
+   org-latex-prefer-user-labels t
+   org-image-actual-width nil
+   org-src-fontify-natively t
+   org-src-tab-acts-natively t
+   org-imenu-depth 8
+   org-return-follows-link t
+   org-mouse-1-follows-link t
+   org-link-descriptive t
+   org-hide-emphasis-markers t
+   org-enforce-todo-dependencies t
+   org-todo-keywords
+   '((sequence "TODO" "WORKING" "|"
+	       "DONE" "ABORTED")))
 
   (dolist (fn '(org-insert-drawer
 		org-insert-heading
@@ -3369,6 +3402,8 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; visuals ==========================================
 ;; ==================================================
 
+(setq column-number-mode t)
+
 (use-package menu-bar
   :straight nil
   :config
@@ -3413,7 +3448,7 @@ set so that it clears the whole REPL buffer, not just the output."
     (set-face-attribute 'default nil
 			:font "Fira Code"
 			:weight 'light
-			:height 160)
+			:height 180)
   (set-face-attribute 'default nil :height 140))
 
 (use-package modus-themes
@@ -3563,7 +3598,8 @@ set so that it clears the whole REPL buffer, not just the output."
     (dolist (hook hooks)
       (add-hook hook
 		(lambda ()
-		  (display-line-numbers-mode -1))))))
+		  (display-line-numbers-mode -1))))
+    (add-hook 'prog-mode-hook (lambda () (display-line-numbers-mode 1)))))
 
 ;; Eshell config ====================================
 ;; ==================================================
