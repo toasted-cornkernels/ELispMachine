@@ -333,10 +333,8 @@
 ;; ==================================================
 
 (use-package mixed-pitch
-  :hook ((org-mode      . mixed-pitch-mode)
-	 (w3m-mode      . mixed-pitch-mode)
-	 (markdown-mode . mixed-pitch-mode)
-	 (gfm-mode      . mixed-pitch-mode)))
+  :hook ((w3m-mode      . mixed-pitch-mode)
+	 (markdown-mode . mixed-pitch-mode)))
 
 ;; Org config =======================================
 ;; ==================================================
@@ -402,7 +400,7 @@
     "cj"         'org-clock-jump-to-current-clock
     "co"         'org-clock-out
     "cr"         'org-clock-report
-    "cr"         'org-resolve-clocks
+    "cR"         'org-resolve-clocks
     "ct"         'org-clock-modify-effort-estimate
 
     "d"          (which-key-prefix :dates)
@@ -572,9 +570,8 @@
    org-clock-in-switch-to-state "WORKING"
    ;; Save clock data and state changes and notes in the LOGBOOK drawer
    org-clock-into-drawer t
-   ;; Sometimes I change tasks I'm clocking quickly - this removes clocked tasks
-   ;; with 0:00 duration
-   org-clock-out-remove-zero-time-clocks t
+   ;; Don't remove clocks with 0:00 duration
+   org-clock-out-remove-zero-time-clocks nil
    ;; Clock out when moving task to a done state
    org-clock-out-when-done t
    ;; Enable auto clock resolution for finding open clocks
@@ -796,7 +793,8 @@
   :defer    t
   :config
   (setq org-agenda-files `(,(concat org-work-directory "/WorkTODO.org")
-			   ,(concat org-directory "/TODO.org"))))
+			   ,(concat org-directory "/TODO.org"))
+	org-agenda-clockreport-parameter-plist '(:link t :scope subtree :maxlevel 2 :step day :block thisweek :stepskip0 t :fileskip0 t)))
 
 (use-package org-src
   :straight nil
