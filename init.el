@@ -610,7 +610,7 @@
    org-hide-emphasis-markers t
    org-enforce-todo-dependencies t
    org-todo-keywords
-   '((sequence "TODO" "WORKING" "|"
+   '((sequence "TODO" "NEXT" "WORKING" "|"
 	       "DONE" "ABORTED")))
 
   (dolist (fn '(org-insert-drawer
@@ -2776,8 +2776,8 @@ set so that it clears the whole REPL buffer, not just the output."
   :commands (company-mode)
   :config
   ;; (global-company-mode)
-  (setq company-idle-delay (if chromeOS-p 0.2 0)
-	company-echo-delay (if chromeOS-p 0.2 0)
+  (setq company-idle-delay 0.2
+	company-echo-delay 0.2
 	company-tooltip-idle-delay 0
 	company-async-redisplay-delay 0)
   (define-key company-active-map (kbd "<return>") nil)
@@ -3455,110 +3455,9 @@ set so that it clears the whole REPL buffer, not just the output."
 			:height 180)
   (set-face-attribute 'default nil :height 140))
 
-(use-package modus-themes
-  :init
-  (setq custom--inhibit-theme-enable nil)
-  (defun mac-dark-mode-p ()
-    (s-contains? "Dark" (plist-get
-			 (mac-application-state) :appearance)))
-
-  (defun general-dark-mode-p ()
-    (let ((current-time (read (format-time-string "%H"))))
-      (not (<= 7 current-time 17))))
-
-  :demand t
+(use-package tron-legacy-theme
   :config
-  (require 'modus-operandi-theme)
-  (require 'modus-vivendi-theme)
-  (defun load-modus-operandi ()
-    (interactive)
-    (disable-theme 'modus-vivendi)
-    (load-theme 'modus-operandi t)
-    (custom-theme-set-faces
-     'modus-operandi
-     '(tool-bar ((default
-		   :box (:line-width 1 :style released-button)
-		   :foreground "black")
-		 (((type x w32 mac ns) (class color))
-		  :background "grey75")
-		 (((type x) (class mono))
-		  :background "grey")))
-     '(tab-bar ((((class color) (min-colors 88))
-		 :inherit variable-pitch
-		 :background "grey85"
-		 :foreground "black")
-		(((class mono))
-		 :background "grey")
-		(t
-		 :inverse-video t)))
-     '(tab-line ((((class color) (min-colors 88))
-		  ;; :inherit variable-pitch
-		  :height 0.9
-		  :background "grey85"
-		  :foreground "black")
-		 (((class mono))
-		  :background "grey")
-		 (t
-		  :inverse-video t)))
-     '(tab-bar-tab ((default
-		      :inherit tab-bar)
-		    (((class color) (min-colors 88))
-		     :box (:line-width 1 :style released-button))
-		    (t
-		     :inverse-video nil)))
-     '(tab-bar-tab-inactive ((default
-			       :inherit tab-bar-tab)
-			     (((class color) (min-colors 88))
-			      :background "grey75")
-			     (t
-			      :inverse-video t)))
-     '(tab-bar-tab-group-current ((t :inherit tab-bar-tab :box nil :weight bold)))
-     '(tab-bar-tab-group-inactive ((t :inherit (shadow tab-bar-tab-inactive))))
-     '(tab-bar-tab-ungrouped ((t :inherit (shadow tab-bar-tab-inactive))))
-     '(fringe ((t (:foreground "#FFFFFF" :background "#FFFFFF"))))
-     '(nonbreak-space ((t ())))))
-
-  (defun load-modus-vivendi ()
-    (interactive)
-    (disable-theme 'modus-operandi)
-    (load-theme 'modus-vivendi t)
-    (custom-theme-set-faces
-     'modus-vivendi
-     '(tool-bar ((t (:foreground "#000000" :background "#000000" :box nil))))
-     '(fringe   ((t (:foreground "#000000" :background "#000000"))))))
-
-  (defun modus-themes-toggle- ()
-    (interactive)
-    (let ((modus-operandi-p (string= (modus-themes--current-theme) "modus-operandi"))
-	  (modus-vivendi-p  (string= (modus-themes--current-theme) "modus-vivendi")))
-      (cond (modus-operandi-p (load-modus-vivendi))
-	    (modus-vivendi-p  (load-modus-operandi))
-	    (:else            (load-modus-operandi)))))
-
-  (if GUI-p
-      (let ((dark-mode-p (if macOS-p
-			     (mac-dark-mode-p)
-			   (general-dark-mode-p))))
-	(if dark-mode-p
-	    (load-modus-vivendi)	; dark mode!
-	  (load-modus-operandi)))	; light mode!
-    (load-modus-vivendi))
-
-  ;; make terminal transparent
-
-  (when terminal-p
-    (defun make-terminal-transparent ()
-      (unless (display-graphic-p (selected-frame))
-	(set-face-background 'default "unspecified-bg" (selected-frame))))
-    (add-hook 'window-setup-hook 'make-terminal-transparent)
-    (make-terminal-transparent)))
-
-(use-package auto-dark
-  :when macOS-p
-  :init
-  (setq auto-dark-light-theme 'modus-operandi
-	auto-dark-dark-theme  'modus-vivendi)
-  (auto-dark-mode t))
+  (load-theme 'tron-legacy t))
 
 ;; hl-todo config ==================================
 ;; =================================================
