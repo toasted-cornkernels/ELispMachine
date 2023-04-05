@@ -2779,9 +2779,11 @@ set so that it clears the whole REPL buffer, not just the output."
   (setq company-idle-delay 0.2
 	company-echo-delay 0.2
 	company-tooltip-idle-delay 0
-	company-async-redisplay-delay 0)
+	company-async-redisplay-delay 0
+	company-dabbrev-downcase nil)
   (define-key company-active-map (kbd "<return>") nil)
   (define-key company-active-map (kbd "RET") nil)
+  (define-key company-active-map (kbd "C-h") nil)
   (define-key company-active-map (kbd "<tab>") #'company-complete-selection)
   (define-key company-active-map (kbd "TAB") #'company-complete-selection))
 
@@ -3459,6 +3461,10 @@ set so that it clears the whole REPL buffer, not just the output."
   :config
   (load-theme 'tron-legacy t))
 
+(use-package mood-line
+  :config
+  (mood-line-mode))
+
 ;; hl-todo config ==================================
 ;; =================================================
 
@@ -3502,7 +3508,8 @@ set so that it clears the whole REPL buffer, not just the output."
       (add-hook hook
 		(lambda ()
 		  (display-line-numbers-mode -1))))
-    (add-hook 'prog-mode-hook (lambda () (display-line-numbers-mode 1)))))
+    ;; (add-hook 'prog-mode-hook (lambda () (display-line-numbers-mode 1)))
+    ))
 
 ;; Eshell config ====================================
 ;; ==================================================
