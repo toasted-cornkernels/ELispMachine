@@ -2826,6 +2826,13 @@ set so that it clears the whole REPL buffer, not just the output."
 (use-package company-emojify
   :after (company emojify))
 
+;; Embark config ====================================
+;; ==================================================
+
+(use-package embark
+  ;; TODO: add some keybindings
+  )
+
 ;; iedit config =====================================
 ;; ==================================================
 
