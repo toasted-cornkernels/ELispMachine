@@ -4373,6 +4373,7 @@ set so that it clears the whole REPL buffer, not just the output."
 (use-package elfeed
   :commands elfeed
   :defer t
+  :hook (elfeed-new-entry . elfeed-show-refresh) ; why is it not working?
   :init
   (defun elfeed-player ()
     "Play the podcast at elfeed podcast entry."
