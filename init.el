@@ -1854,35 +1854,62 @@ set so that it clears the whole REPL buffer, not just the output."
 
 ;; Hy config ========================================
 ;; ==================================================
-
 (use-package hy-mode
   :defer t
-  :hook  (hy-mode . evil-cleverparens-mode)
-
+  :mode ("\\.hy\\'" . hy-mode)
+  :interpreter ("hy" . hy-mode)
   :general
   (local-leader
-    :major-modes '(hy-mode inferior-hy-mode t)
-    :keymaps     '(hy-mode-map inferior-hy-mode-map)
-    "e"          (which-key-prefix "eval")
-    "ec"         'hy-shell-eval-current-form
-    "er"         'hy-shell-eval-region
-    "eb"         'hy-shell-eval-buffer)
+    :major-modes '(hy-mode t)
+    :keymaps '(hy-mode-map)
+    "'"  'run-hy
+    "d"  (which-key-prefix :debug)
+    "dd" 'hy-insert-pdb
+    "dt" 'hy-insert-pdb-threaded
+
+    "e"  (which-key-prefix :eval)
+    "eb" 'hy-shell-eval-buffer
+    "eB" 'hy-shell-eval-buffer-and-go
+    "ec" 'hy-shell-eval-current-form
+    "eC" 'hy-shell-eval-current-form-and-go
+    "ei" 'run-hy
+    "er" 'hy-shell-eval-region
+    "eR" 'spacemacs/hy-shell-eval-region-and-go
+
+    "s"  (which-key-prefix :REPL)
+    "sb" 'hy-shell-eval-buffer
+    "sB" 'hy-shell-eval-buffer-and-go
+    "sc" 'hy-shell-eval-current-form
+    "sC" 'hy-shell-eval-current-form-and-go
+    "si" 'hy-shell-start-or-switch-to-shell
+    "sr" 'hy-shell-eval-region
+    "sR" 'hy-shell-eval-region-and-go
+
+    "h"  (which-key-prefix :help)
+    "hh" 'hy-describe-thing-at-point)
 
   :config
-  (defun my-hy-shell-eval-current-form ()
-    (interactive)
-    (hy-shell-eval-current-form)
-    (previous-buffer))
-
-  (defun my-hy-shell-eval-region ()
-    (interactive)
-    (hy-shell-eval-region)
-    (previous-buffer))
-
-  (defun my-hy-shell-eval-buffer ()
+  (setq hy-jedhy--enable? nil)
+  (defun hy-shell-eval-buffer-and-go ()
+    "Send current buffer to REPL and focus it."
     (interactive)
     (hy-shell-eval-buffer)
-    (previous-buffer)))
+    (run-hy))
+
+  (defun hy-shell-eval-current-form-and-go ()
+    "Send current form to REPL and focus it."
+    (interactive)
+    (hy-shell-eval-current-form)
+    (run-hy))
+
+  (defun hy-shell-eval-region-and-go ()
+    "Send region to REPL and focus it."
+    (interactive)
+    (hy-shell-eval-region)
+    (run-hy)))
+
+(use-package ob-hy
+  :init (add-to-list 'org-babel-load-languages '(hy . t)))
 
 ;; Fennel config ====================================
 ;; ==================================================
@@ -3359,7 +3386,6 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (use-package recentf
   :straight nil
-  :commands (consult-recent-file)
   :init
   (setq recentf-keep '(file-remote-p file-readable-p)
 	recentf-save-file (concat user-emacs-directory ".recentf")
