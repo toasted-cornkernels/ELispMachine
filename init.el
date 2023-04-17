@@ -3488,7 +3488,10 @@ set so that it clears the whole REPL buffer, not just the output."
 			:font "Fira Code"
 			:weight 'light
 			:height 180)
-  (set-face-attribute 'default nil :height 140))
+  (set-face-attribute 'default nil
+		      :height 140)
+  (set-fontset-font t 'hangul 
+		    (font-spec :name "NanumGothic")))
 
 (use-package tron-legacy-theme
   :config
