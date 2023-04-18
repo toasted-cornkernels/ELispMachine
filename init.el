@@ -1204,14 +1204,14 @@
 			       geiser-mode scheme-mode racket-mode
 			       newlisp-mode picolisp-mode janet-mode
 			       lisp-interaction-mode ielm-mode minibuffer-mode
-			       fennel-repl-mode cider-repl-mode)
+			       fennel-repl-mode cider-repl-mode racket-repl-mode)
 		 "'" "'" :actions nil)
   ;; Backquote
   (sp-local-pair '(fennel-mode hy-mode clojure-mode lisp-mode emacs-lisp-mode
 			       geiser-mode scheme-mode racket-mode
 			       newlisp-mode picolisp-mode janet-mode
 			       lisp-interaction-mode ielm-mode minibuffer-mode
-			       fennel-repl-mode cider-repl-mode)
+			       fennel-repl-mode cider-repl-mode racket-repl-mode)
 		 "`" "`" :actions nil))
 
 (use-package evil-cleverparens
@@ -2835,6 +2835,13 @@ set so that it clears the whole REPL buffer, not just the output."
 (use-package company-emojify
   :after (company emojify))
 
+;; Embark config ====================================
+;; ==================================================
+
+(use-package embark
+  ;; TODO: add some keybindings
+  )
+
 ;; iedit config =====================================
 ;; ==================================================
 
@@ -3490,7 +3497,10 @@ set so that it clears the whole REPL buffer, not just the output."
 			:font "Fira Code"
 			:weight 'light
 			:height 180)
-  (set-face-attribute 'default nil :height 140))
+  (set-face-attribute 'default nil
+		      :height 140)
+  (set-fontset-font t 'hangul 
+		    (font-spec :name "NanumGothic")))
 
 (use-package tron-legacy-theme
   :config
@@ -4408,6 +4418,7 @@ set so that it clears the whole REPL buffer, not just the output."
 (use-package elfeed
   :commands elfeed
   :defer t
+  :hook (elfeed-new-entry . elfeed-show-refresh) ; why is it not working?
   :init
   (defun elfeed-player ()
     "Play the podcast at elfeed podcast entry."
