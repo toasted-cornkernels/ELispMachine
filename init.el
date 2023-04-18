@@ -23,6 +23,8 @@
 
 (setq straight-use-package-by-default t)
 
+(use-package use-package-ensure-system-package :ensure t)
+
 ;; Useful Elisp Libraries ===========================
 ;; ==================================================
 
@@ -297,7 +299,7 @@
   ;; extends evil mode for a major mode
   (general-create-definer normal-mode-major-mode
     :keymaps 'override
-    :states  '(normal visual operator)
+    :states  '(normal)
     :prefix  ""))
 
 ;; Emoji config =====================================
@@ -1009,6 +1011,13 @@
   ;; below defalias is not working...
   (defalias 'codeql-mode 'ql-tree-sitter-mode))
 
+;; Codespaces config ================================
+;; ==================================================
+
+(use-package codespaces
+  :ensure-system-package gh
+  :config (codespaces-setup))
+
 ;; Eglot config =====================================
 ;; ==================================================
 
@@ -1159,7 +1168,8 @@
     :major-modes '(minibuffer-mode t)
     :keymaps     '(minibuffer-mode-map)
     "M-p" 'previous-history-element
-    "M-n" 'next-history-element))
+    "M-n" 'next-history-element
+    "C-h" 'backward-delete-char))
 
 ;; imenu config ======================================
 ;; ==================================================
@@ -3016,6 +3026,11 @@ set so that it clears the whole REPL buffer, not just the output."
 
 ;; Magit config =====================================
 ;; ==================================================
+
+(use-package vc
+  :straight nil
+  :config
+  (setq vc-handled-backends '(Git)))
 
 (use-package magit
   :defer t
