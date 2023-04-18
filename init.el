@@ -600,6 +600,15 @@
    org-startup-latex-with-latex-preview t
    org-format-latex-options (plist-put org-format-latex-options :scale 1.5)
    org-latex-prefer-user-labels t
+   org-format-latex-options '(:foreground default
+					  :background "Transparent"
+					  :scale 1.5
+					  :html-foreground "Black"
+					  :html-background "Transparent"
+					  :html-scale 1.0
+					  :matchers ("begin" "$1" "$" "$$" "\\(" "\\["))
+
+
    org-image-actual-width nil
    org-src-fontify-natively t
    org-src-tab-acts-natively t
