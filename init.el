@@ -602,6 +602,15 @@
    org-startup-latex-with-latex-preview t
    org-format-latex-options (plist-put org-format-latex-options :scale 1.5)
    org-latex-prefer-user-labels t
+   org-format-latex-options '(:foreground default
+					  :background "Transparent"
+					  :scale 1.5
+					  :html-foreground "Black"
+					  :html-background "Transparent"
+					  :html-scale 1.0
+					  :matchers ("begin" "$1" "$" "$$" "\\(" "\\["))
+
+
    org-image-actual-width nil
    org-src-fontify-natively t
    org-src-tab-acts-natively t
@@ -1205,14 +1214,14 @@
 			       geiser-mode scheme-mode racket-mode
 			       newlisp-mode picolisp-mode janet-mode
 			       lisp-interaction-mode ielm-mode minibuffer-mode
-			       fennel-repl-mode cider-repl-mode)
+			       fennel-repl-mode cider-repl-mode racket-repl-mode)
 		 "'" "'" :actions nil)
   ;; Backquote
   (sp-local-pair '(fennel-mode hy-mode clojure-mode lisp-mode emacs-lisp-mode
 			       geiser-mode scheme-mode racket-mode
 			       newlisp-mode picolisp-mode janet-mode
 			       lisp-interaction-mode ielm-mode minibuffer-mode
-			       fennel-repl-mode cider-repl-mode)
+			       fennel-repl-mode cider-repl-mode racket-repl-mode)
 		 "`" "`" :actions nil))
 
 (use-package evil-cleverparens
@@ -3503,7 +3512,10 @@ set so that it clears the whole REPL buffer, not just the output."
 			:font "Fira Code"
 			:weight 'light
 			:height 180)
-  (set-face-attribute 'default nil :height 140))
+  (set-face-attribute 'default nil
+		      :height 140)
+  (set-fontset-font t 'hangul 
+		    (font-spec :name "NanumGothic")))
 
 (use-package tron-legacy-theme
   :config
