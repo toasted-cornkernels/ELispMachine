@@ -23,6 +23,8 @@
 
 (setq straight-use-package-by-default t)
 
+(use-package use-package-ensure-system-package :ensure t)
+
 ;; Useful Elisp Libraries ===========================
 ;; ==================================================
 
@@ -180,6 +182,7 @@
 (use-package evil-collection
   :after (evil)
   :config
+  (setq evil-collection-mode-list (remove 'elfeed evil-collection-mode-list))
   (evil-collection-init)
   (setq evil-collection-calendar-want-org-bindings t))
 
@@ -600,6 +603,15 @@
    org-startup-latex-with-latex-preview t
    org-format-latex-options (plist-put org-format-latex-options :scale 1.5)
    org-latex-prefer-user-labels t
+   org-format-latex-options '(:foreground default
+					  :background "Transparent"
+					  :scale 1.5
+					  :html-foreground "Black"
+					  :html-background "Transparent"
+					  :html-scale 1.0
+					  :matchers ("begin" "$1" "$" "$$" "\\(" "\\["))
+
+
    org-image-actual-width nil
    org-src-fontify-natively t
    org-src-tab-acts-natively t
@@ -1009,6 +1021,13 @@
   ;; below defalias is not working...
   (defalias 'codeql-mode 'ql-tree-sitter-mode))
 
+;; Codespaces config ================================
+;; ==================================================
+
+(use-package codespaces
+  :ensure-system-package gh
+  :config (codespaces-setup))
+
 ;; Eglot config =====================================
 ;; ==================================================
 
@@ -1159,7 +1178,8 @@
     :major-modes '(minibuffer-mode t)
     :keymaps     '(minibuffer-mode-map)
     "M-p" 'previous-history-element
-    "M-n" 'next-history-element))
+    "M-n" 'next-history-element
+    "C-h" 'backward-delete-char))
 
 ;; imenu config ======================================
 ;; ==================================================
@@ -3017,6 +3037,11 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; Magit config =====================================
 ;; ==================================================
 
+(use-package vc
+  :straight nil
+  :config
+  (setq vc-handled-backends '(Git)))
+
 (use-package magit
   :defer t
   :custom
@@ -4407,9 +4432,7 @@ set so that it clears the whole REPL buffer, not just the output."
   (setq rmh-elfeed-org-files '("~/.emacs.d/elfeed.org")))
 
 (use-package elfeed
-  :commands elfeed
   :defer t
-  :hook (elfeed-new-entry . elfeed-show-refresh) ; why is it not working?
   :init
   (defun elfeed-player ()
     "Play the podcast at elfeed podcast entry."
@@ -4427,25 +4450,67 @@ set so that it clears the whole REPL buffer, not just the output."
     (let ((entry-link (elfeed-entry-link (elfeed-search-selected :single))))
       (async-shell-command (concat "mpv " "'" entry-link "'") nil nil)
       (elfeed-search-untag-all-unread)))
+
   :general
   (normal-mode-major-mode
     :major-modes '(elfeed-search-mode t)
     :keymaps '(elfeed-search-mode-map)
     "c"  'elfeed-db-compact
-    "gr" 'elfeed-update
-    "gR" 'elfeed-search-update--force
-    "gu" 'elfeed-unjam
     "o"  'elfeed-load-opml
     "w"  'elfeed-web-start
     "W"  'elfeed-web-stop
     "P"  'elfeed-player
-    "Y"  'elfeed-youtube-player)
+    "y"  'elfeed-search-yank
+    "Y"  'elfeed-youtube-player
+
+    "go" 'elfeed-search-browse-url
+    "gr" 'elfeed-update
+    "gu" 'elfeed-unjam
+
+    (kbd "RET") 'elfeed-search-show-entry
+    (kbd "S-<return>") 'elfeed-search-browse-url
+    (kbd "SPC") 'scroll-up-command
+    (kbd "S-SPC") 'scroll-down-command
+
+    "s" 'elfeed-search-live-filter
+    "S" 'elfeed-search-set-filter
+    "c" 'elfeed-search-clear-filter
+
+    "q"  'elfeed-search-quit-window
+    "ZQ" 'elfeed-search-quit-window
+    "ZZ" 'elfeed-search-quit-window
+
+    "+" 'elfeed-search-tag-all
+    "-" 'elfeed-search-untag-all
+    "u" 'elfeed-search-untag-all-unread
+    "U" 'elfeed-search-tag-all-unread)
 
   (normal-mode-major-mode
     :major-modes '(elfeed-show-mode t)
     :keymaps '(elfeed-show-mode-map)
+    (kbd "S-<return>") 'elfeed-show-visit
+    (kbd "SPC") 'scroll-up-command
+    (kbd "S-SPC") 'scroll-down-command
+    (kbd "<tab>") 'elfeed-show-next-link
+    "s" 'elfeed-show-new-live-search
+    "+" 'elfeed-show-tag
+    "-" 'elfeed-show-untag
+    "A" 'elfeed-show-add-enclosure-to-playlist
+    "P" 'elfeed-show-play-enclosure
+    "d" 'elfeed-show-save-enclosure
+    "]]" 'elfeed-show-next
+    "[[" 'elfeed-show-prev
+    "gj" 'elfeed-show-next
+    "gk" 'elfeed-show-prev
+    "go" 'elfeed-show-visit
+    "gr" 'elfeed-show-refresh
+    
     "C-j" 'elfeed-show-next
-    "C-k" 'elfeed-show-prev)
+    "C-k" 'elfeed-show-prev
+
+    "q" 'elfeed-kill-buffer
+    "ZQ" 'elfeed-kill-buffer
+    "ZZ" 'elfeed-kill-buffer)
   
   :config
   (elfeed-org)
@@ -4455,17 +4520,18 @@ set so that it clears the whole REPL buffer, not just the output."
     "+"  'elfeed-search-tag-all
     "-"  'elfeed-search-untag-all
     "b"  'elfeed-search-browse-url
-    "y"  'elfeed-search-yank))
+    "y"  'elfeed-search-yank
+    "U"  'elfeed-search-tag-all-unread
+    "u"  'elfeed-search-untag-all-unread))
 
 (use-package elfeed-goodies
-  :commands elfeed-goodies/setup)
+  :defer t)
 
 ;; Emms config ======================================
 ;; ==================================================
 
 (use-package emms
   :defer t
-
   :init
   (defun emms-mode-line-only-filename ()
     "Format the currently playing song."
