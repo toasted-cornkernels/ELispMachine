@@ -297,7 +297,7 @@
   ;; extends evil mode for a major mode
   (general-create-definer normal-mode-major-mode
     :keymaps 'override
-    :states  '(normal visual operator)
+    :states  '(normal)
     :prefix  ""))
 
 ;; Emoji config =====================================
