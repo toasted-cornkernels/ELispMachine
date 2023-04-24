@@ -160,10 +160,12 @@
   (setq evil-vsplit-window-right t
 	evil-split-window-below t)
 
-  (evil-define-key 'normal 'global (kbd "C-w C-h") 'evil-window-left)
-  (evil-define-key 'normal 'global (kbd "C-w C-j") 'evil-window-down)
-  (evil-define-key 'normal 'global (kbd "C-w C-k") 'evil-window-up)
-  (evil-define-key 'normal 'global (kbd "C-w C-l") 'evil-window-right)
+  (evil-define-key* 'normal 'global
+    (kbd "C-w C-h") 'evil-window-left
+    (kbd "C-w C-j") 'evil-window-down
+    (kbd "C-w C-k") 'evil-window-up
+    (kbd "C-w C-l") 'evil-window-right)
+  
   (unbind-key (kbd "C-@"))
   (unbind-key (kbd "M-SPC"))
   (defalias #'forward-evil-word #'forward-evil-symbol)
