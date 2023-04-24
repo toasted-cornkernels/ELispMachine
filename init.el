@@ -37,6 +37,8 @@
 
 (use-package ts)
 
+(use-package reazon)
+
 (defmacro plaintext (&rest body)
   "Write whatever you want in the BODY!"
   (string-join
@@ -158,7 +160,7 @@
   (setq evil-vsplit-window-right t
 	evil-split-window-below t)
 
-  (evil-define-key 'normal 'global (kbd "C-w DEL") 'evil-window-left)
+  (evil-define-key 'normal 'global (kbd "C-w C-h") 'evil-window-left)
   (evil-define-key 'normal 'global (kbd "C-w C-j") 'evil-window-down)
   (evil-define-key 'normal 'global (kbd "C-w C-k") 'evil-window-up)
   (evil-define-key 'normal 'global (kbd "C-w C-l") 'evil-window-right)
