@@ -418,6 +418,8 @@
 
     "e"          (which-key-prefix :export)
     "ee"         'org-export-dispatch
+    "em"         'org-md-export-as-markdown
+    "eM"         'org-md-export-to-markdown
 
     "f"          (which-key-prefix :feeds)
     "fi"         'org-feed-goto-inbox
@@ -627,7 +629,9 @@
    org-enforce-todo-dependencies t
    org-todo-keywords
    '((sequence "TODO" "NEXT" "WORKING" "|"
-	       "DONE" "ABORTED")))
+	       "DONE" "ABORTED"))
+   org-export-backends
+   '(ascii html icalendar latex odt markdown))
 
   (dolist (fn '(org-insert-drawer
 		org-insert-heading
