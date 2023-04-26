@@ -3786,7 +3786,7 @@ set so that it clears the whole REPL buffer, not just the output."
   "SPC" '(execute-extended-command :which-key "M-x")
   "TAB" '(evil-switch-to-windows-last-buffer :which-key "Last Buffer")
   "C-r" 'revert-buffer
-  "u" 'universal-argument)
+  "u"   'universal-argument)
 
 (global-leader
   "S"   (which-key-prefix :straight)
