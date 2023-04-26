@@ -3739,10 +3739,12 @@ set so that it clears the whole REPL buffer, not just the output."
   (interactive)
   (insert-char ?&))
 
-(defun youtube-viewer-start ()
-  (interactive)
+(defun youtube-viewer-start (with-screen)
+  (interactive "P")
   (if (executable-find "youtube-viewer")
-      (comint-run "youtube-viewer" '("-n"))
+      (if with-screen
+	  (comint-run "youtube-viewer" '())
+	  (comint-run "youtube-viewer" '("-n")))
     (message "youtube-viewer not found")))
 
 ;; c-s-shortcuts
@@ -3783,7 +3785,8 @@ set so that it clears the whole REPL buffer, not just the output."
 (global-leader
   "SPC" '(execute-extended-command :which-key "M-x")
   "TAB" '(evil-switch-to-windows-last-buffer :which-key "Last Buffer")
-  "C-r" 'revert-buffer)
+  "C-r" 'revert-buffer
+  "u"   'universal-argument)
 
 (global-leader
   "S"   (which-key-prefix :straight)
