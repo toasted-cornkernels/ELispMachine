@@ -418,8 +418,8 @@
 
     "e"          (which-key-prefix :export)
     "ee"         'org-export-dispatch
-    "em"         'org-md-export-as-markdown
-    "eM"         'org-md-export-to-markdown
+    "em"         'org-pandoc-export-as-gfm
+    "eM"         'org-pandoc-export-to-gfm-and-open
 
     "f"          (which-key-prefix :feeds)
     "fi"         'org-feed-goto-inbox
