@@ -779,13 +779,16 @@
 
 (use-package verb :defer t)
 
-(use-package ob-hy :defer t)
+(use-package ob-hy
+  :init (add-to-list 'org-babel-load-languages '(hy . t)))
 
 (use-package ob-rust :defer t)
 
 (use-package ob-kotlin :defer t)
 
 (use-package ob-mermaid :defer t)
+
+;; TODO: add racket
 
 (use-package ob
   :straight (:type built-in)
@@ -1975,9 +1978,6 @@ set so that it clears the whole REPL buffer, not just the output."
     (interactive)
     (hy-shell-eval-region)
     (run-hy)))
-
-(use-package ob-hy
-  :init (add-to-list 'org-babel-load-languages '(hy . t)))
 
 ;; Fennel config ====================================
 ;; ==================================================
