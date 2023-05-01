@@ -37,7 +37,36 @@
 
 (use-package ts)
 
-(use-package reazon)
+(use-package reazon
+  ;; :config
+  ;; (defalias 'disj 'reazon-disj)
+  ;; (defalias 'conj 'reazon-conj)
+  ;; (defalias 'fresh 'reazon-fresh)
+  ;; (defalias 'project 'reazon-project)
+  ;; (defalias 'run 'reazon-run)
+  ;; (defalias 'run* 'reazon-run*)
+  ;; (defalias 'conde 'reazon-conde)
+  ;; (defalias 'conda 'reazon-conda)
+  ;; (defalias 'condu 'reazon-condu)
+  ;; (defalias 'defrel 'reazon-defrel)
+  ;; (defalias 'caro 'reazon-caro)
+  ;; (defalias 'cdro 'reazon-cdro)
+  ;; (defalias 'conso 'reazon-conso)
+  ;; (defalias 'nullo 'reazon-nullo)
+  ;; (defalias 'pairo 'reazon-pairo)
+  ;; (defalias 'listo 'reazon-listo)
+  ;; (defalias 'appendo 'reazon-appendo)
+  ;; (defalias 'assqo 'reazon-assqo)
+  ;; (defalias 'membero 'reazon-membero)
+  ;; (defalias 'precedeso 'reazon-precedeso)
+  ;; (defalias 'immediately-precedeso 'reazon-immediately-precedeso)
+  ;; (defalias 'adjacento 'reazon-adjacento)
+  ;; (defalias 'subseto 'reazon-subseto)
+  ;; (defalias 'set-equalo 'reazon-set-equalo)
+  ;; (defalias '== 'reazon-==)
+  ;; (defalias '!S 'reazon-!S)
+  ;; (defalias '!U 'reazon-!U)
+  )
 
 (defmacro plaintext (&rest body)
   "Write whatever you want in the BODY!"
@@ -932,7 +961,7 @@
     "h" 'launchctl-help))
 
 (use-package osx-dictionary
-  :when macOS-p
+  :if macOS-p
   :commands
   (osx-dictionary-search-pointer
    osx-dictionary-search-input
@@ -3592,7 +3621,7 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; ==================================================
 
 (use-package vterm
-  :when (not chromeOS-p))
+  :defer t)
 
 (use-package multi-vterm
   :after (vterm projectile)
@@ -3625,6 +3654,7 @@ set so that it clears the whole REPL buffer, not just the output."
     "C-k"   'vterm--self-insert
     "C-r"   'vterm--self-insert
     "C-t"   'vterm--self-insert
+    "C-h"   'vterm--self-insert
     "C-g"   'vterm--self-insert
     "C-c"   'vterm--self-insert
     "C-SPC" 'vterm--self-insert
@@ -4239,6 +4269,7 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (use-package pdf-tools
   :defer t
+  :if (not chromeOS-p)
   :mode (("\\.pdf\\'" . pdf-view-mode))
   :general
   (local-leader
