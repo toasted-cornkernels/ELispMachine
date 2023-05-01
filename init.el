@@ -4618,8 +4618,8 @@ set so that it clears the whole REPL buffer, not just the output."
 
     "+" 'elfeed-search-tag-all
     "-" 'elfeed-search-untag-all
-    "u" 'elfeed-search-untag-all-unread
-    "U" 'elfeed-search-tag-all-unread)
+    "r" 'elfeed-search-untag-all-unread
+    "u" 'elfeed-search-tag-all-unread)
 
   (normal-mode-major-mode
     :major-modes '(elfeed-show-mode t)
