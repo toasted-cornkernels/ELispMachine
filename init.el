@@ -13,8 +13,7 @@
   (unless (file-exists-p bootstrap-file)
     (with-current-buffer
 	(url-retrieve-synchronously
-	 "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
-	 'silent 'inhibit-cookies)
+	 "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el" 'silent 'inhibit-cookies)
       (goto-char (point-max))
       (eval-print-last-sexp)))
   (load bootstrap-file nil 'nomessage))
@@ -27,6 +26,9 @@
 
 ;; Useful Elisp Libraries ===========================
 ;; ==================================================
+
+;; Disable madness
+(setq lexical-binding t)
 
 (use-package dash
   :config
@@ -69,14 +71,12 @@
   )
 
 (defmacro plaintext (&rest body)
-  "Write whatever you want in the BODY!"
+  "Concat everything in the BODY in a single string. Backslash breaks a line."
   (string-join
    (-interpose " "
 	       (mapcar (lambda (elem)
 			 (cond
 			  ((stringp elem) elem)
-			  ((and (symbolp elem)
-				(string= (symbol-name elem) "//")) "\n")
 			  ((symbolp elem) (symbol-name elem))
 			  (t (error (format "Unrecognized string: %s" elem))))) body))))
 
@@ -158,6 +158,19 @@
   (with-temp-buffer
     (insert-file-contents "~/.emacs.d/init.el")
     (eval-buffer)))
+
+(defun switch-theme (target-theme)
+  "Switch to TARGET-THEME by loading it and disabling all other. Disable everything by passing 'default."
+  (interactive "sSwitch to custom theme: ")
+  (let ((target-theme-symbol (intern target-theme)))
+    (if (eq target-theme-symbol 'default)
+	(dolist (theme custom-enabled-themes)
+	  (disable-theme theme))
+      (load-theme target-theme-symbol)
+      (dolist (other-theme (remove target-theme-symbol custom-enabled-themes))
+	(disable-theme other-theme))
+      (assert (and (= (length custom-enabled-themes) 1)
+		   (eq (car custom-enabled-themes) target-theme-symbol))))))
 
 ;; evil-mode config =================================
 ;; ==================================================
@@ -606,6 +619,8 @@
    org-clock-persist-query-resume nil
    ;; Change tasks to WORKING when clocking in
    org-clock-in-switch-to-state "WORKING"
+   ;; Change tasks to DONE when clocking in
+   org-clock-out-switch-to-state "DONE"
    ;; Save clock data and state changes and notes in the LOGBOOK drawer
    org-clock-into-drawer t
    ;; Don't remove clocks with 0:00 duration
@@ -3029,6 +3044,34 @@ set so that it clears the whole REPL buffer, not just the output."
 	 ("\\.yml\\'"  . yaml-mode)
 	 ("\\.qls\\'"  . yaml-mode)))
 
+;; csv config ======================================
+;; =================================================
+
+(use-package csv-mode
+  :defer t
+  :general
+  (local-leader
+    :major-modes '(csv-mode t)
+    :keymaps     '(csv-mode-map)
+    "s"  (which-key-prefix :sort)
+    "sf" 'csv-sort-fields
+    "sn" 'csv-sort-numeric-fields
+    "so" 'csv-toggle-descending
+
+    "y"  (which-key-prefix :yank)
+    "yf" 'csv-yank-fields
+    "yt" 'csv-yank-as-new-table
+
+    "a"  'csv-align-fields
+    "d"  'csv-kill-fields
+    "h"  'csv-header-line
+    "i"  'csv-toggle-invisibility
+    "n"  'csv-forward-field
+    "p"  'csv-backward-field
+    "r"  'csv-reverse-region
+    "t"  'csv-transpose
+    "u"  'csv-unalign-fields))
+
 ;; kotlin config ===================================
 ;; =================================================
 
@@ -3067,9 +3110,58 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; Git-gutter config ================================
 ;; ==================================================
 
-(use-package git-gutter
+(use-package git-gutter+
+  :when terminal-p
+  :init (global-git-gutter+-mode)
+  :diminish (git-gutter+-mode . "GG")
+  :general
+  (local-leader
+    :keymaps '(git-gutter+-mode-map)
+    "G" (which-key-prefix :version-control)
+    "Gn" 'git-gutter+-next-hunk
+    "Gp" 'git-gutter+-previous-hunk
+    "Gv=" 'git-gutter+-show-hunk
+    "Gr" 'git-gutter+-revert-hunks
+    "Gt" 'git-gutter+-stage-hunks
+    "Gc" 'git-gutter+-commit
+    "GC" 'git-gutter+-stage-and-commit
+    "G C-y" 'git-gutter+-stage-and-commit-whole-buffer
+    "GU" 'git-gutter+-unstage-whole-buffer)
   :config
-  (global-git-gutter-mode +1))
+  (setq git-gutter+-modified-sign " "
+	git-gutter+-added-sign "+"
+	git-gutter+-deleted-sign "-"
+	git-gutter+-diff-option "-w"
+	git-gutter+-hide-gutter t
+	git-gutter+-disabled-modes '(pdf-view-mode doc-view-mode image-mode)
+	;; Hide gutter when there are no changes
+	git-gutter+-hide-gutter t))
+
+(use-package git-gutter-fringe+
+  :when GUI-p
+  :init
+  (setq git-gutter-fr+-side 'left-fringe)
+  :config
+  (fringe-helper-define 'git-gutter-fr+-added nil
+        "..X...."
+        "..X...."
+        "XXXXX.."
+        "..X...."
+        "..X....")
+
+      (fringe-helper-define 'git-gutter-fr+-deleted nil
+        "......."
+        "......."
+        "XXXXX.."
+        "......."
+        ".......")
+
+      (fringe-helper-define 'git-gutter-fr+-modified nil
+        "..X...."
+        ".XXX..."
+        "XX.XX.."
+        ".XXX..."
+        "..X...."))
 
 ;; Magit config =====================================
 ;; ==================================================
@@ -3860,6 +3952,14 @@ set so that it clears the whole REPL buffer, not just the output."
   "8"  'winum-select-window-8
   "9"  'winum-select-window-9
   "0"  'winum-select-window-0)
+
+(defun yank-file-position ()
+  (interactive)
+  (if (not buffer-file-name)
+      (error "You're not visiting a file!")
+    (kill-new
+     (concat buffer-file-name "::"
+	     (number-to-string (current-line))))))
 
 (global-leader
   "f"   (which-key-prefix :file)
