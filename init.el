@@ -581,7 +581,9 @@
   (normal-mode-major-mode
     :major-modes '(org-mode t)
     :keymaps     '(org-mode-map)
-    "RET" 'org-open-at-point)
+    "RET"   'org-open-at-point
+    "C-M-h" 'org-shiftleft
+    "C-M-l" 'org-shiftright)
 
   :config
   (defun org-insert-current-time ()
@@ -743,29 +745,21 @@
   :config
   (setq org-superstar-bullet-list '("■" "◆" "▲" "▶")))
 
-(use-package org-wild-notifier
-  :defer t)
+(use-package org-wild-notifier :defer t)
 
-(use-package org-contrib
-  :defer t)
+(use-package org-contrib :defer t)
 
-(use-package org-pomodoro
-  :defer t)
+(use-package org-pomodoro :defer t)
 
-(use-package org-present
-  :defer t)
+(use-package org-present :defer t)
 
-(use-package org-cliplink
-  :defer t)
+(use-package org-cliplink :defer t)
 
-(use-package org-rich-yank
-  :defer t)
+(use-package org-rich-yank :defer t)
 
-(use-package org-projectile
-  :defer t)
+(use-package org-projectile :defer t)
 
-(use-package valign
-  :after (markdown-mode org-mode))
+(use-package valign :after (markdown-mode org-mode))
 
 (use-package org-appear
   :defer t
