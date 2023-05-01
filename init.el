@@ -581,7 +581,11 @@
   (normal-mode-major-mode
     :major-modes '(org-mode t)
     :keymaps     '(org-mode-map)
-    "RET"   'org-open-at-point
+    "RET"   'org-open-at-point)
+
+  (agnostic-key
+    :major-modes '(org-mode t)
+    :keymaps     '(org-mode-map)
     "C-M-h" 'org-shiftleft
     "C-M-l" 'org-shiftright)
 
@@ -617,8 +621,8 @@
    org-clock-persist-query-resume nil
    ;; Change tasks to WORKING when clocking in
    org-clock-in-switch-to-state "WORKING"
-   ;; Change tasks to DONE when clocking in
-   org-clock-out-switch-to-state "DONE"
+   ;; Change tasks to DONE when clocking out
+   ;; org-clock-out-switch-to-state "DONE"
    ;; Save clock data and state changes and notes in the LOGBOOK drawer
    org-clock-into-drawer t
    ;; Don't remove clocks with 0:00 duration
