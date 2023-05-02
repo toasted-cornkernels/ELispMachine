@@ -379,6 +379,7 @@
 
 (use-package mixed-pitch
   :hook ((w3m-mode      . mixed-pitch-mode)
+	 (org-mode . mixed-pitch-mode)
 	 (markdown-mode . mixed-pitch-mode)))
 
 ;; Org config =======================================
