@@ -357,6 +357,7 @@
 (use-package align
   :straight nil
   :defer t
+  :config
   (add-to-list 'align-rules-list
                '(haskell-types
 		 (regexp . "\\(\\s-+\\)\\(::\\|∷\\)\\s-+")
@@ -787,6 +788,15 @@
 
 (use-package ob-mermaid :defer t)
 
+(use-package ob-racket
+  :after org
+  :config
+  (add-hook 'ob-racket-pre-runtime-library-load-hook
+	      #'ob-racket-raco-make-runtime-library)
+  :straight (ob-racket
+	       :type git :host github :repo "hasu/emacs-ob-racket"
+	       :files ("*.el" "*.rkt")))
+
 (use-package ob
   :straight (:type built-in)
   :defer    t
@@ -806,7 +816,7 @@
 				'ob-dot 'ob-rust 'ob-kotlin 'ob-shell)))
   (org-babel-do-load-languages
    'org-babel-load-languages
-   '((lisp . t) (clojure . t) (scheme . t) (hy . t)
+   '((lisp . t) (clojure . t) (scheme . t) (hy . t) (racket . t)
      (dot . t) (rust . t) (kotlin . t) (shell . t)
      (mermaid . t) (plantuml . t) (awk . t))))
 
