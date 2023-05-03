@@ -380,6 +380,7 @@
 
 (use-package mixed-pitch
   :hook ((w3m-mode      . mixed-pitch-mode)
+	 (org-mode . mixed-pitch-mode)
 	 (markdown-mode . mixed-pitch-mode)))
 
 ;; Org config =======================================
@@ -582,7 +583,13 @@
   (normal-mode-major-mode
     :major-modes '(org-mode t)
     :keymaps     '(org-mode-map)
-    "RET" 'org-open-at-point)
+    "RET"   'org-open-at-point)
+
+  (agnostic-key
+    :major-modes '(org-mode t)
+    :keymaps     '(org-mode-map)
+    "C-M-h" 'org-shiftleft
+    "C-M-l" 'org-shiftright)
 
   :config
   (defun org-insert-current-time ()
@@ -616,8 +623,8 @@
    org-clock-persist-query-resume nil
    ;; Change tasks to WORKING when clocking in
    org-clock-in-switch-to-state "WORKING"
-   ;; Change tasks to DONE when clocking in
-   org-clock-out-switch-to-state "DONE"
+   ;; Change tasks to DONE when clocking out
+   ;; org-clock-out-switch-to-state "DONE"
    ;; Save clock data and state changes and notes in the LOGBOOK drawer
    org-clock-into-drawer t
    ;; Don't remove clocks with 0:00 duration
@@ -744,29 +751,21 @@
   :config
   (setq org-superstar-bullet-list '("■" "◆" "▲" "▶")))
 
-(use-package org-wild-notifier
-  :defer t)
+(use-package org-wild-notifier :defer t)
 
-(use-package org-contrib
-  :defer t)
+(use-package org-contrib :defer t)
 
-(use-package org-pomodoro
-  :defer t)
+(use-package org-pomodoro :defer t)
 
-(use-package org-present
-  :defer t)
+(use-package org-present :defer t)
 
-(use-package org-cliplink
-  :defer t)
+(use-package org-cliplink :defer t)
 
-(use-package org-rich-yank
-  :defer t)
+(use-package org-rich-yank :defer t)
 
-(use-package org-projectile
-  :defer t)
+(use-package org-projectile :defer t)
 
-(use-package valign
-  :after (markdown-mode org-mode))
+(use-package valign :after (markdown-mode org-mode))
 
 (use-package org-appear
   :defer t
@@ -780,7 +779,8 @@
 
 (use-package verb :defer t)
 
-(use-package ob-hy :defer t)
+(use-package ob-hy
+  :init (add-to-list 'org-babel-load-languages '(hy . t)))
 
 (use-package ob-rust :defer t)
 
@@ -1985,9 +1985,6 @@ set so that it clears the whole REPL buffer, not just the output."
     (interactive)
     (hy-shell-eval-region)
     (run-hy)))
-
-(use-package ob-hy
-  :init (add-to-list 'org-babel-load-languages '(hy . t)))
 
 ;; Fennel config ====================================
 ;; ==================================================
@@ -4630,8 +4627,8 @@ set so that it clears the whole REPL buffer, not just the output."
 
     "+" 'elfeed-search-tag-all
     "-" 'elfeed-search-untag-all
-    "u" 'elfeed-search-untag-all-unread
-    "U" 'elfeed-search-tag-all-unread)
+    "r" 'elfeed-search-untag-all-unread
+    "u" 'elfeed-search-tag-all-unread)
 
   (normal-mode-major-mode
     :major-modes '(elfeed-show-mode t)
