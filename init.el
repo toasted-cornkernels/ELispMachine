@@ -793,9 +793,14 @@
   :config
   (add-hook 'ob-racket-pre-runtime-library-load-hook
 	      #'ob-racket-raco-make-runtime-library)
+  (add-to-list 'org-src-lang-modes '("racket" . racket))
   :straight (ob-racket
 	       :type git :host github :repo "hasu/emacs-ob-racket"
 	       :files ("*.el" "*.rkt")))
+
+(use-package org-auto-tangle
+  :defer t
+  :hook (org-mode . org-auto-tangle-mode))
 
 (use-package ob
   :straight (:type built-in)
@@ -2099,6 +2104,7 @@ set so that it clears the whole REPL buffer, not just the output."
 (use-package geiser-gambit  :defer t)
 (use-package geiser-guile   :defer t)
 (use-package geiser-mit     :defer t)
+(use-package geiser-racket  :defer t)
 
 ;; Janet config =====================================
 ;; ==================================================
