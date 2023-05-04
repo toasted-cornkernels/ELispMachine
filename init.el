@@ -2093,18 +2093,116 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; Scheme config ====================================
 ;; ==================================================
 
-(use-package sicp :defer t)
-
 (use-package geiser
-  :defer t
-  :hook  (geiser-mode . evil-cleverparens-mode))
+  :commands run-geiser
+  :general
+  (local-leader
+    :major-modes (scheme-mode t)
+    :keymaps '(scheme-mode-map)
+    "'"  'geiser-mode-switch-to-repl
+    ","  'lisp-state-toggle-lisp-state
+
+    "c"  (which-key-prefix "compile")
+    "cc" 'geiser-compile-current-buffer
+    "cp" 'geiser-add-to-load-path
+
+    "eb" 'geiser-eval-buffer
+    "ee" 'geiser-eval-last-sexp
+    "ef" 'geiser-eval-definition
+    "el" 'lisp-state-eval-sexp-end-of-line
+    "er" 'geiser-eval-region
+
+    "g"  (which-key-prefix "goto")
+    "gm" 'geiser-edit-module
+    "gn" 'next-error
+    "gN" 'previous-error
+
+    "h"  (which-key-prefix "documentation")
+    "hh" 'geiser-doc-symbol-at-point
+    "hd" 'geiser-doc-look-up-manual
+    "hm" 'geiser-doc-module
+    "h<" 'geiser-xref-callers
+    "h>" 'geiser-xref-callees
+
+    "i"  (which-key-prefix "insertion")
+    "il" 'geiser-insert-lambda
+
+    "m"  (which-key-prefix "macroexpansion")
+    "me" 'geiser-expand-last-sexp
+    "mf" 'geiser-expand-definition
+    "mr" 'geiser-expand-region
+
+    "s"  (which-key-prefix "repl")
+    "si" 'geiser-mode-switch-to-repl
+    "sb" 'geiser-eval-buffer
+    "sB" 'geiser-eval-buffer-and-go
+    "sf" 'geiser-eval-definition
+    "sF" 'geiser-eval-definition-and-go
+    "se" 'geiser-eval-last-sexp
+    "sr" 'geiser-eval-region
+    "sR" 'geiser-eval-region-and-go
+    "ss" 'geiser-set-scheme)
+
+  (insert-mode-major-mode
+    :major-modes '(geiser-repl-mode t)
+    :keymaps     '(geiser-repl-mode-map)
+    (kbd "S-<return>") 'geiser-repl--newline-and-indent
+    (kbd "C-l") 'geiser-repl-clear-buffer
+    (kbd "C-d") 'geiser-repl-exit)
+
+  (normal-mode-major-mode
+    :major-modes '(geiser-repl-mode t)
+    :keymaps     '(geiser-repl-mode-map)
+    "]]" 'geiser-repl-next-prompt
+    "[[" 'geiser-repl-previous-prompt
+    "gj" 'geiser-repl-next-prompt
+    "gk" 'geiser-repl-previous-prompt)
+
+  (local-leader
+    :major-modes '(geiser-repl-mode t)
+    :keymaps     '(geiser-repl-mode-map)
+    "C"  'geiser-repl-clear-buffer
+    "k"  'geiser-repl-interrupt
+    "f"  'geiser-load-file
+
+    "i"  (which-key-prefix "insert")
+    "il" 'geiser-insert-lambda
+    "im" 'geiser-repl-import-module
+
+    "u"  'geiser-repl-unload-function
+
+    "h"  (which-key-prefix "help")
+    "hh" 'geiser-doc-symbol-at-point
+
+    "s"  'geiser-squarify
+    "q"  'geiser-repl-exit)
+  
+  (normal-mode-major-mode
+    :major-modes '(geiser-doc-mode t)
+    :keymaps     '(geiser-doc-mode-map)
+    "o" 'link-hint-open-link
+
+    "]]" 'geiser-doc-next-section
+    "[[" 'geiser-doc-previous-section
+    ">" 'geiser-doc-next
+    "<" 'geiser-doc-previous
+
+    "gp" 'geiser-doc-previous
+    "gn" 'geiser-doc-next
+    "gz" 'geiser-doc-switch-to-repl
+
+    (kbd "C-j") 'forward-button
+    (kbd "C-k") 'backward-button))
 
 (use-package geiser-chicken :defer t)
 (use-package geiser-chez    :defer t)
 (use-package geiser-gambit  :defer t)
 (use-package geiser-guile   :defer t)
 (use-package geiser-mit     :defer t)
+(use-package geiser-kawa    :defer t)
 (use-package geiser-racket  :defer t)
+
+(use-package sicp :defer t)
 
 ;; Janet config =====================================
 ;; ==================================================
