@@ -2146,9 +2146,9 @@ set so that it clears the whole REPL buffer, not just the output."
   (insert-mode-major-mode
     :major-modes '(geiser-repl-mode t)
     :keymaps     '(geiser-repl-mode-map)
-    (kbd "S-<return>") 'geiser-repl--newline-and-indent
-    (kbd "C-l") 'geiser-repl-clear-buffer
-    (kbd "C-d") 'geiser-repl-exit)
+    "S-RET" 'geiser-repl--newline-and-indent
+    "C-l"   'geiser-repl-clear-buffer
+    "C-d"   'geiser-repl-exit)
 
   (normal-mode-major-mode
     :major-modes '(geiser-repl-mode t)
@@ -2180,19 +2180,19 @@ set so that it clears the whole REPL buffer, not just the output."
   (normal-mode-major-mode
     :major-modes '(geiser-doc-mode t)
     :keymaps     '(geiser-doc-mode-map)
-    "o" 'link-hint-open-link
+    "o"   'link-hint-open-link
 
-    "]]" 'geiser-doc-next-section
-    "[[" 'geiser-doc-previous-section
-    ">" 'geiser-doc-next
-    "<" 'geiser-doc-previous
+    "]]"  'geiser-doc-next-section
+    "[["  'geiser-doc-previous-section
+    ">"   'geiser-doc-next
+    "<"   'geiser-doc-previous
+	  
+    "gp"  'geiser-doc-previous
+    "gn"  'geiser-doc-next
+    "gz"  'geiser-doc-switch-to-repl
 
-    "gp" 'geiser-doc-previous
-    "gn" 'geiser-doc-next
-    "gz" 'geiser-doc-switch-to-repl
-
-    (kbd "C-j") 'forward-button
-    (kbd "C-k") 'backward-button))
+    "C-j" 'forward-button
+    "C-k" 'backward-button))
 
 (use-package geiser-chicken :defer t)
 (use-package geiser-chez    :defer t)
