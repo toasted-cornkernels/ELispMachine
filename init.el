@@ -764,7 +764,9 @@
 
 (use-package org-projectile :defer t)
 
-(use-package valign :after (markdown-mode org-mode))
+(use-package valign
+  :hook ((markdown-mode . valign-mode)
+	 (org-mode      . valign-mode)))
 
 (use-package org-appear
   :defer t
@@ -2459,9 +2461,6 @@ set so that it clears the whole REPL buffer, not just the output."
    ("\\.mkd\\'" . markdown-mode)
    ("\\.mdk\\'" . markdown-mode)
    ("\\.mdx\\'" . markdown-mode))
-
-  :hook
-  ((markdown-mode . valign-mode))
 
   :config
   (setq markdown-fontify-code-blocks-natively t)
