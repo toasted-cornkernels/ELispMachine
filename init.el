@@ -1,6 +1,7 @@
 (setq-default gc-cons-threshold 100000000)
 (setq warning-minimum-level     :emergency
       warning-minimum-log-level :warning)
+(setq ad-redefinition-action 'accept)
 
 ;; Straight =========================================
 ;; ==================================================
@@ -2072,11 +2073,13 @@ set so that it clears the whole REPL buffer, not just the output."
     "gr" 'racket-open-require-path
     "gu" 'racket-xp-next-use
     "gU" 'racket-xp-previous-use
+    "gt" 'racket-xp-mode
 
     "h"  (which-key-prefix :help)
     "ha" 'racket-xp-annotate
     "hd" 'racket-xp-describe
     "hh" 'racket-xp-documentation
+    "ht" 'racket-xp-mode
 
     "i"  (which-key-prefix :insert)
     "il" 'racket-insert-lambda
@@ -2102,8 +2105,8 @@ set so that it clears the whole REPL buffer, not just the output."
   :commands run-geiser
   :general
   (local-leader
-    :major-modes (scheme-mode t)
-    :keymaps '(scheme-mode-map)
+    :major-modes '(scheme-mode t)
+    :keymaps     '(scheme-mode-map)
     "'"  'geiser-mode-switch-to-repl
     ","  'lisp-state-toggle-lisp-state
 
