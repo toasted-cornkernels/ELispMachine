@@ -766,7 +766,9 @@
 
 (use-package org-projectile :defer t)
 
-(use-package valign :after (markdown-mode org-mode))
+(use-package valign
+  :hook ((markdown-mode . valign-mode)
+	 (org-mode      . valign-mode)))
 
 (use-package org-appear
   :defer t
@@ -2046,6 +2048,7 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (use-package racket-mode
   :defer t
+  :mode "\\.rkt\\'"
   :hook  (racket-mode . evil-cleverparens-mode)
   :general
   (local-leader
@@ -2203,7 +2206,6 @@ set so that it clears the whole REPL buffer, not just the output."
 (use-package geiser-guile   :defer t)
 (use-package geiser-mit     :defer t)
 (use-package geiser-kawa    :defer t)
-(use-package geiser-racket  :defer t)
 
 (use-package sicp :defer t)
 
@@ -2574,9 +2576,6 @@ set so that it clears the whole REPL buffer, not just the output."
    ("\\.mkd\\'" . markdown-mode)
    ("\\.mdk\\'" . markdown-mode)
    ("\\.mdx\\'" . markdown-mode))
-
-  :hook
-  ((markdown-mode . valign-mode))
 
   :config
   (setq markdown-fontify-code-blocks-natively t)
@@ -4893,6 +4892,9 @@ set so that it clears the whole REPL buffer, not just the output."
       inhibit-splash-screen t)
 
 (fset 'yes-or-no-p 'y-or-n-p)
+
+(defun display-startup-echo-area-message ()
+  (message "(λ (f) (λ (x) (f (x x))) (λ (x) (f (x x))))"))
 
 (add-hook 'after-init-hook (lambda () (setq gc-cons-threshold 800000)))
 (message "config loaded!")
