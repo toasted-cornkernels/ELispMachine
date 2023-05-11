@@ -3092,6 +3092,15 @@ set so that it clears the whole REPL buffer, not just the output."
 	    (lambda ()
 	      (evil-define-key 'normal dired-mode-map (kbd "SPC") nil))))
 
+(use-package diff-hl
+  :after dired
+  :hook (dired-mode . diff-hl-dired-mode-unless-remote))
+
+(use-package diredfl
+  :after dired
+  :config
+  (diredfl-global-mode))
+
 ;; xwidget config ===================================
 ;; ==================================================
 
@@ -3218,12 +3227,11 @@ set so that it clears the whole REPL buffer, not just the output."
   ;; sbt-supershell kills sbt-mode:  https://github.com/hvesalai/emacs-sbt-mode/issues/152
   (setq sbt:program-options '("-Dsbt.supershell=false")))
 
-;; Git-gutter config ================================
+;; Git-gutter+ config ===============================
 ;; ==================================================
 
 (use-package git-gutter+
   :when terminal-p
-  :init (global-git-gutter+-mode)
   :diminish (git-gutter+-mode . "GG")
   :general
   (local-leader
@@ -3246,7 +3254,8 @@ set so that it clears the whole REPL buffer, not just the output."
 	git-gutter+-hide-gutter t
 	git-gutter+-disabled-modes '(pdf-view-mode doc-view-mode image-mode)
 	;; Hide gutter when there are no changes
-	git-gutter+-hide-gutter t))
+	git-gutter+-hide-gutter t)
+  (global-git-gutter+-mode))
 
 (use-package git-gutter-fringe+
   :when GUI-p
