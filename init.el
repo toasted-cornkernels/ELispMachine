@@ -3984,9 +3984,10 @@ set so that it clears the whole REPL buffer, not just the output."
 (defun youtube-viewer-start (with-screen)
   (interactive "P")
   (if (executable-find "youtube-viewer")
-      (if with-screen
-	  (comint-run "youtube-viewer" '())
-	  (comint-run "youtube-viewer" '("-n")))
+      (cond 
+       ((null with-screen) (comint-run "youtube-viewer" '()))
+       ((equal with-screen '(4)) (comint-run "youtube-viewer" '("-n")))
+       ((equal with-screen '(16)) (comint-run "youtube-viewer" '("--append-arg='--no-audio'"))))
     (message "youtube-viewer not found")))
 
 ;; c-s-shortcuts
