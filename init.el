@@ -642,7 +642,7 @@
    org-global-properties
    '(("Effort_ALL" .
       "0:15 0:30 0:45 1:00 2:00 3:00 4:00 5:00 6:00 0:00"))
-   ;;        1    2    3    4    5    6    7    8    9    0
+   ;;    1    2    3    4    5    6    7    8    9    0
    ;; These are the hotkeys ^^
    org-time-stamp-rounding-minutes '(0 5)
    org-clock-idle-time nil
@@ -3987,9 +3987,15 @@ set so that it clears the whole REPL buffer, not just the output."
   (interactive "P")
   (if (executable-find "youtube-viewer")
       (cond 
-       ((null with-screen) (comint-run "youtube-viewer" '()))
-       ((equal with-screen '(4)) (comint-run "youtube-viewer" '("-n")))
-       ((equal with-screen '(16)) (comint-run "youtube-viewer" '("--append-arg='--no-audio'"))))
+       ((null with-screen) (progn
+			     (message "Running with video.")
+			     (comint-run "youtube-viewer" '())))
+       ((equal with-screen '(4)) (progn
+				   (message "Running without video.")
+				   (comint-run "youtube-viewer" '("-n"))))
+       ((equal with-screen '(16)) (progn
+				    (message "Running with video and without audio.")
+				    (comint-run "youtube-viewer" '("--append-arg='--no-audio'")))))
     (message "youtube-viewer not found")))
 
 ;; c-s-shortcuts
