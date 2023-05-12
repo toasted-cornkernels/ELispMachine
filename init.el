@@ -746,6 +746,8 @@
     "M-J" 'calednar-one-year-forward
     "M-L" 'calendar-one-month-forward))
 
+(use-package org-ql :defer t)
+
 ;; TODO
 (use-package org-superstar
   :defer t
@@ -3866,7 +3868,7 @@ set so that it clears the whole REPL buffer, not just the output."
     "C-k"   'vterm--self-insert
     "C-r"   'vterm--self-insert
     "C-t"   'vterm--self-insert
-    "C-h"   'vterm--self-insert
+    "C-h"   'vterm-send-backspace
     "C-g"   'vterm--self-insert
     "C-c"   'vterm--self-insert
     "C-SPC" 'vterm--self-insert
