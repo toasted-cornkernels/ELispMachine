@@ -927,7 +927,9 @@
 (use-package ox-epub     :defer t)
 (use-package ox-gfm      :defer t)
 (use-package ox-asciidoc :defer t)
-(use-package ox-pandoc   :defer t)
+(use-package ox-pandoc   :defer t
+  :config
+  (setq org-pandoc-options-for-gfm '((wrap . none) (toc . t))))
 
 ;; Emoji config =====================================
 ;; ==================================================
