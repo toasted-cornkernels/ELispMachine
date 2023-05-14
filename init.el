@@ -1316,6 +1316,124 @@
   :hook     (kbd-mode . evil-cleverparens-mode)
   :commands kbd-mode)
 
+;; Common Lisp config ===============================
+;; ==================================================
+
+(use-package slime
+  :commands slime-mode
+  :init
+  (setq slime-contribs '(slime-asdf
+                         slime-fancy
+                         slime-indentation
+                         slime-sbcl-exts
+                         slime-scratch)
+        inferior-lisp-program "sbcl")
+  (setq slime-complete-symbol*-fancy t
+	slime-complete-symbol-function 'slime-fuzzy-complete-symbol)
+
+  :config
+  (slime-setup)
+  (defun cl-eval-current-symbol-sp ()
+    "Call `eval-last-sexp' on the symbol around point.
+Requires smartparens because all movement is done using `sp-forward-symbol'."
+    (interactive)
+    (let ((evil-move-beyond-eol t))
+      ;; evil-move-beyond-eol disables the evil advices around eval-last-sexp
+      (save-excursion
+	(sp-forward-symbol)
+	(call-interactively 'slime-eval-last-expression))))
+
+  (defun cl-eval-current-form-sp (&optional arg)
+    "Call `eval-last-sexp' after moving out of one level of
+parentheses. Will exit any strings and/or comments first.
+An optional ARG can be used which is passed to `sp-up-sexp' to move out of more
+than one sexp.
+Requires smartparens because all movement is done using `sp-up-sexp'."
+    (interactive "p")
+    (let ((evil-move-beyond-eol t))
+      ;; evil-move-beyond-eol disables the evil advices around eval-last-sexp
+      (save-excursion
+	(let ((max 10))
+	  (while (and (> max 0)
+		      (sp-point-in-string-or-comment))
+	    (decf max)
+	    (sp-up-sexp)))
+	(sp-up-sexp arg)
+	(call-interactively 'slime-eval-last-expression))))
+
+  (defun slime-eval-sexp-end-of-line ()
+    "Evaluate current line."
+    (interactive)
+    (move-end-of-line 1)
+    (slime-eval-last-expression))
+
+  (defun cl-eval-current-form ()
+    "Find and evaluate the current def* or set* command.
+Unlike `eval-defun', this does not go to topmost function."
+    (interactive)
+    (save-excursion
+      (search-backward-regexp "(def\\|(set")
+      (forward-list)
+      (call-interactively 'slime-eval-last-expression)))
+
+  :general
+  (local-leader
+    :major-mode '(lisp-mode t)
+    :keymaps    '(lisp-mode-map)
+    "'" 'slime
+
+    "c"  (which-key-prefix "compile")
+    "cc" 'slime-compile-file
+    "cC" 'slime-compile-and-load-file
+    "cl" 'slime-load-file
+    "cf" 'slime-compile-defun
+    "cr" 'slime-compile-region
+    "cn" 'slime-remove-notes
+
+    "e"  (which-key-prefix "eval")
+    "eb" 'slime-eval-buffer
+    "ef" 'slime-eval-defun
+    "eF" 'slime-undefine-function
+    "ee" 'slime-eval-last-expression
+    "el" 'slime-eval-sexp-end-of-line
+    "er" 'slime-eval-region
+    "ec" 'cl-eval-current-form-sp
+    "eC" 'cl-eval-current-form
+    "es" 'cl-eval-current-symbol-sp
+
+    "g"  (which-key-prefix "goto")
+    "gb" 'slime-pop-find-definition-stack
+    "gn" 'slime-next-note
+    "gN" 'slime-previous-note
+
+    "h"  (which-key-prefix "help")
+    "ha" 'slime-apropos
+    "hA" 'slime-apropos-all
+    "hd" 'slime-disassemble-symbol
+    "hh" 'slime-describe-symbol
+    "hH" 'slime-hyperspec-lookup
+    "hi" 'slime-inspect-definition
+    "hp" 'slime-apropos-package
+    "ht" 'slime-toggle-trace-fdefinition
+    "hT" 'slime-untrace-all
+    "h<" 'slime-who-calls
+    "h>" 'slime-calls-who
+    "hr" 'slime-who-references
+    "hm" 'slime-who-macroexpands
+    "hs" 'slime-who-specializes
+
+    "m"  (which-key-prefix "macro")
+    "ma" 'slime-macroexpand-all
+    "mo" 'slime-macroexpand-1
+
+    "s"  (which-key-prefix "repl")
+    "se" 'slime-eval-last-expression-in-repl
+    "si" 'slime
+    "sq" 'slime-quit-lisp
+
+    "t" (which-key-prefix "toggle")
+    "tf" 'slime-toggle-fancy-trace))
+
 ;; Elisp config =====================================
 ;; ==================================================
 
