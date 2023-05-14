@@ -749,12 +749,6 @@
 
 (use-package org-ql :defer t)
 
-;; TODO
-(use-package org-superstar
-  :defer t
-  :config
-  (setq org-superstar-bullet-list '("■" "◆" "▲" "▶")))
-
 (use-package org-wild-notifier :defer t)
 
 (use-package org-contrib :defer t)
@@ -922,8 +916,9 @@
   :defer    t
   :commands (org-clock-jump-to-current-clock))
 
-(use-package org-remark
-  :defer t)
+(use-package org-remark :defer t)
+
+(use-package org-noter :defer t)
 
 ;; exporters
 (use-package ox-latex    :straight nil :defer t)
