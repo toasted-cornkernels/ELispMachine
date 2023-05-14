@@ -390,6 +390,7 @@
 (use-package org
   :straight (:type built-in)
   :demand   t
+  :defer    t
   :init
   (defmacro org-emphasize-this (fname char)
     "Make function called FNAME for setting the emphasis (signified by CHAR) in org mode."
@@ -689,7 +690,7 @@
     (advice-add fn :after #'evil-insert-state)))
 
 (use-package evil-org
-  :after (evil org)
+  :defer t
   :init
   (add-hook 'org-mode-hook (lambda ()
 			     (evil-org-mode)
@@ -785,6 +786,7 @@
 (use-package verb :defer t)
 
 (use-package ob-hy
+  :defer t
   :init (add-to-list 'org-babel-load-languages '(hy . t)))
 
 (use-package ob-rust :defer t)
@@ -794,7 +796,7 @@
 (use-package ob-mermaid :defer t)
 
 (use-package ob-racket
-  :after org
+  :defer t
   :config
   (add-hook 'ob-racket-pre-runtime-library-load-hook
 	      #'ob-racket-raco-make-runtime-library)
@@ -805,7 +807,7 @@
 
 (use-package org-auto-tangle
   :defer t
-  :hook (org-mode . org-auto-tangle-mode))
+  :hook  (org-mode . org-auto-tangle-mode))
 
 (use-package ob
   :straight (:type built-in)
@@ -845,28 +847,30 @@
 
   :config
   (setq org-capture-templates
-	`(,(when work-machine-p
-	     `("T" "Work TODO" entry (file+headline ,(concat org-work-directory "/WorkTODO.org") "Todos")
-	       "*** TODO %?\n%i\nEntered on %U\n"))
-	  ,(when work-machine-p
-	     `("N" "Work Notes" entry (file+headline ,(concat org-work-directory "/WorkTODO.org") "Notes")
-	       "*** %?\n%i\nEntered on %U\n"))
-	  ,(when work-machine-p
-	     `("C" "Work Clipboard" entry (file+headline ,(concat org-work-directory "/WorkTODO.org") "Clipboard")
- 	       "*** %?          :%^{Tag}:\n\nEntered on %U\n%i\n\n"))
-	  ,(when work-machine-p
-	     `("L" "Work TIL" entry (file+headline ,(concat org-work-directory "/WorkTODO.org") "TIL")
- 	       "*** %?          :%^{Tag}:\n\nEntered on %U\n%i\n\n"))
-	  ("t" "TODO" entry (file+headline ,(concat org-directory "/TODO.org") "Tasks")
-	   "** TODO %?          :%^{Tag}:\n\nEntered on %U\n%i\n%a\n")
-	  ("l" "TIL" entry (file+headline ,(concat org-directory "/TIL.org") "TIL")
-	   "** %?          :%^{Tag}:\n\nEntered on %U\n%i\n%a\n")
-	  ("c" "Clipboard" entry (file+headline ,(concat org-directory "/Clipboard.org") "Clipboard")
-	   "** %?          :%^{Tag}:\n\nEntered on %U\n%i\n%a\n")
-	  ("a" "Journal" entry (file+datetree,(concat org-directory "/Journal.org"))
-	   "** %U\n\n%?\n%i\n")
+	`(
+	  ;; ,(when work-machine-p
+	  ;;    `("T" "Work TODO" entry (file+headline ,(concat org-work-directory "/WorkTODO.org") "Todos")
+	  ;;      "*** TODO %?\n%i\nEntered on %U\n"))
+	  ;; ,(when work-machine-p
+	  ;;    `("N" "Work Notes" entry (file+headline ,(concat org-work-directory "/WorkTODO.org") "Notes")
+	  ;;      "*** %?\n%i\nEntered on %U\n"))
+	  ;; ,(when work-machine-p
+	  ;;    `("C" "Work Clipboard" entry (file+headline ,(concat org-work-directory "/WorkTODO.org") "Clipboard")
+ 	  ;;      "*** %?          :%^{Tag}:\n\nEntered on %U\n%i\n\n"))
+	  ;; ,(when work-machine-p
+	  ;;    `("L" "Work TIL" entry (file+headline ,(concat org-work-directory "/WorkTODO.org") "TIL")
+ 	  ;;      "*** %?          :%^{Tag}:\n\nEntered on %U\n%i\n\n"))
+	  ;; ("t" "TODO" entry (file+headline ,(concat org-directory "/TODO.org") "Tasks")
+	  ;;  "** TODO %?          :%^{Tag}:\n\nEntered on %U\n%i\n%a\n")
+	  ;; ("l" "TIL" entry (file+headline ,(concat org-directory "/TIL.org") "TIL")
+	  ;;  "** %?          :%^{Tag}:\n\nEntered on %U\n%i\n%a\n")
+	  ;; ("c" "Clipboard" entry (file+headline ,(concat org-directory "/Clipboard.org") "Clipboard")
+	  ;;  "** %?          :%^{Tag}:\n\nEntered on %U\n%i\n%a\n")
+	  ;; ("a" "Journal" entry (file+datetree,(concat org-directory "/Journal.org"))
+	  ;;  "** %U\n\n%?\n%i\n")
 	  ("n" "ShowerThoughts" entry (file+headline ,(concat org-directory "/ShowerThoughts.org") "ShowerThoughts")
-	   "** %?          :%^{Tag}:\n\nEntered on %U\n%i\n%a\n"))))
+	   "** %?          :%^{Tag}:\n\nEntered on %U\n%i\n%a\n"))
+	))
 
 (use-package org-agenda
   :straight nil
@@ -893,7 +897,7 @@
 
 (use-package org-habit
   :straight nil
-  :after org)
+  :defer t)
 
 (use-package org-compat
   :straight nil
