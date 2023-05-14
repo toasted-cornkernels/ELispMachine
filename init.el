@@ -1274,7 +1274,6 @@
   (show-paren-mode 1))
 
 (use-package smartparens
-  :hook (prog-mode minibuffer-mode)
   ;; :bind (:map smartparens-mode-map
   ;; 	      ("M-p" . sp-previous-sexp)
   ;; 	      ("M-n" . sp-next-sexp))
@@ -3031,8 +3030,7 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; rainbow delimiters config ========================
 ;; ==================================================
 
-(use-package rainbow-delimiters
-  :hook prog-mode)
+(use-package rainbow-delimiters)
 
 ;; undo-tree config =================================
 ;; ==================================================
