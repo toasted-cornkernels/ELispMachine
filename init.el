@@ -390,7 +390,6 @@
 (use-package org
   :straight (:type built-in)
   :demand   t
-  :defer    t
   :init
   (defmacro org-emphasize-this (fname char)
     "Make function called FNAME for setting the emphasis (signified by CHAR) in org mode."
@@ -690,7 +689,7 @@
     (advice-add fn :after #'evil-insert-state)))
 
 (use-package evil-org
-  :defer t
+  :after (evil org)
   :init
   (add-hook 'org-mode-hook (lambda ()
 			     (evil-org-mode)
@@ -891,7 +890,7 @@
 
 (use-package org-habit
   :straight nil
-  :defer t)
+  :after org)
 
 (use-package org-compat
   :straight nil
@@ -2915,6 +2914,14 @@ set so that it clears the whole REPL buffer, not just the output."
   :straight nil
   :config
   (setq ispell-program-name "aspell"))
+
+;; Dictionaries =====================================
+;; ==================================================
+
+(use-package wiktionary-bro
+  :defer t
+  :straight (wiktionary-bro
+	     :type git :host github :repo "agzam/wiktionary-bro.el"))
 
 ;; CSharp config ====================================
 ;; ==================================================
@@ -5019,6 +5026,12 @@ set so that it clears the whole REPL buffer, not just the output."
     "m"   'tetris-move-bottom
     "SPC" 'tetris-move-bottom		; not working
     "n"   'tetris-start-game))
+
+;; Fun! =============================================
+;; ==================================================
+
+(use-package speed-type :defer t)
+(use-package typit :defer t)
 
 ;; Misc =============================================
 ;; ==================================================
