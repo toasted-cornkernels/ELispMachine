@@ -2217,6 +2217,10 @@ set so that it clears the whole REPL buffer, not just the output."
     "t"  (which-key-prefix :test)
     "tb" 'racket-test))
 
+(use-package scribble
+  :straight (scribble
+	     :type git :host github :repo "toasted-cornkernels/scribble.el"))
+
 ;; Scheme config ====================================
 ;; ==================================================
 
