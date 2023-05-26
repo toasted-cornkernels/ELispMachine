@@ -3286,9 +3286,9 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; =================================================
 
 (use-package yaml-mode
-  :mode (("\\.yaml\\'" . yaml-mode)
-	 ("\\.yml\\'"  . yaml-mode)
-	 ("\\.qls\\'"  . yaml-mode)))
+  :mode (("\\.\\(yml\\|yaml\\)\\'" . yaml-mode)
+	 ("Procfile\\'" . yaml-mode)
+	 ("\\.qlpack\\'"  . yaml-mode)))
 
 ;; csv config ======================================
 ;; =================================================
