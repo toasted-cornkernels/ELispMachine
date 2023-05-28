@@ -2119,35 +2119,37 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; ==================================================
 
 (use-package fennel-mode
-  ;; WIP
   :defer t
   :hook  (fennel-mode . evil-cleverparens-mode)
   :general
   (local-leader
-    :major-modes '(fennel-mode fennel-repl-mode t)
-    :keymaps     '(fennel-mode-map fennel-repl-mode-map)
-    "e"          (which-key-prefix "eval")
+    :major-modes '(fennel-mode t)
+    :keymaps     '(fennel-mode-map)
+    "e"          (which-key-prefix :eval)
     "ep"         'lisp-eval-paragraph
     "er"         'lisp-eval-region
     "ef"         'lisp-eval-defun
     "ee"         'lisp-eval-last-sexp
     "eE"         'lisp-eval-form-and-next
 
-    "d"          (which-key-prefix "documentation")
-    "dd"         'fennel-show-documentation
-    "dv"         'fennel-show-variable-documentation
-
-    "df"         (which-key-prefix "find")
-    "dff"        'fennel-find-definition
-    "dfm"        'fennel-find-module-definition
-    "dfp"        'fennel-find-definition-pop
-
-    "h"          (which-key-prefix "help")
+    "h"          (which-key-prefix :help)
     "ha"         'fennel-show-arglist-at-point
     "hA"         'fennel-show-arglist
     "hc"         'fennel-view-compilation
     "m"          'fennel-macroexpand
-    "="          'fennel-format
+    "="          'fennel-format)
+  
+  (local-leader
+    :major-modes '(fennel-mode fennel-repl-mode t)
+    :keymaps     '(fennel-mode-map fennel-repl-mode-map)
+    "d"          (which-key-prefix :documentation)
+    "dd"         'fennel-show-documentation
+    "dv"         'fennel-show-variable-documentation
+
+    "df"         (which-key-prefix :find)
+    "dff"        'fennel-find-definition
+    "dfm"        'fennel-find-module-definition
+    "dfp"        'fennel-find-definition-pop
 
     "'"          'fennel-repl
     "r"          'fennel-reload)
@@ -2155,9 +2157,9 @@ set so that it clears the whole REPL buffer, not just the output."
   (local-leader
     :major-modes '(fennel-repl-mode t)
     :keymaps     '(fennel-repl-mode-map)
-    "'"  'fennel-repl
-    "rq" 'fennel-repl-quit
-    "r0" 'fennel-repl-move-beginning-of-line)
+    "'"          'fennel-repl
+    "rq"         'fennel-repl-quit
+    "r0"         'fennel-repl-move-beginning-of-line)
 
   :config
   (defun fennel-show-arglist-at-point ()
