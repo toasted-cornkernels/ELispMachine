@@ -2676,6 +2676,10 @@ set so that it clears the whole REPL buffer, not just the output."
 	    (lambda () (setq indent-tabs-mode nil)))
   (define-key rust-mode-map (kbd "C-c C-c") 'rust-run))
 
+(use-package toml-mode
+  :mode '(("/\\(Cargo.lock\\|\\.cargo/config\\)\\'" . toml-mode)
+	  ("\\.toml\\'" . toml-mode)))
+
 ;; VimScript config =================================
 ;; ==================================================
 
@@ -3292,9 +3296,9 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; =================================================
 
 (use-package yaml-mode
-  :mode (("\\.yaml\\'" . yaml-mode)
-	 ("\\.yml\\'"  . yaml-mode)
-	 ("\\.qls\\'"  . yaml-mode)))
+  :mode (("\\.\\(yml\\|yaml\\)\\'" . yaml-mode)
+	 ("Procfile\\'" . yaml-mode)
+	 ("\\.qlpack\\'"  . yaml-mode)))
 
 ;; csv config ======================================
 ;; =================================================
