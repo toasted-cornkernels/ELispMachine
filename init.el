@@ -915,6 +915,9 @@
   :defer    t
   :commands (org-clock-jump-to-current-clock))
 
+(use-package org-pomodoro
+  :defer t)
+
 (use-package org-remark :defer t)
 
 (use-package org-noter :defer t)
@@ -4316,6 +4319,7 @@ set so that it clears the whole REPL buffer, not just the output."
   "aoCj" 'spacemacs/org-clock-jump-to-current-clock
   "aoCo" 'org-clock-out
   "aoCr" 'org-resolve-clocks
+  "aoCp" 'org-pomodoro
   "aol"  'org-store-link
   "aom"  'org-tags-view
   "aos"  'org-search-view
