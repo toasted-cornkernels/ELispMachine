@@ -450,6 +450,7 @@
     "cr"         'org-clock-report
     "cR"         'org-resolve-clocks
     "ct"         'org-clock-modify-effort-estimate
+    "cp"         'org-pomodoro
 
     "d"          (which-key-prefix :dates)
     "dd"         'org-deadline
@@ -752,8 +753,6 @@
 
 (use-package org-contrib :defer t)
 
-(use-package org-pomodoro :defer t)
-
 (use-package org-present :defer t)
 
 (use-package org-cliplink :defer t)
@@ -840,30 +839,28 @@
 
   :config
   (setq org-capture-templates
-	`(
-	  ;; ,(when work-machine-p
-	  ;;    `("T" "Work TODO" entry (file+headline ,(concat org-work-directory "/WorkTODO.org") "Todos")
-	  ;;      "*** TODO %?\n%i\nEntered on %U\n"))
-	  ;; ,(when work-machine-p
-	  ;;    `("N" "Work Notes" entry (file+headline ,(concat org-work-directory "/WorkTODO.org") "Notes")
-	  ;;      "*** %?\n%i\nEntered on %U\n"))
-	  ;; ,(when work-machine-p
-	  ;;    `("C" "Work Clipboard" entry (file+headline ,(concat org-work-directory "/WorkTODO.org") "Clipboard")
- 	  ;;      "*** %?          :%^{Tag}:\n\nEntered on %U\n%i\n\n"))
-	  ;; ,(when work-machine-p
-	  ;;    `("L" "Work TIL" entry (file+headline ,(concat org-work-directory "/WorkTODO.org") "TIL")
- 	  ;;      "*** %?          :%^{Tag}:\n\nEntered on %U\n%i\n\n"))
-	  ;; ("t" "TODO" entry (file+headline ,(concat org-directory "/TODO.org") "Tasks")
-	  ;;  "** TODO %?          :%^{Tag}:\n\nEntered on %U\n%i\n%a\n")
-	  ;; ("l" "TIL" entry (file+headline ,(concat org-directory "/TIL.org") "TIL")
-	  ;;  "** %?          :%^{Tag}:\n\nEntered on %U\n%i\n%a\n")
-	  ;; ("c" "Clipboard" entry (file+headline ,(concat org-directory "/Clipboard.org") "Clipboard")
-	  ;;  "** %?          :%^{Tag}:\n\nEntered on %U\n%i\n%a\n")
-	  ;; ("a" "Journal" entry (file+datetree,(concat org-directory "/Journal.org"))
-	  ;;  "** %U\n\n%?\n%i\n")
+	`(,(when work-machine-p
+	     `("T" "Work TODO" entry (file+headline ,(concat org-work-directory "/WorkTODO.org") "Todos")
+	       "*** TODO %?\n%i\nEntered on %U\n"))
+	  ,(when work-machine-p
+	     `("N" "Work Notes" entry (file+headline ,(concat org-work-directory "/WorkTODO.org") "Notes")
+	       "*** %?\n%i\nEntered on %U\n"))
+	  ,(when work-machine-p
+	     `("C" "Work Clipboard" entry (file+headline ,(concat org-work-directory "/WorkTODO.org") "Clipboard")
+ 	       "*** %?          :%^{Tag}:\n\nEntered on %U\n%i\n\n"))
+	  ,(when work-machine-p
+	     `("L" "Work TIL" entry (file+headline ,(concat org-work-directory "/WorkTODO.org") "TIL")
+ 	       "*** %?          :%^{Tag}:\n\nEntered on %U\n%i\n\n"))
+	  ("t" "TODO" entry (file+headline ,(concat org-directory "/TODO.org") "Tasks")
+	   "** TODO %?          :%^{Tag}:\n\nEntered on %U\n%i\n%a\n")
+	  ("l" "TIL" entry (file+headline ,(concat org-directory "/TIL.org") "TIL")
+	   "** %?          :%^{Tag}:\n\nEntered on %U\n%i\n%a\n")
+	  ("c" "Clipboard" entry (file+headline ,(concat org-directory "/Clipboard.org") "Clipboard")
+	   "** %?          :%^{Tag}:\n\nEntered on %U\n%i\n%a\n")
+	  ("a" "Journal" entry (file+datetree,(concat org-directory "/Journal.org"))
+	   "** %U\n\n%?\n%i\n")
 	  ("n" "ShowerThoughts" entry (file+headline ,(concat org-directory "/ShowerThoughts.org") "ShowerThoughts")
-	   "** %?          :%^{Tag}:\n\nEntered on %U\n%i\n%a\n"))
-	))
+	   "** %?          :%^{Tag}:\n\nEntered on %U\n%i\n%a\n"))))
 
 (use-package org-agenda
   :straight nil
@@ -916,7 +913,9 @@
   :commands (org-clock-jump-to-current-clock))
 
 (use-package org-pomodoro
-  :defer t)
+  :defer t
+  :config
+  (setq org-pomodoro-length 20))
 
 (use-package org-remark :defer t)
 
@@ -1112,7 +1111,8 @@
    (tuareg-mode  . eglot-ensure)
    (cpp-mode     . eglot-ensure)
    (c-mode       . eglot-ensure)
-   (ql-tree-sitter-mode . eglot-ensure))
+   (ql-tree-sitter-mode . eglot-ensure)
+   (javascript-mode . eglot-ensure))
 
   :general
   (local-leader
@@ -2701,6 +2701,26 @@ set so that it clears the whole REPL buffer, not just the output."
 (use-package emmet-mode
   :defer t)
 
+;; Javascript config ================================
+;; ==================================================
+
+(use-package npm-mode
+  :defer t
+  :hook  (npm-mode . js2-mode)
+  :general
+  (local-leader
+    :major-modes '(js2-mode t)
+    :keymaps     '(js2-mode-map)
+    "n"  (which-key-prefix "npm")
+    "ni" 'npm-mode-npm-install
+    "nr" 'npm-mode-npm-run
+    "ns" 'npm-mode-npm-install-save
+    "nd" 'npm-mode-npm-install-save-dev
+    "nn" 'npm-mode-npm-init
+    "nu" 'npm-mode-npm-uninstall
+    "nl" 'npm-mode-npm-list
+    "np" 'npm-mode-visit-project-file))
+
 ;; Markdown config ==================================
 ;; ==================================================
 
@@ -4032,10 +4052,13 @@ set so that it clears the whole REPL buffer, not just the output."
   :straight nil
   :config
   (setq world-clock-list t
-	zoneinfo-style-world-list '(("America/Los_Angeles" "Los Angeles")
-				    ("America/New_York" "New York")
-				    ("Europe/Oxford" "Oxford")
-				    ("Asia/Seoul" "Seoul"))))
+	;; TODO: Not working for Europe
+	zoneinfo-style-world-list
+	'(("America/Los_Angeles" "Los Angeles")
+	  ("America/New_York" "New York")
+	  ("Europe/Oxford" "Oxford")
+	  ("Europe/Lugano" "Lugano")
+	  ("Asia/Seoul" "Seoul"))))
 
 ;; custom functions =================================
 ;; ==================================================
@@ -4707,7 +4730,7 @@ set so that it clears the whole REPL buffer, not just the output."
 
 
     "<"   'beginning-of-buffer
-          
+    
     "H"   'pdf-view-fit-height-to-window
     "P"   'pdf-view-fit-page-to-window
     "W"   'pdf-view-fit-width-to-window
