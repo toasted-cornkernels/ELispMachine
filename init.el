@@ -1287,15 +1287,20 @@
 			       geiser-mode scheme-mode racket-mode
 			       newlisp-mode picolisp-mode janet-mode
 			       lisp-interaction-mode ielm-mode minibuffer-mode
-			       fennel-repl-mode cider-repl-mode racket-repl-mode)
+			       fennel-repl-mode cider-repl-mode racket-repl-mode
+			       text-mode fundamental-mode)
 		 "'" "'" :actions nil)
   ;; Backquote
   (sp-local-pair '(fennel-mode hy-mode clojure-mode lisp-mode emacs-lisp-mode
 			       geiser-mode scheme-mode racket-mode
 			       newlisp-mode picolisp-mode janet-mode
 			       lisp-interaction-mode ielm-mode minibuffer-mode
-			       fennel-repl-mode cider-repl-mode racket-repl-mode)
-		 "`" "`" :actions nil))
+			       fennel-repl-mode cider-repl-mode racket-repl-mode
+			       text-mode fundamental-mode)
+		 "`" "`" :actions nil)
+  ;; Double quotes
+  (sp-local-pair '(text-mode fundamental-mode)
+		 "\"" "\"" :actions nil))
 
 (use-package evil-cleverparens
   :init
