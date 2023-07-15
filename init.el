@@ -3843,7 +3843,8 @@ set so that it clears the whole REPL buffer, not just the output."
   (recentf-mode 1)
   (setq recentf-max-menu-items 40)
   (add-to-list 'recentf-exclude "/private/var/folders/.*")
-  (add-to-list 'recentf-exclude "/var/folders/.*"))
+  (add-to-list 'recentf-exclude "/var/folders/.*")
+  (add-to-list 'recentf-exclude "/tmp/.*"))
 
 (defun cleanup-emacs ()
   (interactive)
