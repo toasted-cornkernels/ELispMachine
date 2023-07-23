@@ -4806,6 +4806,30 @@ set so that it clears the whole REPL buffer, not just the output."
   :init
   (add-hook 'pdf-view-mode-hook 'pdf-view-restore-mode))
 
+;; Epub config ======================================
+;; ==================================================
+
+(use-package nov
+  :defer t
+  :mode ("\\.epub\\'" . nov-mode)
+  :config
+  (normal-mode-major-mode
+    :major-mode '(nov-mode t)
+    :keymaps    '(nov-mode-map)
+    "H"  'nov-previous-document
+    "L"  'nov-next-document
+    "["  'nov-previous-document
+    "]"  'nov-next-document
+    "d"  'nov-scroll-up
+    "u"  'nov-scroll-down
+    "J"  'nov-scroll-up
+    "K"  'nov-scroll-down
+    "gm" 'nov-display-metadata
+    "gr" 'nov-render-document
+    "gt" 'nov-goto-toc
+    "gv" 'nov-view-source
+    "gV" 'nov-view-content-source))
+
 ;; reddigg config ===================================
 ;; ==================================================
 
