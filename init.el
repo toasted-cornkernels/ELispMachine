@@ -1325,6 +1325,10 @@
 ;; Common Lisp config ===============================
 ;; ==================================================
 
+(use-package lisp-mode
+  :straight nil
+  :hook     (lisp-mode . evil-cleverparens-mode))
+
 (use-package slime
   :commands slime-mode
   :init
@@ -2641,7 +2645,7 @@ set so that it clears the whole REPL buffer, not just the output."
   :defer t
   :config
   (when (executable-find "opam")
-    (setq utop-command "opam config exec -- utop -emacs"))
+    (setq utop-command "opam exec -- dune utop . -- -emacs"))
 
   (defun utop-eval-phrase-and-go ()
     "Send phrase to REPL and evaluate it and switch to the REPL in
@@ -3839,7 +3843,8 @@ set so that it clears the whole REPL buffer, not just the output."
   (recentf-mode 1)
   (setq recentf-max-menu-items 40)
   (add-to-list 'recentf-exclude "/private/var/folders/.*")
-  (add-to-list 'recentf-exclude "/var/folders/.*"))
+  (add-to-list 'recentf-exclude "/var/folders/.*")
+  (add-to-list 'recentf-exclude "/tmp/.*"))
 
 (defun cleanup-emacs ()
   (interactive)
