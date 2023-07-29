@@ -5118,7 +5118,7 @@ set so that it clears the whole REPL buffer, not just the output."
   (message "(λ (f) (λ (x) (f (x x))) (λ (x) (f (x x))))"))
 
 (add-hook 'after-init-hook (lambda () (setq gc-cons-threshold 800000)))
-(message "config loaded")
+(message "config loaded!")
 
 ;; config end =======================================
 ;; ==================================================
