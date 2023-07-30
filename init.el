@@ -1036,11 +1036,13 @@
   "s-v" 'yank
   "s-c" 'org-capture
   ;; "s-x" 'kill-region
-  "s-w" 'delete-window
-  "s-W" 'delete-frame
-  "s-`" 'other-frame
-  "s-z" 'undo-tree-undo
-  "s-s" 'save-buffer)
+  "s-w"  'delete-window
+  "s-W"  'delete-frame
+  "s-`"  'other-frame
+  "s-z"  'undo-tree-undo
+  "s-s"  'save-buffer
+  "s-:"  'previous-error
+  "s-\"" 'next-error)
 
 ;; Linux Settings ===================================
 ;; ==================================================
