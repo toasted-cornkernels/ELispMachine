@@ -2642,7 +2642,7 @@ set so that it clears the whole REPL buffer, not just the output."
     "er" 'tuareg-eval-region))
 
 (use-package utop
-  :defer t
+  :after tuareg
   :config
   (when (executable-find "opam")
     (setq utop-command "opam exec -- dune utop . -- -emacs"))
