@@ -1033,9 +1033,8 @@
   :commands reveal-in-osx-finder)
 
 (agnostic-key
-  "s-v" 'yank
-  "s-c" 'org-capture
-  ;; "s-x" 'kill-region
+  "s-v"  'yank
+  "s-c"  'org-capture
   "s-w"  'delete-window
   "s-W"  'delete-frame
   "s-`"  'other-frame
