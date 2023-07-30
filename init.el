@@ -4290,6 +4290,8 @@ set so that it clears the whole REPL buffer, not just the output."
   ","  'tab-close
   "["  'tab-previous
   "]"  'tab-next
+  "{"  'tab-move-previous
+  "}"  'tab-move
   "/"  'flymake-goto-next-error
   "\\" 'flymake-goto-prev-error)
 
