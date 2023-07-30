@@ -25,6 +25,19 @@
 
 (use-package use-package-ensure-system-package :ensure t)
 
+;; No Littering! ====================================
+;; ==================================================
+
+(use-package no-littering
+  :config
+  (setq auto-save-file-name-transforms
+	`((".*" ,(no-littering-expand-var-file-name "auto-save/") t)))
+  (setq custom-file (no-littering-expand-etc-file-name "custom.el"))
+  (when (fboundp 'startup-redirect-eln-cache)
+    (startup-redirect-eln-cache
+     (convert-standard-filename
+      (expand-file-name  "var/eln-cache/" user-emacs-directory)))))
+
 ;; Useful Elisp Libraries ===========================
 ;; ==================================================
 
@@ -278,19 +291,6 @@
 (global-set-key (kbd "C-d C-d") 'toggle-input-method)
 (global-set-key (kbd "C-d C-l") 'toggle-input-method)
 (global-set-key (kbd "C-\\") 'toggle-input-method)
-
-;; No Littering! ====================================
-;; ==================================================
-
-(use-package no-littering
-  :config
-  (setq auto-save-file-name-transforms
-	`((".*" ,(no-littering-expand-var-file-name "auto-save/") t)))
-  (setq custom-file (no-littering-expand-etc-file-name "custom.el"))
-  (when (fboundp 'startup-redirect-eln-cache)
-    (startup-redirect-eln-cache
-     (convert-standard-filename
-      (expand-file-name  "var/eln-cache/" user-emacs-directory)))))
 
 ;; Manage-minor-mode ================================
 ;; ==================================================
@@ -2644,7 +2644,7 @@ set so that it clears the whole REPL buffer, not just the output."
     "er" 'tuareg-eval-region))
 
 (use-package utop
-  :defer t
+  :after tuareg
   :config
   (when (executable-find "opam")
     (setq utop-command "opam exec -- dune utop . -- -emacs"))
@@ -4292,6 +4292,8 @@ set so that it clears the whole REPL buffer, not just the output."
   ","  'tab-close
   "["  'tab-previous
   "]"  'tab-next
+  "{"  'tab-move-previous
+  "}"  'tab-move
   "/"  'flymake-goto-next-error
   "\\" 'flymake-goto-prev-error)
 
