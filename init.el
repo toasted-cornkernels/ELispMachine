@@ -2674,8 +2674,8 @@ set so that it clears the whole REPL buffer, not just the output."
 
   :general
   (agnostic-key
-    :major-modes (utop-mode t)
-    :keymaps (utop-mode-map)
+    :major-modes '(utop-mode t)
+    :keymaps     '(utop-mode-map)
     "C-j" 'utop-history-goto-next
     "C-k" 'utop-history-goto-prev))
 
@@ -3185,6 +3185,8 @@ set so that it clears the whole REPL buffer, not just the output."
 (use-package embark
   ;; TODO: add some keybindings
   )
+
+(use-package embark-consult)
 
 ;; iedit config =====================================
 ;; ==================================================
