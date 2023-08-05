@@ -2690,8 +2690,8 @@ set so that it clears the whole REPL buffer, not just the output."
   (define-key rust-mode-map (kbd "C-c C-c") 'rust-run))
 
 (use-package toml-mode
-  :mode '(("/\\(Cargo.lock\\|\\.cargo/config\\)\\'" . toml-mode)
-	  ("\\.toml\\'" . toml-mode)))
+  :mode (("/\\(Cargo.lock\\|\\.cargo/config\\)\\'" . toml-mode)
+	 ("\\.toml\\'" . toml-mode)))
 
 ;; VimScript config =================================
 ;; ==================================================
