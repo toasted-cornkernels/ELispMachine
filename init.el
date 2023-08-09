@@ -3941,7 +3941,8 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (use-package tron-legacy-theme
   :config
-  (load-theme 'tron-legacy t))
+  ;; (load-theme 'tron-legacy t)
+  )
 
 (use-package mood-line
   :config
