@@ -3318,7 +3318,7 @@ set so that it clears the whole REPL buffer, not just the output."
 
   (add-hook 'xwidget-webkit-mode-hook (lambda () (local-unset-key (kbd "<backspace>")))))
 
-(use-package xwwp :defer t)
+(use-package xwwp :after xwidget)
 
 ;; json config =====================================
 ;; =================================================
@@ -4232,6 +4232,10 @@ set so that it clears the whole REPL buffer, not just the output."
   "wt" 'transpose-frame
   "wr" 'evil-window-rotate-downwards
   "wR" 'evil-window-rotate-upwards
+  "wH" 'flop-frame
+  "wJ" 'flip-frame
+  "wK" 'flip-frame
+  "wL" 'flop-frame
 
   "w=" 'balance-windows
   "wu" 'winner-undo
