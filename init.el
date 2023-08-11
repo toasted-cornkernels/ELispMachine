@@ -3652,7 +3652,7 @@ set so that it clears the whole REPL buffer, not just the output."
   (setq git-link-open-in-browser t))
 
 (use-package git-messenger
-  :defer t
+  :after magit
   :general
   (normal-mode-major-mode
     ;; :major-modes   '(git-messenger-mode)
