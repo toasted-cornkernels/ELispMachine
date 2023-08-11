@@ -2519,6 +2519,54 @@ set so that it clears the whole REPL buffer, not just the output."
 (use-package hlint-refactor
   :defer t)
 
+;; Prolog config ====================================
+;; ==================================================
+
+(use-package prolog
+  :defer t
+  :mode "\\.pl\\'"			; I don't use perl
+  :init
+  (autoload 'run-prolog "prolog" "Start a Prolog sub-process." t)
+  (autoload 'prolog-mode "prolog" "Major mode for editing Prolog programs." t)
+  (setq auto-mode-alist (append '(("\\.pl$" . prolog-mode)) auto-mode-alist))
+  :general
+  (local-leader
+    :major-modes '(prolog-mode t)
+    :keymaps     '(prolog-mode-map)
+    
+    "s"  (which-key-prefix "consult")
+    "sb" 'prolog-consult-buffer
+    "sf" 'prolog-consult-file
+    "sp" 'prolog-consult-predicate
+    "sr" 'prolog-consult-region
+
+    "c"  (which-key-prefix "compile")
+    "cb" 'prolog-compile-buffer
+    "cc" 'prolog-compile-file
+    "cp" 'prolog-compile-predicate
+    "cr" 'prolog-compile-region
+
+    "="  'prolog-indent-buffer
+
+    "i"  (which-key-prefix "insert")
+    "im" 'prolog-insert-module-modeline
+    "in" 'prolog-insert-next-clause
+    "ip" 'prolog-insert-predicate-template
+    "is" 'prolog-insert-predspec
+
+    "h"  (which-key-prefix "help")
+    "ha" 'prolog-help-apropos
+    "hp" 'prolog-help-on-predicate))
+
+(use-package ediprolog
+  :after prolog
+  :general
+  (local-leader
+    :major-modes '(prolog-mode t)
+    :keymaps     '(prolog-mode-map)
+    "e"   (which-key-prefix "eval")
+    "ee"  'ediprolog-dwim))
+
 ;; Nix config =======================================
 ;; ==================================================
 
