@@ -1037,6 +1037,7 @@
   "s-c"  'org-capture
   "s-w"  'delete-window
   "s-W"  'delete-frame
+  "s-N"  'make-frame
   "s-`"  'other-frame
   "s-z"  'undo-tree-undo
   "s-s"  'save-buffer
