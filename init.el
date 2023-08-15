@@ -4227,7 +4227,7 @@ set so that it clears the whole REPL buffer, not just the output."
   "C-s-a" 'insert-ampersand
   "C-s-c" 'world-clock
   "C-s-e" 'eshell
-  "C-s-t" 'modus-themes-toggle-
+  "C-s-t" (lambda () (interactive) (invert-face 'default))
   "C-s-r" 'eradio-toggle
   "C-s-f" 'toggle-frame-fullscreen
   "C-s-s" 'ace-swap-window
