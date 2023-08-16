@@ -3651,20 +3651,6 @@ set so that it clears the whole REPL buffer, not just the output."
   ;; default is to open the generated link
   (setq git-link-open-in-browser t))
 
-(use-package git-messenger
-  :after magit
-  :general
-  (normal-mode-major-mode
-    ;; :major-modes   '(git-messenger-mode)
-    :keymaps       '(git-messenger-map)
-    [escape]       'git-messenger:popup-close)
-  (insert-mode-major-mode
-    ;; :major-modes   '(git-messenger-mode)
-    :keymaps       '(git-messenger-map)
-    [escape]       'git-messenger:popup-close)
-
-  (define-key git-messenger-map [escape] 'git-messenger:popup-close))
-
 ;; TODO
 ;; (use-package git-timemachine
 ;;   :defer t
