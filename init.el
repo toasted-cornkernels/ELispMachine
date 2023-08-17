@@ -1037,6 +1037,7 @@
   "s-c"  'org-capture
   "s-w"  'delete-window
   "s-W"  'delete-frame
+  "s-N"  'make-frame
   "s-`"  'other-frame
   "s-z"  'undo-tree-undo
   "s-s"  'save-buffer
@@ -2081,7 +2082,7 @@ set so that it clears the whole REPL buffer, not just the output."
   :general
   (local-leader
     :major-modes '(hy-mode t)
-    :keymaps '(hy-mode-map)
+    :keymaps     '(hy-mode-map)
     "'"  'run-hy
     "d"  (which-key-prefix :debug)
     "dd" 'hy-insert-pdb
@@ -2387,8 +2388,8 @@ set so that it clears the whole REPL buffer, not just the output."
   
   :general
   (local-leader
-    :major-modes (haskell-mode haskell-literate-mode t)
-    :keymaps (haskell-mode-map haskell-literate-mode-map)
+    :major-modes '(haskell-mode haskell-literate-mode t)
+    :keymaps     '(haskell-mode-map haskell-literate-mode-map)
     "gb" 'xref-pop-marker-stack
     "ht" 'dante-type-at
     "hT" 'dante-insert-type
@@ -2429,7 +2430,7 @@ set so that it clears the whole REPL buffer, not just the output."
   :general
   (local-leader
     :major-modes '(haskell-mode haskell-literate-mode t)
-    :keymaps '(haskell-mode-map haskell-literate-mode-map)
+    :keymaps     '(haskell-mode-map haskell-literate-mode-map)
     "'"  'haskell-interactive-switch
     "S"  'haskell-mode-stylish-buffer
     "f"  'hindent-reformat-decl-or-fill
@@ -2467,14 +2468,14 @@ set so that it clears the whole REPL buffer, not just the output."
     "rr" 'hlint-refactor-refactor-at-point)
 
   (local-leader
-    :major-modes (haskell-interactive-mode t)
-    :keymaps (haskell-interactive-mode-map)
+    :major-modes '(haskell-interactive-mode t)
+    :keymaps     '(haskell-interactive-mode-map)
     "s"  (which-key-prefix :repl)
     "ss" 'haskell-interactive-switch-back)
 
   (local-leader
-    :major-modes (haskell-cabal-mode t)
-    :keymaps (haskell-cabal-mode-map)
+    :major-modes '(haskell-cabal-mode t)
+    :keymaps     '(haskell-cabal-mode-map)
     "C"  'haskell-compile
     "d"  'haskell-cabal-add-dependency
     "b"  'haskell-cabal-goto-benchmark-section
@@ -2494,21 +2495,21 @@ set so that it clears the whole REPL buffer, not just the output."
     "ss" 'haskell-interactive-switch)
 
   (insert-mode-major-mode
-    :major-modes (haskell-interactive-mode t)
-    :keymaps (haskell-interactive-mode-map)
+    :major-modes '(haskell-interactive-mode t)
+    :keymaps     '(haskell-interactive-mode-map)
     "C-j" 'haskell-interactive-mode-history-next 
     "C-k" 'haskell-interactive-mode-history-previous
     "C-l" 'haskell-interactive-mode-clear
     "RET" 'haskell-interactive-mode-return)
 
   (normal-mode-major-mode
-    :major-modes (haskell-interactive-mode t)
-    :keymaps (haskell-interactive-mode-map)
+    :major-modes '(haskell-interactive-mode t)
+    :keymaps     '(haskell-interactive-mode-map)
     "RET" 'haskell-interactive-mode-return)
   
   (insert-mode-major-mode
-    :major-modes (haskell-mode t)
-    :keymaps (haskell-mode-map)
+    :major-modes '(haskell-mode t)
+    :keymaps     '(haskell-mode-map)
     "C-c C-l" 'haskell-process-load-file
     "C-c C-z" 'haskell-interactive-switch))
 
@@ -3652,20 +3653,6 @@ set so that it clears the whole REPL buffer, not just the output."
   ;; default is to open the generated link
   (setq git-link-open-in-browser t))
 
-(use-package git-messenger
-  :defer t
-  :general
-  (normal-mode-major-mode
-    ;; :major-modes   '(git-messenger-mode)
-    :keymaps       '(git-messenger-map)
-    [escape]       'git-messenger:popup-close)
-  (insert-mode-major-mode
-    ;; :major-modes   '(git-messenger-mode)
-    :keymaps       '(git-messenger-map)
-    [escape]       'git-messenger:popup-close)
-
-  (define-key git-messenger-map [escape] 'git-messenger:popup-close))
-
 ;; TODO
 ;; (use-package git-timemachine
 ;;   :defer t
@@ -4228,7 +4215,7 @@ set so that it clears the whole REPL buffer, not just the output."
   "C-s-a" 'insert-ampersand
   "C-s-c" 'world-clock
   "C-s-e" 'eshell
-  "C-s-t" 'modus-themes-toggle-
+  "C-s-t" (lambda () (interactive) (invert-face 'default))
   "C-s-r" 'eradio-toggle
   "C-s-f" 'toggle-frame-fullscreen
   "C-s-s" 'ace-swap-window
