@@ -2527,8 +2527,8 @@ set so that it clears the whole REPL buffer, not just the output."
   :defer t
   :mode "\\.pl\\'"			; I don't use perl
   :init
-  (autoload 'run-prolog "prolog" "Start a Prolog sub-process." t)
-  (autoload 'prolog-mode "prolog" "Major mode for editing Prolog programs." t)
+  ;; (autoload 'run-prolog "prolog" "Start a Prolog sub-process." t)
+  ;; (autoload 'prolog-mode "prolog" "Major mode for editing Prolog programs." t)
   (setq auto-mode-alist (append '(("\\.pl$" . prolog-mode)) auto-mode-alist))
   :general
   (local-leader
@@ -2561,6 +2561,8 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (use-package ediprolog
   :after prolog
+  :config
+  (setq ediprolog-system 'swi)
   :general
   (local-leader
     :major-modes '(prolog-mode t)
@@ -3650,20 +3652,6 @@ set so that it clears the whole REPL buffer, not just the output."
 
   ;; default is to open the generated link
   (setq git-link-open-in-browser t))
-
-(use-package git-messenger
-  :after magit
-  :general
-  (normal-mode-major-mode
-    ;; :major-modes   '(git-messenger-mode)
-    :keymaps       '(git-messenger-map)
-    [escape]       'git-messenger:popup-close)
-  (insert-mode-major-mode
-    ;; :major-modes   '(git-messenger-mode)
-    :keymaps       '(git-messenger-map)
-    [escape]       'git-messenger:popup-close)
-
-  (define-key git-messenger-map [escape] 'git-messenger:popup-close))
 
 ;; TODO
 ;; (use-package git-timemachine
