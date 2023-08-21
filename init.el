@@ -5162,7 +5162,7 @@ set so that it clears the whole REPL buffer, not just the output."
 (fset 'yes-or-no-p 'y-or-n-p)
 
 (defun display-startup-echo-area-message ()
-  (message "(λ (f) (λ (x) (f (x x))) (λ (x) (f (x x))))"))
+  (message "You think with your keyboard"))
 
 (add-hook 'after-init-hook (lambda () (setq gc-cons-threshold 800000)))
 (message "config loaded!")
