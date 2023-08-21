@@ -1290,7 +1290,7 @@
 			       newlisp-mode picolisp-mode janet-mode
 			       lisp-interaction-mode ielm-mode minibuffer-mode
 			       fennel-repl-mode cider-repl-mode racket-repl-mode
-			       text-mode fundamental-mode)
+			       fundamental-mode)
 		 "'" "'" :actions nil)
   ;; Backquote
   (sp-local-pair '(fennel-mode hy-mode clojure-mode lisp-mode emacs-lisp-mode
@@ -1298,11 +1298,8 @@
 			       newlisp-mode picolisp-mode janet-mode
 			       lisp-interaction-mode ielm-mode minibuffer-mode
 			       fennel-repl-mode cider-repl-mode racket-repl-mode
-			       text-mode fundamental-mode)
-		 "`" "`" :actions nil)
-  ;; Double quotes
-  (sp-local-pair '(text-mode fundamental-mode)
-		 "\"" "\"" :actions nil))
+			       fundamental-mode)
+		 "`" "`" :actions nil))
 
 (use-package evil-cleverparens
   :init
@@ -4500,12 +4497,13 @@ set so that it clears the whole REPL buffer, not just the output."
   "s-u"  'emacs-uptime
   "s-g"  'cleanup-emacs
   "s-i"  'insert-current-time
+  "s-t"  'tab-bar-mode
   "s-y"  'youtube-viewer-start
   "s-x"  'delete-trailing-whitespace
   "s-m"  'consult-bookmark
   "s-j"  'join-line
   "s-b"  'consult-bookmark
-  "s-s"  'save-buffer)
+  "s-s"  'ispell-word)
 
 ;; enable mouse scroll in terminal ==================
 ;; ==================================================
