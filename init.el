@@ -5150,9 +5150,9 @@ set so that it clears the whole REPL buffer, not just the output."
     "q"   'tetris-end-game
     "h"   'tetris-move-left
     "j"   'tetris-move-down
-    "k"   'tetris-rotate-prev
+    "k"   'tetris-rotate-next
     "l"   'tetris-move-right
-    "i"   'tetris-rotate-next
+    "i"   'tetris-rotate-prev
     "m"   'tetris-move-bottom
     "SPC" 'tetris-move-bottom		; not working
     "n"   'tetris-start-game))
