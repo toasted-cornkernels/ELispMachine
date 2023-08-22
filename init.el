@@ -3,6 +3,8 @@
       warning-minimum-log-level :warning)
 (setq ad-redefinition-action 'accept)
 
+(fset 'yes-or-no-p 'y-or-n-p)
+
 ;; Straight =========================================
 ;; ==================================================
 
@@ -5156,8 +5158,6 @@ set so that it clears the whole REPL buffer, not just the output."
       inhibit-startup-echo-area-message ""
       inhibit-startup-message t
       inhibit-splash-screen t)
-
-(fset 'yes-or-no-p 'y-or-n-p)
 
 (defun display-startup-echo-area-message ()
   (message "You think with your keyboard"))
