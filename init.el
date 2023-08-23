@@ -2790,7 +2790,8 @@ set so that it clears the whole REPL buffer, not just the output."
    ("\\.mdx\\'" . markdown-mode))
 
   :config
-  (setq markdown-fontify-code-blocks-natively t)
+  (setq markdown-fontify-code-blocks-natively t
+	markdown-command "pandoc")
   (defun insert-keybinding-markdown (key)
     "Ask for a key then insert its description.
      Will work on both org-mode and any mode that accepts plain html."
@@ -3889,6 +3890,7 @@ set so that it clears the whole REPL buffer, not just the output."
   (when (featurep 'helpful)
     (helpful-kill-buffers))
   (recentf-cleanup)
+  (setq kill-ring nil)
   (message "no more garbage! yay!"))
 
 ;; ibuffer configs ==================================
