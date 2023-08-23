@@ -3888,11 +3888,11 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (defun cleanup-emacs ()
   (interactive)
-  (garbage-collect)
   (when (featurep 'helpful)
     (helpful-kill-buffers))
   (recentf-cleanup)
   (setq kill-ring nil)
+  (garbage-collect)
   (message "no more garbage! yay!"))
 
 ;; ibuffer configs ==================================
