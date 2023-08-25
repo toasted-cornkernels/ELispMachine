@@ -955,14 +955,13 @@
 ;; macOS Settings ===================================
 ;; ==================================================
 
-(when macOS-p
-  (when (boundp 'mac-system-move-file-to-trash-use-finder)
-    (setq mac-system-move-file-to-trash-use-finder t)
-    (setq mac-function-modifier 'hyper
+(when (and macOS-p (boundp 'mac-system-move-file-to-trash-use-finder))
+  (setq mac-system-move-file-to-trash-use-finder t)
+  (setq mac-function-modifier 'hyper
 	mac-option-modifier   'meta
 	mac-command-modifier  'super)
-    (setq mac-pass-command-to-system nil
-	  mac-pass-control-to-system nil)))
+  (setq mac-pass-command-to-system nil
+	mac-pass-control-to-system nil))
 
 (when-let ((gls (executable-find "gls")))
   (setq insert-directory-program gls))
