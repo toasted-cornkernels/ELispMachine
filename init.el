@@ -2591,6 +2591,8 @@ set so that it clears the whole REPL buffer, not just the output."
     "e"  (which-key-prefix "eval")
     "ee" 'ediprolog-dwim
     "eb" 'ediprolog-consult-buffer
+    "et" 'ediprolog-back-to-toplevel
+    "ec" 'ediprolog-remove-interactions
     "eq" 'ediprolog-consult-buffer-then-query
 
     "k"  (which-key-prefix "kill")
@@ -2598,8 +2600,6 @@ set so that it clears the whole REPL buffer, not just the output."
     "kb" 'ediprolog-kill-then-consult-buffer
     "kq" 'ediprolog-kill-then-consult-then-query
 
-    "c" 'ediprolog-remove-interactions
-    "t" 'ediprolog-back-to-toplevel
     "l" 'ediprolog-localize
     "L" 'ediprolog-unlocalize))
 
