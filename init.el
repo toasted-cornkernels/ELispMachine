@@ -615,30 +615,7 @@
 
   (add-hook 'org-after-todo-statistics-hook #'cycle-todo-state)
 
-  ;; Resume clocking task when emacs is restarted
-  (org-clock-persistence-insinuate)
-  
   (setq
-   ;; Save the running clock and all clock history when exiting Emacs, load it on startup
-   org-clock-persist t
-   ;; Resume clocking task on clock-in if the clock is open
-   org-clock-in-resume t
-   ;; Do not prompt to resume an active clock, just resume it
-   org-clock-persist-query-resume nil
-   ;; Change tasks to WORKING when clocking in
-   org-clock-in-switch-to-state "WORKING"
-   ;; Change tasks to DONE when clocking out
-   ;; org-clock-out-switch-to-state "DONE"
-   ;; Save clock data and state changes and notes in the LOGBOOK drawer
-   org-clock-into-drawer t
-   ;; Don't remove clocks with 0:00 duration
-   org-clock-out-remove-zero-time-clocks nil
-   ;; Clock out when moving task to a done state
-   org-clock-out-when-done t
-   ;; Enable auto clock resolution for finding open clocks
-   org-clock-auto-clock-resolution 'when-no-clock-is-running
-   ;; Include current clocking task in clock reports
-   org-clock-report-include-clocking-task t
    ;; use pretty things for the clocktable
    org-pretty-entities t
    ;; global Effort estimate values
@@ -648,10 +625,7 @@
    ;;    1    2    3    4    5    6    7    8    9    0
    ;; These are the hotkeys ^^
    org-time-stamp-rounding-minutes '(0 5)
-   org-clock-idle-time nil
-   org-clock-persist-file (cache: "org-clock-save.el")
    org-id-locations-file (cache: ".org-id-locations")
-   org-publish-timestamp-directory (cache: ".org-timestamps/")
    org-directory "~/Dropbox/Org"
    org-work-directory "~/Work/WorkNotes"
    org-default-notes-file (expand-file-name
@@ -659,8 +633,6 @@
    org-log-done 'time
    org-startup-with-inline-images t
    org-startup-latex-with-latex-preview t
-   org-format-latex-options (plist-put org-format-latex-options :scale 1.5)
-   org-latex-prefer-user-labels t
    org-format-latex-options '(:foreground default
 					  :background "Transparent"
 					  :scale 1.5
@@ -671,11 +643,7 @@
 
 
    org-image-actual-width nil
-   org-src-fontify-natively t
-   org-src-tab-acts-natively t
    org-imenu-depth 8
-   org-return-follows-link t
-   org-mouse-1-follows-link t
    org-link-descriptive t
    org-hide-emphasis-markers t
    org-enforce-todo-dependencies t
@@ -698,12 +666,15 @@
 			     (evil-org-mode)
 			     (evil-normalize-keymaps)))
   (setq evil-org-use-additional-insert t
-	evil-org-key-theme `(textobjects navigation additional todo)))
+	evil-org-key-theme '(textobjects navigation additional todo)))
 
 (use-package org-keys
   :straight nil
   :defer    t
   :config
+  (setq org-return-follows-link t
+	org-mouse-1-follows-link t)
+  
   (defun calendar-one-day-forward ()
     (interactive)
     (org-eval-in-calendar '(calendar-forward-day 1)))
@@ -818,8 +789,8 @@
 		(org-redisplay-inline-images))))
 
   :config
-  (dolist (babel-language (list 'ob-lisp 'ob-clojure 'ob-scheme 'ob-hy
-				'ob-dot 'ob-rust 'ob-kotlin 'ob-shell)))
+  ;; (dolist (babel-language (list 'ob-lisp 'ob-clojure 'ob-scheme 'ob-hy
+  ;; 				'ob-dot 'ob-rust 'ob-kotlin 'ob-shell)))
   (org-babel-do-load-languages
    'org-babel-load-languages
    '((lisp . t) (clojure . t) (scheme . t) (hy . t) (racket . t)
@@ -833,11 +804,11 @@
   (local-leader
     :major-modes '(org-capture-mode t)
     :keymaps     '(org-capture-mode-map)
-    "," 'org-capture-finalize
-    "a" 'org-capture-kill
-    "c" 'org-capture-finalize
-    "k" 'org-capture-kill
-    "r" 'org-capture-refile)
+    ","          'org-capture-finalize
+    "a"          'org-capture-kill
+    "c"          'org-capture-finalize
+    "k"          'org-capture-kill
+    "r"          'org-capture-refile)
 
   :config
   (setq org-capture-templates
@@ -885,7 +856,10 @@
     "k" 'org-edit-src-abort
     "'" 'org-edit-src-exit)
   :config
-  (setq org-src-window-setup 'current-window))
+  (setq org-src-window-setup 'current-window
+	org-src-fontify-natively t
+	org-src-tab-acts-natively t)
+  (setq-default org-src-preserve-indentation t))
 
 (use-package org-habit
   :straight nil
@@ -912,7 +886,34 @@
 (use-package org-clock
   :straight nil
   :defer    t
-  :commands (org-clock-jump-to-current-clock))
+  :commands (org-clock-jump-to-current-clock)
+  :config
+  (setq
+   ;; Save the running clock and all clock history when exiting Emacs, load it on startup
+   org-clock-persist t
+   ;; Resume clocking task on clock-in if the clock is open
+   org-clock-in-resume t
+   ;; Do not prompt to resume an active clock, just resume it
+   org-clock-persist-query-resume nil
+   ;; Change tasks to WORKING when clocking in
+   org-clock-in-switch-to-state "WORKING"
+   ;; Change tasks to DONE when clocking out
+   ;; org-clock-out-switch-to-state "DONE"
+   ;; Save clock data and state changes and notes in the LOGBOOK drawer
+   org-clock-into-drawer t
+   ;; Don't remove clocks with 0:00 duration
+   org-clock-out-remove-zero-time-clocks nil
+   ;; Clock out when moving task to a done state
+   org-clock-out-when-done t
+   ;; Enable auto clock resolution for finding open clocks
+   org-clock-auto-clock-resolution 'when-no-clock-is-running
+   ;; Include current clocking task in clock reports
+   org-clock-report-include-clocking-task t
+   org-clock-idle-time nil
+   org-clock-persist-file (cache: "org-clock-save.el"))
+
+  ;; Resume clocking task when emacs is restarted
+  (org-clock-persistence-insinuate))
 
 (use-package org-pomodoro
   :defer t
@@ -924,8 +925,15 @@
 (use-package org-noter :defer t)
 
 ;; exporters
-(use-package ox-latex    :straight nil :defer t)
-(use-package ox-publish  :straight nil :defer t)
+(use-package ox-latex    :straight nil :defer t
+  :config
+  (setq org-latex-prefer-user-labels t))
+
+(use-package ox-publish
+  :straight nil
+  :defer t
+  :config
+  (setq org-publish-timestamp-directory (cache: ".org-timestamps/")))
 (use-package ox-epub     :defer t)
 (use-package ox-gfm      :defer t)
 (use-package ox-asciidoc :defer t)
