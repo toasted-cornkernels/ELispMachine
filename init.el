@@ -2562,12 +2562,44 @@ set so that it clears the whole REPL buffer, not just the output."
   :after prolog
   :config
   (setq ediprolog-system 'swi)
+  (defun ediprolog-kill-prolog-process ()
+    (interactive)
+    (ediprolog-kill-prolog)
+    (message "Prolog process killed."))
+
+  (defun ediprolog-consult-buffer ()
+    (interactive)
+    (ediprolog-consult))
+  
+  (defun ediprolog-kill-then-consult-buffer ()
+    (interactive)
+    (ediprolog-consult t))
+
+  (defun ediprolog-consult-buffer-then-query ()
+    (interactive)
+    (ediprolog-consult)
+    (ediprolog-query))
+
+  (defun ediprolog-kill-then-consult-then-query ()
+    (interactive)
+    (ediprolog consult t)
+    (ediprolog-query))
+
+  (defun ediprolog-back-to-toplevel ()
+    (unless (ediprolog-more-solutions)
+      (error "No query in progress"))
+    (ediprolog-toplevel))
   :general
   (local-leader
-    :major-modes '(prolog-mode t)
-    :keymaps     '(prolog-mode-map)
-    "e"   (which-key-prefix "eval")
-    "ee"  'ediprolog-dwim))
+    "e"  (which-key-prefix "eval")
+    "ee" 'ediprolog-dwim
+    "eb" 'ediprolog-consult-buffer
+    "eq" 'ediprolog-consult-buffer-then-query
+
+    "k"  (which-key-prefix "kill")
+    "kk" 'ediprolog-kill-prolog-process
+    "kb" 'ediprolog-kill-then-consult-buffer
+    "kq" 'ediprolog-kill-then-consult-then-query))
 
 ;; Nix config =======================================
 ;; ==================================================
