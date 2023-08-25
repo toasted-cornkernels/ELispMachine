@@ -2600,8 +2600,8 @@ set so that it clears the whole REPL buffer, not just the output."
     "kb" 'ediprolog-kill-then-consult-buffer
     "kq" 'ediprolog-kill-then-consult-then-query
 
-    "l" 'ediprolog-localize
-    "L" 'ediprolog-unlocalize))
+    "l"  'ediprolog-localize
+    "L"  'ediprolog-unlocalize))
 
 ;; Nix config =======================================
 ;; ==================================================
