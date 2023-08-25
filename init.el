@@ -5072,7 +5072,7 @@ set so that it clears the whole REPL buffer, not just the output."
   :config
   (elfeed-org)
   (elfeed-goodies/setup)
-  (elfeed-web-start)
+  ;; (elfeed-web-start)
   (evil-define-key 'visual elfeed-search-mode-map
     "+"  'elfeed-search-tag-all
     "-"  'elfeed-search-untag-all
