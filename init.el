@@ -968,10 +968,9 @@
   (setq insert-directory-program gls))
 
 (use-package launchctl
-  :when macOS-p
+  :when  macOS-p
   :defer t
-  :init
-  (add-to-list 'auto-mode-alist '("\\.plist\\'" . nxml-mode))
+  :mode  ("\\.plist\\'" . nxml-mode)
   :general
   (normal-mode-major-mode
     :major-modes '(launchctl-mode t)
@@ -1140,7 +1139,7 @@
 ;; ==================================================
 
 (use-package cperl-mode
-  :mode "\\.pl\\'"
+  ;; :mode "\\.pl\\'"
   :general
   (local-leader
     :major-modes '(cperl-mode perl-mode t)
@@ -2524,11 +2523,7 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (use-package prolog
   :defer t
-  :mode "\\.pl\\'"			; I don't use perl
-  :init
-  ;; (autoload 'run-prolog "prolog" "Start a Prolog sub-process." t)
-  ;; (autoload 'prolog-mode "prolog" "Major mode for editing Prolog programs." t)
-  (setq auto-mode-alist (append '(("\\.pl$" . prolog-mode)) auto-mode-alist))
+  :mode ("\\.pl\\'" . prolog-mode)			; I don't use perl
   :general
   (local-leader
     :major-modes '(prolog-mode t)
@@ -2559,7 +2554,6 @@ set so that it clears the whole REPL buffer, not just the output."
     "hp" 'prolog-help-on-predicate))
 
 (use-package ediprolog
-  :after prolog
   :config
   (setq ediprolog-system 'swi)
   (defun ediprolog-kill-prolog-process ()
