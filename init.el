@@ -5161,6 +5161,8 @@ set so that it clears the whole REPL buffer, not just the output."
       inhibit-startup-message t
       inhibit-splash-screen t)
 
+(setq-default indent-tabs-mode nil) 	; Noooooooo please!
+
 (defun display-startup-echo-area-message ()
   (message "You think with your keyboard"))
 
