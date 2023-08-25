@@ -955,23 +955,21 @@
 ;; macOS Settings ===================================
 ;; ==================================================
 
-(when macOS-p
-  (when (boundp 'mac-system-move-file-to-trash-use-finder)
-    (setq mac-system-move-file-to-trash-use-finder t)
-    (setq mac-function-modifier 'hyper
+(when (and macOS-p (boundp 'mac-system-move-file-to-trash-use-finder))
+  (setq mac-system-move-file-to-trash-use-finder t)
+  (setq mac-function-modifier 'hyper
 	mac-option-modifier   'meta
 	mac-command-modifier  'super)
-    (setq mac-pass-command-to-system nil
-	  mac-pass-control-to-system nil)))
+  (setq mac-pass-command-to-system nil
+	mac-pass-control-to-system nil))
 
 (when-let ((gls (executable-find "gls")))
   (setq insert-directory-program gls))
 
 (use-package launchctl
-  :when macOS-p
+  :when  macOS-p
   :defer t
-  :init
-  (add-to-list 'auto-mode-alist '("\\.plist\\'" . nxml-mode))
+  :mode  ("\\.plist\\'" . nxml-mode)
   :general
   (normal-mode-major-mode
     :major-modes '(launchctl-mode t)
@@ -1140,7 +1138,7 @@
 ;; ==================================================
 
 (use-package cperl-mode
-  :mode "\\.pl\\'"
+  ;; :mode "\\.pl\\'"
   :general
   (local-leader
     :major-modes '(cperl-mode perl-mode t)
@@ -2524,11 +2522,7 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (use-package prolog
   :defer t
-  :mode "\\.pl\\'"			; I don't use perl
-  :init
-  ;; (autoload 'run-prolog "prolog" "Start a Prolog sub-process." t)
-  ;; (autoload 'prolog-mode "prolog" "Major mode for editing Prolog programs." t)
-  (setq auto-mode-alist (append '(("\\.pl$" . prolog-mode)) auto-mode-alist))
+  :mode ("\\.pl\\'" . prolog-mode)			; I don't use perl
   :general
   (local-leader
     :major-modes '(prolog-mode t)
@@ -2559,15 +2553,55 @@ set so that it clears the whole REPL buffer, not just the output."
     "hp" 'prolog-help-on-predicate))
 
 (use-package ediprolog
-  :after prolog
   :config
   (setq ediprolog-system 'swi)
+  (defun ediprolog-kill-prolog-process ()
+    (interactive)
+    (ediprolog-kill-prolog)
+    (message "Prolog process killed."))
+
+  (defun ediprolog-consult-buffer ()
+    (interactive)
+    (ediprolog-consult))
+  
+  (defun ediprolog-kill-then-consult-buffer ()
+    (interactive)
+    (ediprolog-consult t))
+
+  (defun ediprolog-consult-buffer-then-query ()
+    (interactive)
+    (ediprolog-consult)
+    (ediprolog-query))
+
+  (defun ediprolog-kill-then-consult-then-query ()
+    (interactive)
+    (ediprolog consult t)
+    (ediprolog-query))
+
+  (defun ediprolog-back-to-toplevel ()
+    (interactive)
+    (unless (ediprolog-more-solutions)
+      (error "No query in progress"))
+    (ediprolog-toplevel))
+  
   :general
   (local-leader
     :major-modes '(prolog-mode t)
     :keymaps     '(prolog-mode-map)
-    "e"   (which-key-prefix "eval")
-    "ee"  'ediprolog-dwim))
+    "e"  (which-key-prefix "eval")
+    "ee" 'ediprolog-dwim
+    "eb" 'ediprolog-consult-buffer
+    "et" 'ediprolog-back-to-toplevel
+    "ec" 'ediprolog-remove-interactions
+    "eq" 'ediprolog-consult-buffer-then-query
+
+    "k"  (which-key-prefix "kill")
+    "kk" 'ediprolog-kill-prolog-process
+    "kb" 'ediprolog-kill-then-consult-buffer
+    "kq" 'ediprolog-kill-then-consult-then-query
+
+    "l"  'ediprolog-localize
+    "L"  'ediprolog-unlocalize))
 
 ;; Nix config =======================================
 ;; ==================================================
