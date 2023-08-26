@@ -3363,11 +3363,7 @@ set so that it clears the whole REPL buffer, not just the output."
 (use-package xwidget
   :straight nil
   :when     macOS-p
-  :defines  (xwidget-webkit-find-file xwidget-new-window)
-  :commands (xwidget-new-window
-	     xwidget-webkit-find-file
-	     xwidget-webkit-browse-url)
-
+  :defer t
   :general
   (normal-mode-major-mode
     :major-modes '(xwidget-webkit-mode t)
