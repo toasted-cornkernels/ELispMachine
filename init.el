@@ -3371,7 +3371,7 @@ set so that it clears the whole REPL buffer, not just the output."
 (use-package xwidget
   :straight nil
   :when     macOS-p
-  :defer t
+  :defer    t
   :general
   (normal-mode-major-mode
     :major-modes '(xwidget-webkit-mode t)
