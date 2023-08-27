@@ -2613,6 +2613,8 @@ set so that it clears the whole REPL buffer, not just the output."
     "l"  'ediprolog-localize
     "L"  'ediprolog-unlocalize))
 
+(use-package sweeprolog)
+
 ;; Nix config =======================================
 ;; ==================================================
 
@@ -4555,7 +4557,7 @@ set so that it clears the whole REPL buffer, not just the output."
   "s-b"  'consult-bookmark
   "s-s"  'ispell-word)
 
-;; enable mouse scroll in terminal ==================
+;; Enable mouse scroll in terminal ==================
 ;; ==================================================
 
 (unless window-system
@@ -4579,7 +4581,7 @@ set so that it clears the whole REPL buffer, not just the output."
   :init
   (define-key Info-mode-map   "o" 'ace-link-info)
   (define-key help-mode-map   "o" 'ace-link-help)
-  (define-key woman-mode-map  "o" 'link-hint-open-link)
+  ;; (define-key woman-mode-map  "o" 'link-hint-open-link)
   (define-key eww-link-keymap "o" 'ace-link-eww)
   (define-key eww-mode-map    "o" 'ace-link-eww)
   (define-key w3m-link-map    "o" 'ace-link-w3m)
