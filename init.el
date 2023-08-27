@@ -2536,6 +2536,8 @@ set so that it clears the whole REPL buffer, not just the output."
     :major-modes '(prolog-mode t)
     :keymaps     '(prolog-mode-map)
     
+    "'"  'run-prolog
+    
     "s"  (which-key-prefix "consult")
     "sb" 'prolog-consult-buffer
     "sf" 'prolog-consult-file
@@ -4523,8 +4525,14 @@ set so that it clears the whole REPL buffer, not just the output."
   "pP" 'projectile-switch-open-project
   "pc" 'projectile-compile-project)
 
+(defun insert-lambda ()
+  "Insert λ."
+  (interactive)
+  (insert "λ"))
+
 (global-leader
   "x"     (which-key-prefix "text")
+  "xl"    'insert-lambda
   "x TAB" 'indent-rigidly
   "xwd"   'osx-dictionary-search-pointer)
 
