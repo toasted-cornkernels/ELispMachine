@@ -5110,7 +5110,7 @@ set so that it clears the whole REPL buffer, not just the output."
   (emms-default-players)
   (setq emms-player-mpv-parameters '("--really-quiet" "--no-audio-display" "--no-video")
         emms-source-file-default-directory (cond (macOS-p "~/Music/")
-                                                 (chromeOS-p "/mnt/chromeos/removable/SD Card/Music")
+                                                 (chromeOS-p "/mnt/chromeos/removable/SD Card/Music/")
                                                  (t "~/"))
 	emms-playlist-buffer-name "*Music*"
 	emms-info-asynchronously t)
