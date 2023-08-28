@@ -415,44 +415,8 @@
     "["          'org-agenda-file-to-front
     "]"          'org-remove-file
 
-    "b"          (which-key-prefix :babel)
-    "bp"         'org-babel-previous-src-block
-    "bn"         'org-babel-next-src-block
-    "be"         'org-babel-execute-maybe
-    "bo"         'org-babel-open-src-block-result
-    "bv"         'org-babel-expand-src-block
-    "bu"         'org-babel-goto-src-block-head
-    "bg"         'org-babel-goto-named-src-block
-    "br"         'org-babel-goto-named-result
-    "bb"         'org-babel-execute-buffer
-    "bs"         'org-babel-execute-subtree
-    "bd"         'org-babel-demarcate-block
-    "bt"         'org-babel-tangle
-    "bf"         'org-babel-tangle-file
-    "bc"         'org-babel-check-src-block
-    "bj"         'org-babel-insert-header-arg
-    "bl"         'org-babel-load-in-session
-    "bi"         'org-babel-lob-ingest
-    "bI"         'org-babel-view-src-block-info
-    "bz"         'org-babel-switch-to-session
-    "bZ"         'org-babel-switch-to-session-with-code
-    "ba"         'org-babel-sha1-hash
-    "bx"         'org-babel-do-key-sequence-in-edit-buffer
-    "b."         'org-babel-transient-state/body
-
     "c"          (which-key-prefix :clock)
-    "cc"         'org-clock-cancel
-    "cd"         'org-clock-display
     "ce"         'org-evaluate-time-range
-    "cg"         'org-clock-goto
-    "ci"         'org-clock-in
-    "cI"         'org-clock-in-last
-    "cj"         'org-clock-jump-to-current-clock
-    "co"         'org-clock-out
-    "cr"         'org-clock-report
-    "cR"         'org-resolve-clocks
-    "ct"         'org-clock-modify-effort-estimate
-    "cp"         'org-pomodoro
 
     "d"          (which-key-prefix :dates)
     "dd"         'org-deadline
@@ -795,7 +759,36 @@
    'org-babel-load-languages
    '((lisp . t) (clojure . t) (scheme . t) (hy . t) (racket . t)
      (dot . t) (rust . t) (kotlin . t) (shell . t)
-     (mermaid . t) (plantuml . t) (awk . t))))
+     (mermaid . t) (plantuml . t) (awk . t)))
+
+  :general
+  (local-leader
+    :major-modes '(org-mode t)
+    :keymaps     '(org-mode-map)
+    "b"          (which-key-prefix :babel)
+    "bp"         'org-babel-previous-src-block
+    "bn"         'org-babel-next-src-block
+    "be"         'org-babel-execute-maybe
+    "bo"         'org-babel-open-src-block-result
+    "bv"         'org-babel-expand-src-block
+    "bu"         'org-babel-goto-src-block-head
+    "bg"         'org-babel-goto-named-src-block
+    "br"         'org-babel-goto-named-result
+    "bb"         'org-babel-execute-buffer
+    "bs"         'org-babel-execute-subtree
+    "bd"         'org-babel-demarcate-block
+    "bt"         'org-babel-tangle
+    "bf"         'org-babel-tangle-file
+    "bc"         'org-babel-check-src-block
+    "bj"         'org-babel-insert-header-arg
+    "bl"         'org-babel-load-in-session
+    "bi"         'org-babel-lob-ingest
+    "bI"         'org-babel-view-src-block-info
+    "bz"         'org-babel-switch-to-session
+    "bZ"         'org-babel-switch-to-session-with-code
+    "ba"         'org-babel-sha1-hash
+    "bx"         'org-babel-do-key-sequence-in-edit-buffer
+    "b."         'org-babel-transient-state/body))
 
 (use-package org-capture
   :straight nil
@@ -913,12 +906,33 @@
    org-clock-persist-file (cache: "org-clock-save.el"))
 
   ;; Resume clocking task when emacs is restarted
-  (org-clock-persistence-insinuate))
+  (org-clock-persistence-insinuate)
+
+  :general
+  (local-leader
+    :major-modes '(org-mode t)
+    :keymaps     '(org-mode-map)
+    "cc"         'org-clock-cancel
+    "cd"         'org-clock-display
+    "cg"         'org-clock-goto
+    "ci"         'org-clock-in
+    "cI"         'org-clock-in-last
+    "cj"         'org-clock-jump-to-current-clock
+    "co"         'org-clock-out
+    "cr"         'org-clock-report
+    "cR"         'org-resolve-clocks
+    "ct"         'org-clock-modify-effort-estimate))
+
 
 (use-package org-pomodoro
   :defer t
   :config
-  (setq org-pomodoro-length 20))
+  (setq org-pomodoro-length 20)
+  :genearl
+  (local-leader
+    :major-modes '(org-mode t)
+    :keymaps     '(org-mode-map)
+    "cp"         'org-pomodoro))
 
 (use-package org-remark :defer t)
 
