@@ -5127,7 +5127,8 @@ set so that it clears the whole REPL buffer, not just the output."
     "ameu" 'emms-play-url))
 
 (use-package emms-mode-line
-  :after emms
+  :after    emms
+  :straight nil
   :init
   (emms-mode-line-enable)
   (emms-mode-line 1)
@@ -5135,7 +5136,8 @@ set so that it clears the whole REPL buffer, not just the output."
   (setq emms-mode-line-mode-line-function #'emms-mode-line-only-filename))
 
 (use-package emms-playing-time
-  :after emms
+  :after    emms
+  :straight nil
   :init
   (emms-playing-time nil))
 
