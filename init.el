@@ -5104,6 +5104,17 @@ set so that it clears the whole REPL buffer, not just the output."
 	   (filename (car (last splitted))))
       (concat "🎵 " (car (s-split "\\.[mp3|wma|m4a]" filename)))))
 
+  :config
+  (require 'emms-setup)
+  (emms-all)
+  (emms-default-players)
+  (setq emms-player-mpv-parameters '("--really-quiet" "--no-audio-display" "--no-video")
+        emms-source-file-default-directory (cond (macOS-p "~/Music/")
+                                                 (chromeOS-p "/mnt/chromeos/removable/SD Card/Music")
+                                                 (t "~/"))
+	emms-playlist-buffer-name "*Music*"
+	emms-info-asynchronously t)
+
   :general
   (global-leader
     "am" (which-key-prefix "emms")
@@ -5113,21 +5124,19 @@ set so that it clears the whole REPL buffer, not just the output."
     "amen" 'emms-next
     "amed" 'emms-play-directory
     "amef" 'emms-play-file
-    "ameu" 'emms-play-url)
+    "ameu" 'emms-play-url))
 
-  :config
-  (require 'emms-setup)
-  (emms-all)
-  (emms-default-players)
-  (setq emms-player-mpv-parameters '("--really-quiet" "--no-audio-display" "--no-video"))
-  (setq emms-source-file-default-directory "~/Music/"
-	emms-playlist-buffer-name "*Music*"
-	emms-info-asynchronously t)
-  (require 'emms-mode-line)
+(use-package emms-mode-line
+  :after emms
+  :init
   (emms-mode-line-enable)
   (emms-mode-line 1)
-  (setq emms-mode-line-mode-line-function #'emms-mode-line-only-filename)
-  (require 'emms-playing-time)
+  :config
+  (setq emms-mode-line-mode-line-function #'emms-mode-line-only-filename))
+
+(use-package emms-playing-time
+  :after emms
+  :init
   (emms-playing-time nil))
 
 ;; Streamlink config ================================
