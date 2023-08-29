@@ -167,9 +167,7 @@
 (defun eval-init-dot-el ()
   "Evaluate the contents of `~/.emacs.d/init.el'."
   (interactive)
-  (with-temp-buffer
-    (insert-file-contents "~/.emacs.d/init.el")
-    (eval-buffer)))
+  (eval-region (point-min) (point-max)))
 
 (defun switch-theme (target-theme)
   "Switch to TARGET-THEME by loading it and disabling all other. Disable everything by passing 'default."
