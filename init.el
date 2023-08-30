@@ -1318,6 +1318,7 @@
 			       newlisp-mode picolisp-mode janet-mode
 			       lisp-interaction-mode ielm-mode minibuffer-mode
 			       fennel-repl-mode cider-repl-mode racket-repl-mode
+                               tuareg-mode
 			       fundamental-mode)
 		 "`" "`" :actions nil))
 
@@ -2625,7 +2626,9 @@ set so that it clears the whole REPL buffer, not just the output."
     "l"  'ediprolog-localize
     "L"  'ediprolog-unlocalize))
 
-(use-package sweeprolog)
+(use-package sweeprolog
+  :init
+  (setq sweeprolog--directory "~/.emacs.d/straight/repos/sweeprolog"))
 
 ;; Nix config =======================================
 ;; ==================================================
@@ -2650,6 +2653,7 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (use-package dune
   :defer t
+  :hook  (dune-mode . evil-cleverparens-mode)
   :general
   (local-leader
     :major-modes '(dune-mode t)
@@ -3114,7 +3118,8 @@ set so that it clears the whole REPL buffer, not just the output."
   (setq vertico-scroll-margin 0
 	vertico-count 20
 	vertico-resize t
-	vertico-cycle t))
+	vertico-cycle t)
+  (define-key vertico-map (kbd "C-l") #'vertico-directory-up))
 
 (use-package savehist
   :straight nil
