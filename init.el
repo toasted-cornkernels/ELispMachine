@@ -1268,6 +1268,7 @@
 
 (use-package minibuffer
   :straight nil
+  :hook (minibuffer-mode . smartparens-mode)
   :general
   (insert-mode-major-mode
     :major-modes '(minibuffer-mode t)
@@ -4309,6 +4310,7 @@ set so that it clears the whole REPL buffer, not just the output."
 (global-leader
   "SPC" '(execute-extended-command :which-key "M-x")
   "TAB" '(evil-switch-to-windows-last-buffer :which-key "Last Buffer")
+  "!"   'async-shell-command
   "C-r" 'revert-buffer
   "u"   'universal-argument)
 
