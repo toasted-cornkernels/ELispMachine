@@ -217,7 +217,7 @@
     (kbd "C-w C-j") 'evil-window-down
     (kbd "C-w C-k") 'evil-window-up
     (kbd "C-w C-l") 'evil-window-right)
-  
+
   (unbind-key (kbd "C-@"))
   (unbind-key (kbd "M-SPC"))
   (defalias #'forward-evil-word #'forward-evil-symbol)
@@ -636,7 +636,7 @@
   :config
   (setq org-return-follows-link t
 	org-mouse-1-follows-link t)
-  
+
   (defun calendar-one-day-forward ()
     (interactive)
     (org-eval-in-calendar '(calendar-forward-day 1)))
@@ -1544,7 +1544,7 @@ Unlike `eval-defun', this does not go to topmost function."
     "rr"  (which-key-prefix "remove/rename/replace")
     "rs"  (which-key-prefix "show/sort/stop")
     "rsn" 'clojure-sort-ns
-    
+
     "rt"  (which-key-prefix "thread")
     "rtf" 'clojure-thread-first-all
     "rth" 'clojure-thread
@@ -2170,7 +2170,7 @@ set so that it clears the whole REPL buffer, not just the output."
     "hc"         'fennel-view-compilation
     "m"          'fennel-macroexpand
     "="          'fennel-format)
-  
+
   (local-leader
     :major-modes '(fennel-mode fennel-repl-mode t)
     :keymaps     '(fennel-mode-map fennel-repl-mode-map)
@@ -2341,7 +2341,7 @@ set so that it clears the whole REPL buffer, not just the output."
 
     "s"  'geiser-squarify
     "q"  'geiser-repl-exit)
-  
+
   (normal-mode-major-mode
     :major-modes '(geiser-doc-mode t)
     :keymaps     '(geiser-doc-mode-map)
@@ -2351,7 +2351,7 @@ set so that it clears the whole REPL buffer, not just the output."
     "[["  'geiser-doc-previous-section
     ">"   'geiser-doc-next
     "<"   'geiser-doc-previous
-	  
+
     "gp"  'geiser-doc-previous
     "gn"  'geiser-doc-next
     "gz"  'geiser-doc-switch-to-repl
@@ -2403,7 +2403,7 @@ set so that it clears the whole REPL buffer, not just the output."
   (defun dante-insert-type ()
     (interactive)
     (dante-type-at :insert))
-  
+
   :general
   (local-leader
     :major-modes '(haskell-mode haskell-literate-mode t)
@@ -2433,11 +2433,11 @@ set so that it clears the whole REPL buffer, not just the output."
     (let* ((session (haskell-session))
            (buffer (haskell-session-interactive-buffer session)))
       (display-buffer buffer)))
-  
+
   (defun haskell-process-do-type-on-prev-line ()
     (interactive)
     (haskell-process-do-type 1))
-  
+
   (defun haskell-format-imports ()
     "Sort and align import statements from anywhere in the source file."
     (interactive)
@@ -2515,7 +2515,7 @@ set so that it clears the whole REPL buffer, not just the output."
   (insert-mode-major-mode
     :major-modes '(haskell-interactive-mode t)
     :keymaps     '(haskell-interactive-mode-map)
-    "C-j" 'haskell-interactive-mode-history-next 
+    "C-j" 'haskell-interactive-mode-history-next
     "C-k" 'haskell-interactive-mode-history-previous
     "C-l" 'haskell-interactive-mode-clear
     "RET" 'haskell-interactive-mode-return)
@@ -2524,7 +2524,7 @@ set so that it clears the whole REPL buffer, not just the output."
     :major-modes '(haskell-interactive-mode t)
     :keymaps     '(haskell-interactive-mode-map)
     "RET" 'haskell-interactive-mode-return)
-  
+
   (insert-mode-major-mode
     :major-modes '(haskell-mode t)
     :keymaps     '(haskell-mode-map)
@@ -2548,9 +2548,9 @@ set so that it clears the whole REPL buffer, not just the output."
   (local-leader
     :major-modes '(prolog-mode t)
     :keymaps     '(prolog-mode-map)
-    
+
     "'"  'run-prolog
-    
+
     "s"  (which-key-prefix "consult")
     "sb" 'prolog-consult-buffer
     "sf" 'prolog-consult-file
@@ -2586,7 +2586,7 @@ set so that it clears the whole REPL buffer, not just the output."
   (defun ediprolog-consult-buffer ()
     (interactive)
     (ediprolog-consult))
-  
+
   (defun ediprolog-kill-then-consult-buffer ()
     (interactive)
     (ediprolog-consult t))
@@ -2606,7 +2606,7 @@ set so that it clears the whole REPL buffer, not just the output."
     (unless (ediprolog-more-solutions)
       (error "No query in progress"))
     (ediprolog-toplevel))
-  
+
   :general
   (local-leader
     :major-modes '(prolog-mode t)
@@ -2710,11 +2710,13 @@ set so that it clears the whole REPL buffer, not just the output."
     :major-modes '(tuareg-mode t)
     :keymaps     '(tuareg-mode-map)
     "'"  'utop
+    "="  'ocamlformat
+
     "E"  (which-key-prefix :errors)
     "Ec" 'merlin-error-check
     "En" 'merlin-error-next
     "EN" 'merlin-error-prev
-  
+
     "g"  (which-key-prefix :goto)
     "ga" 'tuareg-find-alternate-file
     "gb" 'merlin-pop-stack
@@ -2723,7 +2725,7 @@ set so that it clears the whole REPL buffer, not just the output."
     "gi" 'merlin-switch-to-ml
     "gI" 'merlin-switch-to-mli
     "go" 'merlin-occurrences
-    
+
     "h"  (which-key-prefix :help)
     "hh" 'merlin-document
     "ht" 'merlin-type-enclosing
@@ -2735,7 +2737,7 @@ set so that it clears the whole REPL buffer, not just the output."
 
     "c"  (which-key-prefix :compile/check)
     "cc" 'compile
-    
+
     "t"  (which-key-prefix :test)
     "tP" 'dune-promote
     "tp" 'dune-runtest-and-promote
@@ -4033,7 +4035,7 @@ set so that it clears the whole REPL buffer, not just the output."
 			:height 180)
   (set-face-attribute 'default nil
 		      :height 140)
-  (set-fontset-font t 'hangul 
+  (set-fontset-font t 'hangul
 		    (font-spec :name "NanumGothic")))
 
 (use-package tron-legacy-theme
@@ -4257,7 +4259,7 @@ set so that it clears the whole REPL buffer, not just the output."
 (defun youtube-viewer-start (with-screen)
   (interactive "P")
   (if (executable-find "youtube-viewer")
-      (cond 
+      (cond
        ((null with-screen) (progn
 			     (message "Running with video.")
 			     (comint-run "youtube-viewer" '())))
@@ -4824,7 +4826,7 @@ set so that it clears the whole REPL buffer, not just the output."
     "="   'pdf-view-enlarge
     "+"   'pdf-view-enlarge
     "-"   'pdf-view-shrink
-    
+
     "j"   'pdf-view-next-line-or-next-page
     "k"   'pdf-view-previous-line-or-previous-page
     "l"   'image-forward-hscroll
@@ -4854,7 +4856,7 @@ set so that it clears the whole REPL buffer, not just the output."
 
 
     "<"   'beginning-of-buffer
-    
+
     "H"   'pdf-view-fit-height-to-window
     "P"   'pdf-view-fit-page-to-window
     "W"   'pdf-view-fit-width-to-window
@@ -4887,7 +4889,7 @@ set so that it clears the whole REPL buffer, not just the output."
     "Q"               'pdf-outline-quit-and-kill
     "q"               'quit-window
     "F"               'pdf-outline-follow-mode)
-  
+
   (normal-mode-major-mode
     :major-modes '(pdf-annot-list-mode t)
     :keymaps     '(pdf-annot-list-mode-map)
@@ -4896,7 +4898,7 @@ set so that it clears the whole REPL buffer, not just the output."
     "x" 'tablist-do-flagged-delete
     "u" 'tablist-unmark-forward
     "q" 'tablist-quit)
-  
+
   (normal-mode-major-mode
     :major-modes '(pdf-occur-buffer-mode t)
     :keymaps     '(pdf-occur-buffer-mode-map)
@@ -4905,7 +4907,7 @@ set so that it clears the whole REPL buffer, not just the output."
     "r" 'pdf-occur-revert-buffer-with-args
     "*" 'spacemacs/enter-ahs-forward
     "?" 'evil-search-backward)
-  
+
   (local-leader
     :major-modes '(pdf-occur-buffer-mode t)
     :keymaps     '(pdf-occur-buffer-mode-map)
@@ -5084,14 +5086,14 @@ set so that it clears the whole REPL buffer, not just the output."
     "gk" 'elfeed-show-prev
     "go" 'elfeed-show-visit
     "gr" 'elfeed-show-refresh
-    
+
     "C-j" 'elfeed-show-next
     "C-k" 'elfeed-show-prev
 
     "q" 'elfeed-kill-buffer
     "ZQ" 'elfeed-kill-buffer
     "ZZ" 'elfeed-kill-buffer)
-  
+
   :config
   (elfeed-org)
   (elfeed-goodies/setup)
