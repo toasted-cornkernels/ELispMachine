@@ -2711,6 +2711,8 @@ set so that it clears the whole REPL buffer, not just the output."
     :major-modes '(tuareg-mode t)
     :keymaps     '(tuareg-mode-map)
     "'"  'utop
+    "`"  'tuareg-run-ocaml
+    "k"  'tuareg-kill-ocaml
     "="  'ocamlformat
 
     "E"  (which-key-prefix :errors)
@@ -2726,6 +2728,10 @@ set so that it clears the whole REPL buffer, not just the output."
     "gi" 'merlin-switch-to-ml
     "gI" 'merlin-switch-to-mli
     "go" 'merlin-occurrences
+    "gn" 'tuareg-interactive-next-error-source
+    "gN" 'tuareg-interactive-next-error-repl
+    "g[" 'ocaml-open-module
+    "g]" 'ocaml-close-module
 
     "h"  (which-key-prefix :help)
     "hh" 'merlin-document
@@ -2755,7 +2761,17 @@ set so that it clears the whole REPL buffer, not just the output."
     "e"  (which-key-prefix :eval)
     "eb" 'tuareg-eval-buffer
     "ep" 'tuareg-eval-phrase
-    "er" 'tuareg-eval-region))
+    "er" 'tuareg-eval-region
+
+    "i"  (which-key-prefix :insert)
+    "ib" 'tuareg-insert-begin-form
+    "ic" 'tuareg-insert-class-form
+    "if" 'tuareg-insert-for-form
+    "ii" 'tuareg-insert-if-form
+    "il" 'tuareg-insert-let-form
+    "im" 'tuareg-insert-match-form
+    "it" 'tuareg-insert-try-form
+    "iw" 'tuareg-insert-while-form))
 
 (use-package utop
   :after tuareg
@@ -2807,6 +2823,12 @@ set so that it clears the whole REPL buffer, not just the output."
 (use-package toml-mode
   :mode (("/\\(Cargo.lock\\|\\.cargo/config\\)\\'" . toml-mode)
 	 ("\\.toml\\'" . toml-mode)))
+
+;; Golang config ====================================
+;; ==================================================
+
+(use-package go-mode
+  :defer t)
 
 ;; VimScript config =================================
 ;; ==================================================
