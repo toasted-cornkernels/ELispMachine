@@ -3313,7 +3313,8 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; transpose-frame config ===========================
 ;; ==================================================
 
-(use-package transpose-frame :commands (transpose-frame))
+(use-package transpose-frame
+  :commands (transpose-frame))
 
 ;; rainbow delimiters config ========================
 ;; ==================================================
@@ -4332,6 +4333,7 @@ set so that it clears the whole REPL buffer, not just the output."
   "wL" 'evil-window-bottom-right
 
   "wM" 'ace-swap-window
+  "ws" 'ace-swap-window
 
   "wt" 'transpose-frame
   "wr" 'evil-window-rotate-downwards
