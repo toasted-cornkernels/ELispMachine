@@ -2828,6 +2828,9 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; ==================================================
 
 (use-package go-mode
+  :hook (go-mode . (lambda ()
+                     (setq indent-tabs-mode 1
+                           tab-width 2)))
   :defer t)
 
 ;; VimScript config =================================
@@ -4385,6 +4388,14 @@ set so that it clears the whole REPL buffer, not just the output."
   "9"  'winum-select-window-9
   "0"  'winum-select-window-0)
 
+(global-leader
+  "D"  (which-key-prefix :desktop)
+  "Ds" 'desktop-save-in-desktop-dir
+  "Dr" 'desktop-read
+  "Dd" 'desktop-remove
+  "Dc" 'desktop-clear
+  "DR" 'desktop-revert)
+
 (defun yank-file-position ()
   (interactive)
   (if (not buffer-file-name)
@@ -4445,7 +4456,7 @@ set so that it clears the whole REPL buffer, not just the output."
   "gs"  'magit-status
   "gU"  'magit-unstage-file
   "gs"  'magit
-  "ga"  'magit-stage-file
+  "ga"  'magit-stage-buffer-file
   "gc"  'magit-commit-create
   "gC"  'magit-clone
   "gp"  'magit-push
