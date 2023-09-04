@@ -4976,8 +4976,6 @@ set so that it clears the whole REPL buffer, not just the output."
     :keymaps    '(nov-mode-map)
     "H"  'nov-previous-document
     "L"  'nov-next-document
-    "["  'nov-previous-document
-    "]"  'nov-next-document
     "d"  'nov-scroll-up
     "u"  'nov-scroll-down
     "J"  'nov-scroll-up
