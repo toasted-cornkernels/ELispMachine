@@ -2830,7 +2830,7 @@ set so that it clears the whole REPL buffer, not just the output."
 (use-package go-mode
   :hook (go-mode . (lambda ()
                      (setq indent-tabs-mode 1
-                           tab-width 2)))
+                           tab-width 4)))
   :defer t)
 
 ;; VimScript config =================================
