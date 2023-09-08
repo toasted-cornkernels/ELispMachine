@@ -926,7 +926,7 @@
   :defer t
   :config
   (setq org-pomodoro-length 20)
-  :genearl
+  :general
   (local-leader
     :major-modes '(org-mode t)
     :keymaps     '(org-mode-map)
