@@ -2711,6 +2711,8 @@ set so that it clears the whole REPL buffer, not just the output."
     :major-modes '(tuareg-mode t)
     :keymaps     '(tuareg-mode-map)
     "'"  'utop
+    "`"  'tuareg-run-ocaml
+    "k"  'tuareg-kill-ocaml
     "="  'ocamlformat
 
     "E"  (which-key-prefix :errors)
@@ -2726,6 +2728,10 @@ set so that it clears the whole REPL buffer, not just the output."
     "gi" 'merlin-switch-to-ml
     "gI" 'merlin-switch-to-mli
     "go" 'merlin-occurrences
+    "gn" 'tuareg-interactive-next-error-source
+    "gN" 'tuareg-interactive-next-error-repl
+    "g[" 'ocaml-open-module
+    "g]" 'ocaml-close-module
 
     "h"  (which-key-prefix :help)
     "hh" 'merlin-document
@@ -2755,7 +2761,17 @@ set so that it clears the whole REPL buffer, not just the output."
     "e"  (which-key-prefix :eval)
     "eb" 'tuareg-eval-buffer
     "ep" 'tuareg-eval-phrase
-    "er" 'tuareg-eval-region))
+    "er" 'tuareg-eval-region
+
+    "i"  (which-key-prefix :insert)
+    "ib" 'tuareg-insert-begin-form
+    "ic" 'tuareg-insert-class-form
+    "if" 'tuareg-insert-for-form
+    "ii" 'tuareg-insert-if-form
+    "il" 'tuareg-insert-let-form
+    "im" 'tuareg-insert-match-form
+    "it" 'tuareg-insert-try-form
+    "iw" 'tuareg-insert-while-form))
 
 (use-package utop
   :after tuareg
@@ -2807,6 +2823,15 @@ set so that it clears the whole REPL buffer, not just the output."
 (use-package toml-mode
   :mode (("/\\(Cargo.lock\\|\\.cargo/config\\)\\'" . toml-mode)
 	 ("\\.toml\\'" . toml-mode)))
+
+;; Golang config ====================================
+;; ==================================================
+
+(use-package go-mode
+  :hook (go-mode . (lambda ()
+                     (setq indent-tabs-mode 1
+                           tab-width 4)))
+  :defer t)
 
 ;; VimScript config =================================
 ;; ==================================================
@@ -3313,7 +3338,8 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; transpose-frame config ===========================
 ;; ==================================================
 
-(use-package transpose-frame :commands (transpose-frame))
+(use-package transpose-frame
+  :commands (transpose-frame))
 
 ;; rainbow delimiters config ========================
 ;; ==================================================
@@ -4332,6 +4358,7 @@ set so that it clears the whole REPL buffer, not just the output."
   "wL" 'evil-window-bottom-right
 
   "wM" 'ace-swap-window
+  "ws" 'ace-swap-window
 
   "wt" 'transpose-frame
   "wr" 'evil-window-rotate-downwards
@@ -4360,6 +4387,14 @@ set so that it clears the whole REPL buffer, not just the output."
   "8"  'winum-select-window-8
   "9"  'winum-select-window-9
   "0"  'winum-select-window-0)
+
+(global-leader
+  "D"  (which-key-prefix :desktop)
+  "Ds" 'desktop-save-in-desktop-dir
+  "Dr" 'desktop-read
+  "Dd" 'desktop-remove
+  "Dc" 'desktop-clear
+  "DR" 'desktop-revert)
 
 (defun yank-file-position ()
   (interactive)
@@ -4421,7 +4456,7 @@ set so that it clears the whole REPL buffer, not just the output."
   "gs"  'magit-status
   "gU"  'magit-unstage-file
   "gs"  'magit
-  "ga"  'magit-stage-file
+  "ga"  'magit-stage-buffer-file
   "gc"  'magit-commit-create
   "gC"  'magit-clone
   "gp"  'magit-push
@@ -4941,8 +4976,6 @@ set so that it clears the whole REPL buffer, not just the output."
     :keymaps    '(nov-mode-map)
     "H"  'nov-previous-document
     "L"  'nov-next-document
-    "["  'nov-previous-document
-    "]"  'nov-next-document
     "d"  'nov-scroll-up
     "u"  'nov-scroll-down
     "J"  'nov-scroll-up
