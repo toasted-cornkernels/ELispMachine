@@ -2898,6 +2898,9 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; ==================================================
 
 (use-package markdown-mode
+  :hook ((gfm-mode markdown-mode) . (lambda ()
+                                      (setq indent-tabs-mode nil)
+                                      (setq tab-width 4)))
   :mode
   (("\\.md\\'"  . gfm-mode)
    ("\\.mkd\\'" . markdown-mode)
@@ -3596,25 +3599,25 @@ set so that it clears the whole REPL buffer, not just the output."
   (setq git-gutter-fr+-side 'left-fringe)
   :config
   (fringe-helper-define 'git-gutter-fr+-added nil
-        "..X...."
-        "..X...."
-        "XXXXX.."
-        "..X...."
-        "..X....")
+    "..X...."
+    "..X...."
+    "XXXXX.."
+    "..X...."
+    "..X....")
 
-      (fringe-helper-define 'git-gutter-fr+-deleted nil
-        "......."
-        "......."
-        "XXXXX.."
-        "......."
-        ".......")
+  (fringe-helper-define 'git-gutter-fr+-deleted nil
+    "......."
+    "......."
+    "XXXXX.."
+    "......."
+    ".......")
 
-      (fringe-helper-define 'git-gutter-fr+-modified nil
-        "..X...."
-        ".XXX..."
-        "XX.XX.."
-        ".XXX..."
-        "..X...."))
+  (fringe-helper-define 'git-gutter-fr+-modified nil
+    "..X...."
+    ".XXX..."
+    "XX.XX.."
+    ".XXX..."
+    "..X...."))
 
 ;; Magit config =====================================
 ;; ==================================================
