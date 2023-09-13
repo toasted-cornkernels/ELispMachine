@@ -872,7 +872,8 @@
   (setq org-src-window-setup 'current-window
 	org-src-fontify-natively t
 	org-src-tab-acts-natively t)
-  (setq-default org-src-preserve-indentation t))
+  (setq-default org-src-preserve-indentation nil
+                org-edit-src-content-indentation 2))
 
 (use-package org-habit
   :straight nil
