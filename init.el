@@ -1122,6 +1122,9 @@
 
 (use-package emacs-codeql
   :when (not (or android-p chromeOS-p))
+  :hook (ql-tree-sitter-mode . (lambda ()
+                                 (setq indent-tabs-mode nil
+                                       tab-width 2)))
   :straight
   (emacs-codeql :type git
 		:host github
@@ -1156,15 +1159,16 @@
    (tuareg-mode  . eglot-ensure)
    (cpp-mode     . eglot-ensure)
    (c-mode       . eglot-ensure)
+   (csharp-mode  . eglot-ensure)
    (ql-tree-sitter-mode . eglot-ensure)
    (javascript-mode . eglot-ensure))
 
   :general
   (local-leader
     :keymaps '(eglot-mode-map)
-    "a"  (which-key-prefix "LSP")
-    "aa" 'eglot-code-actions
-    "r"  'eglot-rename))
+    "a"      (which-key-prefix "LSP")
+    "aa"     'eglot-code-actions
+    "r"      'eglot-rename))
 
 ;; Shell config =====================================
 ;; ==================================================
