@@ -36,9 +36,30 @@
 	`((".*" ,(no-littering-expand-var-file-name "auto-save/") t)))
   (setq custom-file (no-littering-expand-etc-file-name "custom.el"))
   (when (fboundp 'startup-redirect-eln-cache)
+    (defvar native-comp-eln-load-path nil)
     (startup-redirect-eln-cache
      (convert-standard-filename
       (expand-file-name  "var/eln-cache/" user-emacs-directory)))))
+
+;; Which-key configs ================================
+;; ==================================================
+
+(use-package which-key
+  :config
+  (setq which-key-add-column-padding 1
+	which-key-echo-keystrokes 0.02
+	which-key-idle-delay 0.2
+	which-key-idle-secondary-delay 0.01
+	which-key-max-description-length 32
+	which-key-max-display-columns nil
+	which-key-min-display-lines 6
+	which-key-prevent-C-h-from-cycling t
+	which-key-sort-order 'which-key-prefix-then-key-order
+	which-key-sort-uppercase-first nil
+	which-key-special-keys nil
+	which-key-use-C-h-for-paging t
+	which-key-allow-evil-operators t)
+  (which-key-mode))
 
 ;; Useful Elisp Libraries ===========================
 ;; ==================================================
@@ -431,6 +452,7 @@
     "fu"         'org-feed-update-all
 
     "i"          (which-key-prefix :insert)
+    "it"         (which-key-prefix :template)
     "ita"        (org-insert-structure org-insert-ascii "ascii")
     "itc"        (org-insert-structure org-insert-center "center")
     "itC"        (org-insert-structure org-insert-comment "comment")
@@ -849,7 +871,8 @@
   (setq org-src-window-setup 'current-window
 	org-src-fontify-natively t
 	org-src-tab-acts-natively t)
-  (setq-default org-src-preserve-indentation t))
+  (setq-default org-src-preserve-indentation nil
+                org-edit-src-content-indentation 2))
 
 (use-package org-habit
   :straight nil
@@ -1098,6 +1121,9 @@
 
 (use-package emacs-codeql
   :when (not (or android-p chromeOS-p))
+  :hook (ql-tree-sitter-mode . (lambda ()
+                                 (setq indent-tabs-mode nil
+                                       tab-width 2)))
   :straight
   (emacs-codeql :type git
 		:host github
@@ -1132,15 +1158,16 @@
    (tuareg-mode  . eglot-ensure)
    (cpp-mode     . eglot-ensure)
    (c-mode       . eglot-ensure)
+   (csharp-mode  . eglot-ensure)
    (ql-tree-sitter-mode . eglot-ensure)
    (javascript-mode . eglot-ensure))
 
   :general
   (local-leader
     :keymaps '(eglot-mode-map)
-    "a"  (which-key-prefix "LSP")
-    "aa" 'eglot-code-actions
-    "r"  'eglot-rename))
+    "a"      (which-key-prefix "LSP")
+    "aa"     'eglot-code-actions
+    "r"      'eglot-rename))
 
 ;; Shell config =====================================
 ;; ==================================================
@@ -2874,6 +2901,9 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; ==================================================
 
 (use-package markdown-mode
+  :hook ((gfm-mode markdown-mode) . (lambda ()
+                                      (setq indent-tabs-mode nil)
+                                      (setq tab-width 4)))
   :mode
   (("\\.md\\'"  . gfm-mode)
    ("\\.mkd\\'" . markdown-mode)
@@ -3572,25 +3602,25 @@ set so that it clears the whole REPL buffer, not just the output."
   (setq git-gutter-fr+-side 'left-fringe)
   :config
   (fringe-helper-define 'git-gutter-fr+-added nil
-        "..X...."
-        "..X...."
-        "XXXXX.."
-        "..X...."
-        "..X....")
+    "..X...."
+    "..X...."
+    "XXXXX.."
+    "..X...."
+    "..X....")
 
-      (fringe-helper-define 'git-gutter-fr+-deleted nil
-        "......."
-        "......."
-        "XXXXX.."
-        "......."
-        ".......")
+  (fringe-helper-define 'git-gutter-fr+-deleted nil
+    "......."
+    "......."
+    "XXXXX.."
+    "......."
+    ".......")
 
-      (fringe-helper-define 'git-gutter-fr+-modified nil
-        "..X...."
-        ".XXX..."
-        "XX.XX.."
-        ".XXX..."
-        "..X...."))
+  (fringe-helper-define 'git-gutter-fr+-modified nil
+    "..X...."
+    ".XXX..."
+    "XX.XX.."
+    ".XXX..."
+    "..X...."))
 
 ;; Magit config =====================================
 ;; ==================================================
@@ -3902,26 +3932,6 @@ set so that it clears the whole REPL buffer, not just the output."
 (use-package winner
   :config
   (winner-mode 1))
-
-;; which-key configs ================================
-;; ==================================================
-
-(use-package which-key
-  :config
-  (setq which-key-add-column-padding 1
-	which-key-echo-keystrokes 0.02
-	which-key-idle-delay 0.2
-	which-key-idle-secondary-delay 0.01
-	which-key-max-description-length 32
-	which-key-max-display-columns nil
-	which-key-min-display-lines 6
-	which-key-prevent-C-h-from-cycling t
-	which-key-sort-order 'which-key-prefix-then-key-order
-	which-key-sort-uppercase-first nil
-	which-key-special-keys nil
-	which-key-use-C-h-for-paging t
-	which-key-allow-evil-operators t)
-  (which-key-mode))
 
 ;; isearch configs ==================================
 ;; ==================================================
