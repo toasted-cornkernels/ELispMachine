@@ -4259,7 +4259,7 @@ set so that it clears the whole REPL buffer, not just the output."
   "s-o"   'find-file
   "s-f"   'ace-window
   "s-RET" 'toggle-frame-maximized
-  "s-m"   'w3m-browse-url
+  "s-m"   'w3m-search
   "s-b"   'switch-to-buffer
   "s-e"   'eww
   "s-x"   'xwidget-new-window
