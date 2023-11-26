@@ -305,7 +305,6 @@
 
 (set-language-environment "Korean")
 (prefer-coding-system 'utf-8)
-(global-set-key (kbd "<f6>") 'toggle-korean-input-method)
 (unbind-key (kbd "C-d"))
 (unbind-key (kbd "C-d C-d"))
 (unbind-key (kbd "C-d C-l"))
@@ -401,8 +400,7 @@
 ;; ==================================================
 
 (use-package mixed-pitch
-  :hook ((w3m-mode      . mixed-pitch-mode)
-	 (org-mode . mixed-pitch-mode)
+  :hook ((org-mode . mixed-pitch-mode)
 	 (markdown-mode . mixed-pitch-mode)))
 
 ;; Org config =======================================
@@ -1122,6 +1120,9 @@
 
 (use-package emacs-codeql
   :when (not (or android-p chromeOS-p))
+  :hook (ql-tree-sitter-mode . (lambda ()
+                                 (setq indent-tabs-mode nil
+                                       tab-width 2)))
   :straight
   (emacs-codeql :type git
 		:host github
@@ -1156,15 +1157,16 @@
    (tuareg-mode  . eglot-ensure)
    (cpp-mode     . eglot-ensure)
    (c-mode       . eglot-ensure)
+   (csharp-mode  . eglot-ensure)
    (ql-tree-sitter-mode . eglot-ensure)
    (javascript-mode . eglot-ensure))
 
   :general
   (local-leader
     :keymaps '(eglot-mode-map)
-    "a"  (which-key-prefix "LSP")
-    "aa" 'eglot-code-actions
-    "r"  'eglot-rename))
+    "a"      (which-key-prefix "LSP")
+    "aa"     'eglot-code-actions
+    "r"      'eglot-rename))
 
 ;; Shell config =====================================
 ;; ==================================================
@@ -4257,7 +4259,7 @@ set so that it clears the whole REPL buffer, not just the output."
   "s-o"   'find-file
   "s-f"   'ace-window
   "s-RET" 'toggle-frame-maximized
-  "s-m"   'w3m-browse-url
+  "s-m"   'w3m-search
   "s-b"   'switch-to-buffer
   "s-e"   'eww
   "s-x"   'xwidget-new-window
