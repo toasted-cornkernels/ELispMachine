@@ -1506,6 +1506,7 @@ Unlike `eval-defun', this does not go to topmost function."
     "ef" 'eval-defun
     "er" 'eval-region
     "ep" 'pp-eval-last-sexp
+    "ee" 'eval-last-sexp
     "es" 'eval-last-sexp
     "ec" 'eval-expression-at-point
     "i"  'elisp-index-search)
