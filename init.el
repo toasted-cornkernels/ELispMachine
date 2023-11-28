@@ -1180,6 +1180,44 @@
 	 ("\\.bash_profile\\'" . sh-mode)
 	 ("\\.zprofile\\'"     . sh-mode)))
 
+;; Python config ====================================
+;; ==================================================
+
+(use-package python-mode)
+
+(use-package cython-mode
+  :defer t
+  :config
+  )
+
+(use-package importmagic)
+(use-package pipenv
+    :defer t
+    :commands (pipenv-activate
+               pipenv-deactivate
+               pipenv-shell
+               pipenv-open
+               pipenv-install
+               pipenv-uninstall)
+    :init
+    (dolist (m spacemacs--python-pipenv-modes)
+      (spacemacs/set-leader-keys-for-major-mode m
+        "vpa" 'pipenv-activate
+        "vpd" 'pipenv-deactivate
+        "vpi" 'pipenv-install
+        "vpo" 'pipenv-open
+        "vps" 'pipenv-shell
+        "vpu" 'pipenv-uninstall)))
+(use-package poetry
+    :defer t
+    :commands (poetry-venv-toggle
+               poetry-tracking-mode)
+    :init
+    (dolist (m spacemacs--python-poetry-modes)
+      (spacemacs/set-leader-keys-for-major-mode m
+        "vod" 'poetry-venv-deactivate
+        "vow" 'poetry-venv-workon
+        "vot" 'poetry-venv-toggle)))
 ;; Perl config ======================================
 ;; ==================================================
 
@@ -3451,6 +3489,7 @@ set so that it clears the whole REPL buffer, not just the output."
   :straight nil
   :when     macOS-p
   :defer    t
+  :commands xwidget-new-window
   :general
   (normal-mode-major-mode
     :major-modes '(xwidget-webkit-mode t)
