@@ -305,6 +305,7 @@
 
 (set-language-environment "Korean")
 (prefer-coding-system 'utf-8)
+(global-set-key (kbd "<f6>") 'toggle-korean-input-method)
 (unbind-key (kbd "C-d"))
 (unbind-key (kbd "C-d C-d"))
 (unbind-key (kbd "C-d C-l"))
