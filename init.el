@@ -3489,7 +3489,6 @@ set so that it clears the whole REPL buffer, not just the output."
 (use-package xwidget
   :straight nil
   :when     macOS-p
-  :defer    t
   :commands xwidget-new-window
   :general
   (normal-mode-major-mode
