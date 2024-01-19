@@ -5182,12 +5182,10 @@ set so that it clears the whole REPL buffer, not just the output."
     "gr"         'elfeed-show-refresh
     "q"          'elfeed-kill-buffer
     "ZQ"         'elfeed-kill-buffer
-    "ZZ"         'elfeed-kill-buffer)
+    "ZZ"         'elfeed-kill-buffer
+    "b"          'elfeed-search-browse-url)
 
   :config
-  ;; (elfeed-org)
-  ;; (elfeed-goodies/setup)
-  ;; (elfeed-web-start)
   (evil-define-key 'visual elfeed-search-mode-map
     "+"  'elfeed-search-tag-all
     "-"  'elfeed-search-untag-all
