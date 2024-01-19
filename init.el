@@ -5059,7 +5059,19 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (use-package elfeed
   :defer t
+  :hook (elfeed-show-mode . (lambda ()
+                              (setq fill-column 120) ; is it needed?
+                              (setq elfeed-show-entry-switch #'my-show-elfeed)))
   :init
+  (defun my-show-elfeed (buffer)
+    (with-current-buffer buffer
+      (setq buffer-read-only nil)
+      (goto-char (point-min))
+      (re-search-forward "\n\n")
+      (fill-individual-paragraphs (point) (point-max))
+      (setq buffer-read-only t))
+    (switch-to-buffer buffer))
+
   (defun elfeed-player ()
     "Play the podcast at elfeed podcast entry."
     (interactive)
