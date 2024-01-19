@@ -5096,6 +5096,13 @@ set so that it clears the whole REPL buffer, not just the output."
   :config
   (setq rmh-elfeed-org-files '("~/.emacs.d/elfeed.org")))
 
+(use-package elfeed-web
+  :defer    t
+  :commands '(elfeed-web-start elfeed-web-stop)
+  :init
+  (require 'elfeed)
+  (elfeed-web-start))
+
 (use-package elfeed
   :defer t
   :init
@@ -5119,67 +5126,67 @@ set so that it clears the whole REPL buffer, not just the output."
   :general
   (normal-mode-major-mode
     :major-modes '(elfeed-search-mode t)
-    :keymaps '(elfeed-search-mode-map)
-    "c"  'elfeed-db-compact
-    "o"  'elfeed-load-opml
-    "w"  'elfeed-web-start
-    "W"  'elfeed-web-stop
-    "P"  'elfeed-player
-    "y"  'elfeed-search-yank
-    "Y"  'elfeed-youtube-player
+    :keymaps     '(elfeed-search-mode-map)
+    "c"          'elfeed-db-compact
+    "o"          'elfeed-load-opml
+    "P"          'elfeed-player
+    "y"          'elfeed-search-yank
+    "Y"          'elfeed-youtube-player
+    "b"          'elfeed-search-browse-url
+                 
+    "w"          'elfeed-web-start
+    "W"          'elfeed-web-stop
+    "go"         'elfeed-search-browse-url
+    "gr"         'elfeed-update
+    "gR"         'elfeed-search-update--force
+    "gu"         'elfeed-unjam
 
-    "go" 'elfeed-search-browse-url
-    "gr" 'elfeed-update
-    "gu" 'elfeed-unjam
+    "RET"        'elfeed-search-show-entry
+    "S-RET"      'elfeed-search-browse-url
+    "SPC"        'scroll-up-command
+    "S-SPC"      'scroll-down-command
 
-    (kbd "RET") 'elfeed-search-show-entry
-    (kbd "S-<return>") 'elfeed-search-browse-url
-    (kbd "SPC") 'scroll-up-command
-    (kbd "S-SPC") 'scroll-down-command
+    "s"          'elfeed-search-live-filter
+    "S"          'elfeed-search-set-filter
+    "c"          'elfeed-search-clear-filter
 
-    "s" 'elfeed-search-live-filter
-    "S" 'elfeed-search-set-filter
-    "c" 'elfeed-search-clear-filter
+    "q"          'elfeed-search-quit-window
+    "ZQ"         'elfeed-search-quit-window
+    "ZZ"         'elfeed-search-quit-window
 
-    "q"  'elfeed-search-quit-window
-    "ZQ" 'elfeed-search-quit-window
-    "ZZ" 'elfeed-search-quit-window
-
-    "+" 'elfeed-search-tag-all
-    "-" 'elfeed-search-untag-all
-    "r" 'elfeed-search-untag-all-unread
-    "u" 'elfeed-search-tag-all-unread)
+    "+"          'elfeed-search-tag-all
+    "-"          'elfeed-search-untag-all
+    "r"          'elfeed-search-untag-all-unread
+    "u"          'elfeed-search-tag-all-unread)
 
   (normal-mode-major-mode
     :major-modes '(elfeed-show-mode t)
-    :keymaps '(elfeed-show-mode-map)
-    (kbd "S-<return>") 'elfeed-show-visit
-    (kbd "SPC") 'scroll-up-command
-    (kbd "S-SPC") 'scroll-down-command
-    (kbd "<tab>") 'elfeed-show-next-link
-    "s" 'elfeed-show-new-live-search
-    "+" 'elfeed-show-tag
-    "-" 'elfeed-show-untag
-    "A" 'elfeed-show-add-enclosure-to-playlist
-    "P" 'elfeed-show-play-enclosure
-    "d" 'elfeed-show-save-enclosure
-    "]]" 'elfeed-show-next
-    "[[" 'elfeed-show-prev
-    "gj" 'elfeed-show-next
-    "gk" 'elfeed-show-prev
-    "go" 'elfeed-show-visit
-    "gr" 'elfeed-show-refresh
-
-    "C-j" 'elfeed-show-next
-    "C-k" 'elfeed-show-prev
-
-    "q" 'elfeed-kill-buffer
-    "ZQ" 'elfeed-kill-buffer
-    "ZZ" 'elfeed-kill-buffer)
+    :keymaps     '(elfeed-show-mode-map)
+    "S-RET"      'elfeed-show-visit
+    "SPC"        'scroll-up-command
+    "S-SPC"      'scroll-down-command
+    "TAB"        'elfeed-show-next-link
+    "s"          'elfeed-show-new-live-search
+    "+"          'elfeed-show-tag
+    "-"          'elfeed-show-untag
+    "A"          'elfeed-show-add-enclosure-to-playlist
+    "P"          'elfeed-show-play-enclosure
+    "d"          'elfeed-show-save-enclosure
+    "]]"         'elfeed-show-next
+    "C-j"        'elfeed-show-next
+    "gj"         'elfeed-show-next
+    "[["         'elfeed-show-prev
+    "C-k"        'elfeed-show-prev
+    "gk"         'elfeed-show-prev
+    "go"         'elfeed-show-visit
+    "gr"         'elfeed-show-refresh
+    "q"          'elfeed-kill-buffer
+    "ZQ"         'elfeed-kill-buffer
+    "ZZ"         'elfeed-kill-buffer)
 
   :config
-  (elfeed-org)
-  (elfeed-goodies/setup)
+  ;; (elfeed-org)
+  ;; (elfeed-goodies/setup)
   ;; (elfeed-web-start)
   (evil-define-key 'visual elfeed-search-mode-map
     "+"  'elfeed-search-tag-all
@@ -5190,7 +5197,7 @@ set so that it clears the whole REPL buffer, not just the output."
     "u"  'elfeed-search-untag-all-unread))
 
 (use-package elfeed-goodies
-  :defer t)
+  :commands elfeed-goodies/setup)
 
 ;; Emms config ======================================
 ;; ==================================================
