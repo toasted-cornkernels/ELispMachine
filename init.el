@@ -23,10 +23,10 @@
 
 (straight-use-package 'use-package)
 
-(setq straight-use-package-by-default t)
+(setq straight-use-package-by-default t
+      package-install-upgrade-built-in t)
 
 (use-package use-package-ensure-system-package :ensure t)
-
 ;; No Littering! ====================================
 ;; ==================================================
 
