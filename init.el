@@ -5093,12 +5093,13 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (use-package elfeed-org
   :defer t
+  :commands (elfeed-org)
   :config
   (setq rmh-elfeed-org-files '("~/.emacs.d/elfeed.org")))
 
 (use-package elfeed-web
   :defer    t
-  :commands '(elfeed-web-start elfeed-web-stop)
+  :commands (elfeed-web-start elfeed-web-stop)
   :init
   (require 'elfeed)
   (elfeed-web-start))
@@ -5192,7 +5193,9 @@ set so that it clears the whole REPL buffer, not just the output."
     "b"  'elfeed-search-browse-url
     "y"  'elfeed-search-yank
     "U"  'elfeed-search-tag-all-unread
-    "u"  'elfeed-search-untag-all-unread))
+    "u"  'elfeed-search-untag-all-unread)
+  (elfeed-org)
+  (elfeed-web-start))
 
 (use-package elfeed-goodies
   :commands elfeed-goodies/setup)
