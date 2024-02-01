@@ -3101,12 +3101,10 @@ set so that it clears the whole REPL buffer, not just the output."
     "it"  'markdown-toc-generate-toc))
 
 (use-package mmm-mode
+  :hook (markdown-mode . (lambda ()
+                           (unless (bound-and-true-p git-commit-mode)
+                             (mmm-mode 1))))
   :commands mmm-mode
-  :init
-  (defun activate-mmm-mode ()
-    (unless (bound-and-true-p git-commit-mode)
-      (mmm-mode 1)))
-  (add-hook 'markdown-mode-hook 'activate-mmm-mode)
   :config
   ;; from Jason Blevins http://jblevins.org/log/mmm
   (defvar markdown-mmm-auto-modes
@@ -3124,7 +3122,7 @@ set so that it clears the whole REPL buffer, not just the output."
 				   :submode submode
 				   :front front
 				   :back back)))
-      (dolist (mode markdown--key-bindings-modes)
+      (dolist (mode '(markdown-mode gfm-mode))
 	(mmm-add-mode-ext-class mode nil class))))
   (mapc 'markdown/mmm-auto-class markdown-mmm-auto-modes))
 
@@ -4116,8 +4114,7 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (use-package tron-legacy-theme
   :config
-  ;; (load-theme 'tron-legacy t)
-  )
+  (load-theme 'tron-legacy t))
 
 (use-package mood-line
   :config
