@@ -3100,32 +3100,6 @@ set so that it clears the whole REPL buffer, not just the output."
     :keymaps     '(markdown-mode-map gfm-mode-map)
     "it"  'markdown-toc-generate-toc))
 
-(use-package mmm-mode
-  :hook (markdown-mode . (lambda ()
-                           (unless (bound-and-true-p git-commit-mode)
-                             (mmm-mode 1))))
-  :commands mmm-mode
-  :config
-  ;; from Jason Blevins http://jblevins.org/log/mmm
-  (defvar markdown-mmm-auto-modes
-    '("c" "c++" "css" "java" "javascript" "python" "ruby" "rust" "scala"
-      ("elisp" "emacs-lisp") ("ess" "R") ("ini" "conf-unix") ("html" "web"))
-    "List of language names or lists of language and mode names for which to generate mmm classes.")
-  (defun markdown/mmm-auto-class (lang)
-    (let* ((l       (if (listp lang) (car lang)  lang))
-	   (s       (if (listp lang) (cadr lang) lang))
-	   (class   (intern (concat "markdown-" l)))
-	   (submode (intern (concat s "-mode")))
-	   (front   (concat "^```" l "[\n\r]+"))
-	   (back    "^```$"))
-      (mmm-add-classes (list (list class
-				   :submode submode
-				   :front front
-				   :back back)))
-      (dolist (mode '(markdown-mode gfm-mode))
-	(mmm-add-mode-ext-class mode nil class))))
-  (mapc 'markdown/mmm-auto-class markdown-mmm-auto-modes))
-
 (use-package vmd-mode
   :defer t
   :init
