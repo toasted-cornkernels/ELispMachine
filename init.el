@@ -1377,7 +1377,7 @@
 			       newlisp-mode picolisp-mode janet-mode
 			       lisp-interaction-mode ielm-mode minibuffer-mode
 			       fennel-repl-mode cider-repl-mode racket-repl-mode
-			       fundamental-mode)
+			       fundamental-mode markdown-mode)
 		 "'" "'" :actions nil)
   ;; Backquote
   (sp-local-pair '(fennel-mode hy-mode clojure-mode lisp-mode emacs-lisp-mode
