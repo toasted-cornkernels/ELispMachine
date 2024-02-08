@@ -4226,12 +4226,12 @@ set so that it clears the whole REPL buffer, not just the output."
 (defun display-current-time ()
   "Display the current time in the buffer."
   (interactive)
-  (message (format-time-string "%Y-%m-%d %H:%M:%S")))
+  (message (format-time-string "%Y-%m-%d %H:%M:%S %a")))
 
 (defun insert-current-time ()
   "Insert the current time at point."
   (interactive)
-  (insert (format-time-string "%Y-%m-%d %H:%M:%S")))
+  (insert (format-time-string "%Y-%m-%d %H:%M:%S %a")))
 
 ;; Mode-agnostic keybindings ==========================
 ;; ====================================================
