@@ -1,3 +1,12 @@
+;; Salutation to λ before beginning =================
+;; ==================================================
+
+(defvar y-combinator
+  '(λ (f) ((λ (x) (f (x x))) (λ (x) (f (x x))))))
+
+;; Initial Setups ===================================
+;; ==================================================
+
 (setq-default gc-cons-threshold 100000000)
 (setq warning-minimum-level     :emergency
       warning-minimum-log-level :warning)
