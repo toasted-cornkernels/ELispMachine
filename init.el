@@ -5350,7 +5350,6 @@ set so that it clears the whole REPL buffer, not just the output."
 (defun display-startup-echo-area-message ()
   (message "You think with your keyboard"))
 
-;; (add-hook 'after-init-hook (lambda () (setq gc-cons-threshold 800000)))
 (message "config loaded!")
 
 ;; config end =======================================
