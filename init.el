@@ -7,7 +7,10 @@
 ;; Initial Setups ===================================
 ;; ==================================================
 
-(setq-default gc-cons-threshold 100000000)
+(setq gc-cons-threshold (* 511 1024 1024)
+      gc-cons-percentage 0.5)
+(run-with-idle-timer 5 t #'garbage-collect)
+
 (setq warning-minimum-level     :emergency
       warning-minimum-log-level :warning)
 (setq ad-redefinition-action 'accept)
@@ -744,6 +747,10 @@
 
 (use-package verb :defer t)
 
+(use-package ob-http
+  :after restclient
+  :init (add-to-list 'org-babel-load-languages '(http . t)))
+
 (use-package ob-hy
   :defer t
   :init (add-to-list 'org-babel-load-languages '(hy . t)))
@@ -1345,12 +1352,15 @@
   :straight nil
   :hook (minibuffer-mode . smartparens-mode)
   :general
+  ;; TODO Can't rebind C-h to backward-delete-char...
   (insert-mode-major-mode
     :major-modes '(minibuffer-mode t)
     :keymaps     '(minibuffer-mode-map)
     "M-p" 'previous-history-element
     "M-n" 'next-history-element
-    "C-h" 'backward-delete-char))
+    "C-h" 'backward-delete-char)
+  :config
+  (define-key minibuffer-mode-map "C-h" 'backward-delete-char))
 
 ;; imenu config ======================================
 ;; ==================================================
@@ -1408,7 +1418,7 @@
 	  evil-cp-additional-bindings (assoc-delete-all "M-]" evil-cp-additional-bindings)))
   (evil-cp-set-additional-bindings))
 
-;; kbd-mode config ==================================
+;; KMonad ===========================================
 ;; ==================================================
 
 (use-package kbd-mode
@@ -1418,12 +1428,12 @@
   :hook     (kbd-mode . evil-cleverparens-mode)
   :commands kbd-mode)
 
-;; Common Lisp config ===============================
+;; Common Lisp ======================================
 ;; ==================================================
 
 (use-package lisp-mode
-  :straight nil
-  :hook     (lisp-mode . evil-cleverparens-mode))
+  :straight  nil
+  :hook      (lisp-mode . evil-cleverparens-mode))
 
 (use-package slime
   :commands slime-mode
@@ -1596,11 +1606,11 @@ Unlike `eval-defun', this does not go to topmost function."
 	       cider-clojure-interaction-mode-map)
     "=l"  'clojure-align
 
-    "ra"  (which-key-prefix "add")
+    "ra"  (which-key-prefix :add)
     "ran" 'clojure-insert-ns-form
     "raN" 'clojure-insert-ns-form-at-point
 
-    "rc"  (which-key-prefix "cycle/clean/convert")
+    "rc"  (which-key-prefix :cycle/clean/convert)
     "rci" 'clojure-cycle-if
     "rcp" 'clojure-cycle-privacy
     "rc#" 'clojure-convert-collection-to-set
@@ -1610,23 +1620,23 @@ Unlike `eval-defun', this does not go to topmost function."
     "rc{" 'clojure-convert-collection-to-map
     "rc:" 'clojure-toggle-keyword-string
 
-    "rd"  (which-key-prefix "destructure")
-    "re"  (which-key-prefix "extract/expand")
-    "rf"  (which-key-prefix "find/function")
-    "rh"  (which-key-prefix "hotload")
-    "ri"  (which-key-prefix "introduce/inline")
-    "rm"  (which-key-prefix "move")
-    "rp"  (which-key-prefix "project/promote")
-    "rr"  (which-key-prefix "remove/rename/replace")
-    "rs"  (which-key-prefix "show/sort/stop")
+    "rd"  (which-key-prefix :destructure)
+    "re"  (which-key-prefix :extract/expand)
+    "rf"  (which-key-prefix :find/function)
+    "rh"  (which-key-prefix :hotload)
+    "ri"  (which-key-prefix :introduce/inline)
+    "rm"  (which-key-prefix :move)
+    "rp"  (which-key-prefix :project/promote)
+    "rr"  (which-key-prefix :remove/rename/replace)
+    "rs"  (which-key-prefix :show/sort/stop)
     "rsn" 'clojure-sort-ns
 
-    "rt"  (which-key-prefix "thread")
+    "rt"  (which-key-prefix :thread)
     "rtf" 'clojure-thread-first-all
     "rth" 'clojure-thread
     "rtl" 'clojure-thread-last-all
 
-    "ru"  (which-key-prefix "unwind/update")
+    "ru"  (which-key-prefix :unwind/update)
     "rua" 'clojure-unwind-all
     "ruw" 'clojure-unwind)
   :config
@@ -1819,27 +1829,27 @@ set so that it clears the whole REPL buffer, not just the output."
 	       cider-clojure-interaction-mode-map)
     "'"  'sesman-start
 
-    "="  (which-key-prefix "format")
+    "="  (which-key-prefix :format)
     "=r" 'cider-format-region
     "=f" 'cider-format-defun
 
-    "=e"  (which-key-prefix "edn")
+    "=e"  (which-key-prefix :edn)
     "=eb" 'cider-format-edn-buffer
     "=ee" 'cider-format-edn-last-sexp
     "=er" 'cider-format-edn-region
 
-    "d"  (which-key-prefix  "debug")
+    "d"  (which-key-prefix :debug)
     "db" 'cider-debug-defun-at-point
     "de" 'cider-display-error-buffer
 
-    "dv"  (which-key-prefix "inspect values")
+    "dv"  (which-key-prefix :inspect)
     "dve" 'cider-inspect-last-sexp
     "dvf" 'cider-inspect-defun-at-point
     "dvi" 'cider-inspect
     "dvl" 'cider-inspect-last-result
     "dvv" 'cider-inspect-expr
 
-    "e"  (which-key-prefix "evaluation")
+    "e"  (which-key-prefix :eval)
     "e;" 'cider-eval-defun-to-comment
     "e$" 'cider-eval-sexp-end-of-line
     "e(" 'cider-eval-list-at-point
@@ -1857,19 +1867,19 @@ set so that it clears the whole REPL buffer, not just the output."
     "eV" 'cider-eval-sexp-up-to-point
     "ew" 'cider-eval-last-sexp-and-replace
 
-    "en"  (which-key-prefix "namespace")
+    "en"  (which-key-prefix :namespace)
     "ena" 'cider-ns-reload-all
     "enn" 'cider-eval-ns-form
     "enr" 'cider-ns-refresh
     "enl" 'cider-ns-reload
 
-    "ep"  (which-key-prefix "pretty print")
+    "ep"  (which-key-prefix :pretty-print)
     "ep;" 'cider-pprint-eval-defun-to-comment
     "ep:" 'cider-pprint-eval-last-sexp-to-comment
     "epf" 'cider-pprint-eval-defun-at-point
     "epe" 'cider-pprint-eval-last-sexp
 
-    "m"  (which-key-prefix "manage repls")
+    "m"  (which-key-prefix :repl)
     "mb" 'sesman-browser
     "mi" 'sesman-info
     "mg" 'sesman-goto
@@ -1885,11 +1895,11 @@ set so that it clears the whole REPL buffer, not just the output."
     "mSj" 'cider-connect-sibling-clj
     "mSs" 'cider-connect-sibling-cljs
 
-    "mq"  (which-key-prefix "quit/restart")
+    "mq"  (which-key-prefix :quit/restart)
     "mqq" 'sesman-quit
     "mqr" 'sesman-restart
 
-    "p"  (which-key-prefix "profile")
+    "p"  (which-key-prefix :profile)
     "p+" 'cider-profile-samples
     "pc" 'cider-profile-clear
     "pn" 'cider-profile-ns-toggle
@@ -1923,7 +1933,7 @@ set so that it clears the whole REPL buffer, not just the output."
     "scm" 'cider-connect-clj&cljs
     "scs" 'cider-connect-cljs
 
-    "sj"  (which-key-prefix "jack-in")
+    "sj"  (which-key-prefix :jack-in)
     "sjj" 'cider-jack-in-clj
     "sjm" 'cider-jack-in-clj&cljs
     "sjs" 'cider-jack-in-cljs
@@ -1934,7 +1944,7 @@ set so that it clears the whole REPL buffer, not just the output."
     "sqn" 'cider-ns-reload
     "sqN" 'cider-ns-reload-all
 
-    "t"  (which-key-prefix "test")
+    "t"  (which-key-prefix :test)
     "ta" 'cider-test-run-all-tests
     "tb" 'cider-test-show-report
     "tl" 'cider-test-run-loaded-tests
@@ -1943,7 +1953,7 @@ set so that it clears the whole REPL buffer, not just the output."
     "tr" 'cider-test-rerun-failed-tests
     "tt" 'cider-test-run-focused-test
 
-    "g"  (which-key-prefix "goto")
+    "g"  (which-key-prefix :goto)
     "gb" 'cider-pop-back
     "gc" 'cider-classpath
     "gg" 'clj-find-var
@@ -1953,7 +1963,7 @@ set so that it clears the whole REPL buffer, not just the output."
     "gs" 'cider-browse-spec
     "gS" 'cider-browse-spec-all
 
-    "h"  (which-key-prefix "documentation")
+    "h"  (which-key-prefix :documentation)
     "ha" 'cider-apropos
     "hc" 'cider-cheatsheet
     "hd" 'cider-clojuredocs
@@ -1964,7 +1974,7 @@ set so that it clears the whole REPL buffer, not just the output."
     "hS" 'cider-browse-spec-all
     "hh" 'cider-doc
 
-    "T"  (which-key-prefix "toggle")
+    "T"  (which-key-prefix :toggle)
     "Te" 'cider-enlighten-mode
     "Tf" 'cider-toggle-repl-font-locking
     "Tp" 'cider-toggle-repl-pretty-printing
@@ -2913,6 +2923,30 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (use-package vimrc-mode
   :defer t)
+
+;; RestClient =======================================
+;; ==================================================
+
+(use-package restclient
+  :mode  (("\\.http\\'" . restclient-mode))
+  :defer t
+  :init
+  (defun restclient-http-send-current-raw-stay-in-window ()
+    (interactive)
+    (restclient-http-send-current t t))
+  :general
+  (local-leader
+    :major-modes '(restclient-mode t)
+    :keymaps     '(restclient-mode-map)
+    "n" 'restclient-jump-next
+    "p" 'restclient-jump-prev
+    "j" 'restclient-jump-next
+    "k" 'restclient-jump-prev
+    "s" 'restclient-http-send-current-stay-in-window
+    "S" 'restclient-http-send-current
+    "r" 'restclient-http-send-current-raw-stay-in-window
+    "R" 'restclient-http-send-current-raw
+    "y" 'restclient-copy-curl-command))
 
 ;; HTML config ======================================
 ;; ==================================================
@@ -4724,7 +4758,7 @@ set so that it clears the whole REPL buffer, not just the output."
     (let ((link (w3m-anchor)))
       (if (not link)
 	  (message "Thing on point is not a link.")
-	(cond ((string-match "/\\/www\\.youtube\\.com\\/watch\/?" link)
+	(cond ((string-match "/\\/www\\.youtube\\.com\\/watch\\/?" link)
 	       (message (concat "loading from youtube..." link))
 	       (call-process "mpv" nil nil nil link)))
 	(message "Sorry, playback error. Please check the url."))))
@@ -5316,7 +5350,7 @@ set so that it clears the whole REPL buffer, not just the output."
 (defun display-startup-echo-area-message ()
   (message "You think with your keyboard"))
 
-(add-hook 'after-init-hook (lambda () (setq gc-cons-threshold 800000)))
+;; (add-hook 'after-init-hook (lambda () (setq gc-cons-threshold 800000)))
 (message "config loaded!")
 
 ;; config end =======================================
