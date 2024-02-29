@@ -1362,7 +1362,7 @@
   :config
   (define-key minibuffer-mode-map "C-h" 'backward-delete-char))
 
-;; imenu config ======================================
+;; Imenu =============================================
 ;; ==================================================
 
 (use-package imenu
@@ -1494,8 +1494,8 @@ Unlike `eval-defun', this does not go to topmost function."
 
   :general
   (local-leader
-    :major-mode '(lisp-mode t)
-    :keymaps    '(lisp-mode-map)
+    :major-modes '(lisp-mode t)
+    :keymaps     '(lisp-mode-map)
     "'" 'slime
 
     "c"  (which-key-prefix "compile")
@@ -2942,6 +2942,7 @@ set so that it clears the whole REPL buffer, not just the output."
     "p" 'restclient-jump-prev
     "j" 'restclient-jump-next
     "k" 'restclient-jump-prev
+    "," 'restclient-http-send-current-stay-in-window
     "s" 'restclient-http-send-current-stay-in-window
     "S" 'restclient-http-send-current
     "r" 'restclient-http-send-current-raw-stay-in-window
@@ -3236,7 +3237,17 @@ set so that it clears the whole REPL buffer, not just the output."
 (use-package savehist
   :straight nil
   :init
-  (savehist-mode))
+  (setq savehist-file (concat user-emacs-directory "savehist")
+        enable-recursive-minibuffers t
+        history-length 1000
+        savehist-additional-variables '(mark-ring
+                                        global-mark-ring
+                                        search-ring
+                                        regexp-search-ring
+                                        extended-command-history
+                                        kill-ring)
+        savehist-autosave-interval 60)
+  (savehist-mode t))
 
 (use-package emacs
   :straight nil
@@ -3962,7 +3973,11 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (use-package eldoc
   :straight nil
-  :hook ((emacs-lisp-mode lisp-interaction-mode ielm-mode) . turn-on-eldoc-mode))
+  :hook ((emacs-lisp-mode
+          lisp-interaction-mode
+          ielm-mode
+          eval-expression-minibuffer-setup)
+         . turn-on-eldoc-mode))
 
 ;; Newcomment =======================================
 ;; ==================================================
@@ -4022,7 +4037,7 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (use-package helpful)
 
-;; recentf configs ==================================
+;; Recentf ==========================================
 ;; ==================================================
 
 (use-package recentf
@@ -4030,13 +4045,19 @@ set so that it clears the whole REPL buffer, not just the output."
   :init
   (setq recentf-keep '(file-remote-p file-readable-p)
 	recentf-save-file (concat user-emacs-directory ".recentf")
-	recentf-auto-cleanup 'never)
+        recentf-max-saved-items 1000
+        recentf-max-menu-items 40
+	recentf-auto-cleanup 'never
+        recentf-auto-save-timer (run-with-idle-timer 600 t 'recentf-save-list))
   :config
   (recentf-mode 1)
-  (setq recentf-max-menu-items 40)
+  (add-to-list 'recentf-exclude (recentf-expand-file-name package-user-dir))
   (add-to-list 'recentf-exclude "/private/var/folders/.*")
   (add-to-list 'recentf-exclude "/var/folders/.*")
-  (add-to-list 'recentf-exclude "/tmp/.*"))
+  (add-to-list 'recentf-exclude "COMMIT_EDITMSG\\'")
+  (add-to-list 'recentf-exclude "/tmp/.*")
+  (when custom-file
+    (add-to-list 'recentf-exclude (recentf-expand-file-name custom-file))))
 
 (defun cleanup-emacs ()
   (interactive)
@@ -4047,7 +4068,66 @@ set so that it clears the whole REPL buffer, not just the output."
   (garbage-collect)
   (message "no more garbage! yay!"))
 
-;; ibuffer configs ==================================
+;; Image-mode =======================================
+;; ==================================================
+
+(use-package image-mode
+  :straight nil
+  :defer t
+  :init
+  (setq image-animate-loop t)
+  :general
+  (local-leader
+    :major-modes '(image-mode t)
+    :keymaps     '(image-mode-map)
+    "h" 'image-backward-hscroll
+    "j" 'image-next-line
+    "k" 'image-previous-line
+    "l" 'image-forward-hscroll
+
+    "a" (which-key-prefix "animate")
+    "aa" 'image-toggle-animation
+    "a+" 'image-increase-speed
+    "a-" 'image-decrease-speed
+    "ar" 'image-reset-speed
+
+    "t" (which-key-prefix "transform/resize")
+    "t+" 'image-increase-size
+    "t-" 'image-decrease-size
+    "tf" 'image-mode-fit-frame
+    "tr" 'image-transform-reset
+    "th" 'image-transform-fit-to-height
+    "tw" 'image-transform-fit-to-width
+    "ts" 'image-transform-set-scale
+    "tr" 'image-transform-rotation
+
+    "g" (which-key-prefix "goto file")
+    "gn" 'image-next-file
+    "gN" 'image-previous-file))
+
+;; Ediff ============================================
+;; ==================================================
+
+(use-package ediff
+  ;; TODO make sure that ediff-cleanup-mess runs after a session
+  :defer t
+  :init
+  (setq-default ediff-window-setup-function 'ediff-setup-windows-plain
+                ediff-split-window-function 'split-window-horizontally
+                ediff-merge-split-window-function 'split-window-horizontally)
+  (require 'outline)
+  (add-hook 'ediff-prepare-buffer-hook #'show-all)
+  (add-hook 'ediff-quit-hook           #'winner-undo)
+  (defun disable-y-or-n-p (orig-fun &rest args)
+    "Pressing 'q' immediately closes ediff."
+    (cl-letf (((symbol-function 'y-or-n-p) (cl-constantly t))) ; (lambda (prompt) t)
+      (apply orig-fun args)))
+  (advice-add 'ediff-quit :around #'disable-y-or-n-p)
+
+  :config
+  (setq ediff-diff-program (if (executable-find "delta") "delta" "diff")))
+
+;; Ibuffer ==========================================
 ;; ==================================================
 
 (use-package ibuffer
@@ -4055,7 +4135,7 @@ set so that it clears the whole REPL buffer, not just the output."
   :config
   (add-hook 'ibuffer-mode-hook #'ibuffer-set-filter-groups-by-mode))
 
-;; projectile configs ===============================
+;; Projectile =======================================
 ;; ==================================================
 
 (use-package projectile
@@ -4065,7 +4145,7 @@ set so that it clears the whole REPL buffer, not just the output."
 	anaconda-mode-localhost-address "localhost"
 	projectile-enable-caching       t))
 
-;; minions config ===================================
+;; Minions config ===================================
 ;; ==================================================
 
 (use-package minions
@@ -4073,7 +4153,7 @@ set so that it clears the whole REPL buffer, not just the output."
   (minions-mode 1)
   (setq minions-hidden-modes t))
 
-;; visuals ==========================================
+;; Visuals ==========================================
 ;; ==================================================
 
 (setq column-number-mode t)
@@ -5035,8 +5115,8 @@ set so that it clears the whole REPL buffer, not just the output."
   :mode ("\\.epub\\'" . nov-mode)
   :config
   (normal-mode-major-mode
-    :major-mode '(nov-mode t)
-    :keymaps    '(nov-mode-map)
+    :major-modes '(nov-mode t)
+    :keymaps     '(nov-mode-map)
     "H"  'nov-previous-document
     "L"  'nov-next-document
     "d"  'nov-scroll-up
