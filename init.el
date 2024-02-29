@@ -86,6 +86,17 @@
 
 (use-package ts)
 
+(use-package cus-edit :straight (:type built-in))
+
+(use-package ox :straight (:type built-in))
+
+(use-package unpackaged
+  :straight
+  (unpackaged :type git
+              :host github
+              :repo "alphapapa/unpackaged.el"
+              :branch "master"))
+
 (use-package reazon
   :config
   (defalias 'disj 'reazon-disj)
