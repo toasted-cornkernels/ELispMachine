@@ -3206,7 +3206,48 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; CSharp config ====================================
 ;; ==================================================
 
-(use-package csharp-mode :mode "\\.cs\\'")
+(use-package omnisharp
+  :defer t
+  :config
+  (local-leader
+    :major-modes '(csharp-mode t)
+    :keymaps     '(csharp-mode-map)
+    "u"  'omnisharp-auto-complete-overrides
+    "i"  'omnisharp-fix-usings
+
+    "g"  (which-key-prefix "navigation")
+    "ge" 'omnisharp-solution-errors
+    "gG" 'omnisharp-go-to-definition-other-window
+    ;; "gu" 'omnisharp-helm-find-usages
+    "gU" 'omnisharp-find-usages-with-ido
+    ;; "gs" 'omnisharp-helm-find-symbols
+    "gi" 'omnisharp-find-implementations
+    "gI" 'omnisharp-find-implementations-with-ido
+    "gr" 'omnisharp-navigate-to-region
+    "gm" 'omnisharp-navigate-to-solution-member
+    "gM" 'omnisharp-navigate-to-solution-member-other-window
+    "gf" 'omnisharp-navigate-to-solution-file
+    "gF" 'omnisharp-navigate-to-solution-file-then-file-member
+    "gc" 'omnisharp-navigate-to-current-file-member
+
+    "h"  (which-key-prefix "documentation")
+    "ht" 'omnisharp-current-type-information
+    "hT" 'omnisharp-current-type-information-to-kill-ring
+
+    "r"  (which-key-prefix "refactoring")
+    "rm" 'omnisharp-rename
+    "rr" 'omnisharp-run-code-action-refactoring
+
+    "s"  (which-key-prefix "server")
+    "ss" 'omnisharp-start-omnisharp-server
+    "sS" 'omnisharp-stop-server
+    "sr" 'omnisharp-reload-solution
+    "si" 'omnisharp-install-server
+
+    "t"  (which-key-prefix "tests")
+    "tb" 'omnisharp-unit-test-buffer
+    "tl" 'omnisharp-unit-test-last
+    "tt" 'omnisharp-unit-test-at-point))
 
 ;; auto-indent on RET ===============================
 ;; ==================================================
@@ -3238,12 +3279,13 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (use-package vertico
   :init
-  (vertico-mode)
   (setq vertico-scroll-margin 0
 	vertico-count 20
 	vertico-resize t
 	vertico-cycle t)
-  (define-key vertico-map (kbd "C-l") #'vertico-directory-up))
+  (define-key vertico-map (kbd "C-l") #'vertico-directory-up)
+  :config
+  (vertico-mode))
 
 (use-package savehist
   :straight nil
@@ -3258,6 +3300,7 @@ set so that it clears the whole REPL buffer, not just the output."
                                         extended-command-history
                                         kill-ring)
         savehist-autosave-interval 60)
+  :config
   (savehist-mode t))
 
 (use-package emacs
@@ -4220,6 +4263,7 @@ set so that it clears the whole REPL buffer, not just the output."
   (set-fontset-font t 'hangul
 		    (font-spec :name "NanumGothic")))
 
+;; TODO: customize it using enable-theme-functions in Emacs29
 (use-package tron-legacy-theme
   :config
   (load-theme 'tron-legacy t))
