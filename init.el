@@ -3613,7 +3613,19 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; json config =====================================
 ;; =================================================
 
-(use-package json-mode :mode "\\.json\\'")
+(use-package json-mode
+  :straight nil
+  :mode "\\.json\\'"
+  :hook (json-mode . (lambda ()
+                       (setq indent-tabs-mode nil)
+                       (setq tab-width 2))))
+
+(use-package jsonc-mode
+  :straight nil
+  :mode "\\.jsonc\\'"
+  :hook (jsonc-mode . (lambda ()
+                        (setq indent-tabs-mode nil)
+                        (setq tab-width 2))))
 
 ;; yaml config =====================================
 ;; =================================================
@@ -3855,6 +3867,9 @@ set so that it clears the whole REPL buffer, not just the output."
     "a"          'with-editor-cancel
     "c"          'with-editor-finish
     "k"          'with-editor-cancel))
+
+(use-package magit-lfs
+  :after magit)
 
 (use-package git-commit
   :defer t)
@@ -5284,7 +5299,7 @@ set so that it clears the whole REPL buffer, not just the output."
     "y"          'elfeed-search-yank
     "Y"          'elfeed-youtube-player
     "b"          'elfeed-search-browse-url
-                 
+
     "w"          'elfeed-web-start
     "W"          'elfeed-web-stop
     "go"         'elfeed-search-browse-url
