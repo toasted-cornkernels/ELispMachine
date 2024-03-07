@@ -5509,8 +5509,7 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (setq inhibit-splash-screen t
       inhibit-startup-echo-area-message ""
-      inhibit-startup-message t
-      inhibit-splash-screen t)
+      inhibit-startup-message t)
 
 (setq-default indent-tabs-mode nil) 	; Noooooooo please!
 
