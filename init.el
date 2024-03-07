@@ -2992,6 +2992,14 @@ set so that it clears the whole REPL buffer, not just the output."
     "nl" 'npm-mode-npm-list
     "np" 'npm-mode-visit-project-file))
 
+(use-package javascript-mode
+  :straight nil
+  :config
+  (add-to-list 'eglot-server-programs
+               `(javascript-mode . ("typescript-language-server" "--stdio")))
+  (add-to-list 'eglot-server-programs
+               `(javascript-ts-mode . ("typescript-language-server" "--stdio"))))
+
 ;; Markdown config ==================================
 ;; ==================================================
 
@@ -3206,9 +3214,18 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; CSharp config ====================================
 ;; ==================================================
 
-(use-package omnisharp
-  :defer t
+(use-package csharp-mode
+  :straight nil
   :config
+  (add-to-list 'eglot-server-programs
+               `(csharp-mode . ("csharp-ls")))
+  (add-to-list 'eglot-server-programs
+               `(csharp-ts-mode . ("csharp-ls"))))
+
+(use-package omnisharp
+  :hook ((csharp-mode . omnisharp-mode)
+         (csharp-ts-mode . omnisharp-mode))
+  :general
   (local-leader
     :major-modes '(csharp-mode t)
     :keymaps     '(csharp-mode-map)
