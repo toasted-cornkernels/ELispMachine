@@ -2926,7 +2926,7 @@ set so that it clears the whole REPL buffer, not just the output."
 (use-package go-mode
   :hook (go-mode . (lambda ()
                      (setq indent-tabs-mode 1
-                           tab-width 4)))
+                           tab-width 2)))
   :defer t)
 
 ;; VimScript config =================================
@@ -3006,7 +3006,7 @@ set so that it clears the whole REPL buffer, not just the output."
 (use-package markdown-mode
   :hook ((gfm-mode markdown-mode) . (lambda ()
                                       (setq indent-tabs-mode nil)
-                                      (setq tab-width 4)))
+                                      (setq tab-width 2)))
   :mode
   (("\\.md\\'"  . gfm-mode)
    ("\\.mkd\\'" . markdown-mode)
