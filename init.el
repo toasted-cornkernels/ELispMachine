@@ -3685,12 +3685,10 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (use-package kotlin-mode
   :mode "\\.kt\\'"
-
   :init
   (defun run-kotlin ()
     (interactive)
     (comint-run "kotlin" '()))
-
   :config
   (local-leader
     :major-modes '(kotlin-mode t)
@@ -5037,7 +5035,6 @@ set so that it clears the whole REPL buffer, not just the output."
     (interactive)
     (let ((url (read-from-minibuffer "URL: " "https://namu.wiki/w/")))
       (eww-browse-url url)))
-
   :config
   (evil-define-key 'normal eww-mode-map (kbd "c") 'eww-copy-page-url)
   (setq eww-search-prefix "https://www.google.com/search?q=")
