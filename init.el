@@ -1363,15 +1363,11 @@
   :straight nil
   :hook (minibuffer-mode . smartparens-mode)
   :general
-  ;; TODO Can't rebind C-h to backward-delete-char...
   (insert-mode-major-mode
     :major-modes '(minibuffer-mode t)
     :keymaps     '(minibuffer-mode-map)
     "M-p" 'previous-history-element
-    "M-n" 'next-history-element
-    "C-h" 'backward-delete-char)
-  :config
-  (define-key minibuffer-mode-map "C-h" 'backward-delete-char))
+    "M-n" 'next-history-element))
 
 ;; Imenu =============================================
 ;; ==================================================
