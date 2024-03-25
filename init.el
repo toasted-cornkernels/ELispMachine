@@ -785,11 +785,11 @@
   :defer t
   :config
   (add-hook 'ob-racket-pre-runtime-library-load-hook
-	      #'ob-racket-raco-make-runtime-library)
+	    #'ob-racket-raco-make-runtime-library)
   (add-to-list 'org-src-lang-modes '("racket" . racket))
   :straight (ob-racket
-	       :type git :host github :repo "hasu/emacs-ob-racket"
-	       :files ("*.el" "*.rkt")))
+	     :type git :host github :repo "hasu/emacs-ob-racket"
+	     :files ("*.el" "*.rkt")))
 
 (use-package org-auto-tangle
   :defer t
@@ -1233,32 +1233,32 @@
 
 (use-package importmagic)
 (use-package pipenv
-    :defer t
-    :commands (pipenv-activate
-               pipenv-deactivate
-               pipenv-shell
-               pipenv-open
-               pipenv-install
-               pipenv-uninstall)
-    :init
-    (dolist (m spacemacs--python-pipenv-modes)
-      (spacemacs/set-leader-keys-for-major-mode m
-        "vpa" 'pipenv-activate
-        "vpd" 'pipenv-deactivate
-        "vpi" 'pipenv-install
-        "vpo" 'pipenv-open
-        "vps" 'pipenv-shell
-        "vpu" 'pipenv-uninstall)))
+  :defer t
+  :commands (pipenv-activate
+             pipenv-deactivate
+             pipenv-shell
+             pipenv-open
+             pipenv-install
+             pipenv-uninstall)
+  :init
+  (dolist (m spacemacs--python-pipenv-modes)
+    (spacemacs/set-leader-keys-for-major-mode m
+                                              "vpa" 'pipenv-activate
+                                              "vpd" 'pipenv-deactivate
+                                              "vpi" 'pipenv-install
+                                              "vpo" 'pipenv-open
+                                              "vps" 'pipenv-shell
+                                              "vpu" 'pipenv-uninstall)))
 (use-package poetry
-    :defer t
-    :commands (poetry-venv-toggle
-               poetry-tracking-mode)
-    :init
-    (dolist (m spacemacs--python-poetry-modes)
-      (spacemacs/set-leader-keys-for-major-mode m
-        "vod" 'poetry-venv-deactivate
-        "vow" 'poetry-venv-workon
-        "vot" 'poetry-venv-toggle)))
+  :defer t
+  :commands (poetry-venv-toggle
+             poetry-tracking-mode)
+  :init
+  (dolist (m spacemacs--python-poetry-modes)
+    (spacemacs/set-leader-keys-for-major-mode m
+                                              "vod" 'poetry-venv-deactivate
+                                              "vow" 'poetry-venv-workon
+                                              "vot" 'poetry-venv-toggle)))
 ;; Perl config ======================================
 ;; ==================================================
 
@@ -1375,13 +1375,16 @@
   :straight nil
   :hook (minibuffer-mode . smartparens-mode)
   :general
-  ;; TODO Can't rebind C-h to backward-delete-char...
   (insert-mode-major-mode
     :major-modes '(minibuffer-mode t)
     :keymaps     '(minibuffer-mode-map)
-    (kbd "M-p") 'previous-history-element
-    (kbd "M-n") 'next-history-element
-    (kbd "C-h") 'backward-delete-char))
+   :mode (("\\.sh\\'"           . sh-mode)
+	  ("\\.(ba|z)shrc.*\\'" . sh-mode)
+	  ("\\.zshenv.*\\'"     . sh-mode)
+	  ("\\.bash_profile\\'" . sh-mode)
+	  ("\\.zprofile\\'"     . sh-mode)))
+   "M-p" 'previous-history-element
+    "M-n" 'next-history-element))
 
 ;; Imenu =============================================
 ;; ==================================================
@@ -5533,6 +5536,7 @@ set so that it clears the whole REPL buffer, not just the output."
       inhibit-startup-message t)
 
 (setq-default indent-tabs-mode nil) 	; Noooooooo please!
+(setq-default standard-indent 2)
 
 (setq-local line-spacing 0.1)           ; my eyeeees
 
@@ -5549,17 +5553,11 @@ set so that it clears the whole REPL buffer, not just the output."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(coffee-tab-width 2)
  '(custom-safe-themes
-   '("a8950f7287870cd993d7e56991a45e1414a09d97e4fbf08f48973a1381bc7aaf" "92d350334df87fe61a682518ff214c773625c6d5ace8060d128adc550bc60c9b" default))
- '(package-selected-packages
-   '(no-littering multi-vterm minions xwidget lispy git-gutter clipetty zones yasnippet-classic-snippets treemacs-evil which-key evil-commentary anzu json-mode evil-surround tuareg tagedit cider))
- '(recentf-auto-cleanup 'never t))
+   '("a8950f7287870cd993d7e56991a45e1414a09d97e4fbf08f48973a1381bc7aaf" "92d350334df87fe61a682518ff214c773625c6d5ace8060d128adc550bc60c9b" default)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
-(put 'narrow-to-region 'disabled nil)
-(put 'dired-find-alternate-file 'disabled nil)
