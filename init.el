@@ -1378,12 +1378,7 @@
   (insert-mode-major-mode
     :major-modes '(minibuffer-mode t)
     :keymaps     '(minibuffer-mode-map)
-   :mode (("\\.sh\\'"           . sh-mode)
-	  ("\\.(ba|z)shrc.*\\'" . sh-mode)
-	  ("\\.zshenv.*\\'"     . sh-mode)
-	  ("\\.bash_profile\\'" . sh-mode)
-	  ("\\.zprofile\\'"     . sh-mode)))
-   "M-p" 'previous-history-element
+    "M-p" 'previous-history-element
     "M-n" 'next-history-element))
 
 ;; Imenu =============================================
