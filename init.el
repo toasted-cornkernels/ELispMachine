@@ -2919,9 +2919,8 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (use-package rust-mode
   :mode "\\.rs\\'"
+  :hook (rust-mode . (lambda () (setq indent-tabs-mode nil)))
   :config
-  (add-hook 'rust-mode-hook
-	    (lambda () (setq indent-tabs-mode nil)))
   (define-key rust-mode-map (kbd "C-c C-c") 'rust-run))
 
 (use-package toml-mode
