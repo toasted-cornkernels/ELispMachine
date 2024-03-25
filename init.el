@@ -88,7 +88,14 @@
 
 (use-package cus-edit :straight (:type built-in))
 
-(use-package ox :straight (:type built-in))
+;; (use-package ox :straight (:type built-in))
+
+(use-package font-lock-ext
+  :straight
+  (font-lock-ext :type git
+                 :host github
+                 :repo "sensorflo/font-lock-ext"
+                 :branch "master"))
 
 (use-package unpackaged
   :straight
@@ -656,7 +663,7 @@
    org-hide-emphasis-markers t
    org-enforce-todo-dependencies t
    org-todo-keywords
-   '((sequence "TODO" "NEXT" "WORKING" "|"
+   '((sequence "TODO" "NEXT" "WORKING" "HOLD" "|"
 	       "DONE" "ABORTED"))
    org-export-backends
    '(ascii html icalendar latex odt markdown))
@@ -741,6 +748,8 @@
 (use-package org-rich-yank :defer t)
 
 (use-package org-projectile :defer t)
+
+(use-package org-element :straight (:type built-in))
 
 (use-package valign
   :hook ((markdown-mode . valign-mode)
@@ -1149,7 +1158,7 @@
 ;; ==================================================
 
 (use-package emacs-codeql
-  :when (not (or android-p chromeOS-p))
+  :mode ("\\.qll?\\'" . ql-tree-sitter-mode)
   :hook (ql-tree-sitter-mode . (lambda ()
                                  (setq indent-tabs-mode nil
                                        tab-width 2)))
@@ -1159,7 +1168,6 @@
 		:repo "anticomputer/emacs-codeql"
 		:branch "main"
 		:files (:defaults "bin"))
-  :demand t
   :init
   (setq codeql-transient-binding "C-c q"
 	codeql-configure-eglot-lsp t
@@ -1203,11 +1211,15 @@
 
 (use-package sh-script
   :straight nil
-  :mode (("\\.sh\\'"           . sh-mode)
-	 ("\\.(ba|z)shrc.*\\'" . sh-mode)
-	 ("\\.zshenv.*\\'"     . sh-mode)
-	 ("\\.bash_profile\\'" . sh-mode)
-	 ("\\.zprofile\\'"     . sh-mode)))
+  :hook
+  (shell-script-mode . (lambda ()
+                         (setq indent-tabs-mode nil
+                               tab-width 2)))
+  :mode (("\\.sh\\'"           . shell-script-mode)
+	 ("\\.(ba|z)shrc.*\\'" . shell-script-mode)
+	 ("\\.zshenv.*\\'"     . shell-script-mode)
+	 ("\\.bash_profile\\'" . shell-script-mode)
+	 ("\\.zprofile\\'"     . shell-script-mode)))
 
 ;; Python config ====================================
 ;; ==================================================
@@ -1367,11 +1379,9 @@
   (insert-mode-major-mode
     :major-modes '(minibuffer-mode t)
     :keymaps     '(minibuffer-mode-map)
-    "M-p" 'previous-history-element
-    "M-n" 'next-history-element
-    "C-h" 'backward-delete-char)
-  :config
-  (define-key minibuffer-mode-map "C-h" 'backward-delete-char))
+    (kbd "M-p") 'previous-history-element
+    (kbd "M-n") 'next-history-element
+    (kbd "C-h") 'backward-delete-char))
 
 ;; Imenu =============================================
 ;; ==================================================
@@ -3266,6 +3276,20 @@ set so that it clears the whole REPL buffer, not just the output."
     "tl" 'omnisharp-unit-test-last
     "tt" 'omnisharp-unit-test-at-point))
 
+(use-package csproj-mode
+  :mode "\\.csproj\\'")
+
+(use-package sharper
+  :after csharp-mode)
+
+(use-package sln-mode
+  :mode "\\.sln\\'"
+  :straight
+  (sln-mode :type git
+            :host github
+	    :repo "sensorflo/sln-mode"
+            :branch "master"))
+
 ;; auto-indent on RET ===============================
 ;; ==================================================
 
@@ -3631,7 +3655,7 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; =================================================
 
 (use-package json-mode
-  :straight nil
+  ;; :straight nil
   :mode "\\.json\\'"
   :hook (json-mode . (lambda ()
                        (setq indent-tabs-mode nil)
@@ -5509,6 +5533,8 @@ set so that it clears the whole REPL buffer, not just the output."
       inhibit-startup-message t)
 
 (setq-default indent-tabs-mode nil) 	; Noooooooo please!
+
+(setq-local line-spacing 0.1)           ; my eyeeees
 
 (defun display-startup-echo-area-message ()
   (message "You think with your keyboard"))
