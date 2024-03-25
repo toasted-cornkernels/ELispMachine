@@ -3322,9 +3322,9 @@ set so that it clears the whole REPL buffer, not just the output."
 	vertico-count 20
 	vertico-resize t
 	vertico-cycle t)
-  (define-key vertico-map (kbd "C-l") #'vertico-directory-up)
   :config
-  (vertico-mode))
+  (vertico-mode)
+  (define-key vertico-map (kbd "C-l") #'vertico-directory-up))
 
 (use-package savehist
   :straight nil
@@ -4228,10 +4228,7 @@ set so that it clears the whole REPL buffer, not just the output."
     "Pressing 'q' immediately closes ediff."
     (cl-letf (((symbol-function 'y-or-n-p) (cl-constantly t))) ; (lambda (prompt) t)
       (apply orig-fun args)))
-  (advice-add 'ediff-quit :around #'disable-y-or-n-p)
-
-  :config
-  (setq ediff-diff-program (if (executable-find "delta") "delta" "diff")))
+  (advice-add 'ediff-quit :around #'disable-y-or-n-p))
 
 ;; Ibuffer ==========================================
 ;; ==================================================
