@@ -3671,13 +3671,16 @@ set so that it clears the whole REPL buffer, not just the output."
 (use-package yaml-mode
   :mode (("\\.\\(yml\\|yaml\\)\\'" . yaml-mode)
 	 ("Procfile\\'" . yaml-mode)
-	 ("\\.qlpack\\'"  . yaml-mode)))
+	 ("\\.qlpack\\'"  . yaml-mode)
+         ("\\.qls" . yaml-mode)))
 
 ;; csv config ======================================
 ;; =================================================
 
 (use-package csv-mode
-  :defer t
+  :mode ((".csv" . csv-mode)
+         (".expected" . csv-mode)
+         (".actual" . csv-mode))
   :general
   (local-leader
     :major-modes '(csv-mode t)
@@ -5552,3 +5555,4 @@ set so that it clears the whole REPL buffer, not just the output."
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
+(put 'narrow-to-region 'disabled nil)
