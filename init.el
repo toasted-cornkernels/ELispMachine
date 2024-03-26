@@ -3669,7 +3669,7 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; =================================================
 
 (use-package yaml-mode
-  :mode (("\\.\\(yml\\|yaml\\)\\'" . yaml-mode)
+  :mode (("\\.ya?ml\\'" . yaml-mode)
 	 ("Procfile\\'" . yaml-mode)
 	 ("\\.qlpack\\'"  . yaml-mode)
          ("\\.qls" . yaml-mode)))
