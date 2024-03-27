@@ -402,7 +402,9 @@
 ;; ==================================================
 
 (use-package emojify
-  :hook (after-init . global-emojify-mode))
+  :hook (after-init . global-emojify-mode)
+  :init
+  (setq emojify-emoji-styles '(unicode github)))
 
 ;; Align ============================================
 ;; ==================================================
@@ -5265,6 +5267,7 @@ set so that it clears the whole REPL buffer, not just the output."
     "awhs" 'hnreader-show
     "awhj" 'hnreader-jobs
     "awhb" 'hnreader-best
+    "awhh" 'hnreader-best
     "awhm" 'hnreader-more)
 
   :config
