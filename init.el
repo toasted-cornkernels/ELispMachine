@@ -3225,7 +3225,7 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (use-package csharp-mode
   :straight nil
-  :config
+  :init
   (add-to-list 'eglot-server-programs
                `(csharp-mode . ("csharp-ls")))
   (add-to-list 'eglot-server-programs
