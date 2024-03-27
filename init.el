@@ -3001,13 +3001,13 @@ set so that it clears the whole REPL buffer, not just the output."
     "nl" 'npm-mode-npm-list
     "np" 'npm-mode-visit-project-file))
 
-(use-package javascript-mode
+(use-package js
   :straight nil
   :config
   (add-to-list 'eglot-server-programs
-               `(javascript-mode . ("typescript-language-server" "--stdio")))
+               '(js-mode . ("typescript-language-server" "--stdio")))
   (add-to-list 'eglot-server-programs
-               `(javascript-ts-mode . ("typescript-language-server" "--stdio"))))
+               '(js-ts-mode . ("typescript-language-server" "--stdio"))))
 
 ;; Markdown config ==================================
 ;; ==================================================
