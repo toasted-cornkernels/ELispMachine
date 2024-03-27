@@ -5537,6 +5537,8 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (setq-local line-spacing 0.1)           ; my eyeeees
 
+(put 'narrow-to-region 'disabled nil)
+
 (defun display-startup-echo-area-message ()
   (message "You think with your keyboard"))
 
@@ -5558,4 +5560,3 @@ set so that it clears the whole REPL buffer, not just the output."
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
-(put 'narrow-to-region 'disabled nil)
