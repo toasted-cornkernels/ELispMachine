@@ -3003,6 +3003,9 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (use-package js
   :straight nil
+  :hook (js-mode . (lambda ()
+                     (setq indent-tabs-mode nil
+                           tab-width 2)))
   :config
   (add-to-list 'eglot-server-programs
                '(js-mode . ("typescript-language-server" "--stdio")))
@@ -5244,6 +5247,7 @@ set so that it clears the whole REPL buffer, not just the output."
   (global-leader
     "awr"  (which-key-prefix "reddit")
     "awrm" 'reddigg-view-main
+    "awrr" 'reddigg-view-main
     "awrs" 'reddigg-view-sub)
 
   :config
