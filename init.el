@@ -88,7 +88,14 @@
 
 (use-package cus-edit :straight (:type built-in))
 
-(use-package ox :straight (:type built-in))
+;; (use-package ox :straight (:type built-in))
+
+(use-package font-lock-ext
+  :straight
+  (font-lock-ext :type git
+                 :host github
+                 :repo "sensorflo/font-lock-ext"
+                 :branch "master"))
 
 (use-package unpackaged
   :straight
@@ -395,7 +402,9 @@
 ;; ==================================================
 
 (use-package emojify
-  :hook (after-init . global-emojify-mode))
+  :hook (after-init . global-emojify-mode)
+  :init
+  (setq emojify-emoji-styles '(unicode github)))
 
 ;; Align ============================================
 ;; ==================================================
@@ -656,7 +665,7 @@
    org-hide-emphasis-markers t
    org-enforce-todo-dependencies t
    org-todo-keywords
-   '((sequence "TODO" "NEXT" "WORKING" "|"
+   '((sequence "TODO" "NEXT" "WORKING" "HOLD" "|"
 	       "DONE" "ABORTED"))
    org-export-backends
    '(ascii html icalendar latex odt markdown))
@@ -742,6 +751,8 @@
 
 (use-package org-projectile :defer t)
 
+(use-package org-element :straight (:type built-in))
+
 (use-package valign
   :hook ((markdown-mode . valign-mode)
 	 (org-mode      . valign-mode)))
@@ -776,11 +787,11 @@
   :defer t
   :config
   (add-hook 'ob-racket-pre-runtime-library-load-hook
-	      #'ob-racket-raco-make-runtime-library)
+	    #'ob-racket-raco-make-runtime-library)
   (add-to-list 'org-src-lang-modes '("racket" . racket))
   :straight (ob-racket
-	       :type git :host github :repo "hasu/emacs-ob-racket"
-	       :files ("*.el" "*.rkt")))
+	     :type git :host github :repo "hasu/emacs-ob-racket"
+	     :files ("*.el" "*.rkt")))
 
 (use-package org-auto-tangle
   :defer t
@@ -1149,7 +1160,7 @@
 ;; ==================================================
 
 (use-package emacs-codeql
-  :when (not (or android-p chromeOS-p))
+  :mode ("\\.qll?\\'" . ql-tree-sitter-mode)
   :hook (ql-tree-sitter-mode . (lambda ()
                                  (setq indent-tabs-mode nil
                                        tab-width 2)))
@@ -1159,7 +1170,6 @@
 		:repo "anticomputer/emacs-codeql"
 		:branch "main"
 		:files (:defaults "bin"))
-  :demand t
   :init
   (setq codeql-transient-binding "C-c q"
 	codeql-configure-eglot-lsp t
@@ -1203,11 +1213,15 @@
 
 (use-package sh-script
   :straight nil
-  :mode (("\\.sh\\'"           . sh-mode)
-	 ("\\.(ba|z)shrc.*\\'" . sh-mode)
-	 ("\\.zshenv.*\\'"     . sh-mode)
-	 ("\\.bash_profile\\'" . sh-mode)
-	 ("\\.zprofile\\'"     . sh-mode)))
+  :hook
+  (shell-script-mode . (lambda ()
+                         (setq indent-tabs-mode nil
+                               tab-width 2)))
+  :mode (("\\.sh\\'"           . shell-script-mode)
+	 ("\\.(ba|z)shrc.*\\'" . shell-script-mode)
+	 ("\\.zshenv.*\\'"     . shell-script-mode)
+	 ("\\.bash_profile\\'" . shell-script-mode)
+	 ("\\.zprofile\\'"     . shell-script-mode)))
 
 ;; Python config ====================================
 ;; ==================================================
@@ -1221,32 +1235,32 @@
 
 (use-package importmagic)
 (use-package pipenv
-    :defer t
-    :commands (pipenv-activate
-               pipenv-deactivate
-               pipenv-shell
-               pipenv-open
-               pipenv-install
-               pipenv-uninstall)
-    :init
-    (dolist (m spacemacs--python-pipenv-modes)
-      (spacemacs/set-leader-keys-for-major-mode m
-        "vpa" 'pipenv-activate
-        "vpd" 'pipenv-deactivate
-        "vpi" 'pipenv-install
-        "vpo" 'pipenv-open
-        "vps" 'pipenv-shell
-        "vpu" 'pipenv-uninstall)))
+  :defer t
+  :commands (pipenv-activate
+             pipenv-deactivate
+             pipenv-shell
+             pipenv-open
+             pipenv-install
+             pipenv-uninstall)
+  :init
+  (dolist (m spacemacs--python-pipenv-modes)
+    (spacemacs/set-leader-keys-for-major-mode m
+                                              "vpa" 'pipenv-activate
+                                              "vpd" 'pipenv-deactivate
+                                              "vpi" 'pipenv-install
+                                              "vpo" 'pipenv-open
+                                              "vps" 'pipenv-shell
+                                              "vpu" 'pipenv-uninstall)))
 (use-package poetry
-    :defer t
-    :commands (poetry-venv-toggle
-               poetry-tracking-mode)
-    :init
-    (dolist (m spacemacs--python-poetry-modes)
-      (spacemacs/set-leader-keys-for-major-mode m
-        "vod" 'poetry-venv-deactivate
-        "vow" 'poetry-venv-workon
-        "vot" 'poetry-venv-toggle)))
+  :defer t
+  :commands (poetry-venv-toggle
+             poetry-tracking-mode)
+  :init
+  (dolist (m spacemacs--python-poetry-modes)
+    (spacemacs/set-leader-keys-for-major-mode m
+                                              "vod" 'poetry-venv-deactivate
+                                              "vow" 'poetry-venv-workon
+                                              "vot" 'poetry-venv-toggle)))
 ;; Perl config ======================================
 ;; ==================================================
 
@@ -1363,15 +1377,11 @@
   :straight nil
   :hook (minibuffer-mode . smartparens-mode)
   :general
-  ;; TODO Can't rebind C-h to backward-delete-char...
   (insert-mode-major-mode
     :major-modes '(minibuffer-mode t)
     :keymaps     '(minibuffer-mode-map)
     "M-p" 'previous-history-element
-    "M-n" 'next-history-element
-    "C-h" 'backward-delete-char)
-  :config
-  (define-key minibuffer-mode-map "C-h" 'backward-delete-char))
+    "M-n" 'next-history-element))
 
 ;; Imenu =============================================
 ;; ==================================================
@@ -2911,9 +2921,8 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (use-package rust-mode
   :mode "\\.rs\\'"
+  :hook (rust-mode . (lambda () (setq indent-tabs-mode nil)))
   :config
-  (add-hook 'rust-mode-hook
-	    (lambda () (setq indent-tabs-mode nil)))
   (define-key rust-mode-map (kbd "C-c C-c") 'rust-run))
 
 (use-package toml-mode
@@ -2992,13 +3001,16 @@ set so that it clears the whole REPL buffer, not just the output."
     "nl" 'npm-mode-npm-list
     "np" 'npm-mode-visit-project-file))
 
-(use-package javascript-mode
+(use-package js
   :straight nil
+  :hook (js-mode . (lambda ()
+                     (setq indent-tabs-mode nil
+                           tab-width 2)))
   :config
   (add-to-list 'eglot-server-programs
-               `(javascript-mode . ("typescript-language-server" "--stdio")))
+               '(js-mode . ("typescript-language-server" "--stdio")))
   (add-to-list 'eglot-server-programs
-               `(javascript-ts-mode . ("typescript-language-server" "--stdio"))))
+               '(js-ts-mode . ("typescript-language-server" "--stdio"))))
 
 ;; Markdown config ==================================
 ;; ==================================================
@@ -3216,11 +3228,11 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (use-package csharp-mode
   :straight nil
-  :config
+  :init
   (add-to-list 'eglot-server-programs
-               `(csharp-mode . ("csharp-ls")))
+               '(csharp-mode . ("csharp-ls")))
   (add-to-list 'eglot-server-programs
-               `(csharp-ts-mode . ("csharp-ls"))))
+               '(csharp-ts-mode . ("csharp-ls"))))
 
 (use-package omnisharp
   :hook ((csharp-mode . omnisharp-mode)
@@ -3266,6 +3278,20 @@ set so that it clears the whole REPL buffer, not just the output."
     "tl" 'omnisharp-unit-test-last
     "tt" 'omnisharp-unit-test-at-point))
 
+(use-package csproj-mode
+  :mode "\\.csproj\\'")
+
+(use-package sharper
+  :after csharp-mode)
+
+(use-package sln-mode
+  :mode "\\.sln\\'"
+  :straight
+  (sln-mode :type git
+            :host github
+	    :repo "sensorflo/sln-mode"
+            :branch "master"))
+
 ;; auto-indent on RET ===============================
 ;; ==================================================
 
@@ -3300,9 +3326,9 @@ set so that it clears the whole REPL buffer, not just the output."
 	vertico-count 20
 	vertico-resize t
 	vertico-cycle t)
-  (define-key vertico-map (kbd "C-l") #'vertico-directory-up)
   :config
-  (vertico-mode))
+  (vertico-mode)
+  (define-key vertico-map (kbd "C-l") #'vertico-directory-up))
 
 (use-package savehist
   :straight nil
@@ -3631,7 +3657,7 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; =================================================
 
 (use-package json-mode
-  :straight nil
+  ;; :straight nil
   :mode "\\.json\\'"
   :hook (json-mode . (lambda ()
                        (setq indent-tabs-mode nil)
@@ -3648,15 +3674,18 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; =================================================
 
 (use-package yaml-mode
-  :mode (("\\.\\(yml\\|yaml\\)\\'" . yaml-mode)
+  :mode (("\\.ya?ml\\'" . yaml-mode)
 	 ("Procfile\\'" . yaml-mode)
-	 ("\\.qlpack\\'"  . yaml-mode)))
+	 ("\\.qlpack\\'"  . yaml-mode)
+         ("\\.qls" . yaml-mode)))
 
 ;; csv config ======================================
 ;; =================================================
 
 (use-package csv-mode
-  :defer t
+  :mode ((".csv" . csv-mode)
+         (".expected" . csv-mode)
+         (".actual" . csv-mode))
   :general
   (local-leader
     :major-modes '(csv-mode t)
@@ -5218,6 +5247,7 @@ set so that it clears the whole REPL buffer, not just the output."
   (global-leader
     "awr"  (which-key-prefix "reddit")
     "awrm" 'reddigg-view-main
+    "awrr" 'reddigg-view-main
     "awrs" 'reddigg-view-sub)
 
   :config
@@ -5241,6 +5271,7 @@ set so that it clears the whole REPL buffer, not just the output."
     "awhs" 'hnreader-show
     "awhj" 'hnreader-jobs
     "awhb" 'hnreader-best
+    "awhh" 'hnreader-best
     "awhm" 'hnreader-more)
 
   :config
@@ -5506,6 +5537,11 @@ set so that it clears the whole REPL buffer, not just the output."
       inhibit-startup-message t)
 
 (setq-default indent-tabs-mode nil) 	; Noooooooo please!
+(setq-default standard-indent 2)
+
+(setq-local line-spacing 0.1)           ; my eyeeees
+
+(put 'narrow-to-region 'disabled nil)
 
 (defun display-startup-echo-area-message ()
   (message "You think with your keyboard"))
@@ -5520,17 +5556,11 @@ set so that it clears the whole REPL buffer, not just the output."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(coffee-tab-width 2)
  '(custom-safe-themes
-   '("a8950f7287870cd993d7e56991a45e1414a09d97e4fbf08f48973a1381bc7aaf" "92d350334df87fe61a682518ff214c773625c6d5ace8060d128adc550bc60c9b" default))
- '(package-selected-packages
-   '(no-littering multi-vterm minions xwidget lispy git-gutter clipetty zones yasnippet-classic-snippets treemacs-evil which-key evil-commentary anzu json-mode evil-surround tuareg tagedit cider))
- '(recentf-auto-cleanup 'never t))
+   '("a8950f7287870cd993d7e56991a45e1414a09d97e4fbf08f48973a1381bc7aaf" "92d350334df87fe61a682518ff214c773625c6d5ace8060d128adc550bc60c9b" default)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
-(put 'narrow-to-region 'disabled nil)
-(put 'dired-find-alternate-file 'disabled nil)
