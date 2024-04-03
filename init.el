@@ -1199,7 +1199,7 @@
    (c-mode       . eglot-ensure)
    (csharp-mode  . eglot-ensure)
    (ql-tree-sitter-mode . eglot-ensure)
-   (javascript-mode . eglot-ensure))
+   (js-mode . eglot-ensure))
 
   :general
   (local-leader
@@ -3003,7 +3003,7 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (use-package js
   :straight nil
-  :mode "\\.[j|t]sx?\\'"
+  :mode ("\\.[j|t]sx?\\'" . js-mode)
   :hook (js-mode . (lambda ()
                      (setq indent-tabs-mode nil
                            tab-width 2)))
@@ -4014,7 +4014,9 @@ set so that it clears the whole REPL buffer, not just the output."
   :defer t)
 
 (use-package magit-todos
-  :hook (magit-mode . magit-todos-mode))
+  :hook (magit-mode . magit-todos-mode)
+  :config
+  (evil-collection-magit-todos-setup))
 
 (use-package orgit
   :defer t)
@@ -5252,10 +5254,29 @@ set so that it clears the whole REPL buffer, not just the output."
     "awrs" 'reddigg-view-sub)
 
   :config
-  (setq reddigg-subs '(emacs clojure orgmode lisp commandline
-			     mechkeyboard scala haskell HHKB clojure
-			     vim kotlin programmerhumor orgmode
-			     commandline CityPorn OrgRoam)
+  (setq reddigg-subs '(Common_Lisp
+                       GUIX
+                       HHKB
+                       ProgrammerHumor
+                       Python
+                       Racket
+                       clojure
+                       commandline
+                       elm
+                       emacs
+                       fsharp
+                       haskell
+                       lisp
+                       neovim
+                       nix
+                       nixos
+                       ocaml
+                       orgmode
+                       purescript
+                       ruby
+                       scala
+                       spacemacs
+                       vim)
 	org-confirm-elisp-link-function nil))
 
 ;; hnreader config ==================================
