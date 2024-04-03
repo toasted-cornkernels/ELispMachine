@@ -3003,6 +3003,7 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (use-package js
   :straight nil
+  :mode "\\.[j|t]sx?\\'"
   :hook (js-mode . (lambda ()
                      (setq indent-tabs-mode nil
                            tab-width 2)))
