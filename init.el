@@ -1015,11 +1015,6 @@
   :config
   (setq org-pandoc-options-for-gfm '((wrap . none) (toc . t))))
 
-;; Emoji config =====================================
-;; ==================================================
-
-(use-package emojify)
-
 ;; Esup config ======================================
 ;; ==================================================
 
@@ -4388,6 +4383,8 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; vterm config =====================================
 ;; ==================================================
 
+;; TODO Add https://codeberg.org/akib/emacs-eat
+
 (use-package vterm
   :defer t)
 
@@ -4808,7 +4805,11 @@ set so that it clears the whole REPL buffer, not just the output."
 (global-leader
   "q"    (which-key-prefix :quit)
   "qq"   'kill-emacs
-  "qf"   'delete-frame)
+  "qf"   'delete-frame
+  "qN"   (defun start-emacs-q ()
+           (interactive)
+           (start-process "Emacs" nil
+                          (executable-find "emacs") "-q")))
 
 (global-leader
   "h"    (which-key-prefix :help)
