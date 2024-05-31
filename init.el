@@ -4322,6 +4322,22 @@ set so that it clears the whole REPL buffer, not just the output."
   :config
   (load-theme 'tron-legacy t))
 
+(use-package auto-dark
+  :ensure t
+  :config 
+  (setq auto-dark-dark-theme 'tron-legacy
+        auto-dark-light-theme nil
+        ;; auto-dark-polling-interval-seconds 5
+        auto-dark-allow-osascript macOS-p
+        auto-dark-allow-powershell nil
+        auto-dark-detection-method nil)
+
+  (add-hook 'auto-dark-dark-mode-hook
+    (lambda ()))
+  (add-hook 'auto-dark-light-mode-hook
+    (lambda ()))
+  (auto-dark-mode t))
+
 (use-package mood-line
   :config
   (mood-line-mode))
