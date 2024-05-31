@@ -1412,7 +1412,7 @@
 			       newlisp-mode picolisp-mode janet-mode
 			       lisp-interaction-mode ielm-mode minibuffer-mode
 			       fennel-repl-mode cider-repl-mode racket-repl-mode
-			       fundamental-mode markdown-mode)
+			       fundamental-mode markdown-mode slime-repl-mode)
 		 "'" "'" :actions nil)
   ;; Backquote
   (sp-local-pair '(fennel-mode hy-mode clojure-mode lisp-mode emacs-lisp-mode
@@ -2360,8 +2360,18 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; Scheme config ====================================
 ;; ==================================================
 
+(use-package scheme-mode
+  :straight nil
+  :hook     (scheme-mode . evil-cleverparens-mode)
+  :general
+  (local-leader
+    :major-modes '(scheme-mode t)
+    :keymaps     '(scheme-mode-map)
+    "rs" 'turn-on-geiser-mode
+    "rc" 'turn-off-geiser-mode))
+
 (use-package geiser
-  :commands run-geiser
+  :after scheme-mode
   :general
   (local-leader
     :major-modes '(scheme-mode t)
@@ -2468,6 +2478,7 @@ set so that it clears the whole REPL buffer, not just the output."
 (use-package geiser-mit     :defer t)
 (use-package geiser-kawa    :defer t)
 
+;; λ
 (use-package sicp :defer t)
 
 ;; Janet config =====================================
@@ -3301,7 +3312,7 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (setq explicit-shell-file-name "/bin/zsh")
 (use-package exec-path-from-shell
-  :when (or macOS-p chromeOS-p)
+  :when (or macOS-p chromeOS-p linux-p)
   :config
   (setq exec-path-from-shell-variables '("PATH" "JAVA_HOME" "BROWSER"
 					 "OPAMCLI" "WORK_MACHINE")
@@ -4269,8 +4280,7 @@ set so that it clears the whole REPL buffer, not just the output."
 (use-package menu-bar
   :straight nil
   :config
-  (when (or terminal-p chromeOS-p)
-    (menu-bar-mode -1)))
+  (menu-bar-mode -1))
 
 (use-package tab-bar
   :straight nil
