@@ -773,6 +773,8 @@
   :after restclient
   :init (add-to-list 'org-babel-load-languages '(http . t)))
 
+(use-package ob-restclient :defer t)
+
 (use-package ob-hy
   :defer t
   :init (add-to-list 'org-babel-load-languages '(hy . t)))
@@ -818,7 +820,7 @@
    'org-babel-load-languages
    '((lisp . t) (clojure . t) (scheme . t) (hy . t) (racket . t)
      (dot . t) (rust . t) (kotlin . t) (shell . t)
-     (mermaid . t) (plantuml . t) (awk . t)))
+     (mermaid . t) (plantuml . t) (awk . t) (restclient . t)))
 
   :general
   (local-leader
@@ -1194,7 +1196,8 @@
    (c-mode       . eglot-ensure)
    (csharp-mode  . eglot-ensure)
    (ql-tree-sitter-mode . eglot-ensure)
-   (js-mode . eglot-ensure))
+   (js-mode . eglot-ensure)
+   (go-mode . eglot-ensure))
 
   :general
   (local-leader
@@ -3009,7 +3012,7 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (use-package js
   :straight nil
-  :mode ("\\.[j|t]sx?\\'" . js-mode)
+  :mode ("\\.jsx?\\'" . js-mode)
   :hook (js-mode . (lambda ()
                      (setq indent-tabs-mode nil
                            tab-width 2)))
@@ -3018,6 +3021,12 @@ set so that it clears the whole REPL buffer, not just the output."
                '(js-mode . ("typescript-language-server" "--stdio")))
   (add-to-list 'eglot-server-programs
                '(js-ts-mode . ("typescript-language-server" "--stdio"))))
+
+;; TypeScript config ================================
+;; ==================================================
+
+(use-package typescript-mode
+  :mode ("\\.tsx?\\'" . typescript-mode))
 
 ;; Markdown config ==================================
 ;; ==================================================
@@ -4262,7 +4271,7 @@ set so that it clears the whole REPL buffer, not just the output."
   (projectile-mode)
   (setq projectile-mode-line            "Projectile"
 	anaconda-mode-localhost-address "localhost"
-	projectile-enable-caching       t))
+	projectile-enable-caching       nil))
 
 ;; Minions config ===================================
 ;; ==================================================
@@ -4332,15 +4341,18 @@ set so that it clears the whole REPL buffer, not just the output."
   :config
   (load-theme 'tron-legacy t))
 
+(use-package modus-themes
+  :config
+  (setq modus-themes-italic-constructs t
+        modus-themes-bold-constructs nil))
+
 (use-package auto-dark
   :ensure t
   :config 
   (setq auto-dark-dark-theme 'tron-legacy
-        auto-dark-light-theme nil
-        ;; auto-dark-polling-interval-seconds 5
+        auto-dark-light-theme 'modus-operandi
         auto-dark-allow-osascript macOS-p
-        auto-dark-allow-powershell nil
-        auto-dark-detection-method nil)
+        auto-dark-allow-powershell nil)
 
   (add-hook 'auto-dark-dark-mode-hook
     (lambda ()))
