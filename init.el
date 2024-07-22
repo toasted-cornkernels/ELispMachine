@@ -3068,14 +3068,7 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (use-package godoctor :defer t)
 
-(use-package go-gen-test
-    :defer t
-    :init
-    (declare-prefix-for-mode 'go-mode "mtg" "generate")
-    (set-leader-keys-for-major-mode 'go-mode
-      "tgg" 'go-gen-test-dwim
-      "tgf" 'go-gen-test-exported
-      "tgF" 'go-gen-test-all))
+(use-package go-gen-test :defer t)
 
 ;; VimScript config =================================
 ;; ==================================================
