@@ -1242,7 +1242,7 @@
              pipenv-uninstall)
   :init
   (dolist (m spacemacs--python-pipenv-modes)
-    (spacemacs/set-leader-keys-for-major-mode m
+    (set-leader-keys-for-major-mode m
                                               "vpa" 'pipenv-activate
                                               "vpd" 'pipenv-deactivate
                                               "vpi" 'pipenv-install
@@ -1255,7 +1255,7 @@
              poetry-tracking-mode)
   :init
   (dolist (m spacemacs--python-poetry-modes)
-    (spacemacs/set-leader-keys-for-major-mode m
+    (set-leader-keys-for-major-mode m
                                               "vod" 'poetry-venv-deactivate
                                               "vow" 'poetry-venv-workon
                                               "vot" 'poetry-venv-toggle)))
@@ -2218,7 +2218,7 @@ set so that it clears the whole REPL buffer, not just the output."
     "eC" 'hy-shell-eval-current-form-and-go
     "ei" 'run-hy
     "er" 'hy-shell-eval-region
-    "eR" 'spacemacs/hy-shell-eval-region-and-go
+    "eR" 'hy-shell-eval-region-and-go
 
     "s"  (which-key-prefix :REPL)
     "sb" 'hy-shell-eval-buffer
@@ -2946,38 +2946,119 @@ set so that it clears the whole REPL buffer, not just the output."
                      (setq indent-tabs-mode 1
                            tab-width 2)))
   :defer t
+  :init
+  (defun go-run-tests (args)
+    (interactive)
+    (compilation-start
+     (concat go-test-command " " (when go-test-verbose "-v ") args " " go-use-test-args)
+     nil (lambda (n) go-test-buffer-name) nil))
+
+  (defun go-run-package-tests ()
+    (interactive)
+    (go-run-tests ""))
+
+  (defun go-run-package-tests-nested ()
+    (interactive)
+    (go-run-tests "./..."))
+
+  (defun go-run-test-current-function ()
+    (interactive)
+    (if (string-match "_test\\.go" buffer-file-name)
+        (save-excursion
+          (move-end-of-line nil)
+          (re-search-backward "^func[ ]+\\(([[:alnum:]]*?[ ]?[*]?\\([[:alnum:]]+\\))[ ]+\\)?\\(Test[[:alnum:]_]+\\)(.*)")
+          (go-run-tests
+           (cond
+            (go-use-testify-for-testing
+             (concat "-run='Test" (match-string-no-properties 2)
+                     "' -testify.m='" (match-string-no-properties 3) "'"))
+            (go-use-gocheck-for-testing (concat "-check.f='" (match-string-no-properties 3) "$'"))
+            (t (concat "-run='" (match-string-no-properties 3) "$'")))))
+      (message "Must be in a _test.go file to run go-run-test-current-function")))
+
+  (defun go-run-test-current-suite ()
+    (interactive)
+    (if (string-match "_test\.go" buffer-file-name)
+        (if (or go-use-testify-for-testing go-use-gocheck-for-testing)
+            (let ((test-method (if go-use-gocheck-for-testing
+                                   "-check.f='"
+                                 "-run='Test")))
+              (save-excursion
+                (re-search-backward "^func[ ]+\\(([[:alnum:]]*?[ ]?[*]?\\([[:alnum:]]+\\))[ ]+\\)?\\(Test[[:alnum:]_]+\\)(.*)")
+                (go-run-tests (concat test-method (match-string-no-properties 2) "'"))))
+          (message "Testify or Gocheck is needed to test the current suite"))
+      (message "Must be in a _test.go file to run go-test-current-suite")))
+
+  (defun go-run-main ()
+    (interactive)
+    (shell-command
+     (concat go-run-command " . " go-run-args)))
+
+  (defun go-run-generate-current-dir ()
+    (interactive)
+    (compilation-start
+     (concat go-generate-command " " (file-name-directory buffer-file-name))
+     nil (lambda (n) go-generate-buffer-name) nil))
+
+  (defun go-run-generate-current-buffer ()
+    (interactive)
+    (compilation-start
+     (concat go-generate-command " " (buffer-file-name))
+     nil (lambda (n) go-generate-buffer-name) nil))
+
+  ;; misc
+  (defun go-packages-gopkgs ()
+    "Return a list of all Go packages, using `gopkgs'."
+    (sort (process-lines "gopkgs") #'string<))
+
   :general
   (local-leader
     :major-modes '(go-mode t)
     :keymaps     '(go-mode-map)
-    "="  'gofmt
+    "="   'gofmt
     
-    "e"  (which-key-prefix "playground")
-    "eb" 'go-play-buffer
-    "ed" 'go-download-play
-    "er" 'go-play-region
+    "e"   (which-key-prefix "playground")
+    "eb"  'go-play-buffer
+    "ed"  'go-download-play
+    "er"  'go-play-region
 
-    "g"  (which-key-prefix "goto")
-    "ga" 'ff-find-other-file
-    "gc" 'go-coverage
+    "g"   (which-key-prefix "goto")
+    "ga"  'ff-find-other-file
+    "gc"  'go-coverage
 
-    "h"  (which-key-prefix "help")
-    "hh" 'godoc-at-point
+    "h"   (which-key-prefix "help")
+    "hh"  'godoc-at-point
 
-    "i"  (which-key-prefix "imports")
-    "ia" 'go-import-add
-    "ig" 'go-goto-imports
-    "ir" 'go-remove-unused-imports
+    "i"   (which-key-prefix "imports")
+    "ia"  'go-import-add
+    "ig"  'go-goto-imports
+    "ir"  'go-remove-unused-imports
 
-    "r"  (which-key-prefix "refactor")
-    "rs" 'go-fill-struct
-    "rN" 'go-rename
-    "rf" 'go-tag-add
-    "rF" 'go-tag-remove
-    "rd" 'godoctor-godoc
-    "re" 'godoctor-extract
-    "rn" 'godoctor-rename
-    "rt" 'godoctor-toggle))
+    "t"   (which-key-prefix "test")
+    "tP"  'go-run-package-tests-nested
+    "tp"  'go-run-package-tests
+    "ts"  'go-run-test-current-suite
+    "tt"  'go-run-test-current-function
+
+    "tg"  (which-key-prefix "generate")
+    "tgg" 'go-gen-test-dwim
+    "tgf" 'go-gen-test-exported
+    "tgF" 'go-gen-test-all
+
+    "x"   (which-key-prefix "execute")
+    "xx"  'go-run-main
+    "xg"  'go-run-generate-current-buffer
+    "xG"  'go-run-generate-current-dir
+
+    "r"   (which-key-prefix "refactor")
+    "rs"  'go-fill-struct
+    "rN"  'go-rename
+    "rf"  'go-tag-add
+    "rF"  'go-tag-remove
+    "rd"  'godoctor-godoc
+    "re"  'godoctor-extract
+    "rn"  'godoctor-rename
+    "rt"  'godoctor-toggle))
 
 (use-package go-fill-struct :defer t)
 
@@ -2986,6 +3067,15 @@ set so that it clears the whole REPL buffer, not just the output."
 (use-package go-tag :defer t)
 
 (use-package godoctor :defer t)
+
+(use-package go-gen-test
+    :defer t
+    :init
+    (declare-prefix-for-mode 'go-mode "mtg" "generate")
+    (set-leader-keys-for-major-mode 'go-mode
+      "tgg" 'go-gen-test-dwim
+      "tgf" 'go-gen-test-exported
+      "tgF" 'go-gen-test-all))
 
 ;; VimScript config =================================
 ;; ==================================================
@@ -3874,12 +3964,12 @@ set so that it clears the whole REPL buffer, not just the output."
   ;; (spacemacs|define-transient-state git-blame
   ;;       :title "Git Blame Transient State"
   ;;       :hint-is-doc t
-  ;;       :dynamic-hint (spacemacs//git-blame-ts-hint)
+  ;;       :dynamic-hint (/git-blame-ts-hint)
   ;;       :on-enter (let (golden-ratio-mode)
   ;;                   (unless (bound-and-true-p magit-blame-mode)
   ;;                     (call-interactively 'magit-blame-addition)))
   ;;       :bindings
-  ;;       ("?" spacemacs//git-blame-ts-toggle-hint)
+  ;;       ("?" /git-blame-ts-toggle-hint)
   ;;       ;; chunks
   ;;       ("p" magit-blame-previous-chunk)
   ;;       ("P" magit-blame-previous-chunk-same-commit)
@@ -4008,10 +4098,10 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; TODO
 ;; (use-package git-timemachine
 ;;   :defer t
-;;   :commands spacemacs/time-machine-transient-state/body
+;;   :commands time-machine-transient-state/body
 ;;   :init
-;;   (spacemacs/set-leader-keys
-;;    "gt" 'spacemacs/time-machine-transient-state/body)
+;;   (set-leader-keys
+;;    "gt" 'time-machine-transient-state/body)
 ;;   :config
 ;;   (spacemacs|define-transient-state time-machine
 ;; 				    :title "Git Timemachine Transient State"
@@ -4773,7 +4863,7 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (global-leader
   "g"   (which-key-prefix :git)
-  "gb"  'magit-blame	   ; 'spacemacs/git-blame-transient-state/body
+  "gb"  'magit-blame	   ; 'git-blame-transient-state/body
 
   "gf"  (which-key-prefix :file)
   "gfF" 'magit-find-file
@@ -4829,7 +4919,7 @@ set so that it clears the whole REPL buffer, not just the output."
   "aoCg" 'org-clock-goto
   "aoCi" 'org-clock-in
   "aoCI" 'org-clock-in-last
-  "aoCj" 'spacemacs/org-clock-jump-to-current-clock
+  "aoCj" 'org-clock-jump-to-current-clock
   "aoCo" 'org-clock-out
   "aoCr" 'org-resolve-clocks
   "aoCp" 'org-pomodoro
@@ -5277,7 +5367,7 @@ set so that it clears the whole REPL buffer, not just the output."
     "q" 'tablist-quit
     "g" 'pdf-occur-revert-buffer-with-args
     "r" 'pdf-occur-revert-buffer-with-args
-    "*" 'spacemacs/enter-ahs-forward
+    "*" 'enter-ahs-forward
     "?" 'evil-search-backward)
 
   (local-leader
