@@ -2945,7 +2945,47 @@ set so that it clears the whole REPL buffer, not just the output."
   :hook (go-mode . (lambda ()
                      (setq indent-tabs-mode 1
                            tab-width 2)))
-  :defer t)
+  :defer t
+  :general
+  (local-leader
+    :major-modes '(go-mode t)
+    :keymaps     '(go-mode-map)
+    "="  'gofmt
+    
+    "e"  (which-key-prefix "playground")
+    "eb" 'go-play-buffer
+    "ed" 'go-download-play
+    "er" 'go-play-region
+
+    "g"  (which-key-prefix "goto")
+    "ga" 'ff-find-other-file
+    "gc" 'go-coverage
+
+    "h"  (which-key-prefix "help")
+    "hh" 'godoc-at-point
+
+    "i"  (which-key-prefix "imports")
+    "ia" 'go-import-add
+    "ig" 'go-goto-imports
+    "ir" 'go-remove-unused-imports
+
+    "r"  (which-key-prefix "refactor")
+    "rs" 'go-fill-struct
+    "rN" 'go-rename
+    "rf" 'go-tag-add
+    "rF" 'go-tag-remove
+    "rd" 'godoctor-godoc
+    "re" 'godoctor-extract
+    "rn" 'godoctor-rename
+    "rt" 'godoctor-toggle))
+
+(use-package go-fill-struct :defer t)
+
+(use-package go-rename :defer t)
+
+(use-package go-tag :defer t)
+
+(use-package godoctor :defer t)
 
 ;; VimScript config =================================
 ;; ==================================================
