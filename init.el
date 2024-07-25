@@ -4231,7 +4231,9 @@ set so that it clears the whole REPL buffer, not just the output."
           lisp-interaction-mode
           ielm-mode
           eval-expression-minibuffer-setup)
-         . turn-on-eldoc-mode))
+         . turn-on-eldoc-mode)
+  :config
+  (setq eldoc-echo-area-use-multiline-p 3))
 
 ;; Newcomment =======================================
 ;; ==================================================
@@ -4459,8 +4461,9 @@ set so that it clears the whole REPL buffer, not just the output."
   (set-fontset-font t 'hangul
 		    (font-spec :name "NanumGothic")))
 
-;; TODO: customize it using enable-theme-functions in Emacs29
 (use-package tron-legacy-theme
+  :custom-face
+  (tool-bar ((t (:background "#000000"))))
   :config
   (load-theme 'tron-legacy t))
 
@@ -5706,6 +5709,23 @@ set so that it clears the whole REPL buffer, not just the output."
     "m"   'tetris-move-bottom
     "SPC" 'tetris-move-bottom		; not working
     "n"   'tetris-start-game))
+
+;; proced config ====================================
+;; ==================================================
+
+(use-package proced
+  :ensure nil
+  :defer  t
+  :custom
+  (proced-auto-update-flag t)
+  (proced-goal-attribute nil)
+  (proced-show-remote-processes t)
+  (proced-enable-color-flag t)
+  (proced-format 'custom)
+  :config
+  (add-to-list
+   'proced-format-alist
+   '(custom user pid ppid sess tree pcpu pmem rss start time state (args comm))))
 
 ;; Fun! =============================================
 ;; ==================================================
