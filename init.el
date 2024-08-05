@@ -1324,6 +1324,8 @@
   (setq lua-indent-level 2
 	lua-indent-string-contents t)
 
+  (define-key lua-mode-map (kbd "q") nil)
+
   :general
   (local-leader
     :major-modes '(lua-mode t)
@@ -2283,10 +2285,10 @@ set so that it clears the whole REPL buffer, not just the output."
     "dd"         'fennel-show-documentation
     "dv"         'fennel-show-variable-documentation
 
-    "df"         (which-key-prefix :find)
-    "dff"        'fennel-find-definition
-    "dfm"        'fennel-find-module-definition
-    "dfp"        'fennel-find-definition-pop
+    "f"          (which-key-prefix :find)
+    "fd"         'fennel-find-definition
+    "fm"         'fennel-find-module-definition
+    "fp"         'fennel-find-definition-pop
 
     "'"          'fennel-repl
     "r"          'fennel-reload)
@@ -4489,6 +4491,12 @@ set so that it clears the whole REPL buffer, not just the output."
 (use-package mood-line
   :config
   (mood-line-mode))
+
+(defun on-after-init ()
+  (unless (display-graphic-p (selected-frame))
+    (set-face-background 'default "unspecified-bg" (selected-frame))))
+
+(add-hook 'window-setup-hook 'on-after-init)
 
 ;; hl-todo config ==================================
 ;; =================================================
