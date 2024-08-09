@@ -3368,6 +3368,19 @@ set so that it clears the whole REPL buffer, not just the output."
   :straight (wiktionary-bro
 	     :type git :host github :repo "agzam/wiktionary-bro.el"))
 
+(use-package define-word
+  :defer t)
+
+(use-package powerthesaurus
+  :defer t
+  :general
+  (global-leader
+    "xwtt" 'powerthesaurus-lookup-synonyms-dwim
+    "xwta" powerthesaurus-lookup-antonyms-dwim
+    "xwtr" powerthesaurus-lookup-related-dwim
+    "xwtd" powerthesaurus-lookup-definitions-dwim
+    "xwts" powerthesaurus-lookup-sentences-dwim))
+
 ;; CSharp config ====================================
 ;; ==================================================
 
@@ -4469,9 +4482,7 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (use-package tron-legacy-theme
   :custom-face
-  (tool-bar ((t (:background "#000000"))))
-  :config
-  (load-theme 'tron-legacy t))
+  (tool-bar ((t (:background "#000000")))))
 
 (use-package modus-themes
   :config
@@ -4497,6 +4508,7 @@ set so that it clears the whole REPL buffer, not just the output."
   (mood-line-mode))
 
 (defun on-after-init ()
+  "Make the background transparent when running in a tty."
   (unless (display-graphic-p (selected-frame))
     (set-face-background 'default "unspecified-bg" (selected-frame))))
 
@@ -5024,9 +5036,18 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (global-leader
   "x"     (which-key-prefix "text")
-  "xl"    'insert-lambda
+  
+  "xi"    (which-key-prefix "insert")
+  "xil"   'insert-lambda
+  "xie"   'emojify-insert-emoji 
+  "xiE"   'emoji-insert
+  
   "x TAB" 'indent-rigidly
-  "xwd"   'osx-dictionary-search-pointer)
+
+  "xw"    (which-key-prefix "word")
+  "xwd"   'osx-dictionary-search-pointer
+  "xwD"   'define-word-at-point
+  "xwt"   (which-key-prefix "thesaurus"))
 
 (global-leader
   "t"    (which-key-prefix "toggle")
