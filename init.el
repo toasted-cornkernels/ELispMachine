@@ -1197,7 +1197,8 @@
    (csharp-mode  . eglot-ensure)
    (ql-tree-sitter-mode . eglot-ensure)
    (js-mode . eglot-ensure)
-   (go-mode . eglot-ensure))
+   (go-mode . eglot-ensure)
+   (json-mode . eglot-ensure))
 
   :general
   (local-leader
@@ -1205,6 +1206,9 @@
     "a"      (which-key-prefix "LSP")
     "aa"     'eglot-code-actions
     "r"      'eglot-rename))
+
+(use-package consult-eglot
+  :after eglot)
 
 ;; Shell config =====================================
 ;; ==================================================
