@@ -3376,10 +3376,10 @@ set so that it clears the whole REPL buffer, not just the output."
   :general
   (global-leader
     "xwtt" 'powerthesaurus-lookup-synonyms-dwim
-    "xwta" powerthesaurus-lookup-antonyms-dwim
-    "xwtr" powerthesaurus-lookup-related-dwim
-    "xwtd" powerthesaurus-lookup-definitions-dwim
-    "xwts" powerthesaurus-lookup-sentences-dwim))
+    "xwta" 'powerthesaurus-lookup-antonyms-dwim
+    "xwtr" 'powerthesaurus-lookup-related-dwim
+    "xwtd" 'powerthesaurus-lookup-definitions-dwim
+    "xwts" 'powerthesaurus-lookup-sentences-dwim))
 
 ;; CSharp config ====================================
 ;; ==================================================
@@ -5036,14 +5036,11 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (global-leader
   "x"     (which-key-prefix "text")
-  
   "xi"    (which-key-prefix "insert")
   "xil"   'insert-lambda
   "xie"   'emojify-insert-emoji 
   "xiE"   'emoji-insert
-  
   "x TAB" 'indent-rigidly
-
   "xw"    (which-key-prefix "word")
   "xwd"   'osx-dictionary-search-pointer
   "xwD"   'define-word-at-point
