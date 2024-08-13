@@ -341,17 +341,24 @@
 ;; ==================================================
 
 (global-set-key (kbd "<f6>") 'toggle-korean-input-method)
+
 (unbind-key (kbd "C-d"))
-(unbind-key (kbd "C-d C-k"))
-(global-set-key (kbd "C-d C-k") 'toggle-input-method)
+(unbind-key (kbd "C-d C-l"))
+(global-set-key (kbd "C-d C-l") 'toggle-korean-input-method)
+
+(defun set-input-method-to-korean ()
+  (interactive)
+  (set-input-method 'korean-hangul))
+
+(global-set-key (kbd "C-d C-k") 'set-input-method-to-korean)
 
 ;; Japanese input method ============================
 ;; ==================================================
 
 (defun set-input-method-to-japanese ()
   (interactive)
- (set-input-method 'japanese))
-(unbind-key (kbd "C-d C-j"))
+  (set-input-method 'japanese))
+
 (global-set-key (kbd "C-d C-j") 'set-input-method-to-japanese)
 
 ;; Manage-minor-mode ================================
