@@ -336,13 +336,23 @@
 
 (set-language-environment "Korean")
 (prefer-coding-system 'utf-8)
+
+;; Korean input method ==============================
+;; ==================================================
+
 (global-set-key (kbd "<f6>") 'toggle-korean-input-method)
 (unbind-key (kbd "C-d"))
-(unbind-key (kbd "C-d C-d"))
-(unbind-key (kbd "C-d C-l"))
-(global-set-key (kbd "C-d C-d") 'toggle-input-method)
-(global-set-key (kbd "C-d C-l") 'toggle-input-method)
-(global-set-key (kbd "C-\\") 'toggle-input-method)
+(unbind-key (kbd "C-d C-k"))
+(global-set-key (kbd "C-d C-k") 'toggle-input-method)
+
+;; Japanese input method ============================
+;; ==================================================
+
+(defun set-input-method-to-japanese ()
+  (interactive)
+ (set-input-method 'japanese))
+(unbind-key (kbd "C-d C-j"))
+(global-set-key (kbd "C-d C-j") 'set-input-method-to-japanese)
 
 ;; Manage-minor-mode ================================
 ;; ==================================================
