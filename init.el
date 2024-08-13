@@ -14,6 +14,7 @@
 (setq warning-minimum-level     :emergency
       warning-minimum-log-level :warning)
 (setq ad-redefinition-action 'accept)
+(setq confirm-kill-processes nil)  ; Just shut up and die
 
 (fset 'yes-or-no-p 'y-or-n-p)
 
@@ -1410,9 +1411,6 @@
   (show-paren-mode 1))
 
 (use-package smartparens
-  ;; :bind (:map smartparens-mode-map
-  ;; 	      ("M-p" . sp-previous-sexp)
-  ;; 	      ("M-n" . sp-next-sexp))
   :config
   (smartparens-global-mode)
   ;; Regular quote
@@ -1431,7 +1429,9 @@
 			       fennel-repl-mode cider-repl-mode racket-repl-mode
                                tuareg-mode
 			       fundamental-mode)
-		 "`" "`" :actions nil))
+		 "`" "`" :actions nil)
+  ;; Pound sign
+  (sp-local-pair '(markdown-mode) "#" "#" :actions nil))
 
 (use-package evil-cleverparens
   :init
@@ -3188,13 +3188,12 @@ set so that it clears the whole REPL buffer, not just the output."
   (local-leader
     :major-modes '(markdown-mode t)
     :keymaps     '(markdown-mode-map)
-    "M-RET"      'markdown-do
+    ","          'markdown-do
     "{"          'markdown-backward-paragraph
     "}"          'markdown-forward-paragraph
     "]"          'markdown-complete
     ">"          'markdown-indent-region
     "<"          'markdown-outdent-region
-    "-"          'markdown-insert-hr
 
     "c"          (which-key-prefix "command")
     "c]"         'markdown-complete-buffer
@@ -3227,6 +3226,7 @@ set so that it clears the whole REPL buffer, not just the output."
     "iw"         'markdown-insert-wiki-link
     "iu"         'markdown-insert-uri
     "iT"         'markdown-insert-table
+    "i-"          'markdown-insert-hr
 
     "k"          'markdown-kill-thing-at-point
 
@@ -3290,7 +3290,8 @@ set so that it clears the whole REPL buffer, not just the output."
     "M-h"        'markdown-promote
     "M-j"        'markdown-move-down
     "M-k"        'markdown-move-up
-    "M-l"        'markdown-demote)
+    "M-l"        'markdown-demote
+    "RET"        nil)
 
   (insert-mode-major-mode
     :major-modes '(markdown-mode t)
@@ -4496,11 +4497,6 @@ set so that it clears the whole REPL buffer, not just the output."
         auto-dark-light-theme 'modus-operandi
         auto-dark-allow-osascript macOS-p
         auto-dark-allow-powershell nil)
-
-  (add-hook 'auto-dark-dark-mode-hook
-    (lambda ()))
-  (add-hook 'auto-dark-light-mode-hook
-    (lambda ()))
   (auto-dark-mode t))
 
 (use-package mood-line
