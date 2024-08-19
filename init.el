@@ -238,13 +238,13 @@
 ;; evil-mode config =================================
 ;; ==================================================
 
-(setq evil-undo-system 'undo-tree)
 (use-package evil
   :init
   (setq evil-want-keybinding nil
 	evil-disable-insert-state-bindings t
 	evil-want-C-u-scroll t
-	evil-want-integration t)
+	evil-want-integration t
+        evil-undo-system 'undo-tree)
   :config
   (evil-mode 1)
   ;; set leader key in normal state
