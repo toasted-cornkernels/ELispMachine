@@ -832,13 +832,12 @@
 		(org-redisplay-inline-images))))
 
   :config
-  ;; (dolist (babel-language (list 'ob-lisp 'ob-clojure 'ob-scheme 'ob-hy
-  ;; 				'ob-dot 'ob-rust 'ob-kotlin 'ob-shell)))
+  (setq org-babel-languages '(lisp clojure scheme hy
+                              dot rust kotlin shell
+                              awk restclient C))
   (org-babel-do-load-languages
    'org-babel-load-languages
-   '((lisp . t) (clojure . t) (scheme . t) (hy . t) (racket . t)
-     (dot . t) (rust . t) (kotlin . t) (shell . t)
-     (mermaid . t) (plantuml . t) (awk . t) (restclient . t)))
+   (mapcar (lambda (language) `(,language . t)) org-babel-languages))
 
   :general
   (local-leader
