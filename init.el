@@ -238,13 +238,13 @@
 ;; evil-mode config =================================
 ;; ==================================================
 
-(setq evil-undo-system 'undo-tree)
 (use-package evil
   :init
   (setq evil-want-keybinding nil
 	evil-disable-insert-state-bindings t
 	evil-want-C-u-scroll t
-	evil-want-integration t)
+	evil-want-integration t
+        evil-undo-system 'undo-tree)
   :config
   (evil-mode 1)
   ;; set leader key in normal state
@@ -1245,41 +1245,144 @@
 ;; Python config ====================================
 ;; ==================================================
 
-(use-package python-mode)
+(use-package python
+  :mode "\\.py\\'"
+  :general
+  (local-leader
+    :major-modes '(python-mode t)
+    :keymaps     '(python-mode-map)
+    "'"  'spacemacs/python-start-or-switch-repl
+    
+    "c"  (local-leader "execute")
+    "d"  (local-leader "debug")
+    "h"  (local-leader "help")
+    "g"  (local-leader "goto")
+    "s"  (local-leader "REPL")
+    "r"  (local-leader "refactor")
+    "v"  (local-leader "virtualenv")
+    "vp" (local-leader "pipenv")
+    "vo" (local-leader "poetry")))
 
 (use-package cython-mode
-  :defer t
-  :config
-  )
+  :mode "\\.pyx\\'")
 
 (use-package importmagic)
-(use-package pipenv
-  :defer t
-  :commands (pipenv-activate
-             pipenv-deactivate
-             pipenv-shell
-             pipenv-open
-             pipenv-install
-             pipenv-uninstall)
-  :init
-  (dolist (m spacemacs--python-pipenv-modes)
-    (set-leader-keys-for-major-mode m
-                                              "vpa" 'pipenv-activate
-                                              "vpd" 'pipenv-deactivate
-                                              "vpi" 'pipenv-install
-                                              "vpo" 'pipenv-open
-                                              "vps" 'pipenv-shell
-                                              "vpu" 'pipenv-uninstall)))
+
+(:commands (pipenv-activate
+            pipenv-deactivate
+            pipenv-shell
+            pipenv-open
+            pipenv-install
+            pipenv-uninstall)
+ :general
+ (local-leader
+   :major-modes '(python-mode t)
+   :keymaps     '(python-mode-map)
+   "vpa"        'pipenv-activate
+   "vpd"        'pipenv-deactivate
+   "vpi"        'pipenv-install
+   "vpo"        'pipenv-open
+   "vps"        'pipenv-shell
+   "vpu"        'pipenv-uninstall))
+
 (use-package poetry
-  :defer t
   :commands (poetry-venv-toggle
              poetry-tracking-mode)
-  :init
-  (dolist (m spacemacs--python-poetry-modes)
-    (set-leader-keys-for-major-mode m
-                                              "vod" 'poetry-venv-deactivate
-                                              "vow" 'poetry-venv-workon
-                                              "vot" 'poetry-venv-toggle)))
+  :general
+  (local-leader
+    :major-modes '(python-mode t)
+    :keymaps     '(python-mode-map)
+    "vod"        'poetry-venv-deactivate
+    "vow"        'poetry-venv-workon
+    "vot"        'poetry-venv-toggle))
+
+(use-package code-cells
+  :commands (code-cells-mode)
+  :hook (python-mode . code-cells-mode)
+  :general
+  (local-leader
+    :major-modes '(code-cells-mode t)
+    :keymaps     '(code-cells-mode-map)
+    "gB"         'code-cells-backward-cell
+    "gF"         'code-cells-forward-cell
+    "sc"         'code-cells-eval
+    "sa"         'code-cells-eval-above))
+
+(use-package blacken
+  :defer t
+  :commands (blacken-buffer)
+  :general
+  (local-leader
+    :major-modes '(python-mode t)
+    :keymaps     '(python-mode-map)
+    "="          'blacken-buffer))
+
+(use-package pip-requirements :defer t)
+
+(use-package pippel
+  :defer t
+  :general
+  (local-leader
+    :major-modes '(python-mode t)
+    :keymaps     '(python-mode-map)
+    "P"          'pippel-list-packages))
+
+(use-package py-isort
+  :defer t
+  :general
+  (local-leader
+    :major-modes '(python-mode t)
+    :keymaps     '(python-mode-map)
+    "rI"         'py-isort-buffer))
+
+(use-package sphinx-doc
+  :defer t
+  :general
+  (local-leader
+    :major-modes '(python-mode t)
+    :keymaps     '(python-mode-map)
+    "Se" 'sphinx-doc-mode
+    "Sd" 'sphinx-doc))
+
+(use-package pydoc
+  :defer t
+  :general
+  (local-leader
+    :major-modes '(python-mode t)
+    :keymaps     '(python-mode-map)
+    "hp" 'pydoc-at-point-no-jedi
+    "hP" 'pydoc))
+
+(use-package pyenv-mode
+  :commands (pyenv-mode-versions)
+  :general
+  (local-leader
+   :major-modes '(python-mode t)
+   :keymaps     '(python-mode-map)
+   "vu" 'pyenv-mode-unset
+   "vs" 'pyenv-mode-set))
+
+(use-package pylookup
+  :commands (pylookup-lookup
+             pylookup-update
+             pylookup-update-all)
+  :general
+  (local-leader
+    :major-modes '(python-mode t)
+    :keymaps     '(python-mode-map)
+    "hH" 'pylookup-lookup))
+
+(use-package pytest
+  :commands (pytest-one
+             pytest-pdb-one
+             pytest-all
+             pytest-pdb-all
+             pytest-last-failed
+             pytest-pdb-last-failed
+             pytest-module
+             pytest-pdb-module)
+  :config (add-to-list 'pytest-project-root-files "setup.cfg"))
+
 ;; Perl config ======================================
 ;; ==================================================
 
