@@ -14,6 +14,7 @@
 (setq warning-minimum-level     :emergency
       warning-minimum-log-level :warning)
 (setq ad-redefinition-action 'accept)
+(setq confirm-kill-processes nil)  ; Just shut up and die
 
 (fset 'yes-or-no-p 'y-or-n-p)
 
@@ -237,13 +238,13 @@
 ;; evil-mode config =================================
 ;; ==================================================
 
-(setq evil-undo-system 'undo-tree)
 (use-package evil
   :init
   (setq evil-want-keybinding nil
 	evil-disable-insert-state-bindings t
 	evil-want-C-u-scroll t
-	evil-want-integration t)
+	evil-want-integration t
+        evil-undo-system 'undo-tree)
   :config
   (evil-mode 1)
   ;; set leader key in normal state
@@ -336,13 +337,30 @@
 
 (set-language-environment "Korean")
 (prefer-coding-system 'utf-8)
+
+;; Korean input method ==============================
+;; ==================================================
+
 (global-set-key (kbd "<f6>") 'toggle-korean-input-method)
+
 (unbind-key (kbd "C-d"))
-(unbind-key (kbd "C-d C-d"))
 (unbind-key (kbd "C-d C-l"))
-(global-set-key (kbd "C-d C-d") 'toggle-input-method)
-(global-set-key (kbd "C-d C-l") 'toggle-input-method)
-(global-set-key (kbd "C-\\") 'toggle-input-method)
+(global-set-key (kbd "C-d C-l") 'toggle-korean-input-method)
+
+(defun set-input-method-to-korean ()
+  (interactive)
+  (set-input-method 'korean-hangul))
+
+(global-set-key (kbd "C-d C-k") 'set-input-method-to-korean)
+
+;; Japanese input method ============================
+;; ==================================================
+
+(defun set-input-method-to-japanese ()
+  (interactive)
+  (set-input-method 'japanese))
+
+(global-set-key (kbd "C-d C-j") 'set-input-method-to-japanese)
 
 ;; Manage-minor-mode ================================
 ;; ==================================================
@@ -773,6 +791,8 @@
   :after restclient
   :init (add-to-list 'org-babel-load-languages '(http . t)))
 
+(use-package ob-restclient :defer t)
+
 (use-package ob-hy
   :defer t
   :init (add-to-list 'org-babel-load-languages '(hy . t)))
@@ -812,13 +832,12 @@
 		(org-redisplay-inline-images))))
 
   :config
-  ;; (dolist (babel-language (list 'ob-lisp 'ob-clojure 'ob-scheme 'ob-hy
-  ;; 				'ob-dot 'ob-rust 'ob-kotlin 'ob-shell)))
+  (setq org-babel-languages '(lisp clojure scheme hy
+                              dot rust kotlin shell
+                              awk restclient C))
   (org-babel-do-load-languages
    'org-babel-load-languages
-   '((lisp . t) (clojure . t) (scheme . t) (hy . t) (racket . t)
-     (dot . t) (rust . t) (kotlin . t) (shell . t)
-     (mermaid . t) (plantuml . t) (awk . t)))
+   (mapcar (lambda (language) `(,language . t)) org-babel-languages))
 
   :general
   (local-leader
@@ -1194,8 +1213,10 @@
    (c-mode       . eglot-ensure)
    (csharp-mode  . eglot-ensure)
    (ql-tree-sitter-mode . eglot-ensure)
-   (js-mode      . eglot-ensure)
-   (nix-mode     . eglot-ensure))
+   (js-mode . eglot-ensure)
+   (nix-mode     . eglot-ensure)
+   (go-mode . eglot-ensure)
+   (json-mode . eglot-ensure))
 
   :general
   (local-leader
@@ -1203,6 +1224,9 @@
     "a"      (which-key-prefix "LSP")
     "aa"     'eglot-code-actions
     "r"      'eglot-rename))
+
+(use-package consult-eglot
+  :after eglot)
 
 ;; Shell config =====================================
 ;; ==================================================
@@ -1222,41 +1246,144 @@
 ;; Python config ====================================
 ;; ==================================================
 
-(use-package python-mode)
+(use-package python
+  :mode "\\.py\\'"
+  :general
+  (local-leader
+    :major-modes '(python-mode t)
+    :keymaps     '(python-mode-map)
+    "'"  'spacemacs/python-start-or-switch-repl
+    
+    "c"  (local-leader "execute")
+    "d"  (local-leader "debug")
+    "h"  (local-leader "help")
+    "g"  (local-leader "goto")
+    "s"  (local-leader "REPL")
+    "r"  (local-leader "refactor")
+    "v"  (local-leader "virtualenv")
+    "vp" (local-leader "pipenv")
+    "vo" (local-leader "poetry")))
 
 (use-package cython-mode
-  :defer t
-  :config
-  )
+  :mode "\\.pyx\\'")
 
 (use-package importmagic)
-(use-package pipenv
-  :defer t
-  :commands (pipenv-activate
-             pipenv-deactivate
-             pipenv-shell
-             pipenv-open
-             pipenv-install
-             pipenv-uninstall)
-  :init
-  (dolist (m spacemacs--python-pipenv-modes)
-    (spacemacs/set-leader-keys-for-major-mode m
-                                              "vpa" 'pipenv-activate
-                                              "vpd" 'pipenv-deactivate
-                                              "vpi" 'pipenv-install
-                                              "vpo" 'pipenv-open
-                                              "vps" 'pipenv-shell
-                                              "vpu" 'pipenv-uninstall)))
+
+(:commands (pipenv-activate
+            pipenv-deactivate
+            pipenv-shell
+            pipenv-open
+            pipenv-install
+            pipenv-uninstall)
+ :general
+ (local-leader
+   :major-modes '(python-mode t)
+   :keymaps     '(python-mode-map)
+   "vpa"        'pipenv-activate
+   "vpd"        'pipenv-deactivate
+   "vpi"        'pipenv-install
+   "vpo"        'pipenv-open
+   "vps"        'pipenv-shell
+   "vpu"        'pipenv-uninstall))
+
 (use-package poetry
-  :defer t
   :commands (poetry-venv-toggle
              poetry-tracking-mode)
-  :init
-  (dolist (m spacemacs--python-poetry-modes)
-    (spacemacs/set-leader-keys-for-major-mode m
-                                              "vod" 'poetry-venv-deactivate
-                                              "vow" 'poetry-venv-workon
-                                              "vot" 'poetry-venv-toggle)))
+  :general
+  (local-leader
+    :major-modes '(python-mode t)
+    :keymaps     '(python-mode-map)
+    "vod"        'poetry-venv-deactivate
+    "vow"        'poetry-venv-workon
+    "vot"        'poetry-venv-toggle))
+
+(use-package code-cells
+  :commands (code-cells-mode)
+  :hook (python-mode . code-cells-mode)
+  :general
+  (local-leader
+    :major-modes '(code-cells-mode t)
+    :keymaps     '(code-cells-mode-map)
+    "gB"         'code-cells-backward-cell
+    "gF"         'code-cells-forward-cell
+    "sc"         'code-cells-eval
+    "sa"         'code-cells-eval-above))
+
+(use-package blacken
+  :defer t
+  :commands (blacken-buffer)
+  :general
+  (local-leader
+    :major-modes '(python-mode t)
+    :keymaps     '(python-mode-map)
+    "="          'blacken-buffer))
+
+(use-package pip-requirements :defer t)
+
+(use-package pippel
+  :defer t
+  :general
+  (local-leader
+    :major-modes '(python-mode t)
+    :keymaps     '(python-mode-map)
+    "P"          'pippel-list-packages))
+
+(use-package py-isort
+  :defer t
+  :general
+  (local-leader
+    :major-modes '(python-mode t)
+    :keymaps     '(python-mode-map)
+    "rI"         'py-isort-buffer))
+
+(use-package sphinx-doc
+  :defer t
+  :general
+  (local-leader
+    :major-modes '(python-mode t)
+    :keymaps     '(python-mode-map)
+    "Se" 'sphinx-doc-mode
+    "Sd" 'sphinx-doc))
+
+(use-package pydoc
+  :defer t
+  :general
+  (local-leader
+    :major-modes '(python-mode t)
+    :keymaps     '(python-mode-map)
+    "hp" 'pydoc-at-point-no-jedi
+    "hP" 'pydoc))
+
+(use-package pyenv-mode
+  :commands (pyenv-mode-versions)
+  :general
+  (local-leader
+   :major-modes '(python-mode t)
+   :keymaps     '(python-mode-map)
+   "vu" 'pyenv-mode-unset
+   "vs" 'pyenv-mode-set))
+
+(use-package pylookup
+  :commands (pylookup-lookup
+             pylookup-update
+             pylookup-update-all)
+  :general
+  (local-leader
+    :major-modes '(python-mode t)
+    :keymaps     '(python-mode-map)
+    "hH" 'pylookup-lookup))
+
+(use-package pytest
+  :commands (pytest-one
+             pytest-pdb-one
+             pytest-all
+             pytest-pdb-all
+             pytest-last-failed
+             pytest-pdb-last-failed
+             pytest-module
+             pytest-pdb-module)
+  :config (add-to-list 'pytest-project-root-files "setup.cfg"))
+
 ;; Perl config ======================================
 ;; ==================================================
 
@@ -1321,6 +1448,8 @@
 
   (setq lua-indent-level 2
 	lua-indent-string-contents t)
+
+  (define-key lua-mode-map (kbd "q") nil)
 
   :general
   (local-leader
@@ -1402,9 +1531,6 @@
   (show-paren-mode 1))
 
 (use-package smartparens
-  ;; :bind (:map smartparens-mode-map
-  ;; 	      ("M-p" . sp-previous-sexp)
-  ;; 	      ("M-n" . sp-next-sexp))
   :config
   (smartparens-global-mode)
   ;; Regular quote
@@ -1413,7 +1539,7 @@
 			       newlisp-mode picolisp-mode janet-mode
 			       lisp-interaction-mode ielm-mode minibuffer-mode
 			       fennel-repl-mode cider-repl-mode racket-repl-mode
-			       fundamental-mode markdown-mode)
+			       fundamental-mode markdown-mode slime-repl-mode)
 		 "'" "'" :actions nil)
   ;; Backquote
   (sp-local-pair '(fennel-mode hy-mode clojure-mode lisp-mode emacs-lisp-mode
@@ -1423,7 +1549,9 @@
 			       fennel-repl-mode cider-repl-mode racket-repl-mode
                                tuareg-mode
 			       fundamental-mode)
-		 "`" "`" :actions nil))
+		 "`" "`" :actions nil)
+  ;; Pound sign
+  (sp-local-pair '(markdown-mode) "#" "#" :actions nil))
 
 (use-package evil-cleverparens
   :init
@@ -2216,7 +2344,7 @@ set so that it clears the whole REPL buffer, not just the output."
     "eC" 'hy-shell-eval-current-form-and-go
     "ei" 'run-hy
     "er" 'hy-shell-eval-region
-    "eR" 'spacemacs/hy-shell-eval-region-and-go
+    "eR" 'hy-shell-eval-region-and-go
 
     "s"  (which-key-prefix :REPL)
     "sb" 'hy-shell-eval-buffer
@@ -2281,10 +2409,10 @@ set so that it clears the whole REPL buffer, not just the output."
     "dd"         'fennel-show-documentation
     "dv"         'fennel-show-variable-documentation
 
-    "df"         (which-key-prefix :find)
-    "dff"        'fennel-find-definition
-    "dfm"        'fennel-find-module-definition
-    "dfp"        'fennel-find-definition-pop
+    "f"          (which-key-prefix :find)
+    "fd"         'fennel-find-definition
+    "fm"         'fennel-find-module-definition
+    "fp"         'fennel-find-definition-pop
 
     "'"          'fennel-repl
     "r"          'fennel-reload)
@@ -2361,8 +2489,18 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; Scheme config ====================================
 ;; ==================================================
 
+(use-package scheme-mode
+  :straight nil
+  :hook     (scheme-mode . evil-cleverparens-mode)
+  :general
+  (local-leader
+    :major-modes '(scheme-mode t)
+    :keymaps     '(scheme-mode-map)
+    "rs" 'turn-on-geiser-mode
+    "rc" 'turn-off-geiser-mode))
+
 (use-package geiser
-  :commands run-geiser
+  :after scheme-mode
   :general
   (local-leader
     :major-modes '(scheme-mode t)
@@ -2469,6 +2607,7 @@ set so that it clears the whole REPL buffer, not just the output."
 (use-package geiser-mit     :defer t)
 (use-package geiser-kawa    :defer t)
 
+;; λ
 (use-package sicp :defer t)
 
 ;; Janet config =====================================
@@ -2932,7 +3071,130 @@ set so that it clears the whole REPL buffer, not just the output."
   :hook (go-mode . (lambda ()
                      (setq indent-tabs-mode 1
                            tab-width 2)))
-  :defer t)
+  :defer t
+  :init
+  (defun go-run-tests (args)
+    (interactive)
+    (compilation-start
+     (concat go-test-command " " (when go-test-verbose "-v ") args " " go-use-test-args)
+     nil (lambda (n) go-test-buffer-name) nil))
+
+  (defun go-run-package-tests ()
+    (interactive)
+    (go-run-tests ""))
+
+  (defun go-run-package-tests-nested ()
+    (interactive)
+    (go-run-tests "./..."))
+
+  (defun go-run-test-current-function ()
+    (interactive)
+    (if (string-match "_test\\.go" buffer-file-name)
+        (save-excursion
+          (move-end-of-line nil)
+          (re-search-backward "^func[ ]+\\(([[:alnum:]]*?[ ]?[*]?\\([[:alnum:]]+\\))[ ]+\\)?\\(Test[[:alnum:]_]+\\)(.*)")
+          (go-run-tests
+           (cond
+            (go-use-testify-for-testing
+             (concat "-run='Test" (match-string-no-properties 2)
+                     "' -testify.m='" (match-string-no-properties 3) "'"))
+            (go-use-gocheck-for-testing (concat "-check.f='" (match-string-no-properties 3) "$'"))
+            (t (concat "-run='" (match-string-no-properties 3) "$'")))))
+      (message "Must be in a _test.go file to run go-run-test-current-function")))
+
+  (defun go-run-test-current-suite ()
+    (interactive)
+    (if (string-match "_test\.go" buffer-file-name)
+        (if (or go-use-testify-for-testing go-use-gocheck-for-testing)
+            (let ((test-method (if go-use-gocheck-for-testing
+                                   "-check.f='"
+                                 "-run='Test")))
+              (save-excursion
+                (re-search-backward "^func[ ]+\\(([[:alnum:]]*?[ ]?[*]?\\([[:alnum:]]+\\))[ ]+\\)?\\(Test[[:alnum:]_]+\\)(.*)")
+                (go-run-tests (concat test-method (match-string-no-properties 2) "'"))))
+          (message "Testify or Gocheck is needed to test the current suite"))
+      (message "Must be in a _test.go file to run go-test-current-suite")))
+
+  (defun go-run-main ()
+    (interactive)
+    (shell-command
+     (concat go-run-command " . " go-run-args)))
+
+  (defun go-run-generate-current-dir ()
+    (interactive)
+    (compilation-start
+     (concat go-generate-command " " (file-name-directory buffer-file-name))
+     nil (lambda (n) go-generate-buffer-name) nil))
+
+  (defun go-run-generate-current-buffer ()
+    (interactive)
+    (compilation-start
+     (concat go-generate-command " " (buffer-file-name))
+     nil (lambda (n) go-generate-buffer-name) nil))
+
+  ;; misc
+  (defun go-packages-gopkgs ()
+    "Return a list of all Go packages, using `gopkgs'."
+    (sort (process-lines "gopkgs") #'string<))
+
+  :general
+  (local-leader
+    :major-modes '(go-mode t)
+    :keymaps     '(go-mode-map)
+    "="   'gofmt
+    
+    "e"   (which-key-prefix "playground")
+    "eb"  'go-play-buffer
+    "ed"  'go-download-play
+    "er"  'go-play-region
+
+    "g"   (which-key-prefix "goto")
+    "ga"  'ff-find-other-file
+    "gc"  'go-coverage
+
+    "h"   (which-key-prefix "help")
+    "hh"  'godoc-at-point
+
+    "i"   (which-key-prefix "imports")
+    "ia"  'go-import-add
+    "ig"  'go-goto-imports
+    "ir"  'go-remove-unused-imports
+
+    "t"   (which-key-prefix "test")
+    "tP"  'go-run-package-tests-nested
+    "tp"  'go-run-package-tests
+    "ts"  'go-run-test-current-suite
+    "tt"  'go-run-test-current-function
+
+    "tg"  (which-key-prefix "generate")
+    "tgg" 'go-gen-test-dwim
+    "tgf" 'go-gen-test-exported
+    "tgF" 'go-gen-test-all
+
+    "x"   (which-key-prefix "execute")
+    "xx"  'go-run-main
+    "xg"  'go-run-generate-current-buffer
+    "xG"  'go-run-generate-current-dir
+
+    "r"   (which-key-prefix "refactor")
+    "rs"  'go-fill-struct
+    "rN"  'go-rename
+    "rf"  'go-tag-add
+    "rF"  'go-tag-remove
+    "rd"  'godoctor-godoc
+    "re"  'godoctor-extract
+    "rn"  'godoctor-rename
+    "rt"  'godoctor-toggle))
+
+(use-package go-fill-struct :defer t)
+
+(use-package go-rename :defer t)
+
+(use-package go-tag :defer t)
+
+(use-package godoctor :defer t)
+
+(use-package go-gen-test :defer t)
 
 ;; VimScript config =================================
 ;; ==================================================
@@ -2999,7 +3261,7 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (use-package js
   :straight nil
-  :mode ("\\.[j|t]sx?\\'" . js-mode)
+  :mode ("\\.jsx?\\'" . js-mode)
   :hook (js-mode . (lambda ()
                      (setq indent-tabs-mode nil
                            tab-width 2)))
@@ -3008,6 +3270,12 @@ set so that it clears the whole REPL buffer, not just the output."
                '(js-mode . ("typescript-language-server" "--stdio")))
   (add-to-list 'eglot-server-programs
                '(js-ts-mode . ("typescript-language-server" "--stdio"))))
+
+;; TypeScript config ================================
+;; ==================================================
+
+(use-package typescript-mode
+  :mode ("\\.tsx?\\'" . typescript-mode))
 
 ;; Markdown config ==================================
 ;; ==================================================
@@ -3040,13 +3308,12 @@ set so that it clears the whole REPL buffer, not just the output."
   (local-leader
     :major-modes '(markdown-mode t)
     :keymaps     '(markdown-mode-map)
-    "M-RET"      'markdown-do
+    ","          'markdown-do
     "{"          'markdown-backward-paragraph
     "}"          'markdown-forward-paragraph
     "]"          'markdown-complete
     ">"          'markdown-indent-region
     "<"          'markdown-outdent-region
-    "-"          'markdown-insert-hr
 
     "c"          (which-key-prefix "command")
     "c]"         'markdown-complete-buffer
@@ -3079,6 +3346,7 @@ set so that it clears the whole REPL buffer, not just the output."
     "iw"         'markdown-insert-wiki-link
     "iu"         'markdown-insert-uri
     "iT"         'markdown-insert-table
+    "i-"          'markdown-insert-hr
 
     "k"          'markdown-kill-thing-at-point
 
@@ -3142,7 +3410,8 @@ set so that it clears the whole REPL buffer, not just the output."
     "M-h"        'markdown-promote
     "M-j"        'markdown-move-down
     "M-k"        'markdown-move-up
-    "M-l"        'markdown-demote)
+    "M-l"        'markdown-demote
+    "RET"        nil)
 
   (insert-mode-major-mode
     :major-modes '(markdown-mode t)
@@ -3219,6 +3488,19 @@ set so that it clears the whole REPL buffer, not just the output."
   :defer t
   :straight (wiktionary-bro
 	     :type git :host github :repo "agzam/wiktionary-bro.el"))
+
+(use-package define-word
+  :defer t)
+
+(use-package powerthesaurus
+  :defer t
+  :general
+  (global-leader
+    "xwtt" 'powerthesaurus-lookup-synonyms-dwim
+    "xwta" 'powerthesaurus-lookup-antonyms-dwim
+    "xwtr" 'powerthesaurus-lookup-related-dwim
+    "xwtd" 'powerthesaurus-lookup-definitions-dwim
+    "xwts" 'powerthesaurus-lookup-sentences-dwim))
 
 ;; CSharp config ====================================
 ;; ==================================================
@@ -3302,7 +3584,7 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (setq explicit-shell-file-name "/bin/zsh")
 (use-package exec-path-from-shell
-  :when (or macOS-p chromeOS-p)
+  :when (or macOS-p chromeOS-p linux-p)
   :config
   (setq exec-path-from-shell-variables '("PATH" "JAVA_HOME" "BROWSER"
 					 "OPAMCLI" "WORK_MACHINE")
@@ -3815,12 +4097,12 @@ set so that it clears the whole REPL buffer, not just the output."
   ;; (spacemacs|define-transient-state git-blame
   ;;       :title "Git Blame Transient State"
   ;;       :hint-is-doc t
-  ;;       :dynamic-hint (spacemacs//git-blame-ts-hint)
+  ;;       :dynamic-hint (/git-blame-ts-hint)
   ;;       :on-enter (let (golden-ratio-mode)
   ;;                   (unless (bound-and-true-p magit-blame-mode)
   ;;                     (call-interactively 'magit-blame-addition)))
   ;;       :bindings
-  ;;       ("?" spacemacs//git-blame-ts-toggle-hint)
+  ;;       ("?" /git-blame-ts-toggle-hint)
   ;;       ;; chunks
   ;;       ("p" magit-blame-previous-chunk)
   ;;       ("P" magit-blame-previous-chunk-same-commit)
@@ -3949,10 +4231,10 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; TODO
 ;; (use-package git-timemachine
 ;;   :defer t
-;;   :commands spacemacs/time-machine-transient-state/body
+;;   :commands time-machine-transient-state/body
 ;;   :init
-;;   (spacemacs/set-leader-keys
-;;    "gt" 'spacemacs/time-machine-transient-state/body)
+;;   (set-leader-keys
+;;    "gt" 'time-machine-transient-state/body)
 ;;   :config
 ;;   (spacemacs|define-transient-state time-machine
 ;; 				    :title "Git Timemachine Transient State"
@@ -4089,7 +4371,9 @@ set so that it clears the whole REPL buffer, not just the output."
           lisp-interaction-mode
           ielm-mode
           eval-expression-minibuffer-setup)
-         . turn-on-eldoc-mode))
+         . turn-on-eldoc-mode)
+  :config
+  (setq eldoc-echo-area-use-multiline-p 3))
 
 ;; Newcomment =======================================
 ;; ==================================================
@@ -4252,7 +4536,7 @@ set so that it clears the whole REPL buffer, not just the output."
   (projectile-mode)
   (setq projectile-mode-line            "Projectile"
 	anaconda-mode-localhost-address "localhost"
-	projectile-enable-caching       t))
+	projectile-enable-caching       nil))
 
 ;; Minions config ===================================
 ;; ==================================================
@@ -4270,8 +4554,7 @@ set so that it clears the whole REPL buffer, not just the output."
 (use-package menu-bar
   :straight nil
   :config
-  (when (or terminal-p chromeOS-p)
-    (menu-bar-mode -1)))
+  (menu-bar-mode -1))
 
 (use-package tab-bar
   :straight nil
@@ -4318,14 +4601,34 @@ set so that it clears the whole REPL buffer, not just the output."
   (set-fontset-font t 'hangul
 		    (font-spec :name "NanumGothic")))
 
-;; TODO: customize it using enable-theme-functions in Emacs29
 (use-package tron-legacy-theme
+  :custom-face
+  (tool-bar ((t (:background "#000000")))))
+
+(use-package modus-themes
   :config
-  (load-theme 'tron-legacy t))
+  (setq modus-themes-italic-constructs t
+        modus-themes-bold-constructs nil))
+
+(use-package auto-dark
+  :ensure t
+  :config 
+  (setq auto-dark-dark-theme 'tron-legacy
+        auto-dark-light-theme 'modus-operandi
+        auto-dark-allow-osascript macOS-p
+        auto-dark-allow-powershell nil)
+  (auto-dark-mode t))
 
 (use-package mood-line
   :config
   (mood-line-mode))
+
+(defun on-after-init ()
+  "Make the background transparent when running in a tty."
+  (unless (display-graphic-p (selected-frame))
+    (set-face-background 'default "unspecified-bg" (selected-frame))))
+
+(add-hook 'window-setup-hook 'on-after-init)
 
 ;; hl-todo config ==================================
 ;; =================================================
@@ -4696,7 +4999,7 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (global-leader
   "g"   (which-key-prefix :git)
-  "gb"  'magit-blame	   ; 'spacemacs/git-blame-transient-state/body
+  "gb"  'magit-blame	   ; 'git-blame-transient-state/body
 
   "gf"  (which-key-prefix :file)
   "gfF" 'magit-find-file
@@ -4752,7 +5055,7 @@ set so that it clears the whole REPL buffer, not just the output."
   "aoCg" 'org-clock-goto
   "aoCi" 'org-clock-in
   "aoCI" 'org-clock-in-last
-  "aoCj" 'spacemacs/org-clock-jump-to-current-clock
+  "aoCj" 'org-clock-jump-to-current-clock
   "aoCo" 'org-clock-out
   "aoCr" 'org-resolve-clocks
   "aoCp" 'org-pomodoro
@@ -4849,9 +5152,15 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (global-leader
   "x"     (which-key-prefix "text")
-  "xl"    'insert-lambda
+  "xi"    (which-key-prefix "insert")
+  "xil"   'insert-lambda
+  "xie"   'emojify-insert-emoji 
+  "xiE"   'emoji-insert
   "x TAB" 'indent-rigidly
-  "xwd"   'osx-dictionary-search-pointer)
+  "xw"    (which-key-prefix "word")
+  "xwd"   'osx-dictionary-search-pointer
+  "xwD"   'define-word-at-point
+  "xwt"   (which-key-prefix "thesaurus"))
 
 (global-leader
   "t"    (which-key-prefix "toggle")
@@ -5200,7 +5509,7 @@ set so that it clears the whole REPL buffer, not just the output."
     "q" 'tablist-quit
     "g" 'pdf-occur-revert-buffer-with-args
     "r" 'pdf-occur-revert-buffer-with-args
-    "*" 'spacemacs/enter-ahs-forward
+    "*" 'enter-ahs-forward
     "?" 'evil-search-backward)
 
   (local-leader
@@ -5546,6 +5855,23 @@ set so that it clears the whole REPL buffer, not just the output."
     "m"   'tetris-move-bottom
     "SPC" 'tetris-move-bottom		; not working
     "n"   'tetris-start-game))
+
+;; proced config ====================================
+;; ==================================================
+
+(use-package proced
+  :ensure nil
+  :defer  t
+  :custom
+  (proced-auto-update-flag t)
+  (proced-goal-attribute nil)
+  (proced-show-remote-processes t)
+  (proced-enable-color-flag t)
+  (proced-format 'custom)
+  :config
+  (add-to-list
+   'proced-format-alist
+   '(custom user pid ppid sess tree pcpu pmem rss start time state (args comm))))
 
 ;; Fun! =============================================
 ;; ==================================================
