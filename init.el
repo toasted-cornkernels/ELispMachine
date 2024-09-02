@@ -1268,7 +1268,9 @@
 
 (use-package importmagic)
 
-(:commands (pipenv-activate
+(use-package pipenv
+  :defer t
+  :commands (pipenv-activate
             pipenv-deactivate
             pipenv-shell
             pipenv-open
