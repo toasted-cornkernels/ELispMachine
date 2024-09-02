@@ -1213,9 +1213,10 @@
    (c-mode       . eglot-ensure)
    (csharp-mode  . eglot-ensure)
    (ql-tree-sitter-mode . eglot-ensure)
-   (js-mode . eglot-ensure)
-   (go-mode . eglot-ensure)
-   (json-mode . eglot-ensure))
+   (js-mode      . eglot-ensure)
+   (json-mode    . eglot-ensure)
+   (nix-mode     . eglot-ensure)
+   (go-mode      . eglot-ensure))
 
   :general
   (local-leader
