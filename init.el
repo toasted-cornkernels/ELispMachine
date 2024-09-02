@@ -4605,7 +4605,10 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (use-package tron-legacy-theme
   :custom-face
-  (tool-bar ((t (:background "#000000")))))
+  (tool-bar ((t (:background "#000000"))))
+  :config
+  (when android-p
+    (enable-theme 'tron-legacy)))
 
 (use-package modus-themes
   :config
@@ -4613,7 +4616,7 @@ set so that it clears the whole REPL buffer, not just the output."
         modus-themes-bold-constructs nil))
 
 (use-package auto-dark
-  :ensure t
+  :when (not android-p)
   :config 
   (setq auto-dark-dark-theme 'tron-legacy
         auto-dark-light-theme 'modus-operandi
