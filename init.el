@@ -1248,6 +1248,7 @@
 
 (use-package python
   :mode "\\.py\\'"
+  :commands (python)
   :general
   (local-leader
     :major-modes '(python-mode t)
