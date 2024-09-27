@@ -87,23 +87,12 @@
 
 (use-package ts)
 
-(use-package cus-edit :straight (:type built-in))
-
-;; (use-package ox :straight (:type built-in))
-
 (use-package font-lock-ext
   :straight
   (font-lock-ext :type git
                  :host github
                  :repo "sensorflo/font-lock-ext"
                  :branch "master"))
-
-(use-package unpackaged
-  :straight
-  (unpackaged :type git
-              :host github
-              :repo "alphapapa/unpackaged.el"
-              :branch "master"))
 
 (use-package reazon
   :config
@@ -292,8 +281,8 @@
   :after (evil)
   :config
   (setq evil-collection-mode-list (remove 'elfeed evil-collection-mode-list))
-  (evil-collection-init)
-  (setq evil-collection-calendar-want-org-bindings t))
+  (setq evil-collection-calendar-want-org-bindings t)
+  (evil-collection-init))
 
 (use-package evil-surround
   :after evil
@@ -482,9 +471,11 @@
     "M-RET"      'org-meta-return
     "A"          'org-attach
     "a"          'org-agenda
-    "["          'org-agenda-file-to-front
-    "]"          'org-remove-file
-
+    "{"          'org-agenda-file-to-front
+    "}"          'org-remove-file
+    "["          'org-toggle-radio-button-no-check
+    "]"          'org-toggle-radio-button-no-check
+    
     "c"          (which-key-prefix :clock)
     "ce"         'org-evaluate-time-range
 
@@ -631,6 +622,11 @@
     "C-M-l" 'org-shiftright)
 
   :config
+  (defun org-toggle-radio-button-no-check ()
+    (interactive)
+    (let ((current-prefix-arg '(4)))
+      (call-interactively 'org-toggle-radio-button)) )
+  
   (defun org-insert-current-time ()
     "insert the curren time at the cursor position."
     (interactive)
@@ -1247,13 +1243,13 @@
 ;; ==================================================
 
 (use-package python
-  :mode "\\.py\\'"
-  :commands (python)
+  :straight (:type built-in)
+  ;; :mode "\\.py\\'"
   :general
   (local-leader
     :major-modes '(python-mode t)
     :keymaps     '(python-mode-map)
-    "'"  'spacemacs/python-start-or-switch-repl
+    ;; "'"  'spacemacs/python-start-or-switch-repl
     
     "c"  (local-leader "execute")
     "d"  (local-leader "debug")
@@ -1273,21 +1269,21 @@
 (use-package pipenv
   :defer t
   :commands (pipenv-activate
-            pipenv-deactivate
-            pipenv-shell
-            pipenv-open
-            pipenv-install
-            pipenv-uninstall)
- :general
- (local-leader
-   :major-modes '(python-mode t)
-   :keymaps     '(python-mode-map)
-   "vpa"        'pipenv-activate
-   "vpd"        'pipenv-deactivate
-   "vpi"        'pipenv-install
-   "vpo"        'pipenv-open
-   "vps"        'pipenv-shell
-   "vpu"        'pipenv-uninstall))
+             pipenv-deactivate
+             pipenv-shell
+             pipenv-open
+             pipenv-install
+             pipenv-uninstall)
+  :general
+  (local-leader
+    :major-modes '(python-mode t)
+    :keymaps     '(python-mode-map)
+    "vpa"        'pipenv-activate
+    "vpd"        'pipenv-deactivate
+    "vpi"        'pipenv-install
+    "vpo"        'pipenv-open
+    "vps"        'pipenv-shell
+    "vpu"        'pipenv-uninstall))
 
 (use-package poetry
   :commands (poetry-venv-toggle
@@ -3349,7 +3345,8 @@ set so that it clears the whole REPL buffer, not just the output."
     "iw"         'markdown-insert-wiki-link
     "iu"         'markdown-insert-uri
     "iT"         'markdown-insert-table
-    "i-"          'markdown-insert-hr
+    "iF"         'markdown-insert-foldable-block
+    "i-"         'markdown-insert-hr
 
     "k"          'markdown-kill-thing-at-point
 
@@ -3845,7 +3842,7 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; ==================================================
 
 (use-package tex
-  :mode "\\.tex\\'"
+  ;; :mode "\\.tex\\'"
   :straight auctex
   :config
   (define-key TeX-mode-map (kbd "s-\\") #'TeX-previous-error)
@@ -4455,6 +4452,7 @@ set so that it clears the whole REPL buffer, not just the output."
   (add-to-list 'recentf-exclude "/var/folders/.*")
   (add-to-list 'recentf-exclude "COMMIT_EDITMSG\\'")
   (add-to-list 'recentf-exclude "/tmp/.*")
+  (add-to-list 'recentf-exclude "/.emacs.d/var/.*")
   (when custom-file
     (add-to-list 'recentf-exclude (recentf-expand-file-name custom-file))))
 
