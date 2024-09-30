@@ -499,6 +499,7 @@
     "ita"        (org-insert-structure org-insert-ascii "ascii")
     "itc"        (org-insert-structure org-insert-center "center")
     "itC"        (org-insert-structure org-insert-comment "comment")
+    "it/"        (org-insert-structure org-insert-comment "comment")
     "ite"        (org-insert-structure org-insert-example "example")
     "itE"        (org-insert-structure org-insert-export "export")
     "ith"        (org-insert-structure org-insert-export-html "html")
