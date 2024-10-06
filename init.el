@@ -742,15 +742,15 @@
   :general
   (insert-mode-major-mode
     :keymaps '(org-read-date-minibuffer-local-map)
-    "M-h" 'calendar-one-day-backward
-    "M-k" 'calendar-one-week-backward
-    "M-j" 'calendar-one-week-forward
-    "M-l" 'calendar-one-day-forward
-
-    "M-H" 'calendar-one-month-backward
-    "M-K" 'calendar-one-year-backward
-    "M-J" 'calednar-one-year-forward
-    "M-L" 'calendar-one-month-forward))
+    "M-h"    'calendar-one-day-backward
+    "M-k"    'calendar-one-week-backward
+    "M-j"    'calendar-one-week-forward
+    "M-l"    'calendar-one-day-forward
+             
+    "M-H"    'calendar-one-month-backward
+    "M-K"    'calendar-one-year-backward
+    "M-J"    'calednar-one-year-forward
+    "M-L"    'calendar-one-month-forward))
 
 (use-package org-ql :defer t)
 
@@ -800,6 +800,8 @@
 
 (use-package ob-mermaid :defer t)
 
+(use-package ob-ruby :defer t)
+
 (use-package ob-racket
   :defer t
   :config
@@ -831,7 +833,7 @@
   :config
   (setq org-babel-languages '(lisp clojure scheme hy
                               dot rust kotlin shell
-                              awk restclient C))
+                              awk restclient C ruby))
   (org-babel-do-load-languages
    'org-babel-load-languages
    (mapcar (lambda (language) `(,language . t)) org-babel-languages))
