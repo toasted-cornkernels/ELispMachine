@@ -5773,7 +5773,7 @@ set so that it clears the whole REPL buffer, not just the output."
 
   :general
   (global-leader
-    "am" (which-key-prefix "emms")
+    "am"   (which-key-prefix "emms")
     "amee" 'emms
     "ames" 'emms-pause
     "amep" 'emms-previous
