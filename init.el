@@ -5751,16 +5751,14 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; Emms config ======================================
 ;; ==================================================
 
+(cdr (assoc 'info-title (emms-playlist-current-selected-track)))
+
 (use-package emms
   :defer t
   :init
   (defun emms-mode-line-only-filename ()
     "Format the currently playing song."
-    (let* ((fullname (emms-track-description
-		      (emms-playlist-current-selected-track)))
-	   (splitted (s-split "/" fullname))
-	   (filename (car (last splitted))))
-      (concat "🎵 " (car (s-split "\\.[mp3|wma|m4a]" filename)))))
+    (concat "🎵 " (cdr (assoc 'info-title (emms-playlist-current-selected-track)))))
 
   :config
   (require 'emms-setup)
