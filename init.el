@@ -5756,8 +5756,10 @@ set so that it clears the whole REPL buffer, not just the output."
   :init
   (defun emms-mode-line-only-filename ()
     "Format the currently playing song."
-    (concat "🎵 " (cdr (assoc 'info-title (emms-playlist-current-selected-track)))))
-
+    (->> (emms-playlist-current-selected-track)
+         (assoc 'info-title)
+         (cdr)
+         (concat "🎵 ")))
   :config
   (require 'emms-setup)
   (emms-all)
