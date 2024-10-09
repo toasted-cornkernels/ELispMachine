@@ -5751,8 +5751,6 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; Emms config ======================================
 ;; ==================================================
 
-(cdr (assoc 'info-title (emms-playlist-current-selected-track)))
-
 (use-package emms
   :defer t
   :init
