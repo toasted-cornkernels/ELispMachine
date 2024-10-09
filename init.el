@@ -5776,8 +5776,10 @@ set so that it clears the whole REPL buffer, not just the output."
     "am"   (which-key-prefix "emms")
     "amee" 'emms
     "ames" 'emms-pause
+    "ameh" 'emms-previous
     "amep" 'emms-previous
     "amen" 'emms-next
+    "amel" 'emms-next
     "amed" 'emms-play-directory
     "amef" 'emms-play-file
     "ameu" 'emms-play-url))
