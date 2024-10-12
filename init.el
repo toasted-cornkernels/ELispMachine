@@ -147,11 +147,9 @@
   "Make a straight.el specification to locate the PACKAGE from github REPO."
   (list package :type 'git :host 'github :repo repo))
 
-(defalias 'assert 'cl-assert)
-
 (defun keyword-to-string (keyword)
   "Convert the KEYWORD to string."
-  (assert (symbolp keyword))
+  (cl-assert (symbolp keyword))
   (->> keyword
        intern-soft
        symbol-name
