@@ -5892,10 +5892,9 @@ set so that it clears the whole REPL buffer, not just the output."
       inhibit-startup-echo-area-message ""
       inhibit-startup-message t)
 
-(setq-default indent-tabs-mode nil) 	; Noooooooo please!
-(setq-default standard-indent 2)
-
-(setq-local line-spacing 0.1)           ; my eyeeees
+(setq-default indent-tabs-mode nil	; Noooooooo please!
+              standard-indent 2
+              line-spacing 0.1)         ; my eyeeees
 
 (put 'narrow-to-region 'disabled nil)
 
