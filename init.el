@@ -439,8 +439,9 @@
 ;; ==================================================
 
 (use-package mixed-pitch
-  :hook ((org-mode . mixed-pitch-mode)
-	 (markdown-mode . mixed-pitch-mode)))
+  ;; :hook ((org-mode . mixed-pitch-mode)
+  ;;        (markdown-mode . mixed-pitch-mode))
+  )
 
 ;; Org config =======================================
 ;; ==================================================
