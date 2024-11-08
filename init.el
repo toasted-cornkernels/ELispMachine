@@ -243,6 +243,13 @@
 	evil-normal-state-cursor 'box
 	evil-insert-state-cursor 'bar
 	evil-emacs-state-cursor  'bar)
+  (setq evil-insert-state-message nil
+        evil-motion-state-message nil
+        evil-normal-state-message nil
+        evil-operator-state-message nil
+        evil-replace-state-message nil
+        evil-visual-state-message nil
+        evil-emacs-state-message nil)
   (evil-ex-define-cmd "q" 'kill-this-buffer)
   (evil-ex-define-cmd "Q" 'kill-this-buffer)
   (evil-ex-define-cmd "W" 'save-buffer)
