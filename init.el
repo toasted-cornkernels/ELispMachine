@@ -18,6 +18,14 @@
 
 (fset 'yes-or-no-p 'y-or-n-p)
 
+(defun elispm/advice-man (f man-args)
+  "Work-around a argument parsing bug fixed in 30.1:
+   https://debbugs.gnu.org/cgi/bugreport.cgi?bug=66390"
+  (if (called-interactively-p 'interactive)
+      (funcall f man-args)
+    (message "*WARNING* man called non-interactively with args: %s" man-args)))
+(advice-add 'man :around #'my/advice-man)
+
 ;; Straight =========================================
 ;; ==================================================
 
