@@ -4039,62 +4039,6 @@ set so that it clears the whole REPL buffer, not just the output."
   ;; sbt-supershell kills sbt-mode:  https://github.com/hvesalai/emacs-sbt-mode/issues/152
   (setq sbt:program-options '("-Dsbt.supershell=false")))
 
-;; Git-gutter+ config ===============================
-;; ==================================================
-
-(use-package git-gutter+
-  :when terminal-p
-  :diminish (git-gutter+-mode . "GG")
-  :general
-  (local-leader
-    :keymaps '(git-gutter+-mode-map)
-    "G" (which-key-prefix :version-control)
-    "Gn" 'git-gutter+-next-hunk
-    "Gp" 'git-gutter+-previous-hunk
-    "Gv=" 'git-gutter+-show-hunk
-    "Gr" 'git-gutter+-revert-hunks
-    "Gt" 'git-gutter+-stage-hunks
-    "Gc" 'git-gutter+-commit
-    "GC" 'git-gutter+-stage-and-commit
-    "G C-y" 'git-gutter+-stage-and-commit-whole-buffer
-    "GU" 'git-gutter+-unstage-whole-buffer)
-  :config
-  (setq git-gutter+-modified-sign " "
-	git-gutter+-added-sign "+"
-	git-gutter+-deleted-sign "-"
-	git-gutter+-diff-option "-w"
-	git-gutter+-hide-gutter t
-	git-gutter+-disabled-modes '(pdf-view-mode doc-view-mode image-mode)
-	;; Hide gutter when there are no changes
-	git-gutter+-hide-gutter t)
-  (global-git-gutter+-mode))
-
-(use-package git-gutter-fringe+
-  :when GUI-p
-  :init
-  (setq git-gutter-fr+-side 'left-fringe)
-  :config
-  (fringe-helper-define 'git-gutter-fr+-added nil
-    "..X...."
-    "..X...."
-    "XXXXX.."
-    "..X...."
-    "..X....")
-
-  (fringe-helper-define 'git-gutter-fr+-deleted nil
-    "......."
-    "......."
-    "XXXXX.."
-    "......."
-    ".......")
-
-  (fringe-helper-define 'git-gutter-fr+-modified nil
-    "..X...."
-    ".XXX..."
-    "XX.XX.."
-    ".XXX..."
-    "..X...."))
-
 ;; Magit config =====================================
 ;; ==================================================
 
@@ -4212,11 +4156,9 @@ set so that it clears the whole REPL buffer, not just the output."
 (use-package magit-lfs
   :after magit)
 
-(use-package git-commit
-  :defer t)
-
 (use-package git-link
-  :defer t
+  :after magit
+  ;; :defer t
   :config
   (defun git-permalink ()
     "Allow the user to get a permalink via git-link in a git-timemachine buffer."
@@ -4371,6 +4313,64 @@ set so that it clears the whole REPL buffer, not just the output."
   :straight nil
   :config
   (setq vc-follow-symlinks t))
+
+;; Git-gutter config ===============================
+;; ==================================================
+
+(use-package git-gutter
+  :when terminal-p
+  :defer t
+  ;; :diminish (git-gutter-mode . "GG")
+  :general
+  (local-leader
+    :predicate 'git-gutter-mode
+    "G"  (which-key-prefix :git-gutter)
+    "Gn" 'git-gutter:next-hunk
+    "Gp" 'git-gutter:previous-hunk
+    "G$" 'git-gutter:end-of-hunk
+    "Ge" 'git-gutter:end-of-hunk
+    "Gr" 'git-gutter:revert-hunk
+    "Gs" 'git-gutter:stage-hunk
+    "Ga" 'git-gutter:stage-hunk
+    "Gm" 'git-gutter:mark-hunk
+    "Gp" 'git-gutter:popup-hunk
+    "Gc" 'git-gutter:clear
+    "GG" 'git-gutter:toggle)
+  :config
+  (setq git-gutter:modified-sign " "
+	git-gutter:added-sign "+"
+	git-gutter:deleted-sign "-"
+	git-gutter:diff-option "-w"
+	git-gutter:hide-gutter t ; Hide gutter when there are no changes
+	git-gutter:disabled-modes '(pdf-view-mode doc-view-mode image-mode))
+  (global-git-gutter-mode))
+
+(use-package git-gutter-fringe
+  :when GUI-p
+  :defer t
+  :init
+  (setq git-gutter-fr:side 'left-fringe)
+  :config
+  (fringe-helper-define 'git-gutter-fr:added nil
+    "..X...."
+    "..X...."
+    "XXXXX.."
+    "..X...."
+    "..X....")
+
+  (fringe-helper-define 'git-gutter-fr:deleted nil
+    "......."
+    "......."
+    "XXXXX.."
+    "......."
+    ".......")
+
+  (fringe-helper-define 'git-gutter-fr:modified nil
+    "..X...."
+    ".XXX..."
+    "XX.XX.."
+    ".XXX..."
+    "..X...."))
 
 ;; format-all =======================================
 ;; ==================================================
@@ -5829,22 +5829,6 @@ set so that it clears the whole REPL buffer, not just the output."
   :config
   (setq tramp-copy-size-limit 10000000
 	tramp-inline-compress-start-size 10000000))
-
-(use-package git-gutter+
-  :defer t
-  :config
-  (defun git-gutter+-remote-default-directory (dir file)
-    (let* ((vec (tramp-dissect-file-name file))
-	   (method (tramp-file-name-method vec))
-	   (user (tramp-file-name-user vec))
-	   (domain (tramp-file-name-domain vec))
-	   (host (tramp-file-name-host vec))
-	   (port (tramp-file-name-port vec)))
-      (tramp-make-tramp-file-name method user domain host port dir)))
-
-  (defun git-gutter+-remote-file-path (dir file)
-    (let ((file (tramp-file-name-localname (tramp-dissect-file-name file))))
-      (replace-regexp-in-string (concat "\\`" dir) "" file))))
 
 ;; killing ==========================================
 ;; ==================================================
