@@ -5307,13 +5307,13 @@ set so that it clears the whole REPL buffer, not just the output."
   (defun w3m-open-url (url)
     "Opens url in new w3m session with `http://` appended"
     (interactive
-     (list (read-string "Enter website address (default: google.com):" nil nil "google.com" nil )))
+     (list (read-string "Enter website address (default: google.com): " nil nil "google.com" nil )))
     (w3m-open-url-with 'w3m-goto-url url))
 
   (defun w3m-open-url-new-session (url)
     "Opens url in new w3m session with `http://` appended"
     (interactive
-     (list (read-string "Enter website address (default: google.com):" nil nil "google.com" nil )))
+     (list (read-string "Enter website address (default: google.com): " nil nil "google.com" nil )))
     (w3m-open-url-with 'w3m-goto-url-new-session url))
 
   (setq browse-url-browser-function 'w3m-goto-url-new-session
