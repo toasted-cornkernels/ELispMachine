@@ -29,6 +29,8 @@
 ;; Straight =========================================
 ;; ==================================================
 
+(setq straight-check-for-modifications nil)  ; rebuild packages only manually
+
 (defvar bootstrap-version)
 
 (let ((bootstrap-file
@@ -2700,6 +2702,7 @@ set so that it clears the whole REPL buffer, not just the output."
     "sr" 'dante-restart))
 
 (use-package haskell-mode
+  :defer t
   :mode "\\.(hs|lhs|cabal)\\'"
   :init
   (setq haskell-notify-p t
@@ -4644,11 +4647,6 @@ set so that it clears the whole REPL buffer, not just the output."
     "s-," 'tab-close)
 
   (tab-bar-history-mode 1))
-
-;; (use-package tool-bar
-;;   :straight (:type built-in)
-;;   :when     GUI-p
-;;   :config   (tool-bar-mode 0))
 
 (blink-cursor-mode 0)
 (global-visual-line-mode t)
