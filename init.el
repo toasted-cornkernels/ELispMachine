@@ -4772,12 +4772,11 @@ set so that it clears the whole REPL buffer, not just the output."
   :straight nil
   :config
   (setq world-clock-list t
-	;; TODO: Not working for Europe
 	zoneinfo-style-world-list
 	'(("America/Los_Angeles" "Los Angeles")
 	  ("America/New_York" "New York")
-	  ("Europe/Oxford" "Oxford")
-	  ("Europe/Lugano" "Lugano")
+	  ("Europe/London" "Oxford")
+	  ("Europe/Zurich" "Lugano")
 	  ("Asia/Seoul" "Seoul"))))
 
 ;; custom functions =================================
