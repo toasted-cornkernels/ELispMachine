@@ -49,7 +49,7 @@
 
 (use-package use-package-ensure-system-package :ensure t)
 
-;; TEMP =============================================
+;; Profiling ========================================
 ;; ==================================================
 
 ;; (setq use-package-verbose t
@@ -4819,15 +4819,19 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; ==================================================
 
 (use-package time
-  :straight nil
+  :straight (:type built-in)
   :config
-  (setq world-clock-list t
-	zoneinfo-style-world-list
-	'(("America/Los_Angeles" "Los Angeles")
-	  ("America/New_York" "New York")
-	  ("Europe/London" "Oxford")
-	  ("Europe/Zurich" "Lugano")
-	  ("Asia/Seoul" "Seoul")))
+  (let ((cities '(("America/Los_Angeles" "Los Angeles")
+	          ("America/New_York" "New York")
+	          ("Europe/London" "Oxford")
+	          ("Europe/Zurich" "Lugano")
+	          ("Asia/Seoul" "Seoul"))))
+    (setq display-time-load-average nil
+          display-time-format "%l:%M %p %b %d"
+          display-time-world-time-format "%a %d %b %I:%M %p %Z"
+          display-time-world-list cities
+          world-clock-list t
+	  zoneinfo-style-world-list cities))
   (defun display-current-time ()
     "Display the current time in the buffer."
     (interactive)
