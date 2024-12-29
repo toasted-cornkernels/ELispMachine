@@ -49,6 +49,12 @@
 
 (use-package use-package-ensure-system-package :ensure t)
 
+;; TEMP =============================================
+;; ==================================================
+
+;; (setq use-package-verbose t
+;;       use-package-compute-statistics t)
+
 ;; No Littering! ====================================
 ;; ==================================================
 
@@ -463,7 +469,7 @@
 
 (use-package org
   :straight (:type built-in)
-  :demand   t
+  :defer t
   :init
   (defmacro org-emphasize-this (fname char)
     "Make function called FNAME for setting the emphasis (signified by CHAR) in org mode."
@@ -488,7 +494,7 @@
     "}"          'org-remove-file
     "["          'org-toggle-radio-button-no-check
     "]"          'org-toggle-radio-button-no-check
-    
+
     "c"          (which-key-prefix :clock)
     "ce"         'org-evaluate-time-range
 
@@ -640,7 +646,7 @@
     (interactive)
     (let ((current-prefix-arg '(4)))
       (call-interactively 'org-toggle-radio-button)) )
-  
+
   (defun org-insert-current-time ()
     "insert the curren time at the cursor position."
     (interactive)
@@ -759,7 +765,7 @@
     "M-k"    'calendar-one-week-backward
     "M-j"    'calendar-one-week-forward
     "M-l"    'calendar-one-day-forward
-             
+
     "M-H"    'calendar-one-month-backward
     "M-K"    'calendar-one-year-backward
     "M-J"    'calednar-one-year-forward
@@ -779,7 +785,9 @@
 
 (use-package org-projectile :defer t)
 
-(use-package org-element :straight (:type built-in))
+(use-package org-element
+  :straight (:type built-in)
+  :defer t)
 
 (use-package valign
   :hook ((markdown-mode . valign-mode)
@@ -833,12 +841,12 @@
 
 (use-package ob
   :straight (:type built-in)
-  :defer    t
+  :defer t
   :init
-  (add-hook 'org-mode-hook
-	    (lambda () (org-babel-do-load-languages
-			'org-babel-load-languages
-			org-babel-load-languages)))
+  ;; (add-hook 'org-mode-hook
+  ;;           (lambda () (org-babel-do-load-languages
+  ;;       		'org-babel-load-languages
+  ;;       		org-babel-load-languages)))
 
   (add-hook 'org-babel-after-execute-hook
 	    (lambda ()
@@ -948,8 +956,8 @@
                 org-edit-src-content-indentation 2))
 
 (use-package org-habit
-  :straight nil
-  :after org)
+  :straight (:type built-in)
+  :defer t)
 
 (use-package org-compat
   :straight nil
@@ -1030,6 +1038,20 @@
 (use-package org-remark :defer t)
 
 (use-package org-noter :defer t)
+
+(use-package org-tempo
+  :straight (:type built-in)
+  :defer t
+  :config
+  (dolist (item '(("sh" . "src sh")
+                  ("el" . "src emacs-lisp")
+                  ("li" . "src lisp")
+                  ("sc" . "src scheme")
+                  ("ql" . "src ql-tree-sitter")
+                  ("py" . "src python")
+                  ("yaml" . "src yaml")
+                  ("json" . "src json")))
+    (add-to-list 'org-structure-template-alist item)))
 
 ;; exporters
 (use-package ox-latex    :straight nil :defer t
@@ -1179,7 +1201,7 @@
 (use-package deadgrep :defer t)
 (use-package rg
   :defer t
-  :init
+  :config
   (rg-enable-default-bindings))
 (use-package ag :defer t)
 (use-package wgrep :defer t)
@@ -1212,6 +1234,7 @@
 
 (use-package codespaces
   :ensure-system-package gh
+  :defer t
   :config (codespaces-setup))
 
 ;; Eglot config =====================================
@@ -1268,7 +1291,7 @@
     :major-modes '(python-mode t)
     :keymaps     '(python-mode-map)
     ;; "'"  'spacemacs/python-start-or-switch-repl
-    
+
     "c"  (local-leader "execute")
     "d"  (local-leader "debug")
     "h"  (local-leader "help")
@@ -2624,7 +2647,8 @@ set so that it clears the whole REPL buffer, not just the output."
 (use-package geiser-mit     :defer t)
 (use-package geiser-kawa    :defer t)
 
-;; λ
+;; λ ================================================
+;; ==================================================
 (use-package sicp :defer t)
 
 ;; Janet config =====================================
@@ -2886,6 +2910,7 @@ set so that it clears the whole REPL buffer, not just the output."
     "L"  'ediprolog-unlocalize))
 
 (use-package sweeprolog
+  :defer t
   :init
   (setq sweeprolog--directory "~/.emacs.d/straight/repos/sweeprolog"))
 
@@ -3159,7 +3184,7 @@ set so that it clears the whole REPL buffer, not just the output."
     :major-modes '(go-mode t)
     :keymaps     '(go-mode-map)
     "="   'gofmt
-    
+
     "e"   (which-key-prefix "playground")
     "eb"  'go-play-buffer
     "ed"  'go-download-play
@@ -3524,7 +3549,8 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; ==================================================
 
 (use-package csharp-mode
-  :straight nil
+  :straight (:type built-in)
+  :defer t
   :init
   (add-to-list 'eglot-server-programs
                '(csharp-mode . ("csharp-ls")))
@@ -3659,7 +3685,12 @@ set so that it clears the whole REPL buffer, not just the output."
 	'(read-only t cursor-intangible t face minibuffer-prompt))
   (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
 
-  (setq enable-recursive-minibuffers t))
+  (setq enable-recursive-minibuffers t)
+  (defun on-after-init ()
+    "Make the background transparent when running in a tty."
+    (unless (display-graphic-p (selected-frame))
+      (set-face-background 'default "unspecified-bg" (selected-frame))))
+  (add-hook 'window-setup-hook 'on-after-init))
 
 (use-package orderless
   :init
@@ -3815,14 +3846,16 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (use-package embark
   ;; TODO: add some keybindings
-  )
+  :defer t)
 
-(use-package embark-consult)
+(use-package embark-consult
+  :after embark)
 
 ;; iedit config =====================================
 ;; ==================================================
 
-(use-package iedit)
+(use-package iedit
+  :defer t)
 
 ;; transpose-frame config ===========================
 ;; ==================================================
@@ -3862,6 +3895,7 @@ set so that it clears the whole REPL buffer, not just the output."
 (use-package tex
   ;; :mode "\\.tex\\'"
   :straight auctex
+  :defer t
   :config
   (define-key TeX-mode-map (kbd "s-\\") #'TeX-previous-error)
   (define-key TeX-mode-map (kbd "s-/") #'TeX-next-error)
@@ -4449,7 +4483,8 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; Helpful ==========================================
 ;; ==================================================
 
-(use-package helpful)
+(use-package helpful
+  :defer t)
 
 ;; Recentf ==========================================
 ;; ==================================================
@@ -4551,6 +4586,7 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; ==================================================
 
 (use-package projectile
+  :defer t
   :config
   (projectile-mode)
   (setq projectile-mode-line            "Projectile"
@@ -4569,6 +4605,16 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; ==================================================
 
 (setq column-number-mode t)
+
+(use-package xt-mouse
+  :straight nil
+  :config
+  (xterm-mouse-mode 1))
+
+;; (use-package repeat
+;;   :straight nil
+;;   :config
+;;   (repeat-mode 1))
 
 (use-package menu-bar
   :straight nil
@@ -4595,30 +4641,40 @@ set so that it clears the whole REPL buffer, not just the output."
     "s-[" 'tab-previous
     "s-]" 'tab-next
     "s-." 'tab-new
-    "s-," 'tab-close))
+    "s-," 'tab-close)
 
-(use-package tool-bar
-  :straight nil
-  :when     GUI-p
-  :config   (tool-bar-mode -1))
+  (tab-bar-history-mode 1))
+
+;; (use-package tool-bar
+;;   :straight (:type built-in)
+;;   :when     GUI-p
+;;   :config   (tool-bar-mode 0))
 
 (blink-cursor-mode 0)
 (global-visual-line-mode t)
 
-(when (fboundp 'scroll-bar-mode)
-  (scroll-bar-mode -1))
+(use-package scroll-bar
+  :straight nil
+  :config
+  (when (fboundp 'scroll-bar-mode)
+    (scroll-bar-mode -1)))
+
 (setq ring-bell-function 'ignore)
 
 ;; font
-(if (not chromeOS-p)
+
+(use-package faces
+  :straight nil
+  :config
+  (if (not chromeOS-p)
+      (set-face-attribute 'default nil
+			  :font "Fira Code"
+			  :weight 'light
+			  :height 180)
     (set-face-attribute 'default nil
-			:font "Fira Code"
-			:weight 'light
-			:height 180)
-  (set-face-attribute 'default nil
-		      :height 140)
-  (set-fontset-font t 'hangul
-		    (font-spec :name "NanumGothic")))
+		        :height 140)
+    (set-fontset-font t 'hangul
+		      (font-spec :name "NanumGothic"))))
 
 (use-package tron-legacy-theme
   :custom-face
@@ -4634,7 +4690,7 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (use-package auto-dark
   :when (not android-p)
-  :config 
+  :config
   (setq auto-dark-dark-theme 'tron-legacy
         auto-dark-light-theme 'modus-operandi
         auto-dark-allow-osascript macOS-p
@@ -4644,13 +4700,6 @@ set so that it clears the whole REPL buffer, not just the output."
 (use-package mood-line
   :config
   (mood-line-mode))
-
-(defun on-after-init ()
-  "Make the background transparent when running in a tty."
-  (unless (display-graphic-p (selected-frame))
-    (set-face-background 'default "unspecified-bg" (selected-frame))))
-
-(add-hook 'window-setup-hook 'on-after-init)
 
 ;; hl-todo config ==================================
 ;; =================================================
@@ -4702,7 +4751,8 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; ==================================================
 
 (use-package eshell
-  :straight nil
+  :straight (:type built-in)
+  :defer t
   :config
   (add-hook 'eshell-mode-hook (lambda () (company-mode -1))))
 
@@ -4777,20 +4827,18 @@ set so that it clears the whole REPL buffer, not just the output."
 	  ("America/New_York" "New York")
 	  ("Europe/London" "Oxford")
 	  ("Europe/Zurich" "Lugano")
-	  ("Asia/Seoul" "Seoul"))))
+	  ("Asia/Seoul" "Seoul")))
+  (defun display-current-time ()
+    "Display the current time in the buffer."
+    (interactive)
+    (message (format-time-string "%Y-%m-%d %H:%M:%S %a")))
 
-;; custom functions =================================
-;; ==================================================
+  (defun insert-current-time ()
+    "Insert the current time at point."
+    (interactive)
+    (insert (format-time-string "%Y-%m-%d %H:%M:%S %a")))
 
-(defun display-current-time ()
-  "Display the current time in the buffer."
-  (interactive)
-  (message (format-time-string "%Y-%m-%d %H:%M:%S %a")))
-
-(defun insert-current-time ()
-  "Insert the current time at point."
-  (interactive)
-  (insert (format-time-string "%Y-%m-%d %H:%M:%S %a")))
+  (display-time-mode 1))
 
 ;; Mode-agnostic keybindings ==========================
 ;; ====================================================
@@ -5175,7 +5223,7 @@ set so that it clears the whole REPL buffer, not just the output."
   "x"     (which-key-prefix "text")
   "xi"    (which-key-prefix "insert")
   "xil"   'insert-lambda
-  "xie"   'emojify-insert-emoji 
+  "xie"   'emojify-insert-emoji
   "xiE"   'emoji-insert
   "x TAB" 'indent-rigidly
   "xw"    (which-key-prefix "word")
@@ -5245,6 +5293,7 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; ==================================================
 
 (use-package w3m
+  :defer t
   :init
   (defun xwidget-webkit-open-w3m-current-url ()
     (interactive)
@@ -5387,7 +5436,8 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; ==================================================
 
 (use-package eww
-  :straight nil
+  :straight (:type built-in)
+  :defer t
   :init
   (defun eww-open-w3m-current-url ()
     (interactive)
@@ -5658,12 +5708,12 @@ set so that it clears the whole REPL buffer, not just the output."
   :config
   (setq rmh-elfeed-org-files '("~/.emacs.d/elfeed.org")))
 
-(use-package elfeed-web
-  :defer    t
-  :commands (elfeed-web-start elfeed-web-stop)
-  :init
-  (require 'elfeed)
-  (elfeed-web-start))
+;; (use-package elfeed-web
+;;   :defer    t
+;;   :commands (elfeed-web-start elfeed-web-stop)
+;;   :init
+;;   (require 'elfeed)
+;;   (elfeed-web-start))
 
 (use-package elfeed
   :defer t
@@ -5824,7 +5874,8 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; ==================================================
 
 (use-package tramp
-  :straight nil
+  :straight (:type built-in)
+  :defer t
   :config
   (setq tramp-copy-size-limit 10000000
 	tramp-inline-compress-start-size 10000000))
@@ -5887,18 +5938,26 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; Misc =============================================
 ;; ==================================================
 
-(setq inhibit-splash-screen t
-      inhibit-startup-echo-area-message ""
-      inhibit-startup-message t)
+(use-package startup
+  :straight (:type built-in)
+  :demand t
+  :init
+  (setq inhibit-splash-screen t
+        inhibit-startup-echo-area-message ""
+        inhibit-startup-message t))
 
 (setq-default indent-tabs-mode nil	; Noooooooo please!
               standard-indent 2
-              line-spacing 0.1)         ; my eyeeees
+              line-spacing 0.1)       ; my eyeeees
 
 (put 'narrow-to-region 'disabled nil)
 
 (defun display-startup-echo-area-message ()
   (message "You think with your keyboard"))
+
+(tab-bar-history-mode 1)
+(auto-save-visited-mode 1)     ;; Auto-save files at an interval
+(global-auto-revert-mode 1)    ;; Refresh buffers with changed local files
 
 (message "config loaded!")
 
