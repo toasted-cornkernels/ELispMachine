@@ -1,12 +1,35 @@
-(setq-default gc-cons-threshold 100000000)
+;; Salutation to λ before beginning =================
+;; ==================================================
+
+(defvar y-combinator
+  '(λ (f) ((λ (x) (f (x x))) (λ (x) (f (x x))))))
+
+;; Initial Setups ===================================
+;; ==================================================
+
+(setq gc-cons-threshold (* 511 1024 1024)
+      gc-cons-percentage 0.5)
+(run-with-idle-timer 5 t #'garbage-collect)
+
 (setq warning-minimum-level     :emergency
       warning-minimum-log-level :warning)
 (setq ad-redefinition-action 'accept)
+(setq confirm-kill-processes nil)  ; Just shut up and die
 
 (fset 'yes-or-no-p 'y-or-n-p)
 
+(defun elispm/advice-man (f man-args)
+  "Work-around a argument parsing bug fixed in 30.1:
+   https://debbugs.gnu.org/cgi/bugreport.cgi?bug=66390"
+  (if (called-interactively-p 'interactive)
+      (funcall f man-args)
+    (message "*WARNING* man called non-interactively with args: %s" man-args)))
+(advice-add 'man :around #'my/advice-man)
+
 ;; Straight =========================================
 ;; ==================================================
+
+(setq straight-check-for-modifications nil)  ; rebuild packages only manually
 
 (defvar bootstrap-version)
 
@@ -23,9 +46,16 @@
 
 (straight-use-package 'use-package)
 
-(setq straight-use-package-by-default t)
+(setq straight-use-package-by-default t
+      package-install-upgrade-built-in t)
 
-(use-package use-package-ensure-system-package :ensure t)
+(use-package use-package-ensure-system-package :straight t)
+
+;; Profiling ========================================
+;; ==================================================
+
+;; (setq use-package-verbose t
+;;       use-package-compute-statistics t)
 
 ;; No Littering! ====================================
 ;; ==================================================
@@ -40,6 +70,17 @@
     (startup-redirect-eln-cache
      (convert-standard-filename
       (expand-file-name  "var/eln-cache/" user-emacs-directory)))))
+
+(use-package files
+  :straight (:type built-in)
+  :config
+  (setq backup-directory-alist `(("." . ,(concat user-emacs-directory "backups/")))
+        backup-by-copying t
+        delete-old-versions t
+        kept-new-versions 6
+        kept-old-versions 2
+        version-control t)
+  (auto-save-visited-mode 1))
 
 ;; Which-key configs ================================
 ;; ==================================================
@@ -72,6 +113,13 @@
 (use-package s)
 
 (use-package ts)
+
+(use-package font-lock-ext
+  :straight
+  (font-lock-ext :type git
+                 :host github
+                 :repo "sensorflo/font-lock-ext"
+                 :branch "master"))
 
 (use-package reazon
   :config
@@ -126,11 +174,9 @@
   "Make a straight.el specification to locate the PACKAGE from github REPO."
   (list package :type 'git :host 'github :repo repo))
 
-(defalias 'assert 'cl-assert)
-
 (defun keyword-to-string (keyword)
   "Convert the KEYWORD to string."
-  (assert (symbolp keyword))
+  (cl-assert (symbolp keyword))
   (->> keyword
        intern-soft
        symbol-name
@@ -206,13 +252,13 @@
 ;; evil-mode config =================================
 ;; ==================================================
 
-(setq evil-undo-system 'undo-tree)
 (use-package evil
   :init
   (setq evil-want-keybinding nil
 	evil-disable-insert-state-bindings t
 	evil-want-C-u-scroll t
-	evil-want-integration t)
+	evil-want-integration t
+        evil-undo-system 'undo-tree)
   :config
   (evil-mode 1)
   ;; set leader key in normal state
@@ -224,6 +270,13 @@
 	evil-normal-state-cursor 'box
 	evil-insert-state-cursor 'bar
 	evil-emacs-state-cursor  'bar)
+  (setq evil-insert-state-message nil
+        evil-motion-state-message nil
+        evil-normal-state-message nil
+        evil-operator-state-message nil
+        evil-replace-state-message nil
+        evil-visual-state-message nil
+        evil-emacs-state-message nil)
   (evil-ex-define-cmd "q" 'kill-this-buffer)
   (evil-ex-define-cmd "Q" 'kill-this-buffer)
   (evil-ex-define-cmd "W" 'save-buffer)
@@ -260,8 +313,8 @@
   :after (evil)
   :config
   (setq evil-collection-mode-list (remove 'elfeed evil-collection-mode-list))
-  (evil-collection-init)
-  (setq evil-collection-calendar-want-org-bindings t))
+  (setq evil-collection-calendar-want-org-bindings t)
+  (evil-collection-init))
 
 (use-package evil-surround
   :after evil
@@ -305,12 +358,30 @@
 
 (set-language-environment "Korean")
 (prefer-coding-system 'utf-8)
+
+;; Korean input method ==============================
+;; ==================================================
+
+(global-set-key (kbd "<f6>") 'toggle-korean-input-method)
+
 (unbind-key (kbd "C-d"))
-(unbind-key (kbd "C-d C-d"))
 (unbind-key (kbd "C-d C-l"))
-(global-set-key (kbd "C-d C-d") 'toggle-input-method)
-(global-set-key (kbd "C-d C-l") 'toggle-input-method)
-(global-set-key (kbd "C-\\") 'toggle-input-method)
+(global-set-key (kbd "C-d C-l") 'toggle-korean-input-method)
+
+(defun set-input-method-to-korean ()
+  (interactive)
+  (set-input-method 'korean-hangul))
+
+(global-set-key (kbd "C-d C-k") 'set-input-method-to-korean)
+
+;; Japanese input method ============================
+;; ==================================================
+
+(defun set-input-method-to-japanese ()
+  (interactive)
+  (set-input-method 'japanese))
+
+(global-set-key (kbd "C-d C-j") 'set-input-method-to-japanese)
 
 ;; Manage-minor-mode ================================
 ;; ==================================================
@@ -370,7 +441,9 @@
 ;; ==================================================
 
 (use-package emojify
-  :hook (after-init . global-emojify-mode))
+  :hook (after-init . global-emojify-mode)
+  :init
+  (setq emojify-emoji-styles '(unicode github)))
 
 ;; Align ============================================
 ;; ==================================================
@@ -400,15 +473,16 @@
 ;; ==================================================
 
 (use-package mixed-pitch
-  :hook ((org-mode . mixed-pitch-mode)
-	 (markdown-mode . mixed-pitch-mode)))
+  ;; :hook ((org-mode . mixed-pitch-mode)
+  ;;        (markdown-mode . mixed-pitch-mode))
+  )
 
 ;; Org config =======================================
 ;; ==================================================
 
 (use-package org
   :straight (:type built-in)
-  :demand   t
+  :defer t
   :init
   (defmacro org-emphasize-this (fname char)
     "Make function called FNAME for setting the emphasis (signified by CHAR) in org mode."
@@ -429,8 +503,10 @@
     "M-RET"      'org-meta-return
     "A"          'org-attach
     "a"          'org-agenda
-    "["          'org-agenda-file-to-front
-    "]"          'org-remove-file
+    "{"          'org-agenda-file-to-front
+    "}"          'org-remove-file
+    "["          'org-toggle-radio-button-no-check
+    "]"          'org-toggle-radio-button-no-check
 
     "c"          (which-key-prefix :clock)
     "ce"         'org-evaluate-time-range
@@ -455,6 +531,7 @@
     "ita"        (org-insert-structure org-insert-ascii "ascii")
     "itc"        (org-insert-structure org-insert-center "center")
     "itC"        (org-insert-structure org-insert-comment "comment")
+    "it/"        (org-insert-structure org-insert-comment "comment")
     "ite"        (org-insert-structure org-insert-example "example")
     "itE"        (org-insert-structure org-insert-export "export")
     "ith"        (org-insert-structure org-insert-export-html "html")
@@ -578,6 +655,11 @@
     "C-M-l" 'org-shiftright)
 
   :config
+  (defun org-toggle-radio-button-no-check ()
+    (interactive)
+    (let ((current-prefix-arg '(4)))
+      (call-interactively 'org-toggle-radio-button)) )
+
   (defun org-insert-current-time ()
     "insert the curren time at the cursor position."
     (interactive)
@@ -630,7 +712,7 @@
    org-hide-emphasis-markers t
    org-enforce-todo-dependencies t
    org-todo-keywords
-   '((sequence "TODO" "NEXT" "WORKING" "|"
+   '((sequence "TODO" "NEXT" "WORKING" "HOLD" "|"
 	       "DONE" "ABORTED"))
    org-export-backends
    '(ascii html icalendar latex odt markdown))
@@ -692,15 +774,15 @@
   :general
   (insert-mode-major-mode
     :keymaps '(org-read-date-minibuffer-local-map)
-    "M-h" 'calendar-one-day-backward
-    "M-k" 'calendar-one-week-backward
-    "M-j" 'calendar-one-week-forward
-    "M-l" 'calendar-one-day-forward
+    "M-h"    'calendar-one-day-backward
+    "M-k"    'calendar-one-week-backward
+    "M-j"    'calendar-one-week-forward
+    "M-l"    'calendar-one-day-forward
 
-    "M-H" 'calendar-one-month-backward
-    "M-K" 'calendar-one-year-backward
-    "M-J" 'calednar-one-year-forward
-    "M-L" 'calendar-one-month-forward))
+    "M-H"    'calendar-one-month-backward
+    "M-K"    'calendar-one-year-backward
+    "M-J"    'calednar-one-year-forward
+    "M-L"    'calendar-one-month-forward))
 
 (use-package org-ql :defer t)
 
@@ -715,6 +797,10 @@
 (use-package org-rich-yank :defer t)
 
 (use-package org-projectile :defer t)
+
+(use-package org-element
+  :straight (:type built-in)
+  :defer t)
 
 (use-package valign
   :hook ((markdown-mode . valign-mode)
@@ -732,6 +818,12 @@
 
 (use-package verb :defer t)
 
+(use-package ob-http
+  :after restclient
+  :init (add-to-list 'org-babel-load-languages '(http . t)))
+
+(use-package ob-restclient :defer t)
+
 (use-package ob-hy
   :defer t
   :init (add-to-list 'org-babel-load-languages '(hy . t)))
@@ -742,15 +834,19 @@
 
 (use-package ob-mermaid :defer t)
 
+(use-package ob-ruby
+  :straight (:type built-in)
+  :defer t)
+
 (use-package ob-racket
   :defer t
   :config
   (add-hook 'ob-racket-pre-runtime-library-load-hook
-	      #'ob-racket-raco-make-runtime-library)
+	    #'ob-racket-raco-make-runtime-library)
   (add-to-list 'org-src-lang-modes '("racket" . racket))
   :straight (ob-racket
-	       :type git :host github :repo "hasu/emacs-ob-racket"
-	       :files ("*.el" "*.rkt")))
+	     :type git :host github :repo "hasu/emacs-ob-racket"
+	     :files ("*.el" "*.rkt")))
 
 (use-package org-auto-tangle
   :defer t
@@ -758,12 +854,12 @@
 
 (use-package ob
   :straight (:type built-in)
-  :defer    t
+  :defer t
   :init
-  (add-hook 'org-mode-hook
-	    (lambda () (org-babel-do-load-languages
-			'org-babel-load-languages
-			org-babel-load-languages)))
+  ;; (add-hook 'org-mode-hook
+  ;;           (lambda () (org-babel-do-load-languages
+  ;;       		'org-babel-load-languages
+  ;;       		org-babel-load-languages)))
 
   (add-hook 'org-babel-after-execute-hook
 	    (lambda ()
@@ -771,13 +867,12 @@
 		(org-redisplay-inline-images))))
 
   :config
-  ;; (dolist (babel-language (list 'ob-lisp 'ob-clojure 'ob-scheme 'ob-hy
-  ;; 				'ob-dot 'ob-rust 'ob-kotlin 'ob-shell)))
+  (setq org-babel-languages '(lisp clojure scheme hy
+                              dot rust kotlin shell
+                              awk restclient C ruby))
   (org-babel-do-load-languages
    'org-babel-load-languages
-   '((lisp . t) (clojure . t) (scheme . t) (hy . t) (racket . t)
-     (dot . t) (rust . t) (kotlin . t) (shell . t)
-     (mermaid . t) (plantuml . t) (awk . t)))
+   (mapcar (lambda (language) `(,language . t)) org-babel-languages))
 
   :general
   (local-leader
@@ -874,8 +969,8 @@
                 org-edit-src-content-indentation 2))
 
 (use-package org-habit
-  :straight nil
-  :after org)
+  :straight (:type built-in)
+  :defer t)
 
 (use-package org-compat
   :straight nil
@@ -957,6 +1052,20 @@
 
 (use-package org-noter :defer t)
 
+(use-package org-tempo
+  :straight (:type built-in)
+  :defer t
+  :config
+  (dolist (item '(("sh" . "src sh")
+                  ("el" . "src emacs-lisp")
+                  ("li" . "src lisp")
+                  ("sc" . "src scheme")
+                  ("ql" . "src ql-tree-sitter")
+                  ("py" . "src python")
+                  ("yaml" . "src yaml")
+                  ("json" . "src json")))
+    (add-to-list 'org-structure-template-alist item)))
+
 ;; exporters
 (use-package ox-latex    :straight nil :defer t
   :config
@@ -973,11 +1082,6 @@
 (use-package ox-pandoc   :defer t
   :config
   (setq org-pandoc-options-for-gfm '((wrap . none) (toc . t))))
-
-;; Emoji config =====================================
-;; ==================================================
-
-(use-package emojify)
 
 ;; Esup config ======================================
 ;; ==================================================
@@ -1110,7 +1214,7 @@
 (use-package deadgrep :defer t)
 (use-package rg
   :defer t
-  :init
+  :config
   (rg-enable-default-bindings))
 (use-package ag :defer t)
 (use-package wgrep :defer t)
@@ -1119,7 +1223,7 @@
 ;; ==================================================
 
 (use-package emacs-codeql
-  :when (not (or android-p chromeOS-p))
+  :mode ("\\.qll?\\'" . ql-tree-sitter-mode)
   :hook (ql-tree-sitter-mode . (lambda ()
                                  (setq indent-tabs-mode nil
                                        tab-width 2)))
@@ -1129,7 +1233,6 @@
 		:repo "anticomputer/emacs-codeql"
 		:branch "main"
 		:files (:defaults "bin"))
-  :demand t
   :init
   (setq codeql-transient-binding "C-c q"
 	codeql-configure-eglot-lsp t
@@ -1144,6 +1247,7 @@
 
 (use-package codespaces
   :ensure-system-package gh
+  :defer t
   :config (codespaces-setup))
 
 ;; Eglot config =====================================
@@ -1159,7 +1263,11 @@
    (c-mode       . eglot-ensure)
    (csharp-mode  . eglot-ensure)
    (ql-tree-sitter-mode . eglot-ensure)
-   (javascript-mode . eglot-ensure))
+   (js-mode      . eglot-ensure)
+   (json-mode    . eglot-ensure)
+   (nix-mode     . eglot-ensure)
+   (go-mode      . eglot-ensure)
+   (lua-mode     . eglot-ensure))
 
   :general
   (local-leader
@@ -1168,16 +1276,167 @@
     "aa"     'eglot-code-actions
     "r"      'eglot-rename))
 
+(use-package consult-eglot
+  :after eglot)
+
 ;; Shell config =====================================
 ;; ==================================================
 
 (use-package sh-script
   :straight nil
-  :mode (("\\.sh\\'"           . sh-mode)
-	 ("\\.(ba|z)shrc.*\\'" . sh-mode)
-	 ("\\.zshenv.*\\'"     . sh-mode)
-	 ("\\.bash_profile\\'" . sh-mode)
-	 ("\\.zprofile\\'"     . sh-mode)))
+  :hook
+  (shell-script-mode . (lambda ()
+                         (setq indent-tabs-mode nil
+                               tab-width 2)))
+  :mode (("\\.sh\\'"           . shell-script-mode)
+	 ("\\.(ba|z)shrc.*\\'" . shell-script-mode)
+	 ("\\.zshenv.*\\'"     . shell-script-mode)
+	 ("\\.bash_profile\\'" . shell-script-mode)
+	 ("\\.zprofile\\'"     . shell-script-mode)))
+
+;; Python config ====================================
+;; ==================================================
+
+(use-package python
+  :straight (:type built-in)
+  ;; :mode "\\.py\\'"
+  :general
+  (local-leader
+    :major-modes '(python-mode t)
+    :keymaps     '(python-mode-map)
+    ;; "'"  'spacemacs/python-start-or-switch-repl
+
+    "c"  (local-leader "execute")
+    "d"  (local-leader "debug")
+    "h"  (local-leader "help")
+    "g"  (local-leader "goto")
+    "s"  (local-leader "REPL")
+    "r"  (local-leader "refactor")
+    "v"  (local-leader "virtualenv")
+    "vp" (local-leader "pipenv")
+    "vo" (local-leader "poetry")))
+
+(use-package cython-mode
+  :mode "\\.pyx\\'")
+
+(use-package importmagic)
+
+(use-package pipenv
+  :defer t
+  :commands (pipenv-activate
+             pipenv-deactivate
+             pipenv-shell
+             pipenv-open
+             pipenv-install
+             pipenv-uninstall)
+  :general
+  (local-leader
+    :major-modes '(python-mode t)
+    :keymaps     '(python-mode-map)
+    "vpa"        'pipenv-activate
+    "vpd"        'pipenv-deactivate
+    "vpi"        'pipenv-install
+    "vpo"        'pipenv-open
+    "vps"        'pipenv-shell
+    "vpu"        'pipenv-uninstall))
+
+(use-package poetry
+  :commands (poetry-venv-toggle
+             poetry-tracking-mode)
+  :general
+  (local-leader
+    :major-modes '(python-mode t)
+    :keymaps     '(python-mode-map)
+    "vod"        'poetry-venv-deactivate
+    "vow"        'poetry-venv-workon
+    "vot"        'poetry-venv-toggle))
+
+(use-package code-cells
+  :commands (code-cells-mode)
+  :hook (python-mode . code-cells-mode)
+  :general
+  (local-leader
+    :major-modes '(code-cells-mode t)
+    :keymaps     '(code-cells-mode-map)
+    "gB"         'code-cells-backward-cell
+    "gF"         'code-cells-forward-cell
+    "sc"         'code-cells-eval
+    "sa"         'code-cells-eval-above))
+
+(use-package blacken
+  :defer t
+  :commands (blacken-buffer)
+  :general
+  (local-leader
+    :major-modes '(python-mode t)
+    :keymaps     '(python-mode-map)
+    "="          'blacken-buffer))
+
+(use-package pip-requirements :defer t)
+
+(use-package pippel
+  :defer t
+  :general
+  (local-leader
+    :major-modes '(python-mode t)
+    :keymaps     '(python-mode-map)
+    "P"          'pippel-list-packages))
+
+(use-package py-isort
+  :defer t
+  :general
+  (local-leader
+    :major-modes '(python-mode t)
+    :keymaps     '(python-mode-map)
+    "rI"         'py-isort-buffer))
+
+(use-package sphinx-doc
+  :defer t
+  :general
+  (local-leader
+    :major-modes '(python-mode t)
+    :keymaps     '(python-mode-map)
+    "Se" 'sphinx-doc-mode
+    "Sd" 'sphinx-doc))
+
+(use-package pydoc
+  :defer t
+  :general
+  (local-leader
+    :major-modes '(python-mode t)
+    :keymaps     '(python-mode-map)
+    "hp" 'pydoc-at-point-no-jedi
+    "hP" 'pydoc))
+
+(use-package pyenv-mode
+  :commands (pyenv-mode-versions)
+  :general
+  (local-leader
+   :major-modes '(python-mode t)
+   :keymaps     '(python-mode-map)
+   "vu" 'pyenv-mode-unset
+   "vs" 'pyenv-mode-set))
+
+(use-package pylookup
+  :commands (pylookup-lookup
+             pylookup-update
+             pylookup-update-all)
+  :general
+  (local-leader
+    :major-modes '(python-mode t)
+    :keymaps     '(python-mode-map)
+    "hH" 'pylookup-lookup))
+
+(use-package pytest
+  :commands (pytest-one
+             pytest-pdb-one
+             pytest-all
+             pytest-pdb-all
+             pytest-last-failed
+             pytest-pdb-last-failed
+             pytest-module
+             pytest-pdb-module)
+  :config (add-to-list 'pytest-project-root-files "setup.cfg"))
 
 ;; Perl config ======================================
 ;; ==================================================
@@ -1195,6 +1454,7 @@
 
 (use-package lua-mode
   :straight nil
+  :defer t
   :mode "\\.lua\\'"
   :defines (run-hammerspoon)
 
@@ -1243,6 +1503,8 @@
 
   (setq lua-indent-level 2
 	lua-indent-string-contents t)
+
+  (define-key lua-mode-map (kbd "q") nil)
 
   :general
   (local-leader
@@ -1299,10 +1561,9 @@
     :major-modes '(minibuffer-mode t)
     :keymaps     '(minibuffer-mode-map)
     "M-p" 'previous-history-element
-    "M-n" 'next-history-element
-    "C-h" 'backward-delete-char))
+    "M-n" 'next-history-element))
 
-;; imenu config ======================================
+;; Imenu =============================================
 ;; ==================================================
 
 (use-package imenu
@@ -1325,9 +1586,6 @@
   (show-paren-mode 1))
 
 (use-package smartparens
-  ;; :bind (:map smartparens-mode-map
-  ;; 	      ("M-p" . sp-previous-sexp)
-  ;; 	      ("M-n" . sp-next-sexp))
   :config
   (smartparens-global-mode)
   ;; Regular quote
@@ -1336,7 +1594,7 @@
 			       newlisp-mode picolisp-mode janet-mode
 			       lisp-interaction-mode ielm-mode minibuffer-mode
 			       fennel-repl-mode cider-repl-mode racket-repl-mode
-			       fundamental-mode)
+			       fundamental-mode markdown-mode slime-repl-mode)
 		 "'" "'" :actions nil)
   ;; Backquote
   (sp-local-pair '(fennel-mode hy-mode clojure-mode lisp-mode emacs-lisp-mode
@@ -1346,7 +1604,9 @@
 			       fennel-repl-mode cider-repl-mode racket-repl-mode
                                tuareg-mode
 			       fundamental-mode)
-		 "`" "`" :actions nil))
+		 "`" "`" :actions nil)
+  ;; Pound sign
+  (sp-local-pair '(markdown-mode) "#" "#" :actions nil))
 
 (use-package evil-cleverparens
   :init
@@ -1358,7 +1618,7 @@
 	  evil-cp-additional-bindings (assoc-delete-all "M-]" evil-cp-additional-bindings)))
   (evil-cp-set-additional-bindings))
 
-;; kbd-mode config ==================================
+;; KMonad ===========================================
 ;; ==================================================
 
 (use-package kbd-mode
@@ -1368,12 +1628,12 @@
   :hook     (kbd-mode . evil-cleverparens-mode)
   :commands kbd-mode)
 
-;; Common Lisp config ===============================
+;; Common Lisp ======================================
 ;; ==================================================
 
 (use-package lisp-mode
-  :straight nil
-  :hook     (lisp-mode . evil-cleverparens-mode))
+  :straight  nil
+  :hook      (lisp-mode . evil-cleverparens-mode))
 
 (use-package slime
   :commands slime-mode
@@ -1434,8 +1694,8 @@ Unlike `eval-defun', this does not go to topmost function."
 
   :general
   (local-leader
-    :major-mode '(lisp-mode t)
-    :keymaps    '(lisp-mode-map)
+    :major-modes '(lisp-mode t)
+    :keymaps     '(lisp-mode-map)
     "'" 'slime
 
     "c"  (which-key-prefix "compile")
@@ -1547,11 +1807,11 @@ Unlike `eval-defun', this does not go to topmost function."
 	       cider-clojure-interaction-mode-map)
     "=l"  'clojure-align
 
-    "ra"  (which-key-prefix "add")
+    "ra"  (which-key-prefix :add)
     "ran" 'clojure-insert-ns-form
     "raN" 'clojure-insert-ns-form-at-point
 
-    "rc"  (which-key-prefix "cycle/clean/convert")
+    "rc"  (which-key-prefix :cycle/clean/convert)
     "rci" 'clojure-cycle-if
     "rcp" 'clojure-cycle-privacy
     "rc#" 'clojure-convert-collection-to-set
@@ -1561,23 +1821,23 @@ Unlike `eval-defun', this does not go to topmost function."
     "rc{" 'clojure-convert-collection-to-map
     "rc:" 'clojure-toggle-keyword-string
 
-    "rd"  (which-key-prefix "destructure")
-    "re"  (which-key-prefix "extract/expand")
-    "rf"  (which-key-prefix "find/function")
-    "rh"  (which-key-prefix "hotload")
-    "ri"  (which-key-prefix "introduce/inline")
-    "rm"  (which-key-prefix "move")
-    "rp"  (which-key-prefix "project/promote")
-    "rr"  (which-key-prefix "remove/rename/replace")
-    "rs"  (which-key-prefix "show/sort/stop")
+    "rd"  (which-key-prefix :destructure)
+    "re"  (which-key-prefix :extract/expand)
+    "rf"  (which-key-prefix :find/function)
+    "rh"  (which-key-prefix :hotload)
+    "ri"  (which-key-prefix :introduce/inline)
+    "rm"  (which-key-prefix :move)
+    "rp"  (which-key-prefix :project/promote)
+    "rr"  (which-key-prefix :remove/rename/replace)
+    "rs"  (which-key-prefix :show/sort/stop)
     "rsn" 'clojure-sort-ns
 
-    "rt"  (which-key-prefix "thread")
+    "rt"  (which-key-prefix :thread)
     "rtf" 'clojure-thread-first-all
     "rth" 'clojure-thread
     "rtl" 'clojure-thread-last-all
 
-    "ru"  (which-key-prefix "unwind/update")
+    "ru"  (which-key-prefix :unwind/update)
     "rua" 'clojure-unwind-all
     "ruw" 'clojure-unwind)
   :config
@@ -1770,27 +2030,27 @@ set so that it clears the whole REPL buffer, not just the output."
 	       cider-clojure-interaction-mode-map)
     "'"  'sesman-start
 
-    "="  (which-key-prefix "format")
+    "="  (which-key-prefix :format)
     "=r" 'cider-format-region
     "=f" 'cider-format-defun
 
-    "=e"  (which-key-prefix "edn")
+    "=e"  (which-key-prefix :edn)
     "=eb" 'cider-format-edn-buffer
     "=ee" 'cider-format-edn-last-sexp
     "=er" 'cider-format-edn-region
 
-    "d"  (which-key-prefix  "debug")
+    "d"  (which-key-prefix :debug)
     "db" 'cider-debug-defun-at-point
     "de" 'cider-display-error-buffer
 
-    "dv"  (which-key-prefix "inspect values")
+    "dv"  (which-key-prefix :inspect)
     "dve" 'cider-inspect-last-sexp
     "dvf" 'cider-inspect-defun-at-point
     "dvi" 'cider-inspect
     "dvl" 'cider-inspect-last-result
     "dvv" 'cider-inspect-expr
 
-    "e"  (which-key-prefix "evaluation")
+    "e"  (which-key-prefix :eval)
     "e;" 'cider-eval-defun-to-comment
     "e$" 'cider-eval-sexp-end-of-line
     "e(" 'cider-eval-list-at-point
@@ -1808,19 +2068,19 @@ set so that it clears the whole REPL buffer, not just the output."
     "eV" 'cider-eval-sexp-up-to-point
     "ew" 'cider-eval-last-sexp-and-replace
 
-    "en"  (which-key-prefix "namespace")
+    "en"  (which-key-prefix :namespace)
     "ena" 'cider-ns-reload-all
     "enn" 'cider-eval-ns-form
     "enr" 'cider-ns-refresh
     "enl" 'cider-ns-reload
 
-    "ep"  (which-key-prefix "pretty print")
+    "ep"  (which-key-prefix :pretty-print)
     "ep;" 'cider-pprint-eval-defun-to-comment
     "ep:" 'cider-pprint-eval-last-sexp-to-comment
     "epf" 'cider-pprint-eval-defun-at-point
     "epe" 'cider-pprint-eval-last-sexp
 
-    "m"  (which-key-prefix "manage repls")
+    "m"  (which-key-prefix :repl)
     "mb" 'sesman-browser
     "mi" 'sesman-info
     "mg" 'sesman-goto
@@ -1836,11 +2096,11 @@ set so that it clears the whole REPL buffer, not just the output."
     "mSj" 'cider-connect-sibling-clj
     "mSs" 'cider-connect-sibling-cljs
 
-    "mq"  (which-key-prefix "quit/restart")
+    "mq"  (which-key-prefix :quit/restart)
     "mqq" 'sesman-quit
     "mqr" 'sesman-restart
 
-    "p"  (which-key-prefix "profile")
+    "p"  (which-key-prefix :profile)
     "p+" 'cider-profile-samples
     "pc" 'cider-profile-clear
     "pn" 'cider-profile-ns-toggle
@@ -1874,7 +2134,7 @@ set so that it clears the whole REPL buffer, not just the output."
     "scm" 'cider-connect-clj&cljs
     "scs" 'cider-connect-cljs
 
-    "sj"  (which-key-prefix "jack-in")
+    "sj"  (which-key-prefix :jack-in)
     "sjj" 'cider-jack-in-clj
     "sjm" 'cider-jack-in-clj&cljs
     "sjs" 'cider-jack-in-cljs
@@ -1885,7 +2145,7 @@ set so that it clears the whole REPL buffer, not just the output."
     "sqn" 'cider-ns-reload
     "sqN" 'cider-ns-reload-all
 
-    "t"  (which-key-prefix "test")
+    "t"  (which-key-prefix :test)
     "ta" 'cider-test-run-all-tests
     "tb" 'cider-test-show-report
     "tl" 'cider-test-run-loaded-tests
@@ -1894,7 +2154,7 @@ set so that it clears the whole REPL buffer, not just the output."
     "tr" 'cider-test-rerun-failed-tests
     "tt" 'cider-test-run-focused-test
 
-    "g"  (which-key-prefix "goto")
+    "g"  (which-key-prefix :goto)
     "gb" 'cider-pop-back
     "gc" 'cider-classpath
     "gg" 'clj-find-var
@@ -1904,7 +2164,7 @@ set so that it clears the whole REPL buffer, not just the output."
     "gs" 'cider-browse-spec
     "gS" 'cider-browse-spec-all
 
-    "h"  (which-key-prefix "documentation")
+    "h"  (which-key-prefix :documentation)
     "ha" 'cider-apropos
     "hc" 'cider-cheatsheet
     "hd" 'cider-clojuredocs
@@ -1915,7 +2175,7 @@ set so that it clears the whole REPL buffer, not just the output."
     "hS" 'cider-browse-spec-all
     "hh" 'cider-doc
 
-    "T"  (which-key-prefix "toggle")
+    "T"  (which-key-prefix :toggle)
     "Te" 'cider-enlighten-mode
     "Tf" 'cider-toggle-repl-font-locking
     "Tp" 'cider-toggle-repl-pretty-printing
@@ -2140,7 +2400,7 @@ set so that it clears the whole REPL buffer, not just the output."
     "eC" 'hy-shell-eval-current-form-and-go
     "ei" 'run-hy
     "er" 'hy-shell-eval-region
-    "eR" 'spacemacs/hy-shell-eval-region-and-go
+    "eR" 'hy-shell-eval-region-and-go
 
     "s"  (which-key-prefix :REPL)
     "sb" 'hy-shell-eval-buffer
@@ -2205,10 +2465,10 @@ set so that it clears the whole REPL buffer, not just the output."
     "dd"         'fennel-show-documentation
     "dv"         'fennel-show-variable-documentation
 
-    "df"         (which-key-prefix :find)
-    "dff"        'fennel-find-definition
-    "dfm"        'fennel-find-module-definition
-    "dfp"        'fennel-find-definition-pop
+    "f"          (which-key-prefix :find)
+    "fd"         'fennel-find-definition
+    "fm"         'fennel-find-module-definition
+    "fp"         'fennel-find-definition-pop
 
     "'"          'fennel-repl
     "r"          'fennel-reload)
@@ -2285,8 +2545,18 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; Scheme config ====================================
 ;; ==================================================
 
+(use-package scheme-mode
+  :straight nil
+  :hook     (scheme-mode . evil-cleverparens-mode)
+  :general
+  (local-leader
+    :major-modes '(scheme-mode t)
+    :keymaps     '(scheme-mode-map)
+    "rs" 'turn-on-geiser-mode
+    "rc" 'turn-off-geiser-mode))
+
 (use-package geiser
-  :commands run-geiser
+  :after scheme-mode
   :general
   (local-leader
     :major-modes '(scheme-mode t)
@@ -2393,6 +2663,8 @@ set so that it clears the whole REPL buffer, not just the output."
 (use-package geiser-mit     :defer t)
 (use-package geiser-kawa    :defer t)
 
+;; λ ================================================
+;; ==================================================
 (use-package sicp :defer t)
 
 ;; Janet config =====================================
@@ -2444,6 +2716,7 @@ set so that it clears the whole REPL buffer, not just the output."
     "sr" 'dante-restart))
 
 (use-package haskell-mode
+  :defer t
   :mode "\\.(hs|lhs|cabal)\\'"
   :init
   (setq haskell-notify-p t
@@ -2654,6 +2927,7 @@ set so that it clears the whole REPL buffer, not just the output."
     "L"  'ediprolog-unlocalize))
 
 (use-package sweeprolog
+  :defer t
   :init
   (setq sweeprolog--directory "~/.emacs.d/straight/repos/sweeprolog"))
 
@@ -2841,9 +3115,8 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (use-package rust-mode
   :mode "\\.rs\\'"
+  :hook (rust-mode . (lambda () (setq indent-tabs-mode nil)))
   :config
-  (add-hook 'rust-mode-hook
-	    (lambda () (setq indent-tabs-mode nil)))
   (define-key rust-mode-map (kbd "C-c C-c") 'rust-run))
 
 (use-package toml-mode
@@ -2856,14 +3129,162 @@ set so that it clears the whole REPL buffer, not just the output."
 (use-package go-mode
   :hook (go-mode . (lambda ()
                      (setq indent-tabs-mode 1
-                           tab-width 4)))
-  :defer t)
+                           tab-width 2)))
+  :defer t
+  :init
+  (defun go-run-tests (args)
+    (interactive)
+    (compilation-start
+     (concat go-test-command " " (when go-test-verbose "-v ") args " " go-use-test-args)
+     nil (lambda (n) go-test-buffer-name) nil))
+
+  (defun go-run-package-tests ()
+    (interactive)
+    (go-run-tests ""))
+
+  (defun go-run-package-tests-nested ()
+    (interactive)
+    (go-run-tests "./..."))
+
+  (defun go-run-test-current-function ()
+    (interactive)
+    (if (string-match "_test\\.go" buffer-file-name)
+        (save-excursion
+          (move-end-of-line nil)
+          (re-search-backward "^func[ ]+\\(([[:alnum:]]*?[ ]?[*]?\\([[:alnum:]]+\\))[ ]+\\)?\\(Test[[:alnum:]_]+\\)(.*)")
+          (go-run-tests
+           (cond
+            (go-use-testify-for-testing
+             (concat "-run='Test" (match-string-no-properties 2)
+                     "' -testify.m='" (match-string-no-properties 3) "'"))
+            (go-use-gocheck-for-testing (concat "-check.f='" (match-string-no-properties 3) "$'"))
+            (t (concat "-run='" (match-string-no-properties 3) "$'")))))
+      (message "Must be in a _test.go file to run go-run-test-current-function")))
+
+  (defun go-run-test-current-suite ()
+    (interactive)
+    (if (string-match "_test\.go" buffer-file-name)
+        (if (or go-use-testify-for-testing go-use-gocheck-for-testing)
+            (let ((test-method (if go-use-gocheck-for-testing
+                                   "-check.f='"
+                                 "-run='Test")))
+              (save-excursion
+                (re-search-backward "^func[ ]+\\(([[:alnum:]]*?[ ]?[*]?\\([[:alnum:]]+\\))[ ]+\\)?\\(Test[[:alnum:]_]+\\)(.*)")
+                (go-run-tests (concat test-method (match-string-no-properties 2) "'"))))
+          (message "Testify or Gocheck is needed to test the current suite"))
+      (message "Must be in a _test.go file to run go-test-current-suite")))
+
+  (defun go-run-main ()
+    (interactive)
+    (shell-command
+     (concat go-run-command " . " go-run-args)))
+
+  (defun go-run-generate-current-dir ()
+    (interactive)
+    (compilation-start
+     (concat go-generate-command " " (file-name-directory buffer-file-name))
+     nil (lambda (n) go-generate-buffer-name) nil))
+
+  (defun go-run-generate-current-buffer ()
+    (interactive)
+    (compilation-start
+     (concat go-generate-command " " (buffer-file-name))
+     nil (lambda (n) go-generate-buffer-name) nil))
+
+  ;; misc
+  (defun go-packages-gopkgs ()
+    "Return a list of all Go packages, using `gopkgs'."
+    (sort (process-lines "gopkgs") #'string<))
+
+  :general
+  (local-leader
+    :major-modes '(go-mode t)
+    :keymaps     '(go-mode-map)
+    "="   'gofmt
+
+    "e"   (which-key-prefix "playground")
+    "eb"  'go-play-buffer
+    "ed"  'go-download-play
+    "er"  'go-play-region
+
+    "g"   (which-key-prefix "goto")
+    "ga"  'ff-find-other-file
+    "gc"  'go-coverage
+
+    "h"   (which-key-prefix "help")
+    "hh"  'godoc-at-point
+
+    "i"   (which-key-prefix "imports")
+    "ia"  'go-import-add
+    "ig"  'go-goto-imports
+    "ir"  'go-remove-unused-imports
+
+    "t"   (which-key-prefix "test")
+    "tP"  'go-run-package-tests-nested
+    "tp"  'go-run-package-tests
+    "ts"  'go-run-test-current-suite
+    "tt"  'go-run-test-current-function
+
+    "tg"  (which-key-prefix "generate")
+    "tgg" 'go-gen-test-dwim
+    "tgf" 'go-gen-test-exported
+    "tgF" 'go-gen-test-all
+
+    "x"   (which-key-prefix "execute")
+    "xx"  'go-run-main
+    "xg"  'go-run-generate-current-buffer
+    "xG"  'go-run-generate-current-dir
+
+    "r"   (which-key-prefix "refactor")
+    "rs"  'go-fill-struct
+    "rN"  'go-rename
+    "rf"  'go-tag-add
+    "rF"  'go-tag-remove
+    "rd"  'godoctor-godoc
+    "re"  'godoctor-extract
+    "rn"  'godoctor-rename
+    "rt"  'godoctor-toggle))
+
+(use-package go-fill-struct :defer t)
+
+(use-package go-rename :defer t)
+
+(use-package go-tag :defer t)
+
+(use-package godoctor :defer t)
+
+(use-package go-gen-test :defer t)
 
 ;; VimScript config =================================
 ;; ==================================================
 
 (use-package vimrc-mode
   :defer t)
+
+;; RestClient =======================================
+;; ==================================================
+
+(use-package restclient
+  :mode  (("\\.http\\'" . restclient-mode))
+  :defer t
+  :init
+  (defun restclient-http-send-current-raw-stay-in-window ()
+    (interactive)
+    (restclient-http-send-current t t))
+  :general
+  (local-leader
+    :major-modes '(restclient-mode t)
+    :keymaps     '(restclient-mode-map)
+    "n" 'restclient-jump-next
+    "p" 'restclient-jump-prev
+    "j" 'restclient-jump-next
+    "k" 'restclient-jump-prev
+    "," 'restclient-http-send-current-stay-in-window
+    "s" 'restclient-http-send-current-stay-in-window
+    "S" 'restclient-http-send-current
+    "r" 'restclient-http-send-current-raw-stay-in-window
+    "R" 'restclient-http-send-current-raw
+    "y" 'restclient-copy-curl-command))
 
 ;; HTML config ======================================
 ;; ==================================================
@@ -2897,13 +3318,31 @@ set so that it clears the whole REPL buffer, not just the output."
     "nl" 'npm-mode-npm-list
     "np" 'npm-mode-visit-project-file))
 
+(use-package js
+  :straight nil
+  :mode ("\\.jsx?\\'" . js-mode)
+  :hook (js-mode . (lambda ()
+                     (setq indent-tabs-mode nil
+                           tab-width 2)))
+  :config
+  (add-to-list 'eglot-server-programs
+               '(js-mode . ("typescript-language-server" "--stdio")))
+  (add-to-list 'eglot-server-programs
+               '(js-ts-mode . ("typescript-language-server" "--stdio"))))
+
+;; TypeScript config ================================
+;; ==================================================
+
+(use-package typescript-mode
+  :mode ("\\.tsx?\\'" . typescript-mode))
+
 ;; Markdown config ==================================
 ;; ==================================================
 
 (use-package markdown-mode
   :hook ((gfm-mode markdown-mode) . (lambda ()
                                       (setq indent-tabs-mode nil)
-                                      (setq tab-width 4)))
+                                      (setq tab-width 2)))
   :mode
   (("\\.md\\'"  . gfm-mode)
    ("\\.mkd\\'" . markdown-mode)
@@ -2928,13 +3367,12 @@ set so that it clears the whole REPL buffer, not just the output."
   (local-leader
     :major-modes '(markdown-mode t)
     :keymaps     '(markdown-mode-map)
-    "M-RET"      'markdown-do
+    ","          'markdown-do
     "{"          'markdown-backward-paragraph
     "}"          'markdown-forward-paragraph
     "]"          'markdown-complete
     ">"          'markdown-indent-region
     "<"          'markdown-outdent-region
-    "-"          'markdown-insert-hr
 
     "c"          (which-key-prefix "command")
     "c]"         'markdown-complete-buffer
@@ -2967,6 +3405,8 @@ set so that it clears the whole REPL buffer, not just the output."
     "iw"         'markdown-insert-wiki-link
     "iu"         'markdown-insert-uri
     "iT"         'markdown-insert-table
+    "iF"         'markdown-insert-foldable-block
+    "i-"         'markdown-insert-hr
 
     "k"          'markdown-kill-thing-at-point
 
@@ -3030,7 +3470,8 @@ set so that it clears the whole REPL buffer, not just the output."
     "M-h"        'markdown-promote
     "M-j"        'markdown-move-down
     "M-k"        'markdown-move-up
-    "M-l"        'markdown-demote)
+    "M-l"        'markdown-demote
+    "RET"        nil)
 
   (insert-mode-major-mode
     :major-modes '(markdown-mode t)
@@ -3059,34 +3500,6 @@ set so that it clears the whole REPL buffer, not just the output."
     :major-modes '(markdown-mode gfm-mode t)
     :keymaps     '(markdown-mode-map gfm-mode-map)
     "it"  'markdown-toc-generate-toc))
-
-(use-package mmm-mode
-  :commands mmm-mode
-  :init
-  (defun activate-mmm-mode ()
-    (unless (bound-and-true-p git-commit-mode)
-      (mmm-mode 1)))
-  (add-hook 'markdown-mode-hook 'activate-mmm-mode)
-  :config
-  ;; from Jason Blevins http://jblevins.org/log/mmm
-  (defvar markdown-mmm-auto-modes
-    '("c" "c++" "css" "java" "javascript" "python" "ruby" "rust" "scala"
-      ("elisp" "emacs-lisp") ("ess" "R") ("ini" "conf-unix") ("html" "web"))
-    "List of language names or lists of language and mode names for which to generate mmm classes.")
-  (defun markdown/mmm-auto-class (lang)
-    (let* ((l       (if (listp lang) (car lang)  lang))
-	   (s       (if (listp lang) (cadr lang) lang))
-	   (class   (intern (concat "markdown-" l)))
-	   (submode (intern (concat s "-mode")))
-	   (front   (concat "^```" l "[\n\r]+"))
-	   (back    "^```$"))
-      (mmm-add-classes (list (list class
-				   :submode submode
-				   :front front
-				   :back back)))
-      (dolist (mode markdown--key-bindings-modes)
-	(mmm-add-mode-ext-class mode nil class))))
-  (mapc 'markdown/mmm-auto-class markdown-mmm-auto-modes))
 
 (use-package vmd-mode
   :defer t
@@ -3136,10 +3549,88 @@ set so that it clears the whole REPL buffer, not just the output."
   :straight (wiktionary-bro
 	     :type git :host github :repo "agzam/wiktionary-bro.el"))
 
+(use-package define-word
+  :defer t)
+
+(use-package powerthesaurus
+  :defer t
+  :general
+  (global-leader
+    "xwtt" 'powerthesaurus-lookup-synonyms-dwim
+    "xwta" 'powerthesaurus-lookup-antonyms-dwim
+    "xwtr" 'powerthesaurus-lookup-related-dwim
+    "xwtd" 'powerthesaurus-lookup-definitions-dwim
+    "xwts" 'powerthesaurus-lookup-sentences-dwim))
+
 ;; CSharp config ====================================
 ;; ==================================================
 
-(use-package csharp-mode :mode "\\.cs\\'")
+(use-package csharp-mode
+  :straight (:type built-in)
+  :defer t
+  :init
+  (add-to-list 'eglot-server-programs
+               '(csharp-mode . ("csharp-ls")))
+  (add-to-list 'eglot-server-programs
+               '(csharp-ts-mode . ("csharp-ls"))))
+
+(use-package omnisharp
+  :hook ((csharp-mode . omnisharp-mode)
+         (csharp-ts-mode . omnisharp-mode))
+  :general
+  (local-leader
+    :major-modes '(csharp-mode t)
+    :keymaps     '(csharp-mode-map)
+    "u"  'omnisharp-auto-complete-overrides
+    "i"  'omnisharp-fix-usings
+
+    "g"  (which-key-prefix "navigation")
+    "ge" 'omnisharp-solution-errors
+    "gG" 'omnisharp-go-to-definition-other-window
+    ;; "gu" 'omnisharp-helm-find-usages
+    "gU" 'omnisharp-find-usages-with-ido
+    ;; "gs" 'omnisharp-helm-find-symbols
+    "gi" 'omnisharp-find-implementations
+    "gI" 'omnisharp-find-implementations-with-ido
+    "gr" 'omnisharp-navigate-to-region
+    "gm" 'omnisharp-navigate-to-solution-member
+    "gM" 'omnisharp-navigate-to-solution-member-other-window
+    "gf" 'omnisharp-navigate-to-solution-file
+    "gF" 'omnisharp-navigate-to-solution-file-then-file-member
+    "gc" 'omnisharp-navigate-to-current-file-member
+
+    "h"  (which-key-prefix "documentation")
+    "ht" 'omnisharp-current-type-information
+    "hT" 'omnisharp-current-type-information-to-kill-ring
+
+    "r"  (which-key-prefix "refactoring")
+    "rm" 'omnisharp-rename
+    "rr" 'omnisharp-run-code-action-refactoring
+
+    "s"  (which-key-prefix "server")
+    "ss" 'omnisharp-start-omnisharp-server
+    "sS" 'omnisharp-stop-server
+    "sr" 'omnisharp-reload-solution
+    "si" 'omnisharp-install-server
+
+    "t"  (which-key-prefix "tests")
+    "tb" 'omnisharp-unit-test-buffer
+    "tl" 'omnisharp-unit-test-last
+    "tt" 'omnisharp-unit-test-at-point))
+
+(use-package csproj-mode
+  :mode "\\.csproj\\'")
+
+(use-package sharper
+  :after csharp-mode)
+
+(use-package sln-mode
+  :mode "\\.sln\\'"
+  :straight
+  (sln-mode :type git
+            :host github
+	    :repo "sensorflo/sln-mode"
+            :branch "master"))
 
 ;; auto-indent on RET ===============================
 ;; ==================================================
@@ -3154,7 +3645,7 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (setq explicit-shell-file-name "/bin/zsh")
 (use-package exec-path-from-shell
-  :when (or macOS-p chromeOS-p)
+  :when (or macOS-p chromeOS-p linux-p)
   :config
   (setq exec-path-from-shell-variables '("PATH" "JAVA_HOME" "BROWSER"
 					 "OPAMCLI" "WORK_MACHINE")
@@ -3171,17 +3662,29 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (use-package vertico
   :init
-  (vertico-mode)
   (setq vertico-scroll-margin 0
 	vertico-count 20
 	vertico-resize t
 	vertico-cycle t)
+  :config
+  (vertico-mode)
   (define-key vertico-map (kbd "C-l") #'vertico-directory-up))
 
 (use-package savehist
   :straight nil
   :init
-  (savehist-mode))
+  (setq savehist-file (concat user-emacs-directory "savehist")
+        enable-recursive-minibuffers t
+        history-length 1000
+        savehist-additional-variables '(mark-ring
+                                        global-mark-ring
+                                        search-ring
+                                        regexp-search-ring
+                                        extended-command-history
+                                        kill-ring)
+        savehist-autosave-interval 60)
+  :config
+  (savehist-mode t))
 
 (use-package emacs
   :straight nil
@@ -3199,7 +3702,12 @@ set so that it clears the whole REPL buffer, not just the output."
 	'(read-only t cursor-intangible t face minibuffer-prompt))
   (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
 
-  (setq enable-recursive-minibuffers t))
+  (setq enable-recursive-minibuffers t)
+  (defun on-after-init ()
+    "Make the background transparent when running in a tty."
+    (unless (display-graphic-p (selected-frame))
+      (set-face-background 'default "unspecified-bg" (selected-frame))))
+  (add-hook 'window-setup-hook 'on-after-init))
 
 (use-package orderless
   :init
@@ -3355,14 +3863,16 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (use-package embark
   ;; TODO: add some keybindings
-  )
+  :defer t)
 
-(use-package embark-consult)
+(use-package embark-consult
+  :after embark)
 
 ;; iedit config =====================================
 ;; ==================================================
 
-(use-package iedit)
+(use-package iedit
+  :defer t)
 
 ;; transpose-frame config ===========================
 ;; ==================================================
@@ -3400,8 +3910,9 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; ==================================================
 
 (use-package tex
-  :mode "\\.tex\\'"
+  ;; :mode "\\.tex\\'"
   :straight auctex
+  :defer t
   :config
   (define-key TeX-mode-map (kbd "s-\\") #'TeX-previous-error)
   (define-key TeX-mode-map (kbd "s-/") #'TeX-next-error)
@@ -3450,7 +3961,7 @@ set so that it clears the whole REPL buffer, not just the output."
 (use-package xwidget
   :straight nil
   :when     macOS-p
-  :defer    t
+  :commands xwidget-new-window
   :general
   (normal-mode-major-mode
     :major-modes '(xwidget-webkit-mode t)
@@ -3493,21 +4004,36 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; json config =====================================
 ;; =================================================
 
-(use-package json-mode :mode "\\.json\\'")
+(use-package json-mode
+  ;; :straight nil
+  :mode "\\.json\\'"
+  :hook (json-mode . (lambda ()
+                       (setq indent-tabs-mode nil)
+                       (setq tab-width 2))))
+
+(use-package jsonc-mode
+  :straight nil
+  :mode "\\.jsonc\\'"
+  :hook (jsonc-mode . (lambda ()
+                        (setq indent-tabs-mode nil)
+                        (setq tab-width 2))))
 
 ;; yaml config =====================================
 ;; =================================================
 
 (use-package yaml-mode
-  :mode (("\\.\\(yml\\|yaml\\)\\'" . yaml-mode)
+  :mode (("\\.ya?ml\\'" . yaml-mode)
 	 ("Procfile\\'" . yaml-mode)
-	 ("\\.qlpack\\'"  . yaml-mode)))
+	 ("\\.qlpack\\'"  . yaml-mode)
+         ("\\.qls" . yaml-mode)))
 
 ;; csv config ======================================
 ;; =================================================
 
 (use-package csv-mode
-  :defer t
+  :mode ((".csv" . csv-mode)
+         (".expected" . csv-mode)
+         (".actual" . csv-mode))
   :general
   (local-leader
     :major-modes '(csv-mode t)
@@ -3536,12 +4062,10 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (use-package kotlin-mode
   :mode "\\.kt\\'"
-
   :init
   (defun run-kotlin ()
     (interactive)
     (comint-run "kotlin" '()))
-
   :config
   (local-leader
     :major-modes '(kotlin-mode t)
@@ -3566,62 +4090,6 @@ set so that it clears the whole REPL buffer, not just the output."
   ;; sbt-supershell kills sbt-mode:  https://github.com/hvesalai/emacs-sbt-mode/issues/152
   (setq sbt:program-options '("-Dsbt.supershell=false")))
 
-;; Git-gutter+ config ===============================
-;; ==================================================
-
-(use-package git-gutter+
-  :when terminal-p
-  :diminish (git-gutter+-mode . "GG")
-  :general
-  (local-leader
-    :keymaps '(git-gutter+-mode-map)
-    "G" (which-key-prefix :version-control)
-    "Gn" 'git-gutter+-next-hunk
-    "Gp" 'git-gutter+-previous-hunk
-    "Gv=" 'git-gutter+-show-hunk
-    "Gr" 'git-gutter+-revert-hunks
-    "Gt" 'git-gutter+-stage-hunks
-    "Gc" 'git-gutter+-commit
-    "GC" 'git-gutter+-stage-and-commit
-    "G C-y" 'git-gutter+-stage-and-commit-whole-buffer
-    "GU" 'git-gutter+-unstage-whole-buffer)
-  :config
-  (setq git-gutter+-modified-sign " "
-	git-gutter+-added-sign "+"
-	git-gutter+-deleted-sign "-"
-	git-gutter+-diff-option "-w"
-	git-gutter+-hide-gutter t
-	git-gutter+-disabled-modes '(pdf-view-mode doc-view-mode image-mode)
-	;; Hide gutter when there are no changes
-	git-gutter+-hide-gutter t)
-  (global-git-gutter+-mode))
-
-(use-package git-gutter-fringe+
-  :when GUI-p
-  :init
-  (setq git-gutter-fr+-side 'left-fringe)
-  :config
-  (fringe-helper-define 'git-gutter-fr+-added nil
-    "..X...."
-    "..X...."
-    "XXXXX.."
-    "..X...."
-    "..X....")
-
-  (fringe-helper-define 'git-gutter-fr+-deleted nil
-    "......."
-    "......."
-    "XXXXX.."
-    "......."
-    ".......")
-
-  (fringe-helper-define 'git-gutter-fr+-modified nil
-    "..X...."
-    ".XXX..."
-    "XX.XX.."
-    ".XXX..."
-    "..X...."))
-
 ;; Magit config =====================================
 ;; ==================================================
 
@@ -3642,12 +4110,12 @@ set so that it clears the whole REPL buffer, not just the output."
   ;; (spacemacs|define-transient-state git-blame
   ;;       :title "Git Blame Transient State"
   ;;       :hint-is-doc t
-  ;;       :dynamic-hint (spacemacs//git-blame-ts-hint)
+  ;;       :dynamic-hint (/git-blame-ts-hint)
   ;;       :on-enter (let (golden-ratio-mode)
   ;;                   (unless (bound-and-true-p magit-blame-mode)
   ;;                     (call-interactively 'magit-blame-addition)))
   ;;       :bindings
-  ;;       ("?" spacemacs//git-blame-ts-toggle-hint)
+  ;;       ("?" /git-blame-ts-toggle-hint)
   ;;       ;; chunks
   ;;       ("p" magit-blame-previous-chunk)
   ;;       ("P" magit-blame-previous-chunk-same-commit)
@@ -3736,11 +4204,12 @@ set so that it clears the whole REPL buffer, not just the output."
     "c"          'with-editor-finish
     "k"          'with-editor-cancel))
 
-(use-package git-commit
-  :defer t)
+(use-package magit-lfs
+  :after magit)
 
 (use-package git-link
-  :defer t
+  :after magit
+  ;; :defer t
   :config
   (defun git-permalink ()
     "Allow the user to get a permalink via git-link in a git-timemachine buffer."
@@ -3773,10 +4242,10 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; TODO
 ;; (use-package git-timemachine
 ;;   :defer t
-;;   :commands spacemacs/time-machine-transient-state/body
+;;   :commands time-machine-transient-state/body
 ;;   :init
-;;   (spacemacs/set-leader-keys
-;;    "gt" 'spacemacs/time-machine-transient-state/body)
+;;   (set-leader-keys
+;;    "gt" 'time-machine-transient-state/body)
 ;;   :config
 ;;   (spacemacs|define-transient-state time-machine
 ;; 				    :title "Git Timemachine Transient State"
@@ -3834,7 +4303,9 @@ set so that it clears the whole REPL buffer, not just the output."
   :defer t)
 
 (use-package magit-todos
-  :hook (magit-mode . magit-todos-mode))
+  :hook (magit-mode . magit-todos-mode)
+  :config
+  (evil-collection-magit-todos-setup))
 
 (use-package orgit
   :defer t)
@@ -3894,6 +4365,64 @@ set so that it clears the whole REPL buffer, not just the output."
   :config
   (setq vc-follow-symlinks t))
 
+;; Git-gutter config ===============================
+;; ==================================================
+
+(use-package git-gutter
+  :when terminal-p
+  :defer t
+  ;; :diminish (git-gutter-mode . "GG")
+  :general
+  (local-leader
+    :predicate 'git-gutter-mode
+    "G"  (which-key-prefix :git-gutter)
+    "Gn" 'git-gutter:next-hunk
+    "Gp" 'git-gutter:previous-hunk
+    "G$" 'git-gutter:end-of-hunk
+    "Ge" 'git-gutter:end-of-hunk
+    "Gr" 'git-gutter:revert-hunk
+    "Gs" 'git-gutter:stage-hunk
+    "Ga" 'git-gutter:stage-hunk
+    "Gm" 'git-gutter:mark-hunk
+    "Gp" 'git-gutter:popup-hunk
+    "Gc" 'git-gutter:clear
+    "GG" 'git-gutter:toggle)
+  :config
+  (setq git-gutter:modified-sign " "
+	git-gutter:added-sign "+"
+	git-gutter:deleted-sign "-"
+	git-gutter:diff-option "-w"
+	git-gutter:hide-gutter t ; Hide gutter when there are no changes
+	git-gutter:disabled-modes '(pdf-view-mode doc-view-mode image-mode))
+  (global-git-gutter-mode))
+
+(use-package git-gutter-fringe
+  :when GUI-p
+  :defer t
+  :init
+  (setq git-gutter-fr:side 'left-fringe)
+  :config
+  (fringe-helper-define 'git-gutter-fr:added nil
+    "..X...."
+    "..X...."
+    "XXXXX.."
+    "..X...."
+    "..X....")
+
+  (fringe-helper-define 'git-gutter-fr:deleted nil
+    "......."
+    "......."
+    "XXXXX.."
+    "......."
+    ".......")
+
+  (fringe-helper-define 'git-gutter-fr:modified nil
+    "..X...."
+    ".XXX..."
+    "XX.XX.."
+    ".XXX..."
+    "..X...."))
+
 ;; format-all =======================================
 ;; ==================================================
 
@@ -3907,7 +4436,13 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (use-package eldoc
   :straight nil
-  :hook ((emacs-lisp-mode lisp-interaction-mode ielm-mode) . turn-on-eldoc-mode))
+  :hook ((emacs-lisp-mode
+          lisp-interaction-mode
+          ielm-mode
+          eval-expression-minibuffer-setup)
+         . turn-on-eldoc-mode)
+  :config
+  (setq eldoc-echo-area-use-multiline-p 3))
 
 ;; Newcomment =======================================
 ;; ==================================================
@@ -3965,9 +4500,10 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; Helpful ==========================================
 ;; ==================================================
 
-(use-package helpful)
+(use-package helpful
+  :defer t)
 
-;; recentf configs ==================================
+;; Recentf ==========================================
 ;; ==================================================
 
 (use-package recentf
@@ -3975,13 +4511,20 @@ set so that it clears the whole REPL buffer, not just the output."
   :init
   (setq recentf-keep '(file-remote-p file-readable-p)
 	recentf-save-file (concat user-emacs-directory ".recentf")
-	recentf-auto-cleanup 'never)
+        recentf-max-saved-items 1000
+        recentf-max-menu-items 40
+	recentf-auto-cleanup 'never
+        recentf-auto-save-timer (run-with-idle-timer 600 t 'recentf-save-list))
   :config
   (recentf-mode 1)
-  (setq recentf-max-menu-items 40)
+  (add-to-list 'recentf-exclude (recentf-expand-file-name package-user-dir))
   (add-to-list 'recentf-exclude "/private/var/folders/.*")
   (add-to-list 'recentf-exclude "/var/folders/.*")
-  (add-to-list 'recentf-exclude "/tmp/.*"))
+  (add-to-list 'recentf-exclude "COMMIT_EDITMSG\\'")
+  (add-to-list 'recentf-exclude "/tmp/.*")
+  (add-to-list 'recentf-exclude "/.emacs.d/var/.*")
+  (when custom-file
+    (add-to-list 'recentf-exclude (recentf-expand-file-name custom-file))))
 
 (defun cleanup-emacs ()
   (interactive)
@@ -3992,7 +4535,63 @@ set so that it clears the whole REPL buffer, not just the output."
   (garbage-collect)
   (message "no more garbage! yay!"))
 
-;; ibuffer configs ==================================
+;; Image-mode =======================================
+;; ==================================================
+
+(use-package image-mode
+  :straight nil
+  :defer t
+  :init
+  (setq image-animate-loop t)
+  :general
+  (local-leader
+    :major-modes '(image-mode t)
+    :keymaps     '(image-mode-map)
+    "h" 'image-backward-hscroll
+    "j" 'image-next-line
+    "k" 'image-previous-line
+    "l" 'image-forward-hscroll
+
+    "a" (which-key-prefix "animate")
+    "aa" 'image-toggle-animation
+    "a+" 'image-increase-speed
+    "a-" 'image-decrease-speed
+    "ar" 'image-reset-speed
+
+    "t" (which-key-prefix "transform/resize")
+    "t+" 'image-increase-size
+    "t-" 'image-decrease-size
+    "tf" 'image-mode-fit-frame
+    "tr" 'image-transform-reset
+    "th" 'image-transform-fit-to-height
+    "tw" 'image-transform-fit-to-width
+    "ts" 'image-transform-set-scale
+    "tr" 'image-transform-rotation
+
+    "g" (which-key-prefix "goto file")
+    "gn" 'image-next-file
+    "gN" 'image-previous-file))
+
+;; Ediff ============================================
+;; ==================================================
+
+(use-package ediff
+  ;; TODO make sure that ediff-cleanup-mess runs after a session
+  :defer t
+  :init
+  (setq-default ediff-window-setup-function 'ediff-setup-windows-plain
+                ediff-split-window-function 'split-window-horizontally
+                ediff-merge-split-window-function 'split-window-horizontally)
+  (require 'outline)
+  (add-hook 'ediff-prepare-buffer-hook #'show-all)
+  (add-hook 'ediff-quit-hook           #'winner-undo)
+  (defun disable-y-or-n-p (orig-fun &rest args)
+    "Pressing 'q' immediately closes ediff."
+    (cl-letf (((symbol-function 'y-or-n-p) (cl-constantly t))) ; (lambda (prompt) t)
+      (apply orig-fun args)))
+  (advice-add 'ediff-quit :around #'disable-y-or-n-p))
+
+;; Ibuffer ==========================================
 ;; ==================================================
 
 (use-package ibuffer
@@ -4000,17 +4599,18 @@ set so that it clears the whole REPL buffer, not just the output."
   :config
   (add-hook 'ibuffer-mode-hook #'ibuffer-set-filter-groups-by-mode))
 
-;; projectile configs ===============================
+;; Projectile =======================================
 ;; ==================================================
 
 (use-package projectile
+  :defer t
   :config
   (projectile-mode)
   (setq projectile-mode-line            "Projectile"
 	anaconda-mode-localhost-address "localhost"
-	projectile-enable-caching       t))
+	projectile-enable-caching       nil))
 
-;; minions config ===================================
+;; Minions config ===================================
 ;; ==================================================
 
 (use-package minions
@@ -4018,16 +4618,25 @@ set so that it clears the whole REPL buffer, not just the output."
   (minions-mode 1)
   (setq minions-hidden-modes t))
 
-;; visuals ==========================================
+;; Visuals ==========================================
 ;; ==================================================
 
 (setq column-number-mode t)
 
+(use-package xt-mouse
+  :straight nil
+  :config
+  (xterm-mouse-mode 1))
+
+;; (use-package repeat
+;;   :straight nil
+;;   :config
+;;   (repeat-mode 1))
+
 (use-package menu-bar
   :straight nil
   :config
-  (when (or terminal-p chromeOS-p)
-    (menu-bar-mode -1)))
+  (menu-bar-mode -1))
 
 (use-package tab-bar
   :straight nil
@@ -4049,35 +4658,56 @@ set so that it clears the whole REPL buffer, not just the output."
     "s-[" 'tab-previous
     "s-]" 'tab-next
     "s-." 'tab-new
-    "s-," 'tab-close))
+    "s-," 'tab-close)
 
-(use-package tool-bar
-  :straight nil
-  :when     GUI-p
-  :config   (tool-bar-mode -1))
+  (tab-bar-history-mode 1))
 
 (blink-cursor-mode 0)
 (global-visual-line-mode t)
 
-(when (fboundp 'scroll-bar-mode)
-  (scroll-bar-mode -1))
+(use-package scroll-bar
+  :straight nil
+  :config
+  (when (fboundp 'scroll-bar-mode)
+    (scroll-bar-mode -1)))
+
 (setq ring-bell-function 'ignore)
 
 ;; font
-(if (not chromeOS-p)
+
+(use-package faces
+  :straight nil
+  :config
+  (if (not chromeOS-p)
+      (set-face-attribute 'default nil
+			  :font "Fira Code"
+			  :weight 'light
+			  :height 180)
     (set-face-attribute 'default nil
-			:font "Fira Code"
-			:weight 'light
-			:height 180)
-  (set-face-attribute 'default nil
-		      :height 140)
-  (set-fontset-font t 'hangul
-		    (font-spec :name "NanumGothic")))
+		        :height 140)
+    (set-fontset-font t 'hangul
+		      (font-spec :name "NanumGothic"))))
 
 (use-package tron-legacy-theme
+  :custom-face
+  (tool-bar ((t (:background "#000000"))))
   :config
-  ;; (load-theme 'tron-legacy t)
-  )
+  (when android-p
+    (enable-theme 'tron-legacy)))
+
+(use-package modus-themes
+  :config
+  (setq modus-themes-italic-constructs t
+        modus-themes-bold-constructs nil))
+
+(use-package auto-dark
+  :when (not android-p)
+  :config
+  (setq auto-dark-dark-theme 'tron-legacy
+        auto-dark-light-theme 'modus-operandi
+        auto-dark-allow-osascript macOS-p
+        auto-dark-allow-powershell nil)
+  (auto-dark-mode t))
 
 (use-package mood-line
   :config
@@ -4133,12 +4763,15 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; ==================================================
 
 (use-package eshell
-  :straight nil
+  :straight (:type built-in)
+  :defer t
   :config
   (add-hook 'eshell-mode-hook (lambda () (company-mode -1))))
 
 ;; vterm config =====================================
 ;; ==================================================
+
+;; TODO Add https://codeberg.org/akib/emacs-eat
 
 (use-package vterm
   :defer t)
@@ -4198,29 +4831,30 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; ==================================================
 
 (use-package time
-  :straight nil
+  :straight (:type built-in)
   :config
-  (setq world-clock-list t
-	;; TODO: Not working for Europe
-	zoneinfo-style-world-list
-	'(("America/Los_Angeles" "Los Angeles")
-	  ("America/New_York" "New York")
-	  ("Europe/Oxford" "Oxford")
-	  ("Europe/Lugano" "Lugano")
-	  ("Asia/Seoul" "Seoul"))))
+  (let ((cities '(("America/Los_Angeles" "Los Angeles")
+	          ("America/New_York" "New York")
+	          ("Europe/London" "Oxford")
+	          ("Europe/Zurich" "Lugano")
+	          ("Asia/Seoul" "Seoul"))))
+    (setq display-time-load-average nil
+          display-time-format "%l:%M %p %b %d"
+          display-time-world-time-format "%a %d %b %I:%M %p %Z"
+          display-time-world-list cities
+          world-clock-list t
+	  zoneinfo-style-world-list cities))
+  (defun display-current-time ()
+    "Display the current time in the buffer."
+    (interactive)
+    (message (format-time-string "%Y-%m-%d %H:%M:%S %a")))
 
-;; custom functions =================================
-;; ==================================================
+  (defun insert-current-time ()
+    "Insert the current time at point."
+    (interactive)
+    (insert (format-time-string "%Y-%m-%d %H:%M:%S %a")))
 
-(defun display-current-time ()
-  "Display the current time in the buffer."
-  (interactive)
-  (message (format-time-string "%Y-%m-%d %H:%M:%S")))
-
-(defun insert-current-time ()
-  "Insert the current time at point."
-  (interactive)
-  (insert (format-time-string "%Y-%m-%d %H:%M:%S")))
+  (display-time-mode 1))
 
 ;; Mode-agnostic keybindings ==========================
 ;; ====================================================
@@ -4354,7 +4988,11 @@ set so that it clears the whole REPL buffer, not just the output."
   "Sp"  (which-key-prefix :package)
   "Spu" 'straight-use-package
   "Spp" 'straight-pull-package
-  "SpP" 'straight-pull-all)
+  "SpP" 'straight-pull-all
+  "Spb" 'straight-rebuild-package
+  "SpB" 'straight-rebuild-all
+  "Spv" 'straight-visit-package
+  "SpV" 'straight-visit-package-website)
 
 (global-leader
   "w"  (which-key-prefix :window)
@@ -4450,7 +5088,7 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (global-leader
   "g"   (which-key-prefix :git)
-  "gb"  'magit-blame	   ; 'spacemacs/git-blame-transient-state/body
+  "gb"  'magit-blame	   ; 'git-blame-transient-state/body
 
   "gf"  (which-key-prefix :file)
   "gfF" 'magit-find-file
@@ -4506,7 +5144,7 @@ set so that it clears the whole REPL buffer, not just the output."
   "aoCg" 'org-clock-goto
   "aoCi" 'org-clock-in
   "aoCI" 'org-clock-in-last
-  "aoCj" 'spacemacs/org-clock-jump-to-current-clock
+  "aoCj" 'org-clock-jump-to-current-clock
   "aoCo" 'org-clock-out
   "aoCr" 'org-resolve-clocks
   "aoCp" 'org-pomodoro
@@ -4560,7 +5198,11 @@ set so that it clears the whole REPL buffer, not just the output."
 (global-leader
   "q"    (which-key-prefix :quit)
   "qq"   'kill-emacs
-  "qf"   'delete-frame)
+  "qf"   'delete-frame
+  "qN"   (defun start-emacs-q ()
+           (interactive)
+           (start-process "Emacs" nil
+                          (executable-find "emacs") "-q")))
 
 (global-leader
   "h"    (which-key-prefix :help)
@@ -4599,9 +5241,15 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (global-leader
   "x"     (which-key-prefix "text")
-  "xl"    'insert-lambda
+  "xi"    (which-key-prefix "insert")
+  "xil"   'insert-lambda
+  "xie"   'emojify-insert-emoji
+  "xiE"   'emoji-insert
   "x TAB" 'indent-rigidly
-  "xwd"   'osx-dictionary-search-pointer)
+  "xw"    (which-key-prefix "word")
+  "xwd"   'osx-dictionary-search-pointer
+  "xwD"   'define-word-at-point
+  "xwt"   (which-key-prefix "thesaurus"))
 
 (global-leader
   "t"    (which-key-prefix "toggle")
@@ -4665,6 +5313,7 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; ==================================================
 
 (use-package w3m
+  :defer t
   :init
   (defun xwidget-webkit-open-w3m-current-url ()
     (interactive)
@@ -4704,7 +5353,7 @@ set so that it clears the whole REPL buffer, not just the output."
     (let ((link (w3m-anchor)))
       (if (not link)
 	  (message "Thing on point is not a link.")
-	(cond ((string-match "/\\/www\\.youtube\\.com\\/watch\/?" link)
+	(cond ((string-match "/\\/www\\.youtube\\.com\\/watch\\/?" link)
 	       (message (concat "loading from youtube..." link))
 	       (call-process "mpv" nil nil nil link)))
 	(message "Sorry, playback error. Please check the url."))))
@@ -4726,13 +5375,13 @@ set so that it clears the whole REPL buffer, not just the output."
   (defun w3m-open-url (url)
     "Opens url in new w3m session with `http://` appended"
     (interactive
-     (list (read-string "Enter website address (default: google.com):" nil nil "google.com" nil )))
+     (list (read-string "Enter website address (default: google.com): " nil nil "google.com" nil )))
     (w3m-open-url-with 'w3m-goto-url url))
 
   (defun w3m-open-url-new-session (url)
     "Opens url in new w3m session with `http://` appended"
     (interactive
-     (list (read-string "Enter website address (default: google.com):" nil nil "google.com" nil )))
+     (list (read-string "Enter website address (default: google.com): " nil nil "google.com" nil )))
     (w3m-open-url-with 'w3m-goto-url-new-session url))
 
   (setq browse-url-browser-function 'w3m-goto-url-new-session
@@ -4807,7 +5456,8 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; ==================================================
 
 (use-package eww
-  :straight nil
+  :straight (:type built-in)
+  :defer t
   :init
   (defun eww-open-w3m-current-url ()
     (interactive)
@@ -4816,7 +5466,6 @@ set so that it clears the whole REPL buffer, not just the output."
     (interactive)
     (let ((url (read-from-minibuffer "URL: " "https://namu.wiki/w/")))
       (eww-browse-url url)))
-
   :config
   (evil-define-key 'normal eww-mode-map (kbd "c") 'eww-copy-page-url)
   (setq eww-search-prefix "https://www.google.com/search?q=")
@@ -4951,7 +5600,7 @@ set so that it clears the whole REPL buffer, not just the output."
     "q" 'tablist-quit
     "g" 'pdf-occur-revert-buffer-with-args
     "r" 'pdf-occur-revert-buffer-with-args
-    "*" 'spacemacs/enter-ahs-forward
+    "*" 'enter-ahs-forward
     "?" 'evil-search-backward)
 
   (local-leader
@@ -4981,8 +5630,8 @@ set so that it clears the whole REPL buffer, not just the output."
   :mode ("\\.epub\\'" . nov-mode)
   :config
   (normal-mode-major-mode
-    :major-mode '(nov-mode t)
-    :keymaps    '(nov-mode-map)
+    :major-modes '(nov-mode t)
+    :keymaps     '(nov-mode-map)
     "H"  'nov-previous-document
     "L"  'nov-next-document
     "d"  'nov-scroll-up
@@ -5003,13 +5652,33 @@ set so that it clears the whole REPL buffer, not just the output."
   (global-leader
     "awr"  (which-key-prefix "reddit")
     "awrm" 'reddigg-view-main
+    "awrr" 'reddigg-view-main
     "awrs" 'reddigg-view-sub)
 
   :config
-  (setq reddigg-subs '(emacs clojure orgmode lisp commandline
-			     mechkeyboard scala haskell HHKB clojure
-			     vim kotlin programmerhumor orgmode
-			     commandline CityPorn OrgRoam)
+  (setq reddigg-subs '(Common_Lisp
+                       GUIX
+                       HHKB
+                       ProgrammerHumor
+                       Python
+                       Racket
+                       clojure
+                       commandline
+                       elm
+                       emacs
+                       fsharp
+                       haskell
+                       lisp
+                       neovim
+                       nix
+                       nixos
+                       ocaml
+                       orgmode
+                       purescript
+                       ruby
+                       scala
+                       spacemacs
+                       vim)
 	org-confirm-elisp-link-function nil))
 
 ;; hnreader config ==================================
@@ -5026,6 +5695,7 @@ set so that it clears the whole REPL buffer, not just the output."
     "awhs" 'hnreader-show
     "awhj" 'hnreader-jobs
     "awhb" 'hnreader-best
+    "awhh" 'hnreader-best
     "awhm" 'hnreader-more)
 
   :config
@@ -5038,24 +5708,32 @@ set so that it clears the whole REPL buffer, not just the output."
   :defer t
   :config
   (setq eradio-player '("mpv" "--no-video" "--no-terminal" "--really-quiet")
-	eradio-channels '(("MBC FM4U"    . "http://serpent0.duckdns.org:8088/mbcfm.pls")
-			  ("MBC 표준FM"   . "http://serpent0.duckdns.org:8088/mbcsfm.pls")
-			  ("KBS 쿨FM"     . "http://serpent0.duckdns.org:8088/kbs2fm.pls")
-			  ("KBS 해피FM"   . "http://serpent0.duckdns.org:8088/kbs2radio.pls")
-			  ("KBS 클래식 FM" . "http://serpent0.duckdns.org:8088/kbsfm.pls")
-			  ("SBS 파워FM"   . "http://serpent0.duckdns.org:8088/sbsfm.pls")
-			  ("SBS 러브FM"   . "http://serpent0.duckdns.org:8088/sbs2fm.pls")
-			  ("TBS 교통방송"  . "http://tbs.hscdn.com/tbsradio/fm/playlist.m3u8")
-			  ("TBS eFM"     . "http://tbs.hscdn.com/tbsradio/efm/playlist.m3u8")
-			  ("CBS 음악방송"  . "http://aac.cbs.co.kr/cbs939/cbs939.stream/playlist.m3u8"))))
+	      eradio-channels '(("MBC FM4U"    . "http://serpent0.duckdns.org:8088/mbcfm.pls")
+			                    ("MBC 표준FM"   . "http://serpent0.duckdns.org:8088/mbcsfm.pls")
+			                    ("KBS 쿨FM"     . "http://serpent0.duckdns.org:8088/kbs2fm.pls")
+			                    ("KBS 해피FM"   . "http://serpent0.duckdns.org:8088/kbs2radio.pls")
+			                    ("KBS 클래식 FM" . "http://serpent0.duckdns.org:8088/kbsfm.pls")
+			                    ("SBS 파워FM"   . "http://serpent0.duckdns.org:8088/sbsfm.pls")
+			                    ("SBS 러브FM"   . "http://serpent0.duckdns.org:8088/sbs2fm.pls")
+			                    ("TBS 교통방송"  . "http://tbs.hscdn.com/tbsradio/fm/playlist.m3u8")
+			                    ("TBS eFM"     . "http://tbs.hscdn.com/tbsradio/efm/playlist.m3u8")
+			                    ("CBS 음악방송"  . "http://aac.cbs.co.kr/cbs939/cbs939.stream/playlist.m3u8"))))
 
 ;; Elfeed config ====================================
 ;; ==================================================
 
 (use-package elfeed-org
   :defer t
+  :commands (elfeed-org)
   :config
   (setq rmh-elfeed-org-files '("~/.emacs.d/elfeed.org")))
+
+;; (use-package elfeed-web
+;;   :defer    t
+;;   :commands (elfeed-web-start elfeed-web-stop)
+;;   :init
+;;   (require 'elfeed)
+;;   (elfeed-web-start))
 
 (use-package elfeed
   :defer t
@@ -5092,78 +5770,78 @@ set so that it clears the whole REPL buffer, not just the output."
   :general
   (normal-mode-major-mode
     :major-modes '(elfeed-search-mode t)
-    :keymaps '(elfeed-search-mode-map)
-    "c"  'elfeed-db-compact
-    "o"  'elfeed-load-opml
-    "w"  'elfeed-web-start
-    "W"  'elfeed-web-stop
-    "P"  'elfeed-player
-    "y"  'elfeed-search-yank
-    "Y"  'elfeed-youtube-player
+    :keymaps     '(elfeed-search-mode-map)
+    "c"          'elfeed-db-compact
+    "o"          'elfeed-load-opml
+    "P"          'elfeed-player
+    "y"          'elfeed-search-yank
+    "Y"          'elfeed-youtube-player
+    "b"          'elfeed-search-browse-url
 
-    "go" 'elfeed-search-browse-url
-    "gr" 'elfeed-update
-    "gu" 'elfeed-unjam
+    "w"          'elfeed-web-start
+    "W"          'elfeed-web-stop
+    "go"         'elfeed-search-browse-url
+    "gr"         'elfeed-update
+    "gR"         'elfeed-search-update--force
+    "gu"         'elfeed-unjam
 
-    (kbd "RET") 'elfeed-search-show-entry
-    (kbd "S-<return>") 'elfeed-search-browse-url
-    (kbd "SPC") 'scroll-up-command
-    (kbd "S-SPC") 'scroll-down-command
+    "RET"        'elfeed-search-show-entry
+    "S-RET"      'elfeed-search-browse-url
+    "SPC"        'scroll-up-command
+    "S-SPC"      'scroll-down-command
 
-    "s" 'elfeed-search-live-filter
-    "S" 'elfeed-search-set-filter
-    "c" 'elfeed-search-clear-filter
+    "s"          'elfeed-search-live-filter
+    "S"          'elfeed-search-set-filter
+    "c"          'elfeed-search-clear-filter
 
-    "q"  'elfeed-search-quit-window
-    "ZQ" 'elfeed-search-quit-window
-    "ZZ" 'elfeed-search-quit-window
+    "q"          'elfeed-search-quit-window
+    "ZQ"         'elfeed-search-quit-window
+    "ZZ"         'elfeed-search-quit-window
 
-    "+" 'elfeed-search-tag-all
-    "-" 'elfeed-search-untag-all
-    "r" 'elfeed-search-untag-all-unread
-    "u" 'elfeed-search-tag-all-unread)
+    "+"          'elfeed-search-tag-all
+    "-"          'elfeed-search-untag-all
+    "r"          'elfeed-search-untag-all-unread
+    "u"          'elfeed-search-tag-all-unread)
 
   (normal-mode-major-mode
     :major-modes '(elfeed-show-mode t)
-    :keymaps '(elfeed-show-mode-map)
-    (kbd "S-<return>") 'elfeed-show-visit
-    (kbd "SPC") 'scroll-up-command
-    (kbd "S-SPC") 'scroll-down-command
-    (kbd "<tab>") 'elfeed-show-next-link
-    "s" 'elfeed-show-new-live-search
-    "+" 'elfeed-show-tag
-    "-" 'elfeed-show-untag
-    "A" 'elfeed-show-add-enclosure-to-playlist
-    "P" 'elfeed-show-play-enclosure
-    "d" 'elfeed-show-save-enclosure
-    "]]" 'elfeed-show-next
-    "[[" 'elfeed-show-prev
-    "gj" 'elfeed-show-next
-    "gk" 'elfeed-show-prev
-    "go" 'elfeed-show-visit
-    "gr" 'elfeed-show-refresh
-
-    "C-j" 'elfeed-show-next
-    "C-k" 'elfeed-show-prev
-
-    "q" 'elfeed-kill-buffer
-    "ZQ" 'elfeed-kill-buffer
-    "ZZ" 'elfeed-kill-buffer)
+    :keymaps     '(elfeed-show-mode-map)
+    "S-RET"      'elfeed-show-visit
+    "SPC"        'scroll-up-command
+    "S-SPC"      'scroll-down-command
+    "TAB"        'elfeed-show-next-link
+    "s"          'elfeed-show-new-live-search
+    "+"          'elfeed-show-tag
+    "-"          'elfeed-show-untag
+    "A"          'elfeed-show-add-enclosure-to-playlist
+    "P"          'elfeed-show-play-enclosure
+    "d"          'elfeed-show-save-enclosure
+    "]]"         'elfeed-show-next
+    "C-j"        'elfeed-show-next
+    "gj"         'elfeed-show-next
+    "[["         'elfeed-show-prev
+    "C-k"        'elfeed-show-prev
+    "gk"         'elfeed-show-prev
+    "go"         'elfeed-show-visit
+    "gr"         'elfeed-show-refresh
+    "q"          'elfeed-kill-buffer
+    "ZQ"         'elfeed-kill-buffer
+    "ZZ"         'elfeed-kill-buffer
+    "b"          'elfeed-search-browse-url)
 
   :config
-  (elfeed-org)
-  (elfeed-goodies/setup)
-  ;; (elfeed-web-start)
   (evil-define-key 'visual elfeed-search-mode-map
     "+"  'elfeed-search-tag-all
     "-"  'elfeed-search-untag-all
     "b"  'elfeed-search-browse-url
     "y"  'elfeed-search-yank
     "U"  'elfeed-search-tag-all-unread
-    "u"  'elfeed-search-untag-all-unread))
+    "u"  'elfeed-search-untag-all-unread)
+  (elfeed-org)
+  (elfeed-web-start))
 
 (use-package elfeed-goodies
-  :defer t)
+  :commands elfeed-goodies/setup)
 
 ;; Emms config ======================================
 ;; ==================================================
@@ -5173,12 +5851,10 @@ set so that it clears the whole REPL buffer, not just the output."
   :init
   (defun emms-mode-line-only-filename ()
     "Format the currently playing song."
-    (let* ((fullname (emms-track-description
-		      (emms-playlist-current-selected-track)))
-	   (splitted (s-split "/" fullname))
-	   (filename (car (last splitted))))
-      (concat "🎵 " (car (s-split "\\.[mp3|wma|m4a]" filename)))))
-
+    (->> (emms-playlist-current-selected-track)
+         (assoc 'info-title)
+         (cdr)
+         (concat "🎵 ")))
   :config
   (require 'emms-setup)
   (emms-all)
@@ -5192,11 +5868,13 @@ set so that it clears the whole REPL buffer, not just the output."
 
   :general
   (global-leader
-    "am" (which-key-prefix "emms")
+    "am"   (which-key-prefix "emms")
     "amee" 'emms
     "ames" 'emms-pause
+    "ameh" 'emms-previous
     "amep" 'emms-previous
     "amen" 'emms-next
+    "amel" 'emms-next
     "amed" 'emms-play-directory
     "amef" 'emms-play-file
     "ameu" 'emms-play-url))
@@ -5228,26 +5906,11 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; ==================================================
 
 (use-package tramp
-  :straight nil
+  :straight (:type built-in)
+  :defer t
   :config
   (setq tramp-copy-size-limit 10000000
 	tramp-inline-compress-start-size 10000000))
-
-(use-package git-gutter+
-  :defer t
-  :config
-  (defun git-gutter+-remote-default-directory (dir file)
-    (let* ((vec (tramp-dissect-file-name file))
-	   (method (tramp-file-name-method vec))
-	   (user (tramp-file-name-user vec))
-	   (domain (tramp-file-name-domain vec))
-	   (host (tramp-file-name-host vec))
-	   (port (tramp-file-name-port vec)))
-      (tramp-make-tramp-file-name method user domain host port dir)))
-
-  (defun git-gutter+-remote-file-path (dir file)
-    (let ((file (tramp-file-name-localname (tramp-dissect-file-name file))))
-      (replace-regexp-in-string (concat "\\`" dir) "" file))))
 
 ;; killing ==========================================
 ;; ==================================================
@@ -5281,6 +5944,23 @@ set so that it clears the whole REPL buffer, not just the output."
     "SPC" 'tetris-move-bottom		; not working
     "n"   'tetris-start-game))
 
+;; proced config ====================================
+;; ==================================================
+
+(use-package proced
+  :straight nil
+  :defer  t
+  :custom
+  (proced-auto-update-flag t)
+  (proced-goal-attribute nil)
+  (proced-show-remote-processes t)
+  (proced-enable-color-flag t)
+  (proced-format 'custom)
+  :config
+  (add-to-list
+   'proced-format-alist
+   '(custom user pid ppid sess tree pcpu pmem rss start time state (args comm))))
+
 ;; Fun! =============================================
 ;; ==================================================
 
@@ -5290,17 +5970,26 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; Misc =============================================
 ;; ==================================================
 
-(setq inhibit-splash-screen t
-      inhibit-startup-echo-area-message ""
-      inhibit-startup-message t
-      inhibit-splash-screen t)
+(use-package startup
+  :straight (:type built-in)
+  :demand t
+  :init
+  (setq inhibit-splash-screen t
+        inhibit-startup-echo-area-message ""
+        inhibit-startup-message t))
 
-(setq-default indent-tabs-mode nil) 	; Noooooooo please!
+(setq-default indent-tabs-mode nil	; Noooooooo please!
+              standard-indent 2
+              tab-width 2
+              line-spacing 0.1)       ; my eyeeees
+
+(put 'narrow-to-region 'disabled nil)   ; I need it
 
 (defun display-startup-echo-area-message ()
   (message "You think with your keyboard"))
 
-(add-hook 'after-init-hook (lambda () (setq gc-cons-threshold 800000)))
+(global-auto-revert-mode 1)    ; Refresh buffers with changed local files
+
 (message "config loaded!")
 
 ;; config end =======================================
@@ -5311,17 +6000,11 @@ set so that it clears the whole REPL buffer, not just the output."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(coffee-tab-width 2)
  '(custom-safe-themes
-   '("a8950f7287870cd993d7e56991a45e1414a09d97e4fbf08f48973a1381bc7aaf" "92d350334df87fe61a682518ff214c773625c6d5ace8060d128adc550bc60c9b" default))
- '(package-selected-packages
-   '(no-littering multi-vterm minions xwidget lispy git-gutter clipetty zones yasnippet-classic-snippets treemacs-evil which-key evil-commentary anzu json-mode evil-surround tuareg tagedit cider))
- '(recentf-auto-cleanup 'never t))
+   '("a8950f7287870cd993d7e56991a45e1414a09d97e4fbf08f48973a1381bc7aaf" "92d350334df87fe61a682518ff214c773625c6d5ace8060d128adc550bc60c9b" default)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
-(put 'narrow-to-region 'disabled nil)
-(put 'dired-find-alternate-file 'disabled nil)
