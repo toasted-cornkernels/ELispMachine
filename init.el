@@ -1274,7 +1274,15 @@
     :keymaps '(eglot-mode-map)
     "a"      (which-key-prefix "LSP")
     "aa"     'eglot-code-actions
-    "r"      'eglot-rename))
+    "r"      'eglot-rename)
+
+  :config
+  (setq-default eglot-workspace-configuration
+                '((lua_ls
+                   (format
+                    (defaultConfig 
+                     indent_style "space"
+                     indent_size "2"))))))
 
 (use-package consult-eglot
   :after eglot)
@@ -4708,6 +4716,8 @@ set so that it clears the whole REPL buffer, not just the output."
   (auto-dark-mode t))
 
 (use-package mood-line
+  :custom
+  (mood-line-glyph-alist mood-line-glyphs-fira-code)
   :config
   (mood-line-mode))
 
@@ -4836,8 +4846,9 @@ set so that it clears the whole REPL buffer, not just the output."
 	          ("Europe/London" "Oxford")
 	          ("Europe/Zurich" "Lugano")
 	          ("Asia/Seoul" "Seoul"))))
-    (setq display-time-load-average nil
-          display-time-format "%l:%M %p %b %d"
+    (setq display-time-default-load-average nil
+          display-time-load-average nil
+          display-time-format "%b %d %l:%M %p"
           display-time-world-time-format "%a %d %b %I:%M %p %Z"
           display-time-world-list cities
           world-clock-list t
