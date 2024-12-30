@@ -49,7 +49,7 @@
 (setq straight-use-package-by-default t
       package-install-upgrade-built-in t)
 
-(use-package use-package-ensure-system-package :ensure t)
+(use-package use-package-ensure-system-package :straight t)
 
 ;; Profiling ========================================
 ;; ==================================================
@@ -70,6 +70,17 @@
     (startup-redirect-eln-cache
      (convert-standard-filename
       (expand-file-name  "var/eln-cache/" user-emacs-directory)))))
+
+(use-package files
+  :straight (:type built-in)
+  :config
+  (setq backup-directory-alist `(("." . ,(concat user-emacs-directory "backups/")))
+        backup-by-copying t
+        delete-old-versions t
+        kept-new-versions 6
+        kept-old-versions 2
+        version-control t)
+  (auto-save-visited-mode 1))
 
 ;; Which-key configs ================================
 ;; ==================================================
@@ -1255,7 +1266,8 @@
    (js-mode      . eglot-ensure)
    (json-mode    . eglot-ensure)
    (nix-mode     . eglot-ensure)
-   (go-mode      . eglot-ensure))
+   (go-mode      . eglot-ensure)
+   (lua-mode     . eglot-ensure))
 
   :general
   (local-leader
@@ -1442,6 +1454,7 @@
 
 (use-package lua-mode
   :straight nil
+  :defer t
   :mode "\\.lua\\'"
   :defines (run-hammerspoon)
 
@@ -4974,7 +4987,11 @@ set so that it clears the whole REPL buffer, not just the output."
   "Sp"  (which-key-prefix :package)
   "Spu" 'straight-use-package
   "Spp" 'straight-pull-package
-  "SpP" 'straight-pull-all)
+  "SpP" 'straight-pull-all
+  "Spb" 'straight-rebuild-package
+  "SpB" 'straight-rebuild-all
+  "Spv" 'straight-visit-package
+  "SpV" 'straight-visit-package-website)
 
 (global-leader
   "w"  (which-key-prefix :window)
@@ -5690,16 +5707,16 @@ set so that it clears the whole REPL buffer, not just the output."
   :defer t
   :config
   (setq eradio-player '("mpv" "--no-video" "--no-terminal" "--really-quiet")
-	eradio-channels '(("MBC FM4U"    . "http://serpent0.duckdns.org:8088/mbcfm.pls")
-			  ("MBC 표준FM"   . "http://serpent0.duckdns.org:8088/mbcsfm.pls")
-			  ("KBS 쿨FM"     . "http://serpent0.duckdns.org:8088/kbs2fm.pls")
-			  ("KBS 해피FM"   . "http://serpent0.duckdns.org:8088/kbs2radio.pls")
-			  ("KBS 클래식 FM" . "http://serpent0.duckdns.org:8088/kbsfm.pls")
-			  ("SBS 파워FM"   . "http://serpent0.duckdns.org:8088/sbsfm.pls")
-			  ("SBS 러브FM"   . "http://serpent0.duckdns.org:8088/sbs2fm.pls")
-			  ("TBS 교통방송"  . "http://tbs.hscdn.com/tbsradio/fm/playlist.m3u8")
-			  ("TBS eFM"     . "http://tbs.hscdn.com/tbsradio/efm/playlist.m3u8")
-			  ("CBS 음악방송"  . "http://aac.cbs.co.kr/cbs939/cbs939.stream/playlist.m3u8"))))
+	      eradio-channels '(("MBC FM4U"    . "http://serpent0.duckdns.org:8088/mbcfm.pls")
+			                    ("MBC 표준FM"   . "http://serpent0.duckdns.org:8088/mbcsfm.pls")
+			                    ("KBS 쿨FM"     . "http://serpent0.duckdns.org:8088/kbs2fm.pls")
+			                    ("KBS 해피FM"   . "http://serpent0.duckdns.org:8088/kbs2radio.pls")
+			                    ("KBS 클래식 FM" . "http://serpent0.duckdns.org:8088/kbsfm.pls")
+			                    ("SBS 파워FM"   . "http://serpent0.duckdns.org:8088/sbsfm.pls")
+			                    ("SBS 러브FM"   . "http://serpent0.duckdns.org:8088/sbs2fm.pls")
+			                    ("TBS 교통방송"  . "http://tbs.hscdn.com/tbsradio/fm/playlist.m3u8")
+			                    ("TBS eFM"     . "http://tbs.hscdn.com/tbsradio/efm/playlist.m3u8")
+			                    ("CBS 음악방송"  . "http://aac.cbs.co.kr/cbs939/cbs939.stream/playlist.m3u8"))))
 
 ;; Elfeed config ====================================
 ;; ==================================================
@@ -5918,7 +5935,7 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; ==================================================
 
 (use-package proced
-  :ensure nil
+  :straight nil
   :defer  t
   :custom
   (proced-auto-update-flag t)
@@ -5950,16 +5967,15 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (setq-default indent-tabs-mode nil	; Noooooooo please!
               standard-indent 2
+              tab-width 2
               line-spacing 0.1)       ; my eyeeees
 
-(put 'narrow-to-region 'disabled nil)
+(put 'narrow-to-region 'disabled nil)   ; I need it
 
 (defun display-startup-echo-area-message ()
   (message "You think with your keyboard"))
 
-(tab-bar-history-mode 1)
-(auto-save-visited-mode 1)     ;; Auto-save files at an interval
-(global-auto-revert-mode 1)    ;; Refresh buffers with changed local files
+(global-auto-revert-mode 1)    ; Refresh buffers with changed local files
 
 (message "config loaded!")
 
