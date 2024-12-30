@@ -3975,11 +3975,12 @@ set so that it clears the whole REPL buffer, not just the output."
 
   :config
   (setq xwidget-webkit-enable-plugins t)
-  (setq browse-url-browser-function (lambda (url session)
-				      (if (or (string-match ".*youtube.com.*" url)
-					      (string-match ".*youtu.be.*" url))
-					  (xwidget-webkit-browse-url url session)
-					(eww-browse-url url))))
+  (setq browse-url-browser-function
+        (lambda (url session)
+				  (if (or (string-match ".*youtube.com.*" url)
+					        (string-match ".*youtu.be.*" url))
+					    (xwidget-webkit-browse-url url session)
+					  (eww-browse-url url))))
 
   (defun xwidget-webkit-find-file (file)
     (interactive "fFilename: ")
@@ -3989,13 +3990,13 @@ set so that it clears the whole REPL buffer, not just the output."
     (interactive)
     (let ((url (read-from-minibuffer "URL: " "https://")))
       (if (or (s-starts-with-p "https://https://" url)
-	      (s-starts-with-p "https://http://" url)
-	      (s-starts-with-p "http://http://" url)
-	      (s-starts-with-p "http://https://" url))
-	  (let ((trimmed (s-chop-prefixes '("https://" "http://") url)))
-	    (message (concat "opening " trimmed))
-	    (xwidget-webkit-new-session trimmed))
-	(xwidget-webkit-new-session url))))
+	            (s-starts-with-p "https://http://" url)
+	            (s-starts-with-p "http://http://" url)
+	            (s-starts-with-p "http://https://" url))
+	        (let ((trimmed (s-chop-prefixes '("https://" "http://") url)))
+	          (message (concat "opening " trimmed))
+	          (xwidget-webkit-new-session trimmed))
+	      (xwidget-webkit-new-session url))))
 
   (add-hook 'xwidget-webkit-mode-hook (lambda () (local-unset-key (kbd "<backspace>")))))
 
@@ -4023,8 +4024,8 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (use-package yaml-mode
   :mode (("\\.ya?ml\\'" . yaml-mode)
-	 ("Procfile\\'" . yaml-mode)
-	 ("\\.qlpack\\'"  . yaml-mode)
+	       ("Procfile\\'" . yaml-mode)
+	       ("\\.qlpack\\'"  . yaml-mode)
          ("\\.qls" . yaml-mode)))
 
 ;; csv config ======================================
@@ -4081,14 +4082,11 @@ set so that it clears the whole REPL buffer, not just the output."
 (use-package sbt-mode
   :commands sbt-start sbt-command
   :config
-  ;; WORKAROUND: https://github.com/ensime/emacs-sbt-mode/issues/31
-  ;; allows using SPACE when in the minibuffer
+  ;; WORKAROUND: allows using SPACE when in the minibuffer
   (substitute-key-definition
    'minibuffer-complete-word
    'self-insert-command
-   minibuffer-local-completion-map)
-  ;; sbt-supershell kills sbt-mode:  https://github.com/hvesalai/emacs-sbt-mode/issues/152
-  (setq sbt:program-options '("-Dsbt.supershell=false")))
+   minibuffer-local-completion-map))
 
 ;; Magit config =====================================
 ;; ==================================================
