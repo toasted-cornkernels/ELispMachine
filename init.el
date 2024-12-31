@@ -255,9 +255,9 @@
 (use-package evil
   :init
   (setq evil-want-keybinding nil
-	evil-disable-insert-state-bindings t
-	evil-want-C-u-scroll t
-	evil-want-integration t
+	      evil-disable-insert-state-bindings t
+	      evil-want-C-u-scroll t
+	      evil-want-integration t
         evil-undo-system 'undo-tree)
   :config
   (evil-mode 1)
@@ -266,10 +266,10 @@
   ;; set local leader
   (evil-set-leader 'normal "," t)
   (setq evil-motion-state-cursor 'box
-	evil-visual-state-cursor 'box
-	evil-normal-state-cursor 'box
-	evil-insert-state-cursor 'bar
-	evil-emacs-state-cursor  'bar)
+	      evil-visual-state-cursor 'box
+	      evil-normal-state-cursor 'box
+	      evil-insert-state-cursor 'bar
+	      evil-emacs-state-cursor  'bar)
   (setq evil-insert-state-message nil
         evil-motion-state-message nil
         evil-normal-state-message nil
@@ -284,7 +284,7 @@
   (evil-ex-define-cmd "WQ" 'evil-save-and-close)
   (evil-ex-define-cmd "E" 'evil-edit)
   (setq evil-vsplit-window-right t
-	evil-split-window-below t)
+	      evil-split-window-below t)
 
   (evil-define-key* 'normal 'global
     (kbd "C-w C-h") 'evil-window-left
@@ -303,10 +303,10 @@
   when toggle off input method, switch to evil-normal-state if current state is evil-insert-state"
     (interactive)
     (if (not current-input-method)
-	(if (not (string= evil-state "insert"))
-	    (evil-insert-state))
+	      (if (not (string= evil-state "insert"))
+	          (evil-insert-state))
       (if (string= evil-state "insert")
-	  (evil-normal-state)))
+	        (evil-normal-state)))
     (toggle-input-method)))
 
 (use-package evil-collection
@@ -326,6 +326,11 @@
 (use-package evil-commentary
   :after evil
   :config (evil-commentary-mode))
+
+(use-package evil-terminal-cursor-changer
+  :when terminal-p
+  :config
+  (evil-terminal-cursor-changer-activate))
 
 ;; Custom Lisp files ================================
 ;; ==================================================
@@ -1280,7 +1285,7 @@
   (setq-default eglot-workspace-configuration
                 '((lua_ls
                    (format
-                    (defaultConfig 
+                    (defaultConfig
                      indent_style "space"
                      indent_size "2"))))))
 
@@ -4715,11 +4720,12 @@ set so that it clears the whole REPL buffer, not just the output."
         auto-dark-allow-powershell nil)
   (auto-dark-mode t))
 
-(use-package mood-line
-  :custom
-  (mood-line-glyph-alist mood-line-glyphs-fira-code)
+(use-package telephone-line
   :config
-  (mood-line-mode))
+  (telephone-line-mode 1)
+  :custom-face
+  (telephone-line-evil-normal
+   ((t (:foreground "#1E1E1E" :background "#C0FFEE" :inherit telephone-line-evil)))))
 
 ;; hl-todo config ==================================
 ;; =================================================
@@ -4754,18 +4760,16 @@ set so that it clears the whole REPL buffer, not just the output."
   :straight nil
   :config
   (let ((hooks '(doc-view-mode-hook
-		 pdf-view-mode-hook
-		 w3m-mode-hook
-		 eww-mode-hook
-		 inferior-hy-mode-hook
-		 inferior-python-mode-hook
-		 vterm-mode-hook)))
+		             pdf-view-mode-hook
+		             w3m-mode-hook
+		             eww-mode-hook
+		             inferior-hy-mode-hook
+		             inferior-python-mode-hook
+		             vterm-mode-hook)))
     (dolist (hook hooks)
       (add-hook hook
-		(lambda ()
-		  (display-line-numbers-mode -1))))
-    ;; (add-hook 'prog-mode-hook (lambda () (display-line-numbers-mode 1)))
-    ))
+		            (lambda ()
+		              (display-line-numbers-mode -1))))))
 
 ;; Eshell config ====================================
 ;; ==================================================
@@ -4775,6 +4779,20 @@ set so that it clears the whole REPL buffer, not just the output."
   :defer t
   :config
   (add-hook 'eshell-mode-hook (lambda () (company-mode -1))))
+
+;; EAT config =======================================
+;; ==================================================
+
+(use-package eat
+  :straight
+  (:type git
+         :host codeberg
+         :repo "akib/emacs-eat"
+         :files ("*.el" ("term" "term/*.el") "*.texi"
+                 "*.ti" ("terminfo/e" "terminfo/e/*")
+                 ("terminfo/65" "terminfo/65/*")
+                 ("integration" "integration/*")
+                 (:exclude ".dir-locals.el" "*-tests.el"))))
 
 ;; vterm config =====================================
 ;; ==================================================
@@ -4848,7 +4866,7 @@ set so that it clears the whole REPL buffer, not just the output."
 	          ("Asia/Seoul" "Seoul"))))
     (setq display-time-default-load-average nil
           display-time-load-average nil
-          display-time-format "%b %d %l:%M %p"
+          display-time-format "%b %d%l:%M %p"
           display-time-world-time-format "%a %d %b %I:%M %p %Z"
           display-time-world-list cities
           world-clock-list t
