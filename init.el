@@ -4700,16 +4700,16 @@ set so that it clears the whole REPL buffer, not just the output."
 		      (font-spec :name "NanumGothic"))))
 
 (use-package tron-legacy-theme
+  :when (not android-p)
   :custom-face
-  (tool-bar ((t (:background "#000000"))))
-  :config
-  (when android-p
-    (enable-theme 'tron-legacy)))
+  (tool-bar ((t (:background "#000000")))))
 
 (use-package modus-themes
   :config
   (setq modus-themes-italic-constructs t
-        modus-themes-bold-constructs nil))
+        modus-themes-bold-constructs nil)
+  :custom-face
+  (tool-bar ((t (:box nil)))))
 
 (use-package auto-dark
   :when (not android-p)
