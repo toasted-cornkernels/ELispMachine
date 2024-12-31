@@ -4700,7 +4700,7 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (use-package tron-legacy-theme
   :custom-face
-  (tool-bar ((t (:background "#000000")))))
+  (tool-bar ((t (:box nil :foreground "black" :background "#000000")))))
 
 (use-package modus-themes
   :config
