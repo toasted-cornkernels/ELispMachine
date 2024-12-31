@@ -4692,10 +4692,13 @@ set so that it clears the whole REPL buffer, not just the output."
     (set-fontset-font t 'hangul
 		                  (font-spec :name "NanumGothic"))))
 
-(use-package tron-legacy-theme
+(use-package custom
+  :ensure t
+  :straight (:type built-in)
   :config
-  (when android-p
-    (enable-theme 'tron-legacy))
+  (setq custom-safe-themes t))
+
+(use-package tron-legacy-theme
   :custom-face
   (tool-bar ((t (:background "#000000")))))
 
