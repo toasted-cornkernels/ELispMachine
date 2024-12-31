@@ -3705,12 +3705,11 @@ set so that it clears the whole REPL buffer, not just the output."
 		              (car args))
 	        (cdr args)))
   (advice-add #'completing-read-multiple :filter-args #'crm-indicator)
-
   (setq minibuffer-prompt-properties
 	      '(read-only t cursor-intangible t face minibuffer-prompt))
   (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
-
   (setq enable-recursive-minibuffers t)
+  (setq ring-bell-function 'ignore)
   (defun on-after-init ()
     "Make the background transparent when running in a tty."
     (unless (display-graphic-p (selected-frame))
@@ -3720,8 +3719,7 @@ set so that it clears the whole REPL buffer, not just the output."
 (use-package orderless
   :init
   (setq
-   ;; orderless-style-dispatchers '(first-initialism
-   ;; 				      flex-if-twiddle
+   ;; orderless-style-dispatchers '(first-initialism flex-if-twiddle
    ;; 				      without-if-bang)
    orderless-matching-styles '(orderless-regexp)
    orderless-component-separator #'orderless-escapable-split-on-space)
@@ -4632,11 +4630,6 @@ set so that it clears the whole REPL buffer, not just the output."
   :config
   (xterm-mouse-mode 1))
 
-;; (use-package repeat
-;;   :straight nil
-;;   :config
-;;   (repeat-mode 1))
-
 (use-package menu-bar
   :straight nil
   :config
@@ -4674,10 +4667,6 @@ set so that it clears the whole REPL buffer, not just the output."
   :config
   (when (fboundp 'scroll-bar-mode)
     (scroll-bar-mode -1)))
-
-(setq ring-bell-function 'ignore)
-
-;; font
 
 (use-package faces
   :straight nil
