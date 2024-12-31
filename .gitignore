@@ -1,0 +1,7 @@
+*
+
+!.gitignore
+!README.org
+!LICENSE
+!init.el
+!early-init.el
