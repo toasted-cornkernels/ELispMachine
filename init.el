@@ -170,10 +170,6 @@
   (let ((activated-minor-modes (mapcar #'car minor-mode-alist)))
     (memq minor-mode activated-minor-modes)))
 
-(defun straight-from-github (package repo)
-  "Make a straight.el specification to locate the PACKAGE from github REPO."
-  (list package :type 'git :host 'github :repo repo))
-
 (defun keyword-to-string (keyword)
   "Convert the KEYWORD to string."
   (cl-assert (symbolp keyword))
@@ -3705,11 +3701,22 @@ set so that it clears the whole REPL buffer, not just the output."
 		              (car args))
 	        (cdr args)))
   (advice-add #'completing-read-multiple :filter-args #'crm-indicator)
+
   (setq minibuffer-prompt-properties
 	      '(read-only t cursor-intangible t face minibuffer-prompt))
   (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
+
   (setq enable-recursive-minibuffers t)
   (setq ring-bell-function 'ignore)
+
+  (defun change-window-divider ()
+    "Change the window divider to a Unicode vertical pipe instead of the ASCII one."
+    (unless (display-graphic-p (selected-frame))
+      (let ((display-table (or buffer-display-table standard-display-table)))
+        (set-display-table-slot display-table 5 ?│)
+        (set-window-display-table (selected-window) display-table))))
+  (add-hook 'window-configuration-change-hook 'change-window-divider)
+
   (defun on-after-init ()
     "Make the background transparent when running in a tty."
     (unless (display-graphic-p (selected-frame))
