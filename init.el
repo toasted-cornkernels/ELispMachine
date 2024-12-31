@@ -1230,8 +1230,7 @@
 (use-package emacs-codeql
   :mode ("\\.qll?\\'" . ql-tree-sitter-mode)
   :hook (ql-tree-sitter-mode . (lambda ()
-                                 (setq indent-tabs-mode nil
-                                       tab-width 2)))
+                                 (setq indent-tabs-mode nil)))
   :straight
   (emacs-codeql :type git
 		:host github
@@ -1299,8 +1298,7 @@
   :straight nil
   :hook
   (shell-script-mode . (lambda ()
-                         (setq indent-tabs-mode nil
-                               tab-width 2)))
+                         (setq indent-tabs-mode nil)))
   :mode (("\\.sh\\'"           . shell-script-mode)
 	 ("\\.(ba|z)shrc.*\\'" . shell-script-mode)
 	 ("\\.zshenv.*\\'"     . shell-script-mode)
@@ -3141,8 +3139,7 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (use-package go-mode
   :hook (go-mode . (lambda ()
-                     (setq indent-tabs-mode 1
-                           tab-width 2)))
+                     (setq indent-tabs-mode 1)))
   :defer t
   :init
   (defun go-run-tests (args)
@@ -3335,8 +3332,7 @@ set so that it clears the whole REPL buffer, not just the output."
   :straight nil
   :mode ("\\.jsx?\\'" . js-mode)
   :hook (js-mode . (lambda ()
-                     (setq indent-tabs-mode nil
-                           tab-width 2)))
+                     (setq indent-tabs-mode nil)))
   :config
   (add-to-list 'eglot-server-programs
                '(js-mode . ("typescript-language-server" "--stdio")))
@@ -3354,8 +3350,7 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (use-package markdown-mode
   :hook ((gfm-mode markdown-mode) . (lambda ()
-                                      (setq indent-tabs-mode nil)
-                                      (setq tab-width 2)))
+                                      (setq indent-tabs-mode nil)))
   :mode
   (("\\.md\\'"  . gfm-mode)
    ("\\.mkd\\'" . markdown-mode)
@@ -4022,15 +4017,13 @@ set so that it clears the whole REPL buffer, not just the output."
   ;; :straight nil
   :mode "\\.json\\'"
   :hook (json-mode . (lambda ()
-                       (setq indent-tabs-mode nil)
-                       (setq tab-width 2))))
+                       (setq indent-tabs-mode nil))))
 
 (use-package jsonc-mode
   :straight nil
   :mode "\\.jsonc\\'"
   :hook (jsonc-mode . (lambda ()
-                        (setq indent-tabs-mode nil)
-                        (setq tab-width 2))))
+                        (setq indent-tabs-mode nil))))
 
 ;; yaml config =====================================
 ;; =================================================
@@ -4700,7 +4693,9 @@ set so that it clears the whole REPL buffer, not just the output."
 		      (font-spec :name "NanumGothic"))))
 
 (use-package tron-legacy-theme
-  :when (not android-p)
+  :config
+  (when android-p
+    (enable-theme 'tron-legacy))
   :custom-face
   (tool-bar ((t (:background "#000000")))))
 
@@ -4784,6 +4779,7 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; ==================================================
 
 (use-package eat
+  :defer t
   :straight
   (:type git
          :host codeberg
@@ -4792,7 +4788,9 @@ set so that it clears the whole REPL buffer, not just the output."
                  "*.ti" ("terminfo/e" "terminfo/e/*")
                  ("terminfo/65" "terminfo/65/*")
                  ("integration" "integration/*")
-                 (:exclude ".dir-locals.el" "*-tests.el"))))
+                 (:exclude ".dir-locals.el" "*-tests.el")))
+  :config
+  (setq eat-kill-buffer-on-exit t))
 
 ;; vterm config =====================================
 ;; ==================================================
@@ -5365,39 +5363,39 @@ set so that it clears the whole REPL buffer, not just the output."
   (defun w3m-save-buffer-to-file ()
     (interactive)
     (let* ((curr (buffer-file-name))
-	   (new (read-file-name
-		 "Save to file: " nil nil nil
-		 (and curr (file-name-nondirectory curr))))
-	   (mustbenew (if (and curr (file-equal-p new curr)) 'excl t)))
+	         (new (read-file-name
+		             "Save to file: " nil nil nil
+		             (and curr (file-name-nondirectory curr))))
+	         (mustbenew (if (and curr (file-equal-p new curr)) 'excl t)))
       (if (use-region-p)
-	  (write-region (region-beginning) (region-end) new nil nil nil mustbenew)
-	(save-restriction
-	  (widen)
-	  (write-region (point-min) (point-max) new nil nil nil mustbenew)))))
+	        (write-region (region-beginning) (region-end) new nil nil nil mustbenew)
+	      (save-restriction
+	        (widen)
+	        (write-region (point-min) (point-max) new nil nil nil mustbenew)))))
 
   (defun w3m-player-movie ()
     (interactive)
     (let ((link (w3m-anchor)))
       (if (not link)
-	  (message "Thing on point is not a link.")
-	(cond ((string-match "/\\/www\\.youtube\\.com\\/watch\\/?" link)
-	       (message (concat "loading from youtube..." link))
-	       (call-process "mpv" nil nil nil link)))
-	(message "Sorry, playback error. Please check the url."))))
+	        (message "Thing on point is not a link.")
+	      (cond ((string-match "/\\/www\\.youtube\\.com\\/watch\\/?" link)
+	             (message (concat "loading from youtube..." link))
+	             (call-process "mpv" nil nil nil link)))
+	      (message "Sorry, playback error. Please check the url."))))
 
   (defun w3m-copy-link ()
     (interactive)
     (let ((link (w3m-anchor)))
       (if (not link)
-	  (message "")
-	(kill-new link)
-	(message "Copy \"%s\" to clipboard." link))))
+	        (message "")
+	      (kill-new link)
+	      (message "Copy \"%s\" to clipboard." link))))
 
   (defun w3m-open-url-with (fn url)
     "Open url according to w3m url open function 'fn', and auto handle url prefix"
     (cond ((string-prefix-p "http://" url) (funcall fn url))
-	  ((string-prefix-p "https://" url) (funcall fn url))
-	  (t (funcall fn (concat "http://" url)))))
+	        ((string-prefix-p "https://" url) (funcall fn url))
+	        (t (funcall fn (concat "http://" url)))))
 
   (defun w3m-open-url (url)
     "Opens url in new w3m session with `http://` appended"
@@ -5412,13 +5410,13 @@ set so that it clears the whole REPL buffer, not just the output."
     (w3m-open-url-with 'w3m-goto-url-new-session url))
 
   (setq browse-url-browser-function 'w3m-goto-url-new-session
-	w3m-user-agent "Mozilla/5.0 (Linux; U; Android 2.3.3; zh-tw; HTC_Pyramid Build/GRI40) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533."
-	w3m-coding-system 'utf-8
-	w3m-file-coding-system 'utf-8
-	w3m-file-name-coding-system 'utf-8
-	w3m-input-coding-system 'utf-8
-	w3m-output-coding-system 'utf-8
-	w3m-terminal-coding-system 'utf-8)
+	      w3m-user-agent "Mozilla/5.0 (Linux; U; Android 2.3.3; zh-tw; HTC_Pyramid Build/GRI40) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533."
+	      w3m-coding-system 'utf-8
+	      w3m-file-coding-system 'utf-8
+	      w3m-file-name-coding-system 'utf-8
+	      w3m-input-coding-system 'utf-8
+	      w3m-output-coding-system 'utf-8
+	      w3m-terminal-coding-system 'utf-8)
 
   :general
   (local-leader
@@ -5476,8 +5474,8 @@ set so that it clears the whole REPL buffer, not just the output."
       (setq browse-url-browser-function 'browse-url-default-browser)
     (setq browse-url-browser-function 'w3m-browse-url))
   (setq w3m-default-display-inline-images t
-	w3m-session-load-crashed-sessions 'never
-	w3m-search-word-at-point nil))
+	      w3m-session-load-crashed-sessions 'never
+	      w3m-search-word-at-point nil))
 
 ;; eww config =======================================
 ;; ==================================================
