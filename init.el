@@ -2672,6 +2672,7 @@ set so that it clears the whole REPL buffer, not just the output."
 
 ;; λ ================================================
 ;; ==================================================
+
 (use-package sicp :defer t)
 
 ;; Janet config =====================================
