@@ -484,6 +484,7 @@
 (use-package org
   :straight (:type built-in)
   :defer t
+  :mode "\\.org\'"
   :init
   (defmacro org-emphasize-this (fname char)
     "Make function called FNAME for setting the emphasis (signified by CHAR) in org mode."
@@ -4864,7 +4865,7 @@ set so that it clears the whole REPL buffer, not just the output."
 	                ("Asia/Seoul" "Seoul"))))
     (setq display-time-default-load-average nil
           display-time-load-average nil
-          display-time-format "%b %d%l:%M %p"
+          display-time-format "%b %d %l:%M %p"
           display-time-world-time-format "%a %d %b %I:%M %p %Z"
           display-time-world-list cities
           world-clock-list t
