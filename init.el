@@ -49,8 +49,6 @@
 (setq straight-use-package-by-default t
       package-install-upgrade-built-in t)
 
-(use-package use-package-ensure-system-package :straight t)
-
 ;; Profiling ========================================
 ;; ==================================================
 
