@@ -3646,14 +3646,19 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; exec-path-from-shell =============================
 ;; ==================================================
 
-(setq explicit-shell-file-name "/bin/zsh")
-(use-package exec-path-from-shell
-  :when (or macOS-p linux-p)
+(use-package shell
+  :straight (:type built-in)
+  :defer t
   :config
-  (setq exec-path-from-shell-variables '("PATH" "JAVA_HOME" "BROWSER"
-					                               "OPAMCLI" "WORK_MACHINE")
-	      exec-path-from-shell-arguments '("-l"))
-  (exec-path-from-shell-initialize))
+  (setq explicit-shell-file-name "/bin/zsh"))
+
+;; (use-package exec-path-from-shell
+;;   :when (or macOS-p linux-p)
+;;   :config
+;;   (setq exec-path-from-shell-variables '("PATH" "JAVA_HOME" "BROWSER"
+;; 					                               "OPAMCLI" "WORK_MACHINE")
+;; 	      exec-path-from-shell-arguments '("-l"))
+;;   (exec-path-from-shell-initialize))
 
 ;; Hide-mode-line ===================================
 ;; ==================================================
@@ -3721,10 +3726,9 @@ set so that it clears the whole REPL buffer, not just the output."
     (unless (display-graphic-p (selected-frame))
       (set-face-background 'default "unspecified-bg" (selected-frame))))
   (add-hook 'window-setup-hook 'on-after-init)
-
-  (when chromeOS-p
-    (add-to-list 'exec-path "/nix/var/nix/profiles/default/bin")
-    (add-to-list 'exec-path (expand-file-name "~/.nix-profile/bin"))))
+  
+  (add-to-list 'exec-path "/nix/var/nix/profiles/default/bin")
+  (add-to-list 'exec-path (expand-file-name "~/.nix-profile/bin")))
 
 (use-package orderless
   :init
@@ -4777,8 +4781,7 @@ set so that it clears the whole REPL buffer, not just the output."
 (use-package eshell
   :straight (:type built-in)
   :defer t
-  :config
-  (add-hook 'eshell-mode-hook (lambda () (company-mode -1))))
+  :hook (eshell-mode . (lambda () (company-mode -1))))
 
 ;; EAT config =======================================
 ;; ==================================================
@@ -4799,8 +4802,6 @@ set so that it clears the whole REPL buffer, not just the output."
 
 ;; vterm config =====================================
 ;; ==================================================
-
-;; TODO Add https://codeberg.org/akib/emacs-eat
 
 (use-package vterm
   :defer t)
