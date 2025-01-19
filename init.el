@@ -855,11 +855,6 @@
   :straight (:type built-in)
   :defer t
   :init
-  ;; (add-hook 'org-mode-hook
-  ;;           (lambda () (org-babel-do-load-languages
-  ;;       		'org-babel-load-languages
-  ;;       		org-babel-load-languages)))
-
   (add-hook 'org-babel-after-execute-hook
 	          (lambda ()
 	            (when org-inline-image-overlays
