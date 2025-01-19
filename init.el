@@ -481,7 +481,6 @@
 
 (use-package org
   :straight (:type built-in)
-  :defer t
   :mode "\\.org\'"
   :init
   (defmacro org-emphasize-this (fname char)
