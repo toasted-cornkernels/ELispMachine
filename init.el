@@ -3649,7 +3649,7 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (setq explicit-shell-file-name "/bin/zsh")
 (use-package exec-path-from-shell
-  :when (or macOS-p chromeOS-p linux-p)
+  :when (or macOS-p linux-p)
   :config
   (setq exec-path-from-shell-variables '("PATH" "JAVA_HOME" "BROWSER"
 					                               "OPAMCLI" "WORK_MACHINE")
@@ -3721,7 +3721,11 @@ set so that it clears the whole REPL buffer, not just the output."
     "Make the background transparent when running in a tty."
     (unless (display-graphic-p (selected-frame))
       (set-face-background 'default "unspecified-bg" (selected-frame))))
-  (add-hook 'window-setup-hook 'on-after-init))
+  (add-hook 'window-setup-hook 'on-after-init)
+
+  (when chromeOS-p
+    (add-to-list 'exec-path "/nix/var/nix/profiles/default/bin")
+    (add-to-list 'exec-path (expand-file-name "~/.nix-profile/bin"))))
 
 (use-package orderless
   :init
@@ -4696,7 +4700,10 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (use-package tron-legacy-theme
   :custom-face
-  (tool-bar ((t (:box nil :foreground "black" :background "#000000")))))
+  (tool-bar ((t (:box nil :foreground "black" :background "#000000"))))
+  :config
+  (when (or chromeOS-p android-p)
+    (load-theme 'tron-legacy t)))
 
 (use-package modus-themes
   :config
@@ -4706,7 +4713,7 @@ set so that it clears the whole REPL buffer, not just the output."
   (tool-bar ((t (:box nil)))))
 
 (use-package auto-dark
-  :when (not android-p)
+  :when (not (or chromeOS-p android-p))
   :config
   (setq auto-dark-dark-theme 'tron-legacy
         auto-dark-light-theme 'modus-operandi
