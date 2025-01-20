@@ -5685,12 +5685,6 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; Elfeed config ====================================
 ;; ==================================================
 
-(use-package elfeed-org
-  :defer t
-  :config
-  (elfeed-org)
-  (setq rmh-elfeed-org-files '("~/.emacs.d/elfeed.org")))
-
 (use-package elfeed
   :defer t
   :after elfeed-org
