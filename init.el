@@ -5690,15 +5690,8 @@ set so that it clears the whole REPL buffer, not just the output."
   :config
   (setq rmh-elfeed-org-files '("~/.emacs.d/elfeed.org")))
 
-;; (use-package elfeed-web
-;;   :defer    t
-;;   :commands (elfeed-web-start elfeed-web-stop)
-;;   :init
-;;   (require 'elfeed)
-;;   (elfeed-web-start))
-
 (use-package elfeed
-  :defer t
+  :after elfeed-org
   :hook (elfeed-show-mode . (lambda ()
                               (setq fill-column 120) ; is it needed?
                               (setq elfeed-show-entry-switch #'my-show-elfeed)))
@@ -5799,8 +5792,7 @@ set so that it clears the whole REPL buffer, not just the output."
     "y"  'elfeed-search-yank
     "U"  'elfeed-search-tag-all-unread
     "u"  'elfeed-search-untag-all-unread)
-  (elfeed-org)
-  (elfeed-web-start))
+  (elfeed-org))
 
 (use-package elfeed-goodies
   :commands elfeed-goodies/setup)
