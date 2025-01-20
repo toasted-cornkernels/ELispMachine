@@ -481,7 +481,7 @@
 
 (use-package org
   :straight (:type built-in)
-  :mode "\\.org\'"
+  :defer t
   :init
   (defmacro org-emphasize-this (fname char)
     "Make function called FNAME for setting the emphasis (signified by CHAR) in org mode."
@@ -489,7 +489,7 @@
        (interactive)
        (org-emphasize ,char)))
 
-  :general
+  :general-config
   (local-leader
     :major-modes '(org-mode t)
     :keymaps     '(org-mode-map)
@@ -770,7 +770,7 @@
     (interactive)
     (org-eval-in-calendar '(calendar-backward-year 1)))
 
-  :general
+  :general-config
   (insert-mode-major-mode
     :keymaps '(org-read-date-minibuffer-local-map)
     "M-h"    'calendar-one-day-backward
@@ -868,7 +868,7 @@
    'org-babel-load-languages
    (mapcar (lambda (language) `(,language . t)) org-babel-languages))
 
-  :general
+  :general-config
   (local-leader
     :major-modes '(org-mode t)
     :keymaps     '(org-mode-map)
@@ -900,7 +900,7 @@
 (use-package org-capture
   :straight nil
   :defer    t
-  :general
+  :general-config
   (local-leader
     :major-modes '(org-capture-mode t)
     :keymaps     '(org-capture-mode-map)
@@ -946,7 +946,7 @@
 (use-package org-src
   :straight nil
   :defer    t
-  :general
+  :general-config
   (local-leader
     :major-modes '(org-src-mode t)
     :keymaps     '(org-src-mode-map)
@@ -1016,7 +1016,7 @@
   ;; Resume clocking task when emacs is restarted
   (org-clock-persistence-insinuate)
 
-  :general
+  :general-config
   (local-leader
     :major-modes '(org-mode t)
     :keymaps     '(org-mode-map)
@@ -1036,7 +1036,7 @@
   :defer t
   :config
   (setq org-pomodoro-length 20)
-  :general
+  :general-config
   (local-leader
     :major-modes '(org-mode t)
     :keymaps     '(org-mode-map)
@@ -1109,7 +1109,7 @@
   :when  macOS-p
   :defer t
   :mode  ("\\.plist\\'" . nxml-mode)
-  :general
+  :general-config
   (normal-mode-major-mode
     :major-modes '(launchctl-mode t)
     :keymaps     '(launchctl-mode-map)
@@ -1140,7 +1140,7 @@
   (osx-dictionary-search-pointer
    osx-dictionary-search-input
    osx-dictionary-cli-find-or-recompile)
-  :general
+  :general-config
   (normal-mode-major-mode
     :major-modes '(osx-dictionary-mode t)
     :keymaps     '(osx-dictionary-mode-map)
@@ -1262,7 +1262,7 @@
    (go-mode      . eglot-ensure)
    (lua-mode     . eglot-ensure))
 
-  :general
+  :general-config
   (local-leader
     :keymaps '(eglot-mode-map)
     "a"      (which-key-prefix "LSP")
@@ -1300,7 +1300,7 @@
 (use-package python
   :straight (:type built-in)
   ;; :mode "\\.py\\'"
-  :general
+  :general-config
   (local-leader
     :major-modes '(python-mode t)
     :keymaps     '(python-mode-map)
@@ -1329,7 +1329,7 @@
              pipenv-open
              pipenv-install
              pipenv-uninstall)
-  :general
+  :general-config
   (local-leader
     :major-modes '(python-mode t)
     :keymaps     '(python-mode-map)
@@ -1343,7 +1343,7 @@
 (use-package poetry
   :commands (poetry-venv-toggle
              poetry-tracking-mode)
-  :general
+  :general-config
   (local-leader
     :major-modes '(python-mode t)
     :keymaps     '(python-mode-map)
@@ -1354,7 +1354,7 @@
 (use-package code-cells
   :commands (code-cells-mode)
   :hook (python-mode . code-cells-mode)
-  :general
+  :general-config
   (local-leader
     :major-modes '(code-cells-mode t)
     :keymaps     '(code-cells-mode-map)
@@ -1366,7 +1366,7 @@
 (use-package blacken
   :defer t
   :commands (blacken-buffer)
-  :general
+  :general-config
   (local-leader
     :major-modes '(python-mode t)
     :keymaps     '(python-mode-map)
@@ -1376,7 +1376,7 @@
 
 (use-package pippel
   :defer t
-  :general
+  :general-config
   (local-leader
     :major-modes '(python-mode t)
     :keymaps     '(python-mode-map)
@@ -1384,7 +1384,7 @@
 
 (use-package py-isort
   :defer t
-  :general
+  :general-config
   (local-leader
     :major-modes '(python-mode t)
     :keymaps     '(python-mode-map)
@@ -1392,7 +1392,7 @@
 
 (use-package sphinx-doc
   :defer t
-  :general
+  :general-config
   (local-leader
     :major-modes '(python-mode t)
     :keymaps     '(python-mode-map)
@@ -1401,7 +1401,7 @@
 
 (use-package pydoc
   :defer t
-  :general
+  :general-config
   (local-leader
     :major-modes '(python-mode t)
     :keymaps     '(python-mode-map)
@@ -1410,7 +1410,7 @@
 
 (use-package pyenv-mode
   :commands (pyenv-mode-versions)
-  :general
+  :general-config
   (local-leader
     :major-modes '(python-mode t)
     :keymaps     '(python-mode-map)
@@ -1421,7 +1421,7 @@
   :commands (pylookup-lookup
              pylookup-update
              pylookup-update-all)
-  :general
+  :general-config
   (local-leader
     :major-modes '(python-mode t)
     :keymaps     '(python-mode-map)
@@ -1443,7 +1443,7 @@
 
 (use-package cperl-mode
   ;; :mode "\\.pl\\'"
-  :general
+  :general-config
   (local-leader
     :major-modes '(cperl-mode perl-mode t)
     :keymaps     '(cperl-mode-map perl-mode-map)
@@ -1506,7 +1506,7 @@
 
   (define-key lua-mode-map (kbd "q") nil)
 
-  :general
+  :general-config
   (local-leader
     :major-modes '(lua-mode t)
     :keymaps     '(lua-mode-map)
@@ -1543,7 +1543,7 @@
 
 (use-package comint
   :straight nil
-  :general
+  :general-config
   (normal-mode-major-mode
     :major-modes '(comint-mode t)
     :keymaps     '(comint-mode-map)
@@ -1556,7 +1556,7 @@
 (use-package minibuffer
   :straight nil
   :hook (minibuffer-mode . smartparens-mode)
-  :general
+  :general-config
   (insert-mode-major-mode
     :major-modes '(minibuffer-mode t)
     :keymaps     '(minibuffer-mode-map)
@@ -1692,7 +1692,7 @@ Unlike `eval-defun', this does not go to topmost function."
       (forward-list)
       (call-interactively 'slime-eval-last-expression)))
 
-  :general
+  :general-config
   (local-leader
     :major-modes '(lisp-mode t)
     :keymaps     '(lisp-mode-map)
@@ -1759,7 +1759,7 @@ Unlike `eval-defun', this does not go to topmost function."
   :hook     (emacs-lisp-mode
 	           . evil-cleverparens-mode)
 
-  :general
+  :general-config
   (local-leader
     :major-modes '(emacs-lisp-mode t)
     :keymaps     '(emacs-lisp-mode-map)
@@ -1791,7 +1791,7 @@ Unlike `eval-defun', this does not go to topmost function."
 (use-package clojure-mode
   :defer t
   :hook  (clojure-mode . evil-cleverparens-mode)
-  :general
+  :general-config
   (local-leader
     :major-modes '(clojure-mode
 		               clojurec-mode
@@ -2014,7 +2014,7 @@ set so that it clears the whole REPL buffer, not just the output."
     (let ((current-prefix-arg '(4)))
       (call-interactively 'cider-find-and-clear-repl-output)))
 
-  :general
+  :general-config
   (local-leader
     :major-modes '(clojure-mode
 		               clojurec-mode
@@ -2293,7 +2293,7 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (use-package kaocha-runner
   :defer t
-  :general
+  :general-config
   (local-leader
     :major-modes '(clojure-mode
 		               clojurec-mode
@@ -2320,7 +2320,7 @@ set so that it clears the whole REPL buffer, not just the output."
   :defer t
   :mode ("\\.hy\\'" . hy-mode)
   :interpreter ("hy" . hy-mode)
-  :general
+  :general-config
   (local-leader
     :major-modes '(hy-mode t)
     :keymaps     '(hy-mode-map)
@@ -2376,7 +2376,7 @@ set so that it clears the whole REPL buffer, not just the output."
 (use-package fennel-mode
   :defer t
   :hook  (fennel-mode . evil-cleverparens-mode)
-  :general
+  :general-config
   (local-leader
     :major-modes '(fennel-mode t)
     :keymaps     '(fennel-mode-map)
@@ -2428,7 +2428,7 @@ set so that it clears the whole REPL buffer, not just the output."
   :defer t
   :mode "\\.rkt\\'"
   :hook  (racket-mode . evil-cleverparens-mode)
-  :general
+  :general-config
   (local-leader
     :major-modes '(racket-mode
 		               racket-repl-mode
@@ -2484,7 +2484,7 @@ set so that it clears the whole REPL buffer, not just the output."
 (use-package scheme-mode
   :straight nil
   :hook     (scheme-mode . evil-cleverparens-mode)
-  :general
+  :general-config
   (local-leader
     :major-modes '(scheme-mode t)
     :keymaps     '(scheme-mode-map)
@@ -2493,7 +2493,7 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (use-package geiser
   :after scheme-mode
-  :general
+  :general-config
   (local-leader
     :major-modes '(scheme-mode t)
     :keymaps     '(scheme-mode-map)
@@ -2640,7 +2640,7 @@ set so that it clears the whole REPL buffer, not just the output."
     (interactive)
     (dante-type-at :insert))
 
-  :general
+  :general-config
   (local-leader
     :major-modes '(haskell-mode haskell-literate-mode t)
     :keymaps     '(haskell-mode-map haskell-literate-mode-map)
@@ -2682,7 +2682,7 @@ set so that it clears the whole REPL buffer, not just the output."
       (haskell-navigate-imports)
       (haskell-mode-format-imports)))
 
-  :general
+  :general-config
   (local-leader
     :major-modes '(haskell-mode haskell-literate-mode t)
     :keymaps     '(haskell-mode-map haskell-literate-mode-map)
@@ -2781,7 +2781,7 @@ set so that it clears the whole REPL buffer, not just the output."
 (use-package prolog
   :defer t
   :mode ("\\.pl\\'" . prolog-mode)			; I don't use perl
-  :general
+  :general-config
   (local-leader
     :major-modes '(prolog-mode t)
     :keymaps     '(prolog-mode-map)
@@ -2844,7 +2844,7 @@ set so that it clears the whole REPL buffer, not just the output."
       (error "No query in progress"))
     (ediprolog-toplevel))
 
-  :general
+  :general-config
   (local-leader
     :major-modes '(prolog-mode t)
     :keymaps     '(prolog-mode-map)
@@ -2892,7 +2892,7 @@ set so that it clears the whole REPL buffer, not just the output."
 (use-package dune
   :defer t
   :hook  (dune-mode . evil-cleverparens-mode)
-  :general
+  :general-config
   (local-leader
     :major-modes '(dune-mode t)
     :keymaps     '(dune-mode-map)
@@ -2943,7 +2943,7 @@ set so that it clears the whole REPL buffer, not just the output."
     (let ((merlin-locate-in-new-window 'always))
       (merlin-locate)))
 
-  :general
+  :general-config
   (local-leader
     :major-modes '(tuareg-mode t)
     :keymaps     '(tuareg-mode-map)
@@ -3040,7 +3040,7 @@ set so that it clears the whole REPL buffer, not just the output."
     (utop)
     (evil-insert-state))
 
-  :general
+  :general-config
   (agnostic-key
     :major-modes '(utop-mode t)
     :keymaps     '(utop-mode-map)
@@ -3132,7 +3132,7 @@ set so that it clears the whole REPL buffer, not just the output."
     "Return a list of all Go packages, using `gopkgs'."
     (sort (process-lines "gopkgs") #'string<))
 
-  :general
+  :general-config
   (local-leader
     :major-modes '(go-mode t)
     :keymaps     '(go-mode-map)
@@ -3207,7 +3207,7 @@ set so that it clears the whole REPL buffer, not just the output."
   (defun restclient-http-send-current-raw-stay-in-window ()
     (interactive)
     (restclient-http-send-current t t))
-  :general
+  :general-config
   (local-leader
     :major-modes '(restclient-mode t)
     :keymaps     '(restclient-mode-map)
@@ -3240,7 +3240,7 @@ set so that it clears the whole REPL buffer, not just the output."
 (use-package npm-mode
   :defer t
   :hook  (npm-mode . js2-mode)
-  :general
+  :general-config
   (local-leader
     :major-modes '(js2-mode t)
     :keymaps     '(js2-mode-map)
@@ -3297,7 +3297,7 @@ set so that it clears the whole REPL buffer, not just the output."
 	      (insert (format tag ""))
 	      (forward-char -6))))
 
-  :general
+  :general-config
   (local-leader
     :major-modes '(markdown-mode t)
     :keymaps     '(markdown-mode-map)
@@ -3421,7 +3421,7 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (use-package gh-md
   :defer t
-  :general
+  :general-config
   (local-leader
     :major-modes '(markdown-mode gfm-mode t)
     :keymaps     '(markdown-mode-map gfm-mode-map)
@@ -3429,7 +3429,7 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (use-package markdown-toc
   :defer t
-  :general
+  :general-config
   (local-leader
     :major-modes '(markdown-mode gfm-mode t)
     :keymaps     '(markdown-mode-map gfm-mode-map)
@@ -3459,7 +3459,7 @@ set so that it clears the whole REPL buffer, not just the output."
     (if (not (bound-and-true-p pandoc-mode)) (pandoc-mode))
     (pandoc-main-hydra/body))
 
-  :general
+  :general-config
   (global-leader
     "P"  (which-key-prefix "pandoc")
     "P/" 'run-pandoc)
@@ -3488,7 +3488,7 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (use-package powerthesaurus
   :defer t
-  :general
+  :general-config
   (global-leader
     "xwtt" 'powerthesaurus-lookup-synonyms-dwim
     "xwta" 'powerthesaurus-lookup-antonyms-dwim
@@ -3511,7 +3511,7 @@ set so that it clears the whole REPL buffer, not just the output."
 (use-package omnisharp
   :hook ((csharp-mode . omnisharp-mode)
          (csharp-ts-mode . omnisharp-mode))
-  :general
+  :general-config
   (local-leader
     :major-modes '(csharp-mode t)
     :keymaps     '(csharp-mode-map)
@@ -3913,7 +3913,7 @@ set so that it clears the whole REPL buffer, not just the output."
   :straight nil
   :when     macOS-p
   :commands xwidget-new-window
-  :general
+  :general-config
   (normal-mode-major-mode
     :major-modes '(xwidget-webkit-mode t)
     :keymaps     '(xwidget-webkit-mode-map)
@@ -3984,7 +3984,7 @@ set so that it clears the whole REPL buffer, not just the output."
   :mode ((".csv" . csv-mode)
          (".expected" . csv-mode)
          (".actual" . csv-mode))
-  :general
+  :general-config
   (local-leader
     :major-modes '(csv-mode t)
     :keymaps     '(csv-mode-map)
@@ -4092,7 +4092,7 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (use-package magit-section
   :defer t
-  :general
+  :general-config
   (insert-mode-major-mode
     :major-modes '(magit-section-mode t)
     :keymaps     '(magit-section-mode-map)
@@ -4109,7 +4109,7 @@ set so that it clears the whole REPL buffer, not just the output."
 (use-package magit-blame
   :straight nil
   :defer t
-  :general
+  :general-config
   (insert-mode-major-mode
     :major-modes '(magit-blame-read-only-mode t)
     :keymaps     '(magit-blame-read-only-mode-map)
@@ -4118,7 +4118,7 @@ set so that it clears the whole REPL buffer, not just the output."
 (use-package magit-repos
   :straight nil
   :defer t
-  :general
+  :general-config
   (insert-mode-major-mode
     :major-modes '(magit-repolist-mode t)
     :keymaps     '(magit-repolist-mode-map)
@@ -4128,7 +4128,7 @@ set so that it clears the whole REPL buffer, not just the output."
 (use-package magit-log
   :straight nil
   :defer t
-  :general
+  :general-config
   (local-leader
     :major-modes '(magit-log-select-mode t)
     :keymaps     '(magit-log-select-mode-map)
@@ -4142,7 +4142,7 @@ set so that it clears the whole REPL buffer, not just the output."
   :defer t
   :config
   (add-hook 'with-editor-mode-hook 'evil-normalize-keymaps)
-  :general
+  :general-config
   (local-leader
     :major-modes '(with-editor-mode t)
     :keymaps     '(with-editor-mode-map)
@@ -4221,7 +4221,7 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (use-package gitignore-templates
   :defer t
-  :general
+  :general-config
   (local-leader
     :major-modes '(gitignore-mode t)
     :keymaps     '(gitignore-mode-map)
@@ -4235,7 +4235,7 @@ set so that it clears the whole REPL buffer, not just the output."
   :init
   (setq magit-gitflow-popup-key "%")
 
-  :general
+  :general-config
   (normal-mode-major-mode
     :major-modes '(magit-mode t)
     :keymaps     '(magit-mode-map)
@@ -4278,7 +4278,7 @@ set so that it clears the whole REPL buffer, not just the output."
 ;;   (setq forge-database-file "forge-database.sqlite"
 ;; 	forge-add-default-bindings nil)
 
-;;   :general
+;;   :general-config
 ;;   (local-leader
 ;;     :major-modes '(forge-topic-mode t)
 ;;     :keymaps     '(forge-topic-mode-map)
@@ -4319,7 +4319,7 @@ set so that it clears the whole REPL buffer, not just the output."
   :when terminal-p
   :defer t
   ;; :diminish (git-gutter-mode . "GG")
-  :general
+  :general-config
   (local-leader
     :predicate 'git-gutter-mode
     "G"  (which-key-prefix :git-gutter)
@@ -4374,7 +4374,7 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; ==================================================
 
 (use-package format-all
-  :general
+  :general-config
   (agnostic-key
     "C-M-=" 'format-all-buffer))
 
@@ -4396,7 +4396,7 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (use-package newcomment
   :straight nil
-  :general
+  :general-config
   (agnostic-key "M-;" 'comment-dwim))
 
 ;; save-place configs ===============================
@@ -4420,7 +4420,7 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (use-package isearch
   :straight nil
-  :general
+  :general-config
   (agnostic-key
     "C-s" 'isearch-forward-regexp))
 
@@ -4490,7 +4490,7 @@ set so that it clears the whole REPL buffer, not just the output."
   :defer t
   :init
   (setq image-animate-loop t)
-  :general
+  :general-config
   (local-leader
     :major-modes '(image-mode t)
     :keymaps     '(image-mode-map)
@@ -4594,6 +4594,7 @@ set so that it clears the whole REPL buffer, not just the output."
     (interactive)
     (tab-move -1))
 
+  :general-config
   (agnostic-key
     "s-{" 'tab-move-previous
     "s-}" 'tab-move
@@ -4749,7 +4750,7 @@ set so that it clears the whole REPL buffer, not just the output."
 
   (setq vterm-keymap-exceptions nil)
 
-  :general
+  :general-config
   (insert-mode-major-mode
     :major-modes '(vterm-mode vterm-copy-mode t)
     :keymaps     '(vterm-mode-map vterm-copy-mode-map)
@@ -5355,7 +5356,7 @@ set so that it clears the whole REPL buffer, not just the output."
 	      w3m-output-coding-system 'utf-8
 	      w3m-terminal-coding-system 'utf-8)
 
-  :general
+  :general-config
   (local-leader
     :major-modes '(w3m-mode t)
     :keymaps     '(w3m-mode-map)
@@ -5444,7 +5445,7 @@ set so that it clears the whole REPL buffer, not just the output."
   :defer t
   :if (not chromeOS-p)
   :mode (("\\.pdf\\'" . pdf-view-mode))
-  :general
+  :general-config
   (local-leader
     :major-modes '(pdf-view-mode t)
     :keymaps     '(pdf-view-mode-map)
@@ -5610,7 +5611,7 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; ==================================================
 
 (use-package reddigg
-  :general
+  :general-config
   (global-leader
     "awr"  (which-key-prefix "reddit")
     "awrm" 'reddigg-view-main
@@ -5647,7 +5648,7 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; ==================================================
 
 (use-package hnreader
-  :general
+  :general-config
   (global-leader
     "awh" (which-key-prefix "hackernews")
     "awhn" 'hnreader-news
@@ -5686,11 +5687,12 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (use-package elfeed-org
   :defer t
-  :commands (elfeed-org)
   :config
+  (elfeed-org)
   (setq rmh-elfeed-org-files '("~/.emacs.d/elfeed.org")))
 
 (use-package elfeed
+  :defer t
   :after elfeed-org
   :hook (elfeed-show-mode . (lambda ()
                               (setq fill-column 120) ; is it needed?
@@ -5722,7 +5724,7 @@ set so that it clears the whole REPL buffer, not just the output."
       (async-shell-command (concat "mpv " "'" entry-link "'") nil nil)
       (elfeed-search-untag-all-unread)))
 
-  :general
+  :general-config
   (normal-mode-major-mode
     :major-modes '(elfeed-search-mode t)
     :keymaps     '(elfeed-search-mode-map)
@@ -5791,8 +5793,7 @@ set so that it clears the whole REPL buffer, not just the output."
     "b"  'elfeed-search-browse-url
     "y"  'elfeed-search-yank
     "U"  'elfeed-search-tag-all-unread
-    "u"  'elfeed-search-untag-all-unread)
-  (elfeed-org))
+    "u"  'elfeed-search-untag-all-unread))
 
 (use-package elfeed-goodies
   :commands elfeed-goodies/setup)
@@ -5820,7 +5821,7 @@ set so that it clears the whole REPL buffer, not just the output."
 	      emms-playlist-buffer-name "*Music*"
 	      emms-info-asynchronously t)
 
-  :general
+  :general-config
   (global-leader
     "am"   (which-key-prefix "emms")
     "amee" 'emms
@@ -5884,7 +5885,7 @@ set so that it clears the whole REPL buffer, not just the output."
 (use-package tetris
   :straight nil
   :defer t
-  :general
+  :general-config
   (normal-mode-major-mode
     :major-modes '(tetris-mode t)
     :keymaps     '(tetris-mode-map)
