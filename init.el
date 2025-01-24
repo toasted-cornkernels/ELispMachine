@@ -986,8 +986,7 @@
 
 (use-package org-clock
   :straight nil
-  :defer    t
-  :commands (org-clock-jump-to-current-clock)
+  :after    org
   :config
   (setq
    ;; Save the running clock and all clock history when exiting Emacs, load it on startup
@@ -1031,9 +1030,8 @@
     "cR"         'org-resolve-clocks
     "ct"         'org-clock-modify-effort-estimate))
 
-
 (use-package org-pomodoro
-  :defer t
+  :after org
   :config
   (setq org-pomodoro-length 20)
   :general-config
@@ -1048,7 +1046,7 @@
 
 (use-package org-tempo
   :straight (:type built-in)
-  :defer t
+  :after org
   :config
   (dolist (item '(("sh" . "src sh")
                   ("el" . "src emacs-lisp")
@@ -5691,15 +5689,8 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; Elfeed config ====================================
 ;; ==================================================
 
-(use-package elfeed-org
-  :defer t
-  :config
-  (elfeed-org)
-  (setq rmh-elfeed-org-files '("~/.emacs.d/elfeed.org")))
-
 (use-package elfeed
   :defer t
-  :after elfeed-org
   :hook (elfeed-show-mode . (lambda ()
                               (setq fill-column 120) ; is it needed?
                               (setq elfeed-show-entry-switch #'my-show-elfeed)))
