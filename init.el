@@ -4623,7 +4623,7 @@ set so that it clears the whole REPL buffer, not just the output."
   :config
   (if (not chromeOS-p)
       (set-face-attribute 'default nil
-			                    :font "Fira Code"
+			                    :font "D2Coding ligature"
 			                    :weight 'light
 			                    :height 180)
     (set-face-attribute 'default nil
