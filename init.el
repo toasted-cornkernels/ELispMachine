@@ -863,7 +863,8 @@
   :config
   (setq org-babel-languages '(lisp clojure scheme hy
                                    dot rust kotlin shell
-                                   awk restclient C ruby))
+                                   awk restclient http C ruby
+                                   lua fennel))
   (org-babel-do-load-languages
    'org-babel-load-languages
    (mapcar (lambda (language) `(,language . t)) org-babel-languages))
@@ -4459,6 +4460,7 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (use-package recentf
   :straight nil
+  :defer t
   :init
   (setq recentf-keep '(file-remote-p file-readable-p)
 	      recentf-save-file (concat user-emacs-directory ".recentf")
