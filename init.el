@@ -4574,6 +4574,15 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; Visuals ==========================================
 ;; ==================================================
 
+(use-package ultra-scroll
+  :straight (ultra-scroll :host github
+                          :repo "jdtsmith/ultra-scroll")
+  :init
+  (setq scroll-conservatively 101
+        scroll-margin 0)
+  :config
+  (ultra-scroll-mode 1))
+
 (setq column-number-mode t)
 
 (use-package xt-mouse
