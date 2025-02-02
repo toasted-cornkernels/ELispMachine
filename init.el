@@ -1028,7 +1028,9 @@
     (add-to-list 'org-structure-template-alist item)))
 
 ;; exporters
-(use-package ox-latex    :straight nil :defer t
+(use-package ox-latex
+  :straight nil
+  :defer t
   :config
   (setq org-latex-prefer-user-labels t))
 
@@ -1038,13 +1040,17 @@
   :config
   (setq org-publish-timestamp-directory (cache: ".org-timestamps/")))
 
-(use-package ox-epub     :defer t)
+(use-package ox-epub
+  :defer t)
 
-(use-package ox-gfm      :defer t)
+(use-package ox-gfm
+  :defer t)
 
-(use-package ox-asciidoc :defer t)
+(use-package ox-asciidoc
+  :defer t)
 
-(use-package ox-pandoc   :defer t
+(use-package ox-pandoc
+  :defer t
   :config
   (setq org-pandoc-options-for-gfm '((wrap . none) (toc . t))))
 
@@ -1054,8 +1060,8 @@
 (use-package esup
   :defer t
   :config
-  (setq esup-user-init-file (file-truename "~/.emacs.d/init.el"))
-  (setq esup-depth 0))
+  (setq esup-user-init-file (file-truename "~/.emacs.d/init.el")
+        esup-depth 0))
 
 ;; Transient config =================================
 ;; ==================================================
