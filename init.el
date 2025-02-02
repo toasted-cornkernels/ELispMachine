@@ -817,25 +817,9 @@
 
 (use-package verb :defer t)
 
-(use-package ob-http
-  :after restclient
-  :init (add-to-list 'org-babel-load-languages '(http . t)))
-
-(use-package ob-restclient :defer t)
-
-(use-package ob-hy
+(use-package org-auto-tangle
   :defer t
-  :init (add-to-list 'org-babel-load-languages '(hy . t)))
-
-(use-package ob-rust :defer t)
-
-(use-package ob-kotlin :defer t)
-
-(use-package ob-mermaid :defer t)
-
-(use-package ob-ruby
-  :straight (:type built-in)
-  :defer t)
+  :hook  (org-mode . org-auto-tangle-mode))
 
 (use-package ob-racket
   :defer t
@@ -846,10 +830,6 @@
   :straight (ob-racket
 	           :type git :host github :repo "hasu/emacs-ob-racket"
 	           :files ("*.el" "*.rkt")))
-
-(use-package org-auto-tangle
-  :defer t
-  :hook  (org-mode . org-auto-tangle-mode))
 
 (use-package ob
   :straight (:type built-in)
