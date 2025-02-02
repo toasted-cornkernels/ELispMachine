@@ -893,19 +893,7 @@
 
   :config
   (setq org-capture-templates
-	      `(,(when work-machine-p
-	           `("T" "Work TODO" entry (file+headline ,(concat org-work-directory "/WorkTODO.org") "Todos")
-	             "*** TODO %?\n%i\nEntered on %U\n"))
-	        ,(when work-machine-p
-	           `("N" "Work Notes" entry (file+headline ,(concat org-work-directory "/WorkTODO.org") "Notes")
-	             "*** %?\n%i\nEntered on %U\n"))
-	        ,(when work-machine-p
-	           `("C" "Work Clipboard" entry (file+headline ,(concat org-work-directory "/WorkTODO.org") "Clipboard")
- 	             "*** %?          :%^{Tag}:\n\nEntered on %U\n%i\n\n"))
-	        ,(when work-machine-p
-	           `("L" "Work TIL" entry (file+headline ,(concat org-work-directory "/WorkTODO.org") "TIL")
- 	             "*** %?          :%^{Tag}:\n\nEntered on %U\n%i\n\n"))
-	        ("t" "TODO" entry (file+headline ,(concat org-directory "/TODO.org") "Tasks")
+	      `(("t" "TODO" entry (file+headline ,(concat org-directory "/TODO.org") "Tasks")
 	         "** TODO %?          :%^{Tag}:\n\nEntered on %U\n%i\n%a\n")
 	        ("l" "TIL" entry (file+headline ,(concat org-directory "/TIL.org") "TIL")
 	         "** %?          :%^{Tag}:\n\nEntered on %U\n%i\n%a\n")
