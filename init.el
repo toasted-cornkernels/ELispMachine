@@ -4364,7 +4364,7 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; ==================================================
 
 (use-package eldoc
-  :straight nil
+  :straight (:type built-in)
   :hook ((emacs-lisp-mode
           lisp-interaction-mode
           ielm-mode
@@ -4372,6 +4372,18 @@ set so that it clears the whole REPL buffer, not just the output."
          . turn-on-eldoc-mode)
   :config
   (setq eldoc-echo-area-use-multiline-p 3))
+
+(use-package eldoc-box
+  :when GUI-p
+  :after eldoc
+  :hook ((eldoc-mode . eldoc-box-hover-at-point-mode))
+  :custom-face
+  (eldoc-box-border ((t (:inherit posframe-border :background unspecified))))
+  (eldoc-box-body ((t (:inherit tooltip))))
+  :config
+  (setq eldoc-box-lighter nil
+        eldoc-box-only-multi-line t
+        eldoc-box-clear-with-C-g t))
 
 ;; Newcomment =======================================
 ;; ==================================================
