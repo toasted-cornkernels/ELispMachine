@@ -482,13 +482,6 @@
 (use-package org
   :straight (:type built-in)
   :defer t
-  :init
-  (defmacro org-emphasize-this (fname char)
-    "Make function called FNAME for setting the emphasis (signified by CHAR) in org mode."
-    `(defun ,fname ()
-       (interactive)
-       (org-emphasize ,char)))
-
   :general-config
   (local-leader
     :major-modes '(org-mode t)
@@ -654,6 +647,12 @@
     "C-M-l" 'org-shiftright)
 
   :config
+  (defmacro org-emphasize-this (fname char)
+    "Make function called FNAME for setting the emphasis (signified by CHAR) in org mode."
+    `(defun ,fname ()
+       (interactive)
+       (org-emphasize ,char)))
+  
   (defun org-toggle-radio-button-no-check ()
     (interactive)
     (let ((current-prefix-arg '(4)))
