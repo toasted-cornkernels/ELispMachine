@@ -1259,6 +1259,13 @@
 				            :nix (:flake
 					                (:autoArchive t :autoEvalInputs t :nixpkgsInputName "nixpkgs")))))))
 
+(use-package eglot-x
+  :straight (eglot-x :type git
+                     :host github
+                     :repo "nemethf/eglot-x")
+  :after eglot
+  :config (eglot-x-setup))
+
 (use-package consult-eglot
   :after eglot)
 
