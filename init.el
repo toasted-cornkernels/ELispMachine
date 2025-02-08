@@ -4448,8 +4448,7 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; ==================================================
 
 (use-package recentf
-  :straight nil
-  :defer t
+  :straight (:type built-in)
   :init
   (setq recentf-keep '(file-remote-p file-readable-p)
 	      recentf-save-file (concat user-emacs-directory ".recentf")
