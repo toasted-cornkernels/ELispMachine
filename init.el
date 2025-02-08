@@ -5838,9 +5838,10 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; ==================================================
 
 (use-package streamlink
-  ;; TODO
+  :defer t
   :config
-  (setq streamlink-player "mpv --no-video"))
+  (setq streamlink-player "mpv"
+        streamlink-opts "--player-args '--no-video'"))
 
 ;; TRAMP config =====================================
 ;; ==================================================
@@ -5931,6 +5932,53 @@ set so that it clears the whole REPL buffer, not just the output."
 (global-auto-revert-mode 1)    ; Refresh buffers with changed local files
 
 (message "config loaded!")
+
+;; Patchups =========================================
+;; ==================================================
+
+(use-package el-patch
+  :config
+  (el-patch-feature streamlink)
+  (with-eval-after-load 'streamlink
+    (el-patch-defun streamlink-open (url &optional size opts no-erase msg)
+      "Opens the stream at URL using the Streamlink program.
+Optional argument SIZE Size of the stream.
+Optional argument OPTS Options for streamlink.
+Optional argument NO-ERASE Erase old buffer.
+Optional argument MSG First message shown in buffer."
+      (let* ((cmd  (executable-find streamlink-binary))
+             (size (or size streamlink-size ""))
+             (opts (or opts streamlink-opts ""))
+             (opts (if streamlink-player
+                       (concat streamlink-opts " --player \""
+                               streamlink-player "\"")
+                     opts))
+             (cmd  (when cmd (format (el-patch-swap
+                                       "%s %s %s %s"
+                                       "%s %s '%s' %s") ; quote the stream link
+                                     cmd opts url size)))
+             (buff (when cmd (get-buffer-create "*streamlink*")))
+             (msg  (or msg "# Opening stream...\n")))
+        (if cmd
+            (with-current-buffer buff
+              (switch-to-buffer buff)
+              (unless (eq major-mode 'streamlink-mode)
+                (streamlink-mode))
+              (let ((inhibit-read-only t))
+                (when (not no-erase)
+                  (erase-buffer))
+                (insert (propertize msg 'face 'font-lock-comment-face))
+                (let ((proc (start-process-shell-command cmd buff cmd)))
+                  (setq streamlink-process proc
+                        streamlink-url url
+                        streamlink-current-size size
+                        header-line-format
+                        `(:eval (funcall ',streamlink-header-fn
+                                         ,@streamlink-header-fn-args)))
+                  (set-process-filter proc 'streamlink--filter)
+                  (set-process-sentinel proc 'streamlink--sentinel))
+                nil))
+          (message "Could not locate the streamlink program."))))))
 
 ;; config end =======================================
 ;; ==================================================
