@@ -4444,9 +4444,9 @@ set so that it clears the whole REPL buffer, not just the output."
 	      recentf-save-file (concat user-emacs-directory ".recentf")
         recentf-max-saved-items 1000
         recentf-max-menu-items 40
-	      recentf-auto-cleanup 'never
-        recentf-auto-save-timer (run-with-idle-timer 600 t 'recentf-save-list))
+	      recentf-auto-cleanup 'never)
   :config
+  (setq recentf-auto-save-timer (run-with-idle-timer 600 t 'recentf-save-list))
   (recentf-mode 1)
   (add-to-list 'recentf-exclude (recentf-expand-file-name package-user-dir))
   (add-to-list 'recentf-exclude "/private/var/folders/.*")
