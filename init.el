@@ -1023,7 +1023,8 @@
                   ("ql" . "src ql-tree-sitter")
                   ("py" . "src python")
                   ("yaml" . "src yaml")
-                  ("json" . "src json")))
+                  ("json" . "src json")
+                  ("gfm" . "src gfm")))
     (add-to-list 'org-structure-template-alist item)))
 
 ;; exporters
