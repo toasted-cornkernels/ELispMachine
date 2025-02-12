@@ -472,9 +472,7 @@
 ;; ==================================================
 
 (use-package mixed-pitch
-  ;; :hook ((org-mode . mixed-pitch-mode)
-  ;;        (markdown-mode . mixed-pitch-mode))
-  )
+  :hook ((osx-dictionary-mode . mixed-pitch-mode)))
 
 ;; Org config =======================================
 ;; ==================================================
@@ -1028,6 +1026,7 @@
     (add-to-list 'org-structure-template-alist item)))
 
 ;; exporters
+
 (use-package ox-latex
   :straight nil
   :defer t
