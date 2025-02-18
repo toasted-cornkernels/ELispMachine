@@ -4385,7 +4385,7 @@ set so that it clears the whole REPL buffer, not just the output."
   :after eldoc
   :hook ((eldoc-mode . eldoc-box-hover-at-point-mode))
   :custom-face
-  (eldoc-box-border ((t (:inherit posframe-border :background unspecified))))
+  ;; (eldoc-box-border ((t (:inherit posframe-border :background unspecified))))
   (eldoc-box-body ((t (:inherit tooltip))))
   :config
   (setq eldoc-box-lighter nil
@@ -4646,8 +4646,9 @@ set so that it clears the whole REPL buffer, not just the output."
 (use-package tron-legacy-theme
   :custom-face
   (tool-bar ((t (:box nil :foreground "black" :background "#000000"))))
+  (tooltip ((t (:foreground "#B0CCDC" :background "#000000"))))
   :config
-  (when (or chromeOS-p android-p)
+  (when (or chromeOS-p android-p terminal-p)
     (load-theme 'tron-legacy t)))
 
 (use-package modus-themes
@@ -4655,10 +4656,10 @@ set so that it clears the whole REPL buffer, not just the output."
   (setq modus-themes-italic-constructs t
         modus-themes-bold-constructs nil)
   :custom-face
-  (tool-bar ((t (:box nil)))))
+  (tool-bar ((t (:box (:line-width -1 :style released-button) :foreground "black" :background "grey75")))))
 
 (use-package auto-dark
-  :when (not (or chromeOS-p android-p))
+  :when (not (or chromeOS-p android-p terminal-p))
   :config
   (setq auto-dark-dark-theme 'tron-legacy
         auto-dark-light-theme 'modus-operandi
