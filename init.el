@@ -5349,17 +5349,17 @@ set so that it clears the whole REPL buffer, not just the output."
   (defun w3m-open-url (url)
     "Opens url in new w3m session with `http://` appended"
     (interactive
-     (list (read-string "Enter website address (default: google.com): " nil nil "google.com" nil )))
+     (list (read-string "Enter website address (default: duckduckgo.com): " nil nil "duckduckgo.com" nil )))
     (w3m-open-url-with 'w3m-goto-url url))
 
   (defun w3m-open-url-new-session (url)
     "Opens url in new w3m session with `http://` appended"
     (interactive
-     (list (read-string "Enter website address (default: google.com): " nil nil "google.com" nil )))
+     (list (read-string "Enter website address (default: duckduckgo.com): " nil nil "duckduckgo.com" nil )))
     (w3m-open-url-with 'w3m-goto-url-new-session url))
 
   (setq browse-url-browser-function 'w3m-goto-url-new-session
-	      w3m-user-agent "Mozilla/5.0 (Linux; U; Android 2.3.3; zh-tw; HTC_Pyramid Build/GRI40) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533."
+	      w3m-user-agent "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36"
 	      w3m-coding-system 'utf-8
 	      w3m-file-coding-system 'utf-8
 	      w3m-file-name-coding-system 'utf-8
@@ -5442,7 +5442,7 @@ set so that it clears the whole REPL buffer, not just the output."
       (eww-browse-url url)))
   :config
   (evil-define-key 'normal eww-mode-map (kbd "c") 'eww-copy-page-url)
-  (setq eww-search-prefix "https://www.google.com/search?q=")
+  (setq eww-search-prefix "https://www.duckduckgo.com/search?q=")
   (setq browse-url-browser-function (lambda (url session)
 				                              (if (or (string-match ".*youtube.com.*" url)
 					                                    (string-match ".*youtu.be.*" url))
