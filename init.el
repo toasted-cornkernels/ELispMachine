@@ -1248,13 +1248,7 @@
                    (format
                     (defaultConfig
                      indent_style "space"
-                     indent_size "2")))
-                  (:nil
-                   .
-                   (:formatting
-                    (:command ["nixfmt"])
-				            :nix (:flake
-					                (:autoArchive t :autoEvalInputs t :nixpkgsInputName "nixpkgs")))))))
+                     indent_size "2"))))))
 
 (use-package eglot-x
   :straight (eglot-x :type git
@@ -2858,12 +2852,12 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; ==================================================
 
 (use-package nix-mode
-  :mode "\\.nix\\'")
+  :mode "\\.nix\\'"
+  :init
+  (add-to-list 'eglot-server-programs
+               '((nix-mode nix-ts-mode) . ("nixd" "nil"))))
 
 (use-package nix-modeline
-  :after nix-mode)
-
-(use-package nix-env-install
   :after nix-mode)
 
 (use-package nix-update
