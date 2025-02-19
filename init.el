@@ -676,15 +676,13 @@
   (add-hook 'org-after-todo-statistics-hook #'cycle-todo-state)
 
   (setq
-   ;; use pretty things for the clocktable
    org-pretty-entities t
-   ;; global Effort estimate values
    org-global-properties
    '(("Effort_ALL" .
       "0:15 0:30 0:45 1:00 2:00 3:00 4:00 5:00 6:00 0:00"))
    ;;    1    2    3    4    5    6    7    8    9    0
    ;; These are the hotkeys ^^
-   org-time-stamp-rounding-minutes '(0 5)
+   org-time-stamp-rounding-minutes '(0 30)
    org-id-locations-file (cache: ".org-id-locations")
    org-directory "~/Dropbox/Org"
    org-work-directory "~/Work/WorkNotes"
@@ -905,9 +903,8 @@
   :straight nil
   :defer    t
   :config
-  (setq org-agenda-files `(,(concat org-work-directory "/WorkTODO.org")
-			                     ,(concat org-directory "/TODO.org"))
-	      org-agenda-clockreport-parameter-plist '(:link t :scope subtree :maxlevel 2 :step day :block thisweek :stepskip0 t :fileskip0 t)))
+  (setq org-agenda-clockreport-parameter-plist
+        '(:link t :scope subtree :maxlevel 2 :step day :block thisweek :stepskip0 t :fileskip0 t)))
 
 (use-package org-src
   :straight nil
