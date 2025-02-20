@@ -3574,7 +3574,7 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; Hide-mode-line ===================================
 ;; ==================================================
 
-(use-package hide-mode-line)
+(use-package hide-mode-line :defer t)
 
 ;; Vertico config ===================================
 ;; ==================================================
@@ -4800,8 +4800,8 @@ set so that it clears the whole REPL buffer, not just the output."
   (let ((cities '(("America/Los_Angeles" "Los Angeles")
 	                ("America/New_York" "New York")
 	                ("Europe/London" "Oxford")
-	                ("Europe/Zurich" "Lugano")
-	                ("Asia/Seoul" "Seoul"))))
+	                ("Europe/Zurich" "Zurich")
+	                ("Asia/Tokyo" "Tokyo"))))
     (setq display-time-default-load-average nil
           display-time-load-average nil
           display-time-format "%b %d %l:%M %p"
