@@ -650,7 +650,7 @@
     `(defun ,fname ()
        (interactive)
        (org-emphasize ,char)))
-  
+
   (defun org-toggle-radio-button-no-check ()
     (interactive)
     (let ((current-prefix-arg '(4)))
@@ -808,6 +808,8 @@
 
 (use-package org-transclusion :defer t)
 
+(use-package org-download :defer t)
+
 (use-package htmlize :defer t)
 
 (use-package verb :defer t)
@@ -817,14 +819,26 @@
   :hook  (org-mode . org-auto-tangle-mode))
 
 (use-package ob-racket
+  :straight (ob-racket
+	           :type git :host github :repo "hasu/emacs-ob-racket"
+	           :files ("*.el" "*.rkt"))
   :defer t
   :config
   (add-hook 'ob-racket-pre-runtime-library-load-hook
 	          #'ob-racket-raco-make-runtime-library)
-  (add-to-list 'org-src-lang-modes '("racket" . racket))
-  :straight (ob-racket
-	           :type git :host github :repo "hasu/emacs-ob-racket"
-	           :files ("*.el" "*.rkt")))
+  (add-to-list 'org-src-lang-modes '("racket" . racket)))
+
+(use-package ob-restclient :defer t)
+
+(use-package ob-http :defer t)
+
+(use-package ob-nix
+  :straight
+  (ob-nix :type git
+          :host github
+          :repo "emacsmirror/ob-nix"
+          :branch "master")
+  :defer t)
 
 (use-package ob
   :straight (:type built-in)
@@ -836,10 +850,11 @@
 		            (org-redisplay-inline-images))))
 
   :config
-  (setq org-babel-languages '(lisp clojure scheme hy
-                                   dot rust kotlin shell
+  (setq org-babel-languages '(lisp clojure scheme
+                                   dot shell
                                    awk restclient http C ruby
-                                   lua fennel))
+                                   lua fennel
+                                   nix))
   (org-babel-do-load-languages
    'org-babel-load-languages
    (mapcar (lambda (language) `(,language . t)) org-babel-languages))
@@ -3637,7 +3652,7 @@ set so that it clears the whole REPL buffer, not just the output."
     (unless (display-graphic-p (selected-frame))
       (set-face-background 'default "unspecified-bg" (selected-frame))))
   (add-hook 'window-setup-hook 'on-after-init)
-  
+
   (add-to-list 'exec-path "/nix/var/nix/profiles/default/bin")
   (add-to-list 'exec-path (expand-file-name "~/.nix-profile/bin")))
 
