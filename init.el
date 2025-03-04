@@ -2870,7 +2870,9 @@ set so that it clears the whole REPL buffer, not just the output."
   :mode "\\.nix\\'"
   :init
   (add-to-list 'eglot-server-programs
-               '((nix-mode nix-ts-mode) . ("nixd" "nil"))))
+               '((nix-mode nix-ts-mode) . ("nixd" "nil")))
+  :config
+  (setq nix-repl-executable-args '("repl" "--expr" "import <nixpkgs> {}")))
 
 (use-package nix-modeline
   :after nix-mode)
@@ -2930,7 +2932,8 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (use-package tuareg
   :mode (("\\.ml[ily]?$" . tuareg-mode)
-	       ("\\.topml$" . tuareg-mode))
+	       ("\\.topml$" . tuareg-mode)
+         (".ocamlinit" . tuareg-mode))
   :defer t
   :init
   (defun merlin-locate-other-window ()
