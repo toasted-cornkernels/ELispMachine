@@ -1257,6 +1257,10 @@
     "aa"     'eglot-code-actions
     "r"      'eglot-rename)
 
+  (normal-mode-major-mode
+    :keymaps '(eglot-mode-map)
+    "K"      'eldoc-box-help-at-point)
+
   :config
   (setq-default eglot-workspace-configuration
                 '((lua_ls
@@ -2934,7 +2938,6 @@ set so that it clears the whole REPL buffer, not just the output."
   :mode (("\\.ml[ily]?$" . tuareg-mode)
 	       ("\\.topml$" . tuareg-mode)
          (".ocamlinit" . tuareg-mode))
-  :defer t
   :init
   (defun merlin-locate-other-window ()
     (interactive)
@@ -4392,7 +4395,6 @@ set so that it clears the whole REPL buffer, not just the output."
 (use-package eldoc-box
   :when GUI-p
   :after eldoc
-  :hook ((eldoc-mode . eldoc-box-hover-at-point-mode))
   :custom-face
   ;; (eldoc-box-border ((t (:inherit posframe-border :background unspecified))))
   (eldoc-box-body ((t (:inherit tooltip))))
