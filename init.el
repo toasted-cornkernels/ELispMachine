@@ -726,6 +726,9 @@
   (setq evil-org-use-additional-insert t
 	      evil-org-key-theme '(textobjects navigation additional todo)))
 
+(use-package org-modern
+  :hook (org-mode . global-org-modern-mode))
+
 (use-package org-keys
   :straight nil
   :defer    t
@@ -797,8 +800,7 @@
   :defer t)
 
 (use-package valign
-  :hook ((markdown-mode . valign-mode)
-	       (org-mode      . valign-mode)))
+  :hook ((markdown-mode . valign-mode)))
 
 (use-package org-appear
   :defer t
@@ -1321,7 +1323,7 @@
 (use-package importmagic)
 
 (use-package pipenv
-  :defer t
+/  :defer t
   :commands (pipenv-activate
              pipenv-deactivate
              pipenv-shell
