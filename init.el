@@ -3824,7 +3824,7 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; ==================================================
 
 (use-package iedit
-  :defer t)
+  :commands (iedit-mode))
 
 ;; transpose-frame config ===========================
 ;; ==================================================
@@ -4589,6 +4589,20 @@ set so that it clears the whole REPL buffer, not just the output."
   :config
   (ultra-scroll-mode 1))
 
+(use-package spacious-padding
+  :straight (spacious-padding :host github
+                              :repo "protesilaos/spacious-padding")
+  :config
+  (setq spacious-padding-widths
+      '(:internal-border-width 15
+        :header-line-width 4
+        :mode-line-width 6
+        :tab-width 4
+        :right-divider-width 30
+        :scroll-bar-width 8
+        :fringe-width 8))
+  (spacious-padding-mode 1))
+
 (setq column-number-mode t)
 
 (use-package xt-mouse
@@ -4648,42 +4662,21 @@ set so that it clears the whole REPL buffer, not just the output."
     (set-fontset-font t 'hangul
 		                  (font-spec :name "NanumGothic"))))
 
-(use-package custom
-  :ensure t
-  :straight (:type built-in)
-  :config
-  (setq custom-safe-themes t))
-
-(use-package tron-legacy-theme
-  :custom-face
-  (tool-bar ((t (:box nil :foreground "black" :background "#000000"))))
-  (tooltip ((t (:foreground "#B0CCDC" :background "#000000"))))
-  :config
-  (when (or chromeOS-p android-p terminal-p)
-    (load-theme 'tron-legacy t)))
-
 (use-package modus-themes
   :config
   (setq modus-themes-italic-constructs t
-        modus-themes-bold-constructs nil)
-  :custom-face
-  (tool-bar ((t (:box (:line-width -1 :style released-button) :foreground "black" :background "grey75")))))
+        modus-themes-bold-constructs nil))
 
 (use-package auto-dark
   :when (not (or chromeOS-p android-p terminal-p))
+  :init
+  (setq custom-safe-themes t)
   :config
-  (setq auto-dark-dark-theme 'tron-legacy
-        auto-dark-light-theme 'modus-operandi
+  (setq custom-safe-themes t)
+  (setq auto-dark-themes '((modus-vivendi) (modus-operandi))
         auto-dark-allow-osascript macOS-p
         auto-dark-allow-powershell nil)
   (auto-dark-mode t))
-
-(use-package telephone-line
-  :config
-  (telephone-line-mode 1)
-  :custom-face
-  (telephone-line-evil-normal
-   ((t (:foreground "#1E1E1E" :background "#C0FFEE" :inherit telephone-line-evil)))))
 
 ;; hl-todo config ==================================
 ;; =================================================
