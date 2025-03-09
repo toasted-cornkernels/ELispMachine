@@ -5458,7 +5458,11 @@ set so that it clears the whole REPL buffer, not just the output."
 				                              (if (or (string-match ".*youtube.com.*" url)
 					                                    (string-match ".*youtu.be.*" url))
 					                                (xwidget-webkit-browse-url url session)
-					                              (eww-browse-url url)))))
+					                              (eww-browse-url url))))
+  :bind
+  (:map eww-mode-map
+        ("<mouse-4>" . eww-back-url)
+        ("<mouse-5>" . eww-forward-url)))
 
 ;; PDF tools ========================================
 ;; ==================================================
