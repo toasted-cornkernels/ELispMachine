@@ -4834,7 +4834,11 @@ set so that it clears the whole REPL buffer, not just the output."
     (interactive)
     (insert (format-time-string "%Y-%m-%d %H:%M:%S %a")))
 
-  (display-time-mode 1))
+  (display-time-mode 1)
+  (setq global-mode-string (remove 'display-time-string global-mode-string))
+  (setq mode-line-end-spaces
+        (list (propertize " " 'display '(space :align-to (- right 15)))
+              'display-time-string)))
 
 ;; Mode-agnostic keybindings ==========================
 ;; ====================================================
@@ -5793,12 +5797,12 @@ set so that it clears the whole REPL buffer, not just the output."
     "[["         'elfeed-show-prev
     "C-k"        'elfeed-show-prev
     "gk"         'elfeed-show-prev
-    "go"         'elfeed-show-visit
+    "go"         'elfeed-search-browse-url
     "gr"         'elfeed-show-refresh
     "q"          'elfeed-kill-buffer
     "ZQ"         'elfeed-kill-buffer
     "ZZ"         'elfeed-kill-buffer
-    "b"          'elfeed-search-browse-url)
+    "b"          'elfeed-show-visit)
 
   :config
   (evil-define-key 'visual elfeed-search-mode-map
