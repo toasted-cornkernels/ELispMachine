@@ -252,7 +252,8 @@
 	      evil-disable-insert-state-bindings t
 	      evil-want-C-u-scroll t
 	      evil-want-integration t
-        evil-undo-system 'undo-tree)
+        evil-undo-system 'undo-tree
+        evil-mode-line-format nil)
   :config
   (evil-mode 1)
   ;; set leader key in normal state
