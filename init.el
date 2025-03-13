@@ -4424,9 +4424,7 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; ==================================================
 
 (use-package git-gutter
-  :when terminal-p
   :defer t
-  ;; :diminish (git-gutter-mode . "GG")
   :general-config
   (local-leader
     :predicate 'git-gutter-mode
