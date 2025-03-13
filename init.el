@@ -1444,30 +1444,29 @@
   (local-leader
     :major-modes '(python-mode t)
     :keymaps     '(python-mode-map)
-    "'"  'elispm/python-start-or-switch-repl
-    "s"  (which-key-prefix "REPL")
+    "'"   'elispm/python-start-or-switch-repl
     
-    "sB" 'elispm/python-shell-send-buffer-switch
-    "sb" 'elispm/python-shell-send-buffer
-    "sE" 'elispm/python-shell-send-statement-switch
-    "se" 'elispm/python-shell-send-statement
-    "sF" 'elispm/python-shell-send-defun-switch
-    "sf" 'elispm/python-shell-send-defun
-    "si" 'elispm/python-start-or-switch-repl
-    "sK" 'elispm/python-shell-send-block-switch
-    "sk" 'elispm/python-shell-send-block
-    "sn" 'elispm/python-shell-restart
-    "sN" 'elispm/python-shell-restart-switch
-    "sR" 'elispm/python-shell-send-region-switch
-    "sr" 'elispm/python-shell-send-region
-    "sl" 'elispm/python-shell-send-line
-    "ss" 'elispm/python-shell-send-with-output
+    "s"   (which-key-prefix "REPL")
+    "sB"  'elispm/python-shell-send-buffer-switch
+    "sb"  'elispm/python-shell-send-buffer
+    "sE"  'elispm/python-shell-send-statement-switch
+    "se"  'elispm/python-shell-send-statement
+    "sF"  'elispm/python-shell-send-defun-switch
+    "sf"  'elispm/python-shell-send-defun
+    "si"  'elispm/python-start-or-switch-repl
+    "sK"  'elispm/python-shell-send-block-switch
+    "sk"  'elispm/python-shell-send-block
+    "sn"  'elispm/python-shell-restart
+    "sN"  'elispm/python-shell-restart-switch
+    "sR"  'elispm/python-shell-send-region-switch
+    "sr"  'elispm/python-shell-send-region
+    "sl"  'elispm/python-shell-send-line
+    "ss"  'elispm/python-shell-send-with-output
 
     "r"   (which-key-prefix "refactor")
     "rI"  'py-isort-buffer
     
     "v"   (which-key-prefix "virtualenv")
-
     "vi"  (which-key-prefix "pipenv")
     "via" 'pipenv-activate
     "vid" 'pipenv-deactivate
