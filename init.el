@@ -1301,61 +1301,241 @@
 
 (use-package python
   :straight (:type built-in)
-  ;; :mode "\\.py\\'"
+  :config
+  (defun elispm/python-start-or-switch-repl ()
+    "Start and/or switch to the REPL."
+    (interactive)
+    (if-let* ((shell-process (or (python-shell-get-process)
+                                 (call-interactively #'run-python))))
+        (progn
+          (pop-to-buffer (process-buffer shell-process))
+          (evil-insert-state))
+      (error "Failed to start python shell properly")))
+
+  (defun elispm/python-shell-send-block (&optional arg)
+    "Send the block under cursor to shell. If optional argument ARG is non-nil
+(interactively, the prefix argument), send the block body with its header."
+    (interactive "P")
+    (if (fboundp 'python-shell-send-block)
+        (let ((python-mode-hook nil))
+          (call-interactively #'python-shell-send-block))
+      (let ((python-mode-hook nil)
+            (beg (save-excursion
+                   (when (python-nav-beginning-of-block)
+                     (if arg
+                         (beginning-of-line)
+                       (python-nav-end-of-statement)
+                       (beginning-of-line 2)))
+                   (point-marker)))
+            (end (save-excursion (python-nav-end-of-block)))
+            (python-indent-guess-indent-offset-verbose nil))
+        (if (and beg end)
+            (python-shell-send-region beg end nil msg t)
+          (user-error "Can't get code block from current position.")))))
+
+  (defun elispm/python-shell-send-block-switch (&optional arg)
+    "Send block to shell and switch to it in insert mode."
+    (interactive "P")
+    (call-interactively #'elispm/python-shell-send-block)
+    (python-shell-switch-to-shell)
+    (evil-insert-state))
+
+  (defun elispm/python-shell-send-buffer-switch ()
+    "Send buffer content to shell and switch to it in insert mode."
+    (interactive)
+    (let ((python-mode-hook nil))
+      (python-shell-send-buffer)
+      (python-shell-switch-to-shell)
+      (evil-insert-state)))
+
+  (defun elispm/python-shell-send-buffer ()
+    "Send buffer content to shell and switch to it in insert mode."
+    (interactive)
+    (let ((python-mode-hook nil))
+      (python-shell-send-buffer)))
+
+  (defun elispm/python-shell-send-defun-switch ()
+    "Send function content to shell and switch to it in insert mode."
+    (interactive)
+    (let ((python-mode-hook nil))
+      (python-shell-send-defun nil)
+      (python-shell-switch-to-shell)
+      (evil-insert-state)))
+
+  (defun elispm/python-shell-send-defun ()
+    "Send function content to shell and switch to it in insert mode."
+    (interactive)
+    (let ((python-mode-hook nil))
+      (python-shell-send-defun nil)))
+
+  (defun elispm/python-shell-send-region-switch (start end)
+    "Send region content to shell and switch to it in insert mode."
+    (interactive "r")
+    (let ((python-mode-hook nil))
+      (python-shell-send-region start end)
+      (python-shell-switch-to-shell)
+      (evil-insert-state)))
+
+  (defun elispm/python-shell-send-region (start end)
+    "Send region content to shell and switch to it in insert mode."
+    (interactive "r")
+    (let ((python-mode-hook nil))
+      (python-shell-send-region start end)))
+
+  (defun elispm/python-shell-send-line ()
+    "Send the current line to shell"
+    (interactive)
+    (let ((python-mode-hook nil)
+          (start (point-at-bol))
+          (end (point-at-eol)))
+      (python-shell-send-region start end)))
+
+  (defun elispm/python-shell-send-statement ()
+    "Send the statement under cursor to shell."
+    (interactive)
+    (let ((python-mode-hook nil))
+      (call-interactively #'python-shell-send-statement)))
+
+  (defun elispm/python-shell-send-statement-switch ()
+    "Send statement to shell and switch to it in insert mode."
+    (interactive)
+    (call-interactively #'elispm/python-shell-send-statement)
+    (python-shell-switch-to-shell)
+    (evil-insert-state))
+
+  (defun elispm/python-shell-send-with-output(start end)
+    "Send region content to shell and show output in comint buffer.
+  If region is not active then send line."
+    (interactive "r")
+    (let ((python-mode-hook nil)
+          (process-buffer (python-shell-get-process))
+          (line-start (point-at-bol))
+          (line-end (point-at-eol)))
+      (if (region-active-p)
+          (comint-send-region process-buffer start end)
+        (comint-send-region process-buffer line-start line-end))
+      (comint-simple-send process-buffer "\r")))
+
+  (defun elispm/python-start-or-switch-repl ()
+    "Start and/or switch to the REPL."
+    (interactive)
+    (if-let* ((shell-process (or (python-shell-get-process)
+                                 (call-interactively #'run-python))))
+        (progn
+          (pop-to-buffer (process-buffer shell-process))
+          (evil-insert-state))
+      (error "Failed to start python shell properly")))
+
+  (defun elispm/python-shell-restart ()
+    "Restart python shell."
+    (interactive)
+    (let ((python-mode-hook nil))
+      (python-shell-restart)))
+
+  (defun elispm/python-shell-restart-switch ()
+    "Restart python shell and switch to it in insert mode."
+    (interactive)
+    (let ((python-mode-hook nil))
+      (python-shell-restart)
+      (python-shell-switch-to-shell)
+      (evil-insert-state)))
+
   :general-config
   (local-leader
     :major-modes '(python-mode t)
     :keymaps     '(python-mode-map)
-    ;; "'"  'spacemacs/python-start-or-switch-repl
+    "'"  'elispm/python-start-or-switch-repl
+    "s"  (which-key-prefix "REPL")
+    
+    "sB" 'elispm/python-shell-send-buffer-switch
+    "sb" 'elispm/python-shell-send-buffer
+    "sE" 'elispm/python-shell-send-statement-switch
+    "se" 'elispm/python-shell-send-statement
+    "sF" 'elispm/python-shell-send-defun-switch
+    "sf" 'elispm/python-shell-send-defun
+    "si" 'elispm/python-start-or-switch-repl
+    "sK" 'elispm/python-shell-send-block-switch
+    "sk" 'elispm/python-shell-send-block
+    "sn" 'elispm/python-shell-restart
+    "sN" 'elispm/python-shell-restart-switch
+    "sR" 'elispm/python-shell-send-region-switch
+    "sr" 'elispm/python-shell-send-region
+    "sl" 'elispm/python-shell-send-line
+    "ss" 'elispm/python-shell-send-with-output
 
-    "c"  (local-leader "execute")
-    "d"  (local-leader "debug")
-    "h"  (local-leader "help")
-    "g"  (local-leader "goto")
-    "s"  (local-leader "REPL")
-    "r"  (local-leader "refactor")
-    "v"  (local-leader "virtualenv")
-    "vp" (local-leader "pipenv")
-    "vo" (local-leader "poetry")))
+    "r"   (which-key-prefix "refactor")
+    "rI"  'py-isort-buffer
+    
+    "v"   (which-key-prefix "virtualenv")
+
+    "vi"  (which-key-prefix "pipenv")
+    "via" 'pipenv-activate
+    "vid" 'pipenv-deactivate
+    "vii" 'pipenv-install
+    "vio" 'pipenv-open
+    "vis" 'pipenv-shell
+    "viu" 'pipenv-uninstall
+    
+    "vp"  (which-key-prefix "poetry")
+    "vpd" 'poetry-venv-deactivate
+    "vpw" 'poetry-venv-workon
+    "vpt" 'poetry-venv-toggle
+
+    "vP"  (which-key-prefix "pyenv")
+    "vu" 'pyenv-mode-unset
+    "vs" 'pyenv-mode-set
+
+    "t"   (which-key-prefix "testing")
+    "tt"  (which-key-prefix "pytest")
+    "tt"  python-pytest
+    "tff" python-pytest-file-dwim
+    "tfF" python-pytest-file
+    "tfa" python-pytest-files
+    "td"  python-pytest-function-dwim
+    "tD"  python-pytest-function
+    "tx"  python-pytest-last-failed
+    "tr"  python-pytest-repeat
+
+    "d"   (which-key-prefix "generate docs")
+    "dse" 'sphinx-doc-mode
+    "dsd" 'sphinx-doc
+
+    "dp" 'pydoc-at-point-no-jedi
+    "dP" 'pydoc))
 
 (use-package cython-mode
   :mode "\\.pyx\\'")
 
-(use-package importmagic)
+(use-package importmagic
+  :after python)
 
 (use-package pipenv
-/  :defer t
-  :commands (pipenv-activate
-             pipenv-deactivate
-             pipenv-shell
-             pipenv-open
-             pipenv-install
-             pipenv-uninstall)
-  :general-config
-  (local-leader
-    :major-modes '(python-mode t)
-    :keymaps     '(python-mode-map)
-    "vpa"        'pipenv-activate
-    "vpd"        'pipenv-deactivate
-    "vpi"        'pipenv-install
-    "vpo"        'pipenv-open
-    "vps"        'pipenv-shell
-    "vpu"        'pipenv-uninstall))
+  :defer t)
 
 (use-package poetry
-  :commands (poetry-venv-toggle
-             poetry-tracking-mode)
-  :general-config
-  (local-leader
-    :major-modes '(python-mode t)
-    :keymaps     '(python-mode-map)
-    "vod"        'poetry-venv-deactivate
-    "vow"        'poetry-venv-workon
-    "vot"        'poetry-venv-toggle))
+  :defer t)
+
+(use-package pip-requirements
+  :defer t)
+
+(use-package py-isort
+  :defer t)
+
+(use-package sphinx-doc
+  :defer t)
+
+(use-package pydoc
+  :defer t)
+
+(use-package pyenv-mode
+  :defer t)
+
+(use-package python-pytest
+  :defer t)
 
 (use-package code-cells
   :commands (code-cells-mode)
-  :hook (python-mode . code-cells-mode)
+  :hook     (python-mode . code-cells-mode)
   :general-config
   (local-leader
     :major-modes '(code-cells-mode t)
@@ -1364,82 +1544,6 @@
     "gF"         'code-cells-forward-cell
     "sc"         'code-cells-eval
     "sa"         'code-cells-eval-above))
-
-(use-package blacken
-  :defer t
-  :commands (blacken-buffer)
-  :general-config
-  (local-leader
-    :major-modes '(python-mode t)
-    :keymaps     '(python-mode-map)
-    "="          'blacken-buffer))
-
-(use-package pip-requirements :defer t)
-
-(use-package pippel
-  :defer t
-  :general-config
-  (local-leader
-    :major-modes '(python-mode t)
-    :keymaps     '(python-mode-map)
-    "P"          'pippel-list-packages))
-
-(use-package py-isort
-  :defer t
-  :general-config
-  (local-leader
-    :major-modes '(python-mode t)
-    :keymaps     '(python-mode-map)
-    "rI"         'py-isort-buffer))
-
-(use-package sphinx-doc
-  :defer t
-  :general-config
-  (local-leader
-    :major-modes '(python-mode t)
-    :keymaps     '(python-mode-map)
-    "Se" 'sphinx-doc-mode
-    "Sd" 'sphinx-doc))
-
-(use-package pydoc
-  :defer t
-  :general-config
-  (local-leader
-    :major-modes '(python-mode t)
-    :keymaps     '(python-mode-map)
-    "hp" 'pydoc-at-point-no-jedi
-    "hP" 'pydoc))
-
-(use-package pyenv-mode
-  :commands (pyenv-mode-versions)
-  :general-config
-  (local-leader
-    :major-modes '(python-mode t)
-    :keymaps     '(python-mode-map)
-    "vu" 'pyenv-mode-unset
-    "vs" 'pyenv-mode-set))
-
-(use-package pylookup
-  :commands (pylookup-lookup
-             pylookup-update
-             pylookup-update-all)
-  :general-config
-  (local-leader
-    :major-modes '(python-mode t)
-    :keymaps     '(python-mode-map)
-    "hH" 'pylookup-lookup))
-
-(use-package pytest
-  :commands (pytest-one
-             pytest-pdb-one
-             pytest-all
-             pytest-pdb-all
-             pytest-last-failed
-             pytest-pdb-last-failed
-             pytest-module
-             pytest-pdb-module)
-  :config (add-to-list 'pytest-project-root-files "setup.cfg"))
-
 ;; Perl config ======================================
 ;; ==================================================
 
