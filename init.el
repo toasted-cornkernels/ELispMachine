@@ -1482,26 +1482,26 @@
     "vpt" 'poetry-venv-toggle
 
     "vP"  (which-key-prefix "pyenv")
-    "vu" 'pyenv-mode-unset
-    "vs" 'pyenv-mode-set
+    "vu"  'pyenv-mode-unset
+    "vs"  'pyenv-mode-set
 
     "t"   (which-key-prefix "testing")
     "tt"  (which-key-prefix "pytest")
-    "tt"  python-pytest
-    "tff" python-pytest-file-dwim
-    "tfF" python-pytest-file
-    "tfa" python-pytest-files
-    "td"  python-pytest-function-dwim
-    "tD"  python-pytest-function
-    "tx"  python-pytest-last-failed
-    "tr"  python-pytest-repeat
+    "tt"  'python-pytest
+    "tff" 'python-pytest-file-dwim
+    "tfF" 'python-pytest-file
+    "tfa" 'python-pytest-files
+    "td"  'python-pytest-function-dwim
+    "tD"  'python-pytest-function
+    "tx"  'python-pytest-last-failed
+    "tr"  'python-pytest-repeat
 
     "d"   (which-key-prefix "generate docs")
     "dse" 'sphinx-doc-mode
     "dsd" 'sphinx-doc
 
-    "dp" 'pydoc-at-point-no-jedi
-    "dP" 'pydoc))
+    "dp"  'pydoc-at-point-no-jedi
+    "dP"  'pydoc))
 
 (use-package cython-mode
   :mode "\\.pyx\\'")
