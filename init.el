@@ -1544,6 +1544,7 @@
     "gF"         'code-cells-forward-cell
     "sc"         'code-cells-eval
     "sa"         'code-cells-eval-above))
+
 ;; Perl config ======================================
 ;; ==================================================
 
