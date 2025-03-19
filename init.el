@@ -3037,9 +3037,7 @@ set so that it clears the whole REPL buffer, not just the output."
   :hook (merlin-mode . merlin-eldoc-setup))
 
 (use-package ocamlformat
-  :defer t
-  :init
-  (add-hook 'before-save-hook 'ocamlformat-before-save))
+  :commands ocamlformat)
 
 (use-package tuareg
   :mode (("\\.ml[ily]?$" . tuareg-mode)
