@@ -4440,6 +4440,7 @@ set so that it clears the whole REPL buffer, not just the output."
     "Gp" 'git-gutter:popup-hunk
     "Gc" 'git-gutter:clear
     "GG" 'git-gutter:toggle)
+  
   :config
   (setq git-gutter:modified-sign " "
 	      git-gutter:added-sign "+"
