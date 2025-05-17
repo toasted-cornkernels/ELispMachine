@@ -843,6 +843,14 @@
           :branch "master")
   :defer t)
 
+(use-package ob-rust
+  :straight
+  (ob-rust :type git
+           :host github
+           :repo "micanzhang/ob-rust"
+           :branch "master")
+  :defer t)
+
 (use-package ob
   :straight (:type built-in)
   :defer t
@@ -857,7 +865,7 @@
                                    dot shell awk restclient
                                    http C ruby
                                    lua fennel nix
-                                   hledger))
+                                   hledger rust))
   (org-babel-do-load-languages
    'org-babel-load-languages
    (mapcar (lambda (language) `(,language . t)) org-babel-languages))
@@ -888,8 +896,7 @@
     "bz"         'org-babel-switch-to-session
     "bZ"         'org-babel-switch-to-session-with-code
     "ba"         'org-babel-sha1-hash
-    "bx"         'org-babel-do-key-sequence-in-edit-buffer
-    "b."         'org-babel-transient-state/body))
+    "bx"         'org-babel-do-key-sequence-in-edit-buffer))
 
 (use-package org-capture
   :straight nil
