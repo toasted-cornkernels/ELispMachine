@@ -24,7 +24,7 @@
   (if (called-interactively-p 'interactive)
       (funcall f man-args)
     (message "*WARNING* man called non-interactively with args: %s" man-args)))
-(advice-add 'man :around #'my/advice-man)
+(advice-add 'man :around #'elispm/advice-man)
 
 ;; Straight =========================================
 ;; ==================================================
@@ -440,10 +440,10 @@
 ;; Emoji config =====================================
 ;; ==================================================
 
-(use-package emojify
-  :hook (after-init . global-emojify-mode)
-  :init
-  (setq emojify-emoji-styles '(unicode github)))
+;; (use-package emojify
+;;   :hook (after-init . global-emojify-mode)
+;;   :init
+;;   (setq emojify-emoji-styles '(unicode github)))
 
 ;; Align ============================================
 ;; ==================================================
@@ -843,6 +843,14 @@
           :branch "master")
   :defer t)
 
+(use-package ob-rust
+  :straight
+  (ob-rust :type git
+           :host github
+           :repo "micanzhang/ob-rust"
+           :branch "master")
+  :defer t)
+
 (use-package ob
   :straight (:type built-in)
   :defer t
@@ -854,10 +862,10 @@
 
   :config
   (setq org-babel-languages '(lisp clojure scheme
-                                   dot shell
-                                   awk restclient http C ruby
-                                   lua fennel
-                                   nix))
+                                   dot shell awk restclient
+                                   http C ruby
+                                   lua fennel nix
+                                   hledger rust))
   (org-babel-do-load-languages
    'org-babel-load-languages
    (mapcar (lambda (language) `(,language . t)) org-babel-languages))
@@ -888,8 +896,7 @@
     "bz"         'org-babel-switch-to-session
     "bZ"         'org-babel-switch-to-session-with-code
     "ba"         'org-babel-sha1-hash
-    "bx"         'org-babel-do-key-sequence-in-edit-buffer
-    "b."         'org-babel-transient-state/body))
+    "bx"         'org-babel-do-key-sequence-in-edit-buffer))
 
 (use-package org-capture
   :straight nil
@@ -1708,7 +1715,8 @@
 			                         newlisp-mode picolisp-mode janet-mode
 			                         lisp-interaction-mode ielm-mode minibuffer-mode
 			                         fennel-repl-mode cider-repl-mode racket-repl-mode
-			                         fundamental-mode markdown-mode slime-repl-mode)
+			                         fundamental-mode markdown-mode slime-repl-mode
+                               tuareg-mode)
 		             "'" "'" :actions nil)
   ;; Backquote
   (sp-local-pair '(fennel-mode hy-mode clojure-mode lisp-mode emacs-lisp-mode
@@ -5284,7 +5292,19 @@ set so that it clears the whole REPL buffer, not just the output."
   "aRR"  'eradio-toggle
 
   "ar"   (which-key-prefix :reader)
-  "are"  'elfeed)
+  "are"  'elfeed
+
+
+  "am"   (which-key-prefix "emms")
+  "amee" 'emms
+  "ames" 'emms-pause
+  "ameh" 'emms-previous
+  "amep" 'emms-previous
+  "amen" 'emms-next
+  "amel" 'emms-next
+  "amed" 'emms-play-directory
+  "amef" 'emms-play-file
+  "ameu" 'emms-play-url)
 
 (global-leader
   "Cc"   'org-capture)
@@ -5947,20 +5967,7 @@ set so that it clears the whole REPL buffer, not just the output."
                                                  (chromeOS-p "/mnt/chromeos/removable/SD Card/Music/")
                                                  (t "~/"))
 	      emms-playlist-buffer-name "*Music*"
-	      emms-info-asynchronously t)
-
-  :general-config
-  (global-leader
-    "am"   (which-key-prefix "emms")
-    "amee" 'emms
-    "ames" 'emms-pause
-    "ameh" 'emms-previous
-    "amep" 'emms-previous
-    "amen" 'emms-next
-    "amel" 'emms-next
-    "amed" 'emms-play-directory
-    "amef" 'emms-play-file
-    "ameu" 'emms-play-url))
+	      emms-info-asynchronously t))
 
 (use-package emms-mode-line
   :after    emms
@@ -6051,30 +6058,30 @@ set so that it clears the whole REPL buffer, not just the output."
 (use-package speed-type :defer t)
 (use-package typit :defer t)
 
-;; Misc =============================================
+;; Ledger ===========================================
 ;; ==================================================
 
-(use-package startup
-  :straight (:type built-in)
-  :demand t
-  :init
-  (setq inhibit-splash-screen t
-        inhibit-startup-echo-area-message ""
-        inhibit-startup-message t))
+(use-package hledger-mode
+  :mode ("\\.journal\\'" "\\.hledger\\'")
+  :hook (hledger-view-mode
+         .
+         (lambda ()
+           (run-with-timer 1 nil
+                           (lambda ()
+                             (when (equal hledger-last-run-command
+                                          "balancesheet")
+                               ;; highlight frequently changing accounts
+                               (highlight-regexp "^.*\\(savings\\|cash\\).*$")
+                               (highlight-regexp "^.*credit-card.*$"
+                                                 'hledger-warning-face)))))))
 
-(setq-default indent-tabs-mode nil	; Noooooooo please!
-              standard-indent 2
-              tab-width 2
-              line-spacing 0.1)       ; my eyeeees
+;; (use-package hledger-input
+;;   :after hledger-mode
+;;   :config
+;;   (setq hledger-input-buffer-height 20))
 
-(put 'narrow-to-region 'disabled nil)   ; I need it
-
-(defun display-startup-echo-area-message ()
-  (message "You think with your keyboard"))
-
-(global-auto-revert-mode 1)    ; Refresh buffers with changed local files
-
-(message "config loaded!")
+(use-package flycheck-hledger
+  :after hledger-mode)
 
 ;; Patchups =========================================
 ;; ==================================================
@@ -6122,6 +6129,31 @@ Optional argument MSG First message shown in buffer."
                   (set-process-sentinel proc 'streamlink--sentinel))
                 nil))
           (message "Could not locate the streamlink program."))))))
+
+;; Misc =============================================
+;; ==================================================
+
+(use-package startup
+  :straight (:type built-in)
+  :demand t
+  :init
+  (setq inhibit-splash-screen t
+        inhibit-startup-echo-area-message ""
+        inhibit-startup-message t))
+
+(setq-default indent-tabs-mode nil	; Noooooooo please!
+              standard-indent 2
+              tab-width 2
+              line-spacing 0.1)       ; my eyeeees
+
+(put 'narrow-to-region 'disabled nil)   ; I need it
+
+(defun display-startup-echo-area-message ()
+  (message "You think with your keyboard"))
+
+(global-auto-revert-mode 1)    ; Refresh buffers with changed local files
+
+(message "config loaded!")
 
 ;; config end =======================================
 ;; ==================================================
