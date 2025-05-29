@@ -658,7 +658,7 @@
       (call-interactively 'org-toggle-radio-button)) )
 
   (defun org-insert-current-time ()
-    "insert the curren time at the cursor position."
+    "Insert the current time at the cursor position."
     (interactive)
     (insert (format-time-string "** %Y-%m-%d %H:%M:%S")))
 
@@ -1000,6 +1000,13 @@
    org-clock-idle-time nil
    org-clock-persist-file (cache: "org-clock-save.el"))
 
+  (defun org-generate-time-table ()
+    "Spawn time table for the week."
+    (interactive)
+    (insert
+     "#+BEGIN: clocktable :maxlevel 6 :block thisweek :scope file :step day :stepskip0 t :fileskip0 t\n#+END:")
+    (org-ctrl-c-ctrl-c))
+
   ;; Resume clocking task when emacs is restarted
   (org-clock-persistence-insinuate)
 
@@ -1016,7 +1023,8 @@
     "co"         'org-clock-out
     "cr"         'org-clock-report
     "cR"         'org-resolve-clocks
-    "ct"         'org-clock-modify-effort-estimate))
+    "ct"         'org-clock-modify-effort-estimate
+    "cT"         'org-generate-time-table))
 
 (use-package org-pomodoro
   :after org
