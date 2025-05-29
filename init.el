@@ -4741,16 +4741,18 @@ set so that it clears the whole REPL buffer, not just the output."
     (interactive)
     (tab-move -1))
 
+  (tab-bar-history-mode t)
+
   :general-config
   (agnostic-key
-    "s-{" 'tab-move-previous
-    "s-}" 'tab-move
+    "C-H-<up>" 'tab-move-previous
+    "C-H-<down>" 'tab-move
+    "s-{" 'tab-previous
+    "s-}" 'tab-next
     "s-[" 'tab-previous
     "s-]" 'tab-next
     "s-." 'tab-new
-    "s-," 'tab-close)
-
-  (tab-bar-history-mode 1))
+    "s-," 'tab-close))
 
 (blink-cursor-mode 0)
 (global-visual-line-mode t)
