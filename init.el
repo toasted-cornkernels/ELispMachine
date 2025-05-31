@@ -843,14 +843,6 @@
           :branch "master")
   :defer t)
 
-(use-package ob-rust
-  :straight
-  (ob-rust :type git
-           :host github
-           :repo "micanzhang/ob-rust"
-           :branch "master")
-  :defer t)
-
 (use-package ob
   :straight (:type built-in)
   :defer t
@@ -865,7 +857,7 @@
                                    dot shell awk restclient
                                    http C ruby
                                    lua fennel nix
-                                   hledger rust))
+                                   hledger))
   (org-babel-do-load-languages
    'org-babel-load-languages
    (mapcar (lambda (language) `(,language . t)) org-babel-languages))
@@ -1254,7 +1246,7 @@
 
 (use-package eglot
   :hook
-  ((rust-mode    . eglot-ensure)
+  ((rustic-mode  . eglot-ensure)
    (clojure-mode . eglot-ensure)
    (python-mode  . eglot-ensure)
    (tuareg-mode  . eglot-ensure)
@@ -3172,11 +3164,41 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; Rust config ======================================
 ;; ==================================================
 
-(use-package rust-mode
-  :mode "\\.rs\\'"
-  :hook (rust-mode . (lambda () (setq indent-tabs-mode nil)))
+(use-package rustic
+  :defer t
+  :hook (rustic-mode . (lambda () (setq indent-tabs-mode nil)))
   :config
-  (define-key rust-mode-map (kbd "C-c C-c") 'rust-run))
+  (setq rustic-lsp-client 'eglot)
+  (add-to-list 'eglot-server-programs
+               '((rust-ts-mode rust-mode) .
+                 ("rust-analyzer" :initializationOptions (:check (:command "clippy")))))
+  :general-config
+  (local-leader
+    :major-modes '(rustic-mode t)
+    :keymaps     '(rustic-mode-map)
+    "c"  (which-key-prefix "cargo")
+    "c." 'rustic-cargo-run-rerun
+    "c=" 'rustic-cargo-fmt
+    "ca" 'rustic-cargo-add
+    "cc" 'rustic-cargo-build
+    "cC" 'rustic-cargo-clean
+    "cd" 'rustic-cargo-doc
+    "cs" 'rustic-doc-search
+    "ce" 'rustic-cargo-bench
+    "ci" 'rustic-cargo-init
+    "cl" 'rustic-cargo-clippy
+    "cf" 'rustic-cargo-clippy-fix
+    "cn" 'rustic-cargo-new
+    "co" 'rustic-cargo-outdated
+    "cr" 'rustic-cargo-rm
+    "cu" 'rustic-cargo-update
+    "cU" 'rustic-cargo-upgrade
+    "cv" 'rustic-cargo-check
+    "cx" 'rustic-cargo-run
+
+    "t"  (which-key-prefix "tests")
+    "ta" 'rustic-cargo-test-run
+    "tt" 'rustic-cargo-current-test))
 
 (use-package toml-mode
   :mode (("/\\(Cargo.lock\\|\\.cargo/config\\)\\'" . toml-mode)
