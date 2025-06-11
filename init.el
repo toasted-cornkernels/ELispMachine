@@ -728,7 +728,10 @@
 	      evil-org-key-theme '(textobjects navigation additional todo)))
 
 (use-package org-modern
-  :hook (org-mode . global-org-modern-mode))
+  :hook (org-mode . global-org-modern-mode)
+  :config
+  (setq org-modern-table nil
+        org-modern-timestamp nil))
 
 (use-package org-keys
   :straight nil
