@@ -272,8 +272,8 @@
         evil-replace-state-message nil
         evil-visual-state-message nil
         evil-emacs-state-message nil)
-  (evil-ex-define-cmd "q" 'kill-this-buffer)
-  (evil-ex-define-cmd "Q" 'kill-this-buffer)
+  (evil-ex-define-cmd "q" 'kill-current-buffer)
+  (evil-ex-define-cmd "Q" 'kill-current-buffer)
   (evil-ex-define-cmd "W" 'save-buffer)
   (evil-ex-define-cmd "Wq" 'evil-save-and-close)
   (evil-ex-define-cmd "WQ" 'evil-save-and-close)
@@ -4067,7 +4067,7 @@ set so that it clears the whole REPL buffer, not just the output."
     "f"   'xwwp-follow-link
     "L"   'xwidget-webkit-browse-url
     "s-c" 'xwidget-webkit-copy-selection-as-kill
-    "q"   'kill-this-buffer
+    "q"   'kill-current-buffer
     "C"   'xwidget-webkit-clone-and-split-below
     "c"   'xwidget-webkit-clone-and-split-right)
 
@@ -4737,6 +4737,7 @@ set so that it clears the whole REPL buffer, not just the output."
 (use-package spacious-padding
   :straight (spacious-padding :host github
                               :repo "protesilaos/spacious-padding")
+  :when GUI-p
   :config
   (setq spacious-padding-widths
       '(:internal-border-width 15
@@ -5033,7 +5034,7 @@ set so that it clears the whole REPL buffer, not just the output."
   "s-k"   'evil-window-up
   "s-l"   'evil-window-right
   "s-u"   'winner-undo
-  "s-d"   'kill-this-buffer
+  "s-d"   'kill-current-buffer
   "s-D"   'kill-buffer-and-window
   "s-g"   'magit
   "s-r"   'winner-redo
@@ -5193,7 +5194,7 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (global-leader
   "b"  (which-key-prefix :buffer)
-  "bd" 'kill-this-buffer
+  "bd" 'kill-current-buffer
   "bb" 'switch-to-buffer
   "bp" 'previous-buffer
   "bn" 'next-buffer
