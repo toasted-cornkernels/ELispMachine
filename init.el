@@ -729,6 +729,7 @@
 
 (use-package org-modern
   :hook (org-mode . global-org-modern-mode)
+  :when GUI-p
   :config
   (setq org-modern-table nil
         org-modern-timestamp nil))
