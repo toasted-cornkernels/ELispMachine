@@ -485,64 +485,65 @@
   (local-leader
     :major-modes '(org-mode t)
     :keymaps     '(org-mode-map)
-    "'"          'org-edit-special
-    ","          'org-ctrl-c-ctrl-c
-    "*"          'org-ctrl-c-star
-    "-"          'org-ctrl-c-minus
     "#"          'org-update-statistics-cookies
-    "RET"        'org-ctrl-c-ret
-    "M-RET"      'org-meta-return
+    "'"          'org-edit-special
+    "*"          'org-ctrl-c-star
+    ","          'org-ctrl-c-ctrl-c
+    "-"          'org-ctrl-c-minus
     "A"          'org-attach
+    "M-RET"      'org-meta-return
+    "RET"        'org-ctrl-c-ret
+    "["          'org-toggle-radio-button-no-check
+    "]"          'org-toggle-radio-button-no-check
     "a"          'org-agenda
     "{"          'org-agenda-file-to-front
     "}"          'org-remove-file
-    "["          'org-toggle-radio-button-no-check
-    "]"          'org-toggle-radio-button-no-check
 
     "c"          (which-key-prefix :clock)
     "ce"         'org-evaluate-time-range
 
     "d"          (which-key-prefix :dates)
+    "dT"         'org-time-stamp
     "dd"         'org-deadline
     "ds"         'org-schedule
     "dt"         'org-time-stamp-inactive
-    "dT"         'org-time-stamp
 
     "e"          (which-key-prefix :export)
+    "eM"         'org-pandoc-export-to-gfm-and-open
     "ee"         'org-export-dispatch
     "em"         'org-pandoc-export-as-gfm
-    "eM"         'org-pandoc-export-to-gfm-and-open
 
     "f"          (which-key-prefix :feeds)
     "fi"         'org-feed-goto-inbox
     "fu"         'org-feed-update-all
 
     "i"          (which-key-prefix :insert)
+    "iH"         'org-insert-heading-after-current
+    "iK"         'insert-keybinding-org
+    "iT"         'org-insert-current-time
+    "iT"         'org-set-tags-command
+    "id"         'org-insert-drawer
+    "ie"         'org-set-effort
+    "if"         'org-footnote-new
+    "ih"         'org-insert-heading
+    "ii"         'org-insert-item
+    "il"         'org-insert-link
+    "in"         'org-add-note
+    "ip"         'org-set-property
+    "is"         'org-insert-subheading
+    
     "it"         (which-key-prefix :template)
+    "it/"        (org-insert-structure org-insert-comment "comment")
+    "itC"        (org-insert-structure org-insert-comment "comment")
+    "itE"        (org-insert-structure org-insert-export "export")
     "ita"        (org-insert-structure org-insert-ascii "ascii")
     "itc"        (org-insert-structure org-insert-center "center")
-    "itC"        (org-insert-structure org-insert-comment "comment")
-    "it/"        (org-insert-structure org-insert-comment "comment")
     "ite"        (org-insert-structure org-insert-example "example")
-    "itE"        (org-insert-structure org-insert-export "export")
     "ith"        (org-insert-structure org-insert-export-html "html")
     "itl"        (org-insert-structure org-insert-export-latex "latex")
     "itq"        (org-insert-structure org-insert-quote "quote")
     "its"        (org-insert-structure org-insert-src "src")
     "itv"        (org-insert-structure org-insert-verse "verse")
-    "iT"         'org-insert-current-time
-    "id"         'org-insert-drawer
-    "ie"         'org-set-effort
-    "if"         'org-footnote-new
-    "ih"         'org-insert-heading
-    "iH"         'org-insert-heading-after-current
-    "ii"         'org-insert-item
-    "iK"         'insert-keybinding-org
-    "il"         'org-insert-link
-    "in"         'org-add-note
-    "ip"         'org-set-property
-    "is"         'org-insert-subheading
-    "iT"         'org-set-tags-command
 
     "iD"         (which-key-prefix :download)
 
@@ -551,21 +552,21 @@
     "p"          'org-priority
 
     "s"          (which-key-prefix :trees/subtrees)
-    "sa"         'org-toggle-archive-tag
     "sA"         'org-archive-subtree-default
+    "sS"         'org-sort
+    "sa"         'org-toggle-archive-tag
     "sb"         'org-tree-to-indirect-buffer
     "sd"         'org-cut-subtree
-    "sy"         'org-copy-subtree
-    "sp"         'org-paste-subtree
     "sh"         'org-promote-subtree
     "sj"         'org-move-subtree-down
     "sk"         'org-move-subtree-up
     "sl"         'org-demote-subtree
     "sn"         'org-narrow-to-subtree
-    "sw"         'widen
+    "sp"         'org-paste-subtree
     "sr"         'org-refile
     "ss"         'org-sparse-tree
-    "sS"         'org-sort
+    "sw"         'widen
+    "sy"         'org-copy-subtree
 
     "S"          (which-key-prefix :shift)
     "Sh"         'org-shiftcontrolleft
@@ -573,40 +574,40 @@
     "Sk"         'org-shiftcontrolup
     "Sl"         'org-shiftcontrolright
 
-    "T"          (which-key-prefix :toggles)
-    "Tc"         'org-toggle-checkbox
-    "Te"         'org-toggle-pretty-entities
-    "Ti"         'org-toggle-inline-images
-    "Tn"         'org-num-mode
-    "Tl"         'org-toggle-link-display
-    "Tt"         'org-show-todo-tree
-    "TT"         'org-todo
-    "TV"         'space-doc-mode
-    "Tx"         'org-latex-preview
-    "L"          'org-shiftright
     "H"          'org-shiftleft
     "J"          'org-shiftdown
     "K"          'org-shiftup
+    "L"          'org-shiftright
+    "T"          (which-key-prefix :toggles)
+    "TT"         'org-todo
+    "TV"         'space-doc-mode
+    "Tc"         'org-toggle-checkbox
+    "Te"         'org-toggle-pretty-entities
+    "Ti"         'org-toggle-inline-images
+    "Tl"         'org-toggle-link-display
+    "Tn"         'org-num-mode
+    "Tt"         'org-show-todo-tree
+    "Tx"         'org-latex-preview
 
     "t"          (which-key-prefix :tables)
+    "tE"         'org-table-export
+    "tH"         'org-table-move-column-left
+    "tI"         'org-table-import
+    "tJ"         'org-table-move-row-down
+    "tK"         'org-table-move-row-up
+    "tL"         'org-table-move-column-right
+    "tN"         'org-table-create-with-table.el
+    "tR"         'org-table-recalculate-buffer-tables
     "ta"         'org-table-align
     "tb"         'org-table-blank-field
     "tc"         'org-table-convert
     "te"         'org-table-eval-formula
-    "tE"         'org-table-export
     "tf"         'org-table-field-info
     "th"         'org-table-previous-field
-    "tH"         'org-table-move-column-left
-    "tI"         'org-table-import
     "tj"         'org-table-next-row
-    "tJ"         'org-table-move-row-down
-    "tK"         'org-table-move-row-up
     "tl"         'org-table-next-field
-    "tL"         'org-table-move-column-right
     "tn"         'org-table-create
-    "tN"         'org-table-create-with-table.el
     "tr"         'org-table-recalculate
-    "tR"         'org-table-recalculate-buffer-tables
     "ts"         'org-table-sort-lines
     "tw"         'org-table-wrap-region
 
@@ -615,9 +616,9 @@
     "tdr"        'org-table-kill-row
 
     "ti"         (which-key-prefix :insert)
+    "tiH"        'org-table-hline-and-move
     "tic"        'org-table-insert-column
     "tih"        'org-table-insert-hline
-    "tiH"        'org-table-hline-and-move
     "tir"        'org-table-insert-row
 
     "tt"         (which-key-prefix :toggle)
@@ -637,13 +638,13 @@
   (normal-mode-major-mode
     :major-modes '(org-mode t)
     :keymaps     '(org-mode-map)
-    "RET"   'org-open-at-point)
+    "RET"        'org-open-at-point)
 
   (agnostic-key
     :major-modes '(org-mode t)
     :keymaps     '(org-mode-map)
-    "C-M-h" 'org-shiftleft
-    "C-M-l" 'org-shiftright)
+    "C-M-h"      'org-shiftleft
+    "C-M-l"      'org-shiftright)
 
   :config
   (defmacro org-emphasize-this (fname char)
