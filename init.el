@@ -935,11 +935,11 @@
   (local-leader
     :major-modes '(org-src-mode t)
     :keymaps     '(org-src-mode-map)
-    "," 'org-edit-src-exit
-    "a" 'org-edit-src-abort
-    "c" 'org-edit-src-exit
-    "k" 'org-edit-src-abort
-    "'" 'org-edit-src-exit)
+    ","          'org-edit-src-exit
+    "a"          'org-edit-src-abort
+    "c"          'org-edit-src-exit
+    "k"          'org-edit-src-abort
+    "'"          'org-edit-src-exit)
   :config
   (setq org-src-window-setup 'current-window
 	      org-src-fontify-natively t
@@ -1051,6 +1051,14 @@
                   ("json" . "src json")
                   ("gfm" . "src gfm")))
     (add-to-list 'org-structure-template-alist item)))
+
+(use-package org-kanban
+  :after org
+  :general-config
+  (local-leader
+    :major-modes '(org-mode t)
+    :keymaps     '(org-mode-map)
+    "k"          (which-key-prefix :kanban)))
 
 ;; exporters
 
