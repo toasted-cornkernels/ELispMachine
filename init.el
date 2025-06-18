@@ -1060,6 +1060,9 @@
     :keymaps     '(org-mode-map)
     "k"          (which-key-prefix :kanban)))
 
+(use-package org-roam
+  :after org)
+
 ;; exporters
 
 (use-package ox-latex
