@@ -3992,7 +3992,10 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; ==================================================
 
 (use-package iedit
-  :commands (iedit-mode))
+  :commands (iedit-mode)
+  :general
+  (agnostic-key
+    "C-;"  'iedit-mode))
 
 ;; transpose-frame config ===========================
 ;; ==================================================
