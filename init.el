@@ -814,9 +814,9 @@
 
 (use-package org-sticky-header :defer t)
 
-(use-package org-transclusion :defer t)
+(use-package org-transclusion :after org)
 
-(use-package org-download :defer t)
+(use-package org-download :after org)
 
 (use-package htmlize :defer t)
 
@@ -1059,9 +1059,6 @@
     :major-modes '(org-mode t)
     :keymaps     '(org-mode-map)
     "k"          (which-key-prefix :kanban)))
-
-(use-package org-roam
-  :after org)
 
 ;; exporters
 
