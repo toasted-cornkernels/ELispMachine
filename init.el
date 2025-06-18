@@ -1033,6 +1033,27 @@
     :keymaps     '(org-mode-map)
     "cp"         'org-pomodoro))
 
+(use-package org-journal
+  :after org
+  :general-config
+  (local-leader
+    :major-modes '(calendar-mode t)
+    :keymaps     '(calendar-mode-map)
+    "r" 'org-journal-read-entry
+    "i" 'org-journal-new-date-entry
+    "n" 'org-journal-next-entry
+    "p" 'org-journal-previous-entry
+    "s" 'org-journal-search-forever
+    "w" 'org-journal-search-calendar-week
+    "m" 'org-journal-search-calendar-month
+    "y" 'org-journal-search-calendar-year)
+  (local-leader
+    :major-modes '(org-journal-mode t)
+    :keymaps     '(org-journal-mode-map)
+    "j"          'org-journal-new-entry
+    "n"          'org-journal-next-entry
+    "p"          'org-journal-previous-entry))
+
 (use-package org-remark :defer t)
 
 (use-package org-noter :defer t)
@@ -5286,6 +5307,11 @@ set so that it clears the whole REPL buffer, not just the output."
   "al"   'launchctl
 
   "ao"   (which-key-prefix :org)
+  "aol"  'org-store-link
+  "aom"  'org-tags-view
+  "aos"  'org-search-view
+  "aot"  'org-todo-list
+  
   "aof"  (which-key-prefix :feeds)
   "ao#"  'org-agenda-list-stuck-projects
   "aoa"  'org-agenda-list
@@ -5294,6 +5320,7 @@ set so that it clears the whole REPL buffer, not just the output."
   "aoe"  'org-store-agenda-views
   "aofi" 'org-feed-goto-inbox
   "aofu" 'org-feed-update-all
+
   "aoC"  (which-key-prefix :clocks)
   "aoCc" 'org-clock-cancel
   "aoCg" 'org-clock-goto
@@ -5303,10 +5330,13 @@ set so that it clears the whole REPL buffer, not just the output."
   "aoCo" 'org-clock-out
   "aoCr" 'org-resolve-clocks
   "aoCp" 'org-pomodoro
-  "aol"  'org-store-link
-  "aom"  'org-tags-view
-  "aos"  'org-search-view
-  "aot"  'org-todo-list
+
+  "aoj"  (which-key-prefix :journal)
+  "aojf" 'org-journal-open-current-journal-file
+  "aojj" 'org-journal-new-entry
+  "aojs" 'org-journal-search-forever
+  "aojt" 'org-journal-new-scheduled-entry
+  "aojv" 'org-journal-schedule-view
 
   "aw"   (which-key-prefix :web)
   "aww"  (which-key-prefix :eww)
