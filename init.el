@@ -531,7 +531,7 @@
     "in"         'org-add-note
     "ip"         'org-set-property
     "is"         'org-insert-subheading
-    
+
     "it"         (which-key-prefix :template)
     "it/"        (org-insert-structure org-insert-comment "comment")
     "itC"        (org-insert-structure org-insert-comment "comment")
@@ -1058,9 +1058,21 @@
   (local-leader
     :major-modes '(org-mode t)
     :keymaps     '(org-mode-map)
-    "k"          (which-key-prefix :kanban)))
+    "k"          (which-key-prefix :kanban)
+    "k."         'org-kanban/initialize-here
+    "k^"         'org-kanban/initialize-at-beginning
+    "k$"         'org-kanban/initialize-at-end
 
-;; exporters
+    "ks"         'org-kanban/shift
+    "kh"         'org-kanban/prev
+    "kj"         'org-kanban/move-subtree-down
+    "kk"         'org-kanban/move-subtree-up
+    "kl"         'org-kanban/next
+
+    "kc"         'org-kanban/configure-block
+    "kv"         'org-kanban/version))
+
+;; Exporters
 
 (use-package ox-latex
   :straight nil
@@ -1465,7 +1477,7 @@
     :major-modes '(python-mode t)
     :keymaps     '(python-mode-map)
     "'"   'elispm/python-start-or-switch-repl
-    
+
     "s"   (which-key-prefix "REPL")
     "sB"  'elispm/python-shell-send-buffer-switch
     "sb"  'elispm/python-shell-send-buffer
@@ -1485,7 +1497,7 @@
 
     "r"   (which-key-prefix "refactor")
     "rI"  'py-isort-buffer
-    
+
     "v"   (which-key-prefix "virtualenv")
     "vi"  (which-key-prefix "pipenv")
     "via" 'pipenv-activate
@@ -1494,7 +1506,7 @@
     "vio" 'pipenv-open
     "vis" 'pipenv-shell
     "viu" 'pipenv-uninstall
-    
+
     "vp"  (which-key-prefix "poetry")
     "vpd" 'poetry-venv-deactivate
     "vpw" 'poetry-venv-workon
@@ -4489,7 +4501,7 @@ set so that it clears the whole REPL buffer, not just the output."
     "Gp" 'git-gutter:popup-hunk
     "Gc" 'git-gutter:clear
     "GG" 'git-gutter:toggle)
-  
+
   :config
   (setq git-gutter:modified-sign " "
 	      git-gutter:added-sign "+"
