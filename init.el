@@ -2004,6 +2004,7 @@ Unlike `eval-defun', this does not go to topmost function."
   (require 'cider))
 
 (use-package cider
+  ;; :after clojure-mode
   :init
   (setq cider-stacktrace-default-filters '(tooling dup)
 	      cider-repl-pop-to-buffer-on-connect nil
@@ -2188,20 +2189,20 @@ set so that it clears the whole REPL buffer, not just the output."
 	             clojurex-mode-map
 	             cider-repl-mode-map
 	             cider-clojure-interaction-mode-map)
-    "'"  'sesman-start
+    "'"   'sesman-start
 
-    "="  (which-key-prefix :format)
-    "=r" 'cider-format-region
-    "=f" 'cider-format-defun
+    "="   (which-key-prefix :format)
+    "=r"  'cider-format-region
+    "=f"  'cider-format-defun
 
     "=e"  (which-key-prefix :edn)
     "=eb" 'cider-format-edn-buffer
     "=ee" 'cider-format-edn-last-sexp
     "=er" 'cider-format-edn-region
 
-    "d"  (which-key-prefix :debug)
-    "db" 'cider-debug-defun-at-point
-    "de" 'cider-display-error-buffer
+    "d"   (which-key-prefix :debug)
+    "db"  'cider-debug-defun-at-point
+    "de"  'cider-display-error-buffer
 
     "dv"  (which-key-prefix :inspect)
     "dve" 'cider-inspect-last-sexp
@@ -2210,23 +2211,23 @@ set so that it clears the whole REPL buffer, not just the output."
     "dvl" 'cider-inspect-last-result
     "dvv" 'cider-inspect-expr
 
-    "e"  (which-key-prefix :eval)
-    "e;" 'cider-eval-defun-to-comment
-    "e$" 'cider-eval-sexp-end-of-line
-    "e(" 'cider-eval-list-at-point
-    "eb" 'cider-eval-buffer
-    "ee" 'cider-eval-last-sexp
-    "ec" 'cider-eval-last-sexp
-    "ef" 'cider-eval-defun-at-point
-    "ei" 'cider-interrupt
-    "el" 'cider-eval-sexp-end-of-line
-    "em" 'cider-macroexpand-1
-    "eM" 'cider-macroexpand-all
-    "er" 'cider-eval-region
-    "eu" 'cider-undef
-    "ev" 'cider-eval-sexp-at-point
-    "eV" 'cider-eval-sexp-up-to-point
-    "ew" 'cider-eval-last-sexp-and-replace
+    "e"   (which-key-prefix :eval)
+    "e;"  'cider-eval-defun-to-comment
+    "e$"  'cider-eval-sexp-end-of-line
+    "e("  'cider-eval-list-at-point
+    "eb"  'cider-eval-buffer
+    "ee"  'cider-eval-last-sexp
+    "ec"  'cider-eval-last-sexp
+    "ef"  'cider-eval-defun-at-point
+    "ei"  'cider-interrupt
+    "el"  'cider-eval-sexp-end-of-line
+    "em"  'cider-macroexpand-1
+    "eM"  'cider-macroexpand-all
+    "er"  'cider-eval-region
+    "eu"  'cider-undef
+    "ev"  'cider-eval-sexp-at-point
+    "eV"  'cider-eval-sexp-up-to-point
+    "ew"  'cider-eval-last-sexp-and-replace
 
     "en"  (which-key-prefix :namespace)
     "ena" 'cider-ns-reload-all
@@ -2240,11 +2241,11 @@ set so that it clears the whole REPL buffer, not just the output."
     "epf" 'cider-pprint-eval-defun-at-point
     "epe" 'cider-pprint-eval-last-sexp
 
-    "m"  (which-key-prefix :repl)
-    "mb" 'sesman-browser
-    "mi" 'sesman-info
-    "mg" 'sesman-goto
-    "ms" 'sesman-start
+    "m"   (which-key-prefix :repl)
+    "mb"  'sesman-browser
+    "mi"  'sesman-info
+    "mg"  'sesman-goto
+    "ms"  'sesman-start
 
     "ml"  (which-key-prefix "link session")
     "mlb" 'sesman-link-with-buffer
@@ -2260,34 +2261,34 @@ set so that it clears the whole REPL buffer, not just the output."
     "mqq" 'sesman-quit
     "mqr" 'sesman-restart
 
-    "p"  (which-key-prefix :profile)
-    "p+" 'cider-profile-samples
-    "pc" 'cider-profile-clear
-    "pn" 'cider-profile-ns-toggle
-    "ps" 'cider-profile-var-summary
-    "pS" 'cider-profile-summary
-    "pt" 'cider-profile-toggle
-    "pv" 'cider-profile-var-profiled-p
+    "p"   (which-key-prefix :profile)
+    "p+"  'cider-profile-samples
+    "pc"  'cider-profile-clear
+    "pn"  'cider-profile-ns-toggle
+    "ps"  'cider-profile-var-summary
+    "pS"  'cider-profile-summary
+    "pt"  'cider-profile-toggle
+    "pv"  'cider-profile-var-profiled-p
 
-    "s"  (which-key-prefix "send to repl")
-    "sa" (if (eq major-mode 'cider-repl-mode)
+    "s"   (which-key-prefix "send to repl")
+    "sa"  (if (eq major-mode 'cider-repl-mode)
 	           'cider-switch-to-last-clojure-buffer
 	         'cider-switch-to-repl-buffer)
-    "sb" 'cider-load-buffer
-    "sB" 'cider-send-buffer-in-repl-and-focus
-    "se" 'cider-send-last-sexp-to-repl
-    "sE" 'cider-send-last-sexp-to-repl-focus
-    "sf" 'cider-send-function-to-repl
-    "sF" 'cider-send-function-to-repl-focus
-    "si" 'sesman-start
-    "sl" 'cider-find-and-clear-repl-buffer
-    "sL" 'cider-find-and-clear-repl-output
-    "sn" 'cider-send-ns-form-to-repl
-    "sN" 'cider-send-ns-form-to-repl-focus
-    "so" 'cider-repl-switch-to-other
-    "sr" 'cider-send-region-to-repl
-    "sR" 'cider-send-region-to-repl-focus
-    "su" 'cider-repl-require-repl-utils
+    "sb"  'cider-load-buffer
+    "sB"  'cider-send-buffer-in-repl-and-focus
+    "se"  'cider-send-last-sexp-to-repl
+    "sE"  'cider-send-last-sexp-to-repl-focus
+    "sf"  'cider-send-function-to-repl
+    "sF"  'cider-send-function-to-repl-focus
+    "si"  'sesman-start
+    "sl"  'cider-find-and-clear-repl-buffer
+    "sL"  'cider-find-and-clear-repl-output
+    "sn"  'cider-send-ns-form-to-repl
+    "sN"  'cider-send-ns-form-to-repl-focus
+    "so"  'cider-repl-switch-to-other
+    "sr"  'cider-send-region-to-repl
+    "sR"  'cider-send-region-to-repl-focus
+    "su"  'cider-repl-require-repl-utils
 
     "sc"  (which-key-prefix "connect external repl")
     "scj" 'cider-connect-clj
@@ -2305,125 +2306,125 @@ set so that it clears the whole REPL buffer, not just the output."
     "sqn" 'cider-ns-reload
     "sqN" 'cider-ns-reload-all
 
-    "t"  (which-key-prefix :test)
-    "ta" 'cider-test-run-all-tests
-    "tb" 'cider-test-show-report
-    "tl" 'cider-test-run-loaded-tests
-    "tn" 'cider-test-run-ns-tests
-    "tp" 'cider-test-run-project-tests
-    "tr" 'cider-test-rerun-failed-tests
-    "tt" 'cider-test-run-focused-test
+    "t"   (which-key-prefix :test)
+    "ta"  'cider-test-run-all-tests
+    "tb"  'cider-test-show-report
+    "tl"  'cider-test-run-loaded-tests
+    "tn"  'cider-test-run-ns-tests
+    "tp"  'cider-test-run-project-tests
+    "tr"  'cider-test-rerun-failed-tests
+    "tt"  'cider-test-run-focused-test
+          
+    "g"   (which-key-prefix :goto)
+    "gb"  'cider-pop-back
+    "gc"  'cider-classpath
+    "gg"  'clj-find-var
+    "gn"  'cider-find-ns
+    "ge"  'cider-jump-to-compilation-error
+    "gr"  'cider-find-resource
+    "gs"  'cider-browse-spec
+    "gS"  'cider-browse-spec-all
 
-    "g"  (which-key-prefix :goto)
-    "gb" 'cider-pop-back
-    "gc" 'cider-classpath
-    "gg" 'clj-find-var
-    "gn" 'cider-find-ns
-    "ge" 'cider-jump-to-compilation-error
-    "gr" 'cider-find-resource
-    "gs" 'cider-browse-spec
-    "gS" 'cider-browse-spec-all
-
-    "h"  (which-key-prefix :documentation)
-    "ha" 'cider-apropos
-    "hc" 'cider-cheatsheet
-    "hd" 'cider-clojuredocs
-    "hj" 'cider-javadoc
-    "hn" 'cider-browse-ns
-    "hN" 'cider-browse-ns-all
-    "hs" 'cider-browse-spec
-    "hS" 'cider-browse-spec-all
-    "hh" 'cider-doc
-
-    "T"  (which-key-prefix :toggle)
-    "Te" 'cider-enlighten-mode
-    "Tf" 'cider-toggle-repl-font-locking
-    "Tp" 'cider-toggle-repl-pretty-printing
-    "Tt" 'cider-auto-test-mode)
+    "h"   (which-key-prefix :documentation)
+    "ha"  'cider-apropos
+    "hc"  'cider-cheatsheet
+    "hd"  'cider-clojuredocs
+    "hj"  'cider-javadoc
+    "hn"  'cider-browse-ns
+    "hN"  'cider-browse-ns-all
+    "hs"  'cider-browse-spec
+    "hS"  'cider-browse-spec-all
+    "hh"  'cider-doc
+          
+    "T"   (which-key-prefix :toggle)
+    "Te"  'cider-enlighten-mode
+    "Tf"  'cider-toggle-repl-font-locking
+    "Tp"  'cider-toggle-repl-pretty-printing
+    "Tt"  'cider-auto-test-mode)
 
   (local-leader
     :major-modes '(cider-repl-mode t)
-    :keymaps '(cider-repl-mode-map)
-    "," 'cider-repl-handle-shortcut)
+    :keymaps     '(cider-repl-mode-map)
+    ","          'cider-repl-handle-shortcut)
 
   (local-leader
     :major-modes '(cider-clojure-interaction-mode t)
-    :keymaps '(cider-clojure-interaction-mode-map)
+    :keymaps     '(cider-clojure-interaction-mode-map)
     "epl" 'cider-eval-print-last-sexp)
 
   (normal-mode-major-mode
     :major-modes '(cider-stacktrace-mode t)
-    :keymaps '(cider-stacktrace-mode-map)
-    "C-j" 'cider-stacktrace-next-cause
-    "C-k" 'cider-stacktrace-previous-cause
-    "TAB" 'cider-stacktrace-cycle-current-cause
-    "0"   'cider-stacktrace-cycle-all-causes
-    "1"   'cider-stacktrace-cycle-cause-1
-    "2"   'cider-stacktrace-cycle-cause-2
-    "3"   'cider-stacktrace-cycle-cause-3
-    "4"   'cider-stacktrace-cycle-cause-4
-    "5"   'cider-stacktrace-cycle-cause-5
-    "a"   'cider-stacktrace-toggle-all
-    "c"   'cider-stacktrace-toggle-clj
-    "d"   'cider-stacktrace-toggle-duplicates
-    "J"   'cider-stacktrace-toggle-java
-    "r"   'cider-stacktrace-toggle-repl
-    "T"   'cider-stacktrace-toggle-tooling)
+    :keymaps     '(cider-stacktrace-mode-map)
+    "C-j"        'cider-stacktrace-next-cause
+    "C-k"        'cider-stacktrace-previous-cause
+    "TAB"        'cider-stacktrace-cycle-current-cause
+    "0"          'cider-stacktrace-cycle-all-causes
+    "1"          'cider-stacktrace-cycle-cause-1
+    "2"          'cider-stacktrace-cycle-cause-2
+    "3"          'cider-stacktrace-cycle-cause-3
+    "4"          'cider-stacktrace-cycle-cause-4
+    "5"          'cider-stacktrace-cycle-cause-5
+    "a"          'cider-stacktrace-toggle-all
+    "c"          'cider-stacktrace-toggle-clj
+    "d"          'cider-stacktrace-toggle-duplicates
+    "J"          'cider-stacktrace-toggle-java
+    "r"          'cider-stacktrace-toggle-repl
+    "T"          'cider-stacktrace-toggle-tooling)
 
   (normal-mode-major-mode
     :major-modes '(cider-docview-mode t)
-    :keymaps '(cider-docview-mode-map)
-    "q" 'cider-popup-buffer-quit)
+    :keymaps     '(cider-docview-mode-map)
+    "q"          'cider-popup-buffer-quit)
 
   (normal-mode-major-mode
     :major-modes '(cider-inspector-mode t)
-    :keymaps '(cider-inspector-mode-map)
-    "L" 'cider-inspector-pop
-    "n" 'cider-inspector-next-page
-    "N" 'cider-inspector-prev-page
-    "p" 'cider-inspector-prev-page
-    "r" 'cider-inspector-refresh)
+    :keymaps     '(cider-inspector-mode-map)
+    "L"          'cider-inspector-pop
+    "n"          'cider-inspector-next-page
+    "N"          'cider-inspector-prev-page
+    "p"          'cider-inspector-prev-page
+    "r"          'cider-inspector-refresh)
 
   (normal-mode-major-mode
     :major-modes '(cider-test-report-mode t)
-    :keymaps '(cider-test-report-mode-map)
-    (kbd "C-j") 'cider-test-next-result
-    (kbd "C-k") 'cider-test-previous-result
-    (kbd "RET") 'cider-test-jump
-    (kbd "d")   'cider-test-ediff
-    (kbd "e")   'cider-test-stacktrace
-    (kbd "q")   'cider-popup-buffer-quit
-    (kbd "r")   'cider-test-rerun-tests
-    (kbd "t")   'cider-test-run-test
-    (kbd "T")   'cider-test-run-ns-tests)
+    :keymaps     '(cider-test-report-mode-map)
+    "C-j"        'cider-test-next-result
+    "C-k"        'cider-test-previous-result
+    "RET"        'cider-test-jump
+    "d"          'cider-test-ediff
+    "e"          'cider-test-stacktrace
+    "q"          'cider-popup-buffer-quit
+    "r"          'cider-test-rerun-tests
+    "t"          'cider-test-run-test
+    "T"          'cider-test-run-ns-tests)
 
   (normal-mode-major-mode
     :major-modes '(cider-repl-history-mode t)
-    :keymaps '(cider-repl-history-mode-map)
-    "j" 'cider-repl-history-forward
-    "k" 'cider-repl-history-previous
-    "s" 'cider-repl-history-occur
-    "r" 'cider-repl-history-update)
+    :keymaps     '(cider-repl-history-mode-map)
+    "j"          'cider-repl-history-forward
+    "k"          'cider-repl-history-previous
+    "s"          'cider-repl-history-occur
+    "r"          'cider-repl-history-update)
 
   (local-leader
     :major-modes '(cider-repl-history-mode t)
-    :keymaps '(cider-repl-history-mode-map)
-    "s" 'cider-repl-history-save)
+    :keymaps     '(cider-repl-history-mode-map)
+    "s"          'cider-repl-history-save)
 
   (normal-mode-major-mode
     :major-modes '(cider-repl-mode t)
-    :keymaps '(cider-repl-mode-map)
-    "C-j" 'cider-repl-next-input
-    "C-k" 'cider-repl-previous-input
-    "RET" 'cider-repl-return)
+    :keymaps     '(cider-repl-mode-map)
+    "C-j"        'cider-repl-next-input
+    "C-k"        'cider-repl-previous-input
+    "RET"        'cider-repl-return)
 
   (insert-mode-major-mode
     :major-modes '(cider-repl-mode t)
-    :keymaps '(cider-repl-mode-map)
-    "C-j" 'cider-repl-next-input
-    "C-k" 'cider-repl-previous-input
-    "C-RET" 'cider-repl-newline-and-indent
-    "C-r" 'cider-repl-history)
+    :keymaps     '(cider-repl-mode-map)
+    "C-j"        'cider-repl-next-input
+    "C-k"        'cider-repl-previous-input
+    "C-RET"      'cider-repl-newline-and-indent
+    "C-r"        'cider-repl-history)
 
 
   :config
@@ -2664,6 +2665,7 @@ set so that it clears the whole REPL buffer, not just the output."
     "cc" 'geiser-compile-current-buffer
     "cp" 'geiser-add-to-load-path
 
+    "e"  (which-key-prefix "eval")
     "eb" 'geiser-eval-buffer
     "ee" 'geiser-eval-last-sexp
     "ef" 'geiser-eval-definition
