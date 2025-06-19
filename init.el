@@ -1856,7 +1856,7 @@ Unlike `eval-defun', this does not go to topmost function."
   (local-leader
     :major-modes '(lisp-mode t)
     :keymaps     '(lisp-mode-map)
-    "'" 'slime
+    "'"  'slime
 
     "c"  (which-key-prefix "compile")
     "cc" 'slime-compile-file
@@ -1907,7 +1907,7 @@ Unlike `eval-defun', this does not go to topmost function."
     "si" 'slime
     "sq" 'slime-quit-lisp
 
-    "t" (which-key-prefix "toggle")
+    "t"  (which-key-prefix "toggle")
     "tf" 'slime-toggle-fancy-trace))
 
 ;; Elisp config =====================================
@@ -1923,15 +1923,15 @@ Unlike `eval-defun', this does not go to topmost function."
   (local-leader
     :major-modes '(emacs-lisp-mode t)
     :keymaps     '(emacs-lisp-mode-map)
-    "e"  (which-key-prefix :eval)
-    "eb" 'eval-buffer
-    "ef" 'eval-defun
-    "er" 'eval-region
-    "ep" 'pp-eval-last-sexp
-    "ee" 'eval-last-sexp
-    "es" 'eval-last-sexp
-    "ec" 'eval-expression-at-point
-    "i"  'elisp-index-search)
+    "e"          (which-key-prefix :eval)
+    "eb"         'eval-buffer
+    "ef"         'eval-defun
+    "er"         'eval-region
+    "ep"         'pp-eval-last-sexp
+    "ee"         'eval-last-sexp
+    "es"         'eval-last-sexp
+    "ec"         'eval-expression-at-point
+    "i"          'elisp-index-search)
 
   :config
   (defun eval-expression-at-point ()
