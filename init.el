@@ -1039,24 +1039,22 @@
   (local-leader
     :major-modes '(calendar-mode t)
     :keymaps     '(calendar-mode-map)
-    "r" 'org-journal-read-entry
-    "i" 'org-journal-new-date-entry
-    "n" 'org-journal-next-entry
-    "p" 'org-journal-previous-entry
-    "s" 'org-journal-search-forever
-    "w" 'org-journal-search-calendar-week
-    "m" 'org-journal-search-calendar-month
-    "y" 'org-journal-search-calendar-year)
+    "r"          'org-journal-read-entry
+    "i"          'org-journal-new-date-entry
+    "n"          'org-journal-next-entry
+    "p"          'org-journal-previous-entry
+    "s"          'org-journal-search-forever
+    "w"          'org-journal-search-calendar-week
+    "m"          'org-journal-search-calendar-month
+    "y"          'org-journal-search-calendar-year)
   (local-leader
     :major-modes '(org-journal-mode t)
     :keymaps     '(org-journal-mode-map)
     "j"          'org-journal-new-entry
     "n"          'org-journal-next-entry
-    "p"          'org-journal-previous-entry))
-
-(use-package org-remark :defer t)
-
-(use-package org-noter :defer t)
+    "p"          'org-journal-previous-entry)
+  :config
+  (setq org-journal-dir "~/Org/Journal"))
 
 (use-package org-tempo
   :straight (:type built-in)
@@ -1092,6 +1090,10 @@
 
     "kc"         'org-kanban/configure-block
     "kv"         'org-kanban/version))
+
+(use-package org-remark :defer t)
+
+(use-package org-noter :defer t)
 
 ;; Exporters
 
@@ -4861,7 +4863,11 @@ set so that it clears the whole REPL buffer, not just the output."
 (use-package modus-themes
   :config
   (setq modus-themes-italic-constructs t
-        modus-themes-bold-constructs nil))
+        modus-themes-bold-constructs nil)
+  ;; We choose to not use auto-dark in a terminal, so
+  ;; load the dark theme manually.
+  (when terminal-p
+    (load-theme 'modus-vivendi t)))
 
 (use-package auto-dark
   :when (not (or chromeOS-p android-p terminal-p))
