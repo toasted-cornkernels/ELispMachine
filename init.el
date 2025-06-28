@@ -316,7 +316,9 @@
   :config (global-evil-surround-mode 1))
 
 (use-package evil-anzu
-  :after evil)
+  :after evil
+  :config
+  (global-anzu-mode))
 
 (use-package evil-commentary
   :after evil
