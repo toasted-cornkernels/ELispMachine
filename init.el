@@ -1041,24 +1041,22 @@
   (local-leader
     :major-modes '(calendar-mode t)
     :keymaps     '(calendar-mode-map)
-    "r" 'org-journal-read-entry
-    "i" 'org-journal-new-date-entry
-    "n" 'org-journal-next-entry
-    "p" 'org-journal-previous-entry
-    "s" 'org-journal-search-forever
-    "w" 'org-journal-search-calendar-week
-    "m" 'org-journal-search-calendar-month
-    "y" 'org-journal-search-calendar-year)
+    "r"          'org-journal-read-entry
+    "i"          'org-journal-new-date-entry
+    "n"          'org-journal-next-entry
+    "p"          'org-journal-previous-entry
+    "s"          'org-journal-search-forever
+    "w"          'org-journal-search-calendar-week
+    "m"          'org-journal-search-calendar-month
+    "y"          'org-journal-search-calendar-year)
   (local-leader
     :major-modes '(org-journal-mode t)
     :keymaps     '(org-journal-mode-map)
     "j"          'org-journal-new-entry
     "n"          'org-journal-next-entry
-    "p"          'org-journal-previous-entry))
-
-(use-package org-remark :defer t)
-
-(use-package org-noter :defer t)
+    "p"          'org-journal-previous-entry)
+  :config
+  (setq org-journal-dir "~/Org/Journal"))
 
 (use-package org-tempo
   :straight (:type built-in)
@@ -1094,6 +1092,10 @@
 
     "kc"         'org-kanban/configure-block
     "kv"         'org-kanban/version))
+
+(use-package org-remark :defer t)
+
+(use-package org-noter :defer t)
 
 ;; Exporters
 
@@ -3214,41 +3216,117 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; Rust config ======================================
 ;; ==================================================
 
+;; (use-package rust-mode
+;;   :defer t
+;;   :init
+;;   (setq rust-mode-treesitter-derive t))
+
 (use-package rustic
-  :defer t
+  :mode ("\\.rs\\'" . rustic-mode)
   :hook (rustic-mode . (lambda () (setq indent-tabs-mode nil)))
   :config
-  (setq rustic-lsp-client 'eglot)
+  (setq rustic-lsp-client 'eglot
+        rustic-lsp-server 'rust-analyzer)
+  (evil-set-initial-state 'rustic-popup-mode 'motion)
   (add-to-list 'eglot-server-programs
-               '((rust-ts-mode rust-mode) .
+               '((rustic-mode) .
                  ("rust-analyzer" :initializationOptions (:check (:command "clippy")))))
   :general-config
   (local-leader
     :major-modes '(rustic-mode t)
     :keymaps     '(rustic-mode-map)
-    "c"  (which-key-prefix "cargo")
-    "c." 'rustic-cargo-run-rerun
-    "c=" 'rustic-cargo-fmt
-    "ca" 'rustic-cargo-add
-    "cc" 'rustic-cargo-build
-    "cC" 'rustic-cargo-clean
-    "cd" 'rustic-cargo-doc
-    "cs" 'rustic-doc-search
-    "ce" 'rustic-cargo-bench
-    "ci" 'rustic-cargo-init
-    "cl" 'rustic-cargo-clippy
-    "cf" 'rustic-cargo-clippy-fix
-    "cn" 'rustic-cargo-new
-    "co" 'rustic-cargo-outdated
-    "cr" 'rustic-cargo-rm
-    "cu" 'rustic-cargo-update
-    "cU" 'rustic-cargo-upgrade
-    "cv" 'rustic-cargo-check
-    "cx" 'rustic-cargo-run
+    "o"   'rustic-cargo-outdated
+    "p"   'rustic-popup
+    "!"   'rustic-run-shell-command
 
-    "t"  (which-key-prefix "tests")
-    "ta" 'rustic-cargo-test-run
-    "tt" 'rustic-cargo-current-test))
+    "b"   (which-key-prefix "babel")
+    "bc"  'rustic-babel-clippy
+    "bf"  'rustic-babel-format-block
+    "bh"  'rustic-babel-header-insert-crates
+    "bm"  'rustic-babel-visit-project
+
+    "C"   (which-key-prefix "cargo")
+    "C!"  'rustic-cargo-init
+    "CC"  'rustic-cargo-clean
+    "CD"  'rustic-cargo-build-doc
+    "CL"  'rustic-cargo-login
+    "CU"  'rustic-cargo-upgrade
+    "CX"  'rustic-cargo-rm
+    "Ca"  'rustic-cargo-add
+    "Cc"  'rustic-cargo-build
+    "Cd"  'rustic-cargo-doc
+    "Ce"  'rustic-cargo-bench
+    "Cl"  'rustic-cargo-lints
+    "Cm"  'rustic-cargo-add-missing-dependencies
+    "Cn"  'rustic-cargo-new
+    "Co"  'rustic-cargo-outdated
+    "Cs"  'rustic-doc-search
+    "Cu"  'rustic-cargo-update
+    "Cv"  'rustic-cargo-check
+
+    "ci"  (which-key-prefix "install")
+    "cii" 'rustic-cargo-install
+    "ciI" 'rustic-cargo-install-rerun
+
+    "l"   (which-key-prefix "clippy")
+    "lL"  'rustic-cargo-clippy-rerun
+    "ll"  'rustic-cargo-clippy
+    "lr"  'rustic-cargo-clippy-run
+    "lf"  'rustic-cargo-clippy-fix
+
+    "c"   (which-key-prefix "compile")
+    "cc"  'rustic-compile
+    "cC"  'rustic-recompile
+    "ci"  'rustic-compile-send-input
+
+    "d"   (which-key-prefix "docs")
+    "ds"  'rustic-doc-search
+    "dd"  'rustic-doc-dumb-search
+    "dS"  'rustic-doc-setup
+    "dc"  'rustic-doc-convert-current-package
+
+    "e"   (which-key-prefix "macroexpand")
+    "ee"  'rustic-cargo-expand
+    "ec"  'rustic-cargo-expand-command
+
+    "r"   (which-key-prefix "run")
+    "rr"  'rustic-cargo-run
+    "rR"  'rustic-cargo-run-rerun
+    "ri"  'rustic-cargo-comint-run
+    "rI"  'rustic-cargo-comint-run-rerun
+    "rp"  'rustic-cargo-plain-run
+
+    "t"   (which-key-prefix "tests")
+    "tr"  'rustic-cargo-test
+    "ta"  'rustic-cargo-test-run
+    "tc"  'rustic-cargo-current-test
+    "tR"  'rustic-cargo-test-rerun
+    "t."  'rustic-cargo-test-rerun-current
+    "tt"  'rustic-cargo-test-dwim
+
+    "p"   (which-key-prefix "playground")
+    "pp"  'rustic-playground
+    "pb"  'rustic-playground-buffer
+
+    "e"   (which-key-prefix "edit")
+    "ed"  'rustic-docstring-dwim
+    "et"  'rustic-open-dependency-file
+    "ef"  'rustic-beginning-of-defun
+
+    "F"   (which-key-prefix "fix")
+    "FF"  'rustic-rustfix
+
+    "S"   (which-key-prefix "spellcheck")
+    "SS"  'rustic-cargo-spellcheck
+    "SR"  'rustic-cargo-spellcheck-rerun
+
+    "f"   (which-key-prefix "format")
+    "fB"  'rustic-babel-format-block
+    "f="  'rustic-format-file
+    "fb"  'rustic-format-buffer
+    "fc"  'rustic-cargo-fmt
+    "ff"  'rustic-format-dwim
+    "fr"  'rustic-format-region))
 
 (use-package toml-mode
   :mode (("/\\(Cargo.lock\\|\\.cargo/config\\)\\'" . toml-mode)
@@ -4169,10 +4247,10 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; =================================================
 
 (use-package yaml-mode
-  :mode (("\\.ya?ml\\'" . yaml-mode)
-	       ("Procfile\\'" . yaml-mode)
-	       ("\\.qlpack\\'"  . yaml-mode)
-         ("\\.qls" . yaml-mode)))
+  :mode ("\\.ya?ml\\'"
+	       "Procfile\\'"
+	       "\\.qlpack\\'"
+         "\\.qls" ))
 
 ;; csv config ======================================
 ;; =================================================
@@ -4863,7 +4941,11 @@ set so that it clears the whole REPL buffer, not just the output."
 (use-package modus-themes
   :config
   (setq modus-themes-italic-constructs t
-        modus-themes-bold-constructs nil))
+        modus-themes-bold-constructs nil)
+  ;; We choose to not use auto-dark in a terminal, so
+  ;; load the dark theme manually.
+  (when terminal-p
+    (load-theme 'modus-vivendi t)))
 
 (use-package auto-dark
   :when (not (or chromeOS-p android-p terminal-p))
@@ -5127,7 +5209,7 @@ set so that it clears the whole REPL buffer, not just the output."
   "C-s-a" 'insert-ampersand
   "C-s-c" 'world-clock
   "C-s-e" 'eshell
-  "C-s-t" (lambda () (interactive) (invert-face 'default))
+  "C-s-t" 'modus-themes-toggle
   "C-s-r" 'eradio-toggle
   "C-s-f" 'toggle-frame-fullscreen
   "C-s-s" 'ace-swap-window
@@ -5315,7 +5397,7 @@ set so that it clears the whole REPL buffer, not just the output."
   "aom"  'org-tags-view
   "aos"  'org-search-view
   "aot"  'org-todo-list
-  
+
   "aof"  (which-key-prefix :feeds)
   "ao#"  'org-agenda-list-stuck-projects
   "aoa"  'org-agenda-list
@@ -5380,7 +5462,6 @@ set so that it clears the whole REPL buffer, not just the output."
 
   "ar"   (which-key-prefix :reader)
   "are"  'elfeed
-
 
   "am"   (which-key-prefix "emms")
   "amee" 'emms
@@ -6050,7 +6131,7 @@ set so that it clears the whole REPL buffer, not just the output."
   (emms-all)
   (emms-default-players)
   (setq emms-player-mpv-parameters '("--really-quiet" "--no-audio-display" "--no-video")
-        emms-source-file-default-directory (cond (macOS-p "~/Music/")
+        emms-source-file-default-directory (cond (macOS-p "~/Music/MyMusic/")
                                                  (chromeOS-p "/mnt/chromeos/removable/SD Card/Music/")
                                                  (t "~/"))
 	      emms-playlist-buffer-name "*Music*"
@@ -6070,6 +6151,19 @@ set so that it clears the whole REPL buffer, not just the output."
   :straight nil
   :init
   (emms-playing-time nil))
+
+;; Ready-player config ==============================
+;; ==================================================
+
+(use-package ready-player
+  :defer t
+  :config
+  (setq ready-player-my-media-collection-location "~/Music/MyMusic"
+        ready-player-hide-modeline nil)
+  (ready-player-mode))
+
+(use-package listen
+  :defer t)
 
 ;; Streamlink config ================================
 ;; ==================================================
