@@ -6238,10 +6238,16 @@ Optional argument MSG First message shown in buffer."
 
 (global-auto-revert-mode 1)    ; Refresh buffers with changed local files
 
-(message "config loaded!")
+(use-package restart-emacs
+  :defer t
+  :general
+  (global-leader
+    "qr" 'restart-emacs))
 
 ;; config end =======================================
 ;; ==================================================
+
+(message "config loaded!")
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
