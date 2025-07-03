@@ -3532,6 +3532,7 @@ set so that it clears the whole REPL buffer, not just the output."
   :hook (js-mode . (lambda ()
                      (setq indent-tabs-mode nil)))
   :config
+  (setq-default js-indent-level 2)
   (add-to-list 'eglot-server-programs
                '(js-mode . ("typescript-language-server" "--stdio")))
   (add-to-list 'eglot-server-programs
