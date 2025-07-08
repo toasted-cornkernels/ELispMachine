@@ -1037,6 +1037,8 @@
 
 (use-package org-journal
   :after org
+  :config
+  (setq org-journal-file-format "%Y%m%d.org")
   :general-config
   (local-leader
     :major-modes '(calendar-mode t)
