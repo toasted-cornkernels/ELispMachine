@@ -1773,6 +1773,7 @@
 
 (use-package smartparens
   :config
+  (setq sp-highlight-pair-overlay nil)
   (smartparens-global-mode)
   ;; Regular quote
   (sp-local-pair '(fennel-mode hy-mode clojure-mode lisp-mode emacs-lisp-mode
@@ -1802,9 +1803,9 @@
     (forward-line -1)
     (indent-according-to-mode))
 
-  (sp-local-pair 'prog-mode "{" nil :post-handlers '((indent-between-pair "RET")))
-  (sp-local-pair 'prog-mode "[" nil :post-handlers '((indent-between-pair "RET")))
-  (sp-local-pair 'prog-mode "(" nil :post-handlers '((indent-between-pair "RET"))))
+  (sp-pair "{" nil :post-handlers '((indent-between-pair "RET")))
+  (sp-pair "[" nil :post-handlers '((indent-between-pair "RET")))
+  (sp-pair "(" nil :post-handlers '((indent-between-pair "RET"))))
 
 (use-package evil-cleverparens
   :init
