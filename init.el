@@ -272,6 +272,7 @@
         evil-replace-state-message nil
         evil-visual-state-message nil
         evil-emacs-state-message nil)
+  (setq evil-shift-width 2)  ; TODO Make this language-dependent
   (evil-ex-define-cmd "q" 'kill-current-buffer)
   (evil-ex-define-cmd "Q" 'kill-current-buffer)
   (evil-ex-define-cmd "W" 'save-buffer)
@@ -1037,6 +1038,8 @@
 
 (use-package org-journal
   :after org
+  :config
+  (setq org-journal-file-format "%Y%m%d.org")
   :general-config
   (local-leader
     :major-modes '(calendar-mode t)
@@ -1242,6 +1245,26 @@
 (when chromeOS-p
   (setq x-super-keysym 'meta
 	      x-meta-keysym 'super))
+
+;; Quickrun config ==================================
+;; ==================================================
+
+(use-package quickrun
+  :after prog-mode
+  :general-config
+  (local-leader
+    :major-modes '(prog-mode t)
+    :keymaps     '(prog-mode-map)
+    "q"  '(which-key-prefix "quickrun")
+    "qq" 'quickrun
+    "qs" 'quickrun-select
+    "qr" 'quickrun-region
+    "qa" 'quickrun-with-arg
+    "q$" 'quickrun-shell
+    "qc" 'quickrun-compile-only
+    "qC" 'quickrun-compile-only-select
+    "qR" 'quickrun-replace-region
+    "qm" 'quickrun-autorun-mode))
 
 ;; Yasnippet config  ================================
 ;; ==================================================
@@ -3538,6 +3561,11 @@ set so that it clears the whole REPL buffer, not just the output."
   (add-to-list 'eglot-server-programs
                '(js-ts-mode . ("typescript-language-server" "--stdio"))))
 
+(use-package jtsx
+  :mode (("\\.jsx?\\'" . jtsx-jsx-mode)
+         ("\\.tsx\\'" . jtsx-tsx-mode)
+         ("\\.ts\\'" . jtsx-typescript-mode)))
+
 ;; TypeScript config ================================
 ;; ==================================================
 
@@ -4181,6 +4209,9 @@ set so that it clears the whole REPL buffer, not just the output."
   :after dired
   :config
   (diredfl-global-mode))
+
+(use-package dirvish
+  :after dired)
 
 ;; xwidget config ===================================
 ;; ==================================================
