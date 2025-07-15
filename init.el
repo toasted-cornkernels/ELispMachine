@@ -1793,7 +1793,18 @@
 			                         fundamental-mode)
 		             "`" "`" :actions nil)
   ;; Pound sign
-  (sp-local-pair '(markdown-mode) "#" "#" :actions nil))
+  (sp-local-pair '(markdown-mode) "#" "#" :actions nil)
+
+  ;; Courtesy of https://xenodium.com/emacs-smartparens-auto-indent
+  (defun indent-between-pair (&rest _ignored)
+    (newline)
+    (indent-according-to-mode)
+    (forward-line -1)
+    (indent-according-to-mode))
+
+  (sp-local-pair 'prog-mode "{" nil :post-handlers '((indent-between-pair "RET")))
+  (sp-local-pair 'prog-mode "[" nil :post-handlers '((indent-between-pair "RET")))
+  (sp-local-pair 'prog-mode "(" nil :post-handlers '((indent-between-pair "RET"))))
 
 (use-package evil-cleverparens
   :init
