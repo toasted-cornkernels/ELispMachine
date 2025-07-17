@@ -272,6 +272,7 @@
         evil-replace-state-message nil
         evil-visual-state-message nil
         evil-emacs-state-message nil)
+  (setq evil-shift-width 2)  ; TODO Make this language-dependent
   (evil-ex-define-cmd "q" 'kill-current-buffer)
   (evil-ex-define-cmd "Q" 'kill-current-buffer)
   (evil-ex-define-cmd "W" 'save-buffer)
@@ -1037,6 +1038,8 @@
 
 (use-package org-journal
   :after org
+  :config
+  (setq org-journal-file-format "%Y%m%d.org")
   :general-config
   (local-leader
     :major-modes '(calendar-mode t)
@@ -1242,6 +1245,26 @@
 (when chromeOS-p
   (setq x-super-keysym 'meta
 	      x-meta-keysym 'super))
+
+;; Quickrun config ==================================
+;; ==================================================
+
+(use-package quickrun
+  :after prog-mode
+  :general-config
+  (local-leader
+    :major-modes '(prog-mode t)
+    :keymaps     '(prog-mode-map)
+    "q"  '(which-key-prefix "quickrun")
+    "qq" 'quickrun
+    "qs" 'quickrun-select
+    "qr" 'quickrun-region
+    "qa" 'quickrun-with-arg
+    "q$" 'quickrun-shell
+    "qc" 'quickrun-compile-only
+    "qC" 'quickrun-compile-only-select
+    "qR" 'quickrun-replace-region
+    "qm" 'quickrun-autorun-mode))
 
 ;; Yasnippet config  ================================
 ;; ==================================================
@@ -1750,6 +1773,9 @@
 
 (use-package smartparens
   :config
+  (setq sp-highlight-pair-overlay nil
+        sp-highlight-wrap-overlay nil
+        sp-highlight-wrap-tag-overlay nil)
   (smartparens-global-mode)
   ;; Regular quote
   (sp-local-pair '(fennel-mode hy-mode clojure-mode lisp-mode emacs-lisp-mode
@@ -1758,7 +1784,7 @@
 			                         lisp-interaction-mode ielm-mode minibuffer-mode
 			                         fennel-repl-mode cider-repl-mode racket-repl-mode
 			                         fundamental-mode markdown-mode slime-repl-mode
-                               tuareg-mode)
+                               tuareg-mode rust-mode rustic-mode)
 		             "'" "'" :actions nil)
   ;; Backquote
   (sp-local-pair '(fennel-mode hy-mode clojure-mode lisp-mode emacs-lisp-mode
@@ -1770,7 +1796,18 @@
 			                         fundamental-mode)
 		             "`" "`" :actions nil)
   ;; Pound sign
-  (sp-local-pair '(markdown-mode) "#" "#" :actions nil))
+  (sp-local-pair '(markdown-mode) "#" "#" :actions nil)
+
+  ;; Courtesy of https://xenodium.com/emacs-smartparens-auto-indent
+  (defun indent-between-pair (&rest _ignored)
+    (newline)
+    (indent-according-to-mode)
+    (forward-line -1)
+    (indent-according-to-mode))
+
+  (sp-pair "{" nil :post-handlers '((indent-between-pair "RET")))
+  (sp-pair "[" nil :post-handlers '((indent-between-pair "RET")))
+  (sp-pair "(" nil :post-handlers '((indent-between-pair "RET"))))
 
 (use-package evil-cleverparens
   :init
@@ -3533,10 +3570,16 @@ set so that it clears the whole REPL buffer, not just the output."
   :hook (js-mode . (lambda ()
                      (setq indent-tabs-mode nil)))
   :config
+  (setq-default js-indent-level 2)
   (add-to-list 'eglot-server-programs
                '(js-mode . ("typescript-language-server" "--stdio")))
   (add-to-list 'eglot-server-programs
                '(js-ts-mode . ("typescript-language-server" "--stdio"))))
+
+(use-package jtsx
+  :mode (("\\.jsx?\\'" . jtsx-jsx-mode)
+         ("\\.tsx\\'" . jtsx-tsx-mode)
+         ("\\.ts\\'" . jtsx-typescript-mode)))
 
 ;; TypeScript config ================================
 ;; ==================================================
@@ -4181,6 +4224,9 @@ set so that it clears the whole REPL buffer, not just the output."
   :after dired
   :config
   (diredfl-global-mode))
+
+(use-package dirvish
+  :after dired)
 
 ;; xwidget config ===================================
 ;; ==================================================
@@ -6338,10 +6384,16 @@ Optional argument MSG First message shown in buffer."
 
 (global-auto-revert-mode 1)    ; Refresh buffers with changed local files
 
-(message "config loaded!")
+(use-package restart-emacs
+  :defer t
+  :general
+  (global-leader
+    "qr" 'restart-emacs))
 
 ;; config end =======================================
 ;; ==================================================
+
+(message "config loaded!")
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
