@@ -3216,10 +3216,11 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; Rust config ======================================
 ;; ==================================================
 
-;; (use-package rust-mode
-;;   :defer t
-;;   :init
-;;   (setq rust-mode-treesitter-derive t))
+(use-package rust-mode
+  :defer t
+  :init
+  (setq rust-mode-treesitter-derive t)
+  (require 'rustic))
 
 (use-package rustic
   :mode ("\\.rs\\'" . rustic-mode)
@@ -6161,6 +6162,9 @@ set so that it clears the whole REPL buffer, not just the output."
   (setq ready-player-my-media-collection-location "~/Music/MyMusic"
         ready-player-hide-modeline nil)
   (ready-player-mode))
+
+;; Listen.el config =================================
+;; ==================================================
 
 (use-package listen
   :defer t)
