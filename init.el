@@ -3253,12 +3253,6 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; Rust config ======================================
 ;; ==================================================
 
-(use-package rust-mode
-  :defer t
-  :init
-  (setq rust-mode-treesitter-derive t)
-  (require 'rustic))
-
 (use-package rustic
   :mode ("\\.rs\\'" . rustic-mode)
   :hook (rustic-mode . (lambda () (setq indent-tabs-mode nil)))
@@ -4993,6 +4987,8 @@ set so that it clears the whole REPL buffer, not just the output."
   ;; load the dark theme manually.
   (when terminal-p
     (load-theme 'modus-vivendi t)))
+
+;; (use-package )
 
 (use-package auto-dark
   :when (not (or chromeOS-p android-p terminal-p))
