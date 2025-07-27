@@ -476,7 +476,10 @@
 ;; ==================================================
 
 (use-package mixed-pitch
-  :hook ((osx-dictionary-mode . mixed-pitch-mode)))
+  :hook ((osx-dictionary-mode . mixed-pitch-mode)
+         (org-mode . mixed-pitch-mode)
+         (gfm-mode . mixed-pitch-mode)
+         (markdown-mode . mixed-pitch-mode)))
 
 ;; Org config =======================================
 ;; ==================================================
