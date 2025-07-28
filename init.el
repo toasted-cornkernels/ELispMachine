@@ -5612,8 +5612,14 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; ==================================================
 
 (use-package graphviz-dot-mode
+  :mode (("\\.diag\\'"      . graphviz-dot-mode)
+         ("\\.blockdiag\\'" . graphviz-dot-mode)
+         ("\\.nwdiag\\'"    . graphviz-dot-mode)
+         ("\\.rackdiag\\'"  . graphviz-dot-mode)
+         ("\\.dot\\'"       . graphviz-dot-mode)
+         ("\\.gv\\'"        . graphviz-dot-mode))
   :config
-  (setq graphviz-dot-indent-width 4))
+  (setq graphviz-dot-indent-width tab-width))
 
 ;; ace-link config ==================================
 ;; ==================================================
