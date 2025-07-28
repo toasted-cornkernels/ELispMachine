@@ -1779,6 +1779,7 @@
   (setq sp-highlight-pair-overlay nil
         sp-highlight-wrap-overlay nil
         sp-highlight-wrap-tag-overlay nil)
+  (require 'smartparens-config)
   (smartparens-global-mode)
   ;; Regular quote
   (sp-local-pair '(fennel-mode hy-mode clojure-mode lisp-mode emacs-lisp-mode
@@ -4164,7 +4165,7 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; =================================================
 
 (use-package winum
-  :init (setq winum-auto-setup-mode-line nil)
+  :init (setq winum-auto-setup-mode-line t)
   :config (winum-mode))
 
 ;; scratch buffer configs ==========================
@@ -5411,7 +5412,7 @@ set so that it clears the whole REPL buffer, not just the output."
   "gs"  'magit-status
   "gU"  'magit-unstage-file
   "gs"  'magit
-  "ga"  'magit-stage-buffer-file
+  "ga"  'magit-file-stage
   "gc"  'magit-commit-create
   "gC"  'magit-clone
   "gp"  'magit-push
