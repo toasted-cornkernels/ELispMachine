@@ -1779,7 +1779,6 @@
   (setq sp-highlight-pair-overlay nil
         sp-highlight-wrap-overlay nil
         sp-highlight-wrap-tag-overlay nil)
-  (require 'smartparens-config)
   (smartparens-global-mode)
   ;; Regular quote
   (sp-local-pair '(fennel-mode hy-mode clojure-mode lisp-mode emacs-lisp-mode
@@ -4991,8 +4990,6 @@ set so that it clears the whole REPL buffer, not just the output."
   ;; load the dark theme manually.
   (when terminal-p
     (load-theme 'modus-vivendi t)))
-
-;; (use-package )
 
 (use-package auto-dark
   :when (not (or chromeOS-p android-p terminal-p))
