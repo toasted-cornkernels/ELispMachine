@@ -5,3 +5,5 @@
 !LICENSE
 !init.el
 !early-init.el
+!CaptureTemplates/
+!CaptureTemplates/**

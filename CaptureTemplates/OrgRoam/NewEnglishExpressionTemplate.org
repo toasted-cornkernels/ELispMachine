@@ -1,0 +1,17 @@
+* Expression
+
+${title}
+
+* Meaning
+
+%^{Meaning}
+
+* Full sentence
+
+%^{Full sentence}
+
+** TODO Make your own
+
+* Where did you see it?
+
+%^{Where did you see it?}

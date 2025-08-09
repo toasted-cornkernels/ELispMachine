@@ -692,7 +692,7 @@
    ;; These are the hotkeys ^^
    org-time-stamp-rounding-minutes '(0 30)
    org-id-locations-file (cache: ".org-id-locations")
-   org-directory "~/Dropbox/Org"
+   org-directory "~/Org"
    org-work-directory "~/Work/WorkNotes"
    org-default-notes-file (expand-file-name
 			                     "notes.org" org-directory)
@@ -964,9 +964,32 @@
   (setq org-latex-create-formula-image-program 'dvisvgm))
 
 (use-package org-roam
-  :defer t
+  :ensure t
+  :custom
+  (org-roam-directory (file-truename "~/OrgRoam"))
+  :bind (("C-c n l" . org-roam-buffer-toggle)
+         ("C-c n f" . org-roam-node-find)
+         ("C-c n g" . org-roam-graph)
+         ("C-c n i" . org-roam-node-insert)
+         ("C-c n c" . org-roam-capture)
+         ;; Dailies
+         ("C-c n j" . org-roam-dailies-capture-today))
   :config
-  (setq org-roam-completion-everywhere t))
+  (defvar oc-capture-prmt-history nil
+    "History of prompt answers for org capture.")
+  (defun oc/prmt (prompt variable)
+    "PROMPT for string, save it to VARIABLE and insert it."
+    (make-local-variable variable)
+    (set variable (read-string (concat prompt ": ") nil oc-capture-prmt-history)))
+
+  (setq org-roam-node-display-template (concat "${title:*} " (propertize "${tags:10}" 'face 'org-tag))
+        org-roam-completion-everywhere t
+        org-roam-capture-templates
+        `(("e" "New English Expression" plain
+           (file ,(concat user-emacs-directory "/CaptureTemplates/OrgRoam/NewEnglishExpressionTemplate.org"))
+           :if-new (file+head "Languages/${slug}.org" "#+TITLE: ${title}\n#+DATE:%U\n")
+           :unnarrowed t)))
+  (org-roam-db-autosync-mode))
 
 (use-package org-roam-ui
   :defer t)
