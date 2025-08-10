@@ -969,24 +969,24 @@
   (local-leader
     :major-modes '(org-mode t)
     :keymaps     '(org-mode-map)
-    "r"  (which-key-prefix "org-roam")
+    "r"   (which-key-prefix "org-roam")
 
-    "rd" (which-key-prefix "org-roam-dailies")
+    "rd"  (which-key-prefix "org-roam-dailies")
     "rdy" 'org-roam-dailies-goto-yesterday
     "rdt" 'org-roam-dailies-goto-today
     "rdT" 'org-roam-dailies-goto-tomorrow
     "rdd" 'org-roam-dailies-goto-date
     
-    "rt" (which-key-prefix "org-roam-tags")
+    "rt"  (which-key-prefix "org-roam-tags")
     "rta" 'org-roam-tag-add
     "rtr" 'org-roam-tag-remove
 
-    "rc" 'org-roam-capture
-    "rf" 'org-roam-node-find
-    "rg" 'org-roam-graph
-    "ri" 'org-roam-node-insert
-    "rl" 'org-roam-buffer-toggle
-    "ra" 'org-roam-alias-add)
+    "rc"  'org-roam-capture
+    "rf"  'org-roam-node-find
+    "rg"  'org-roam-graph
+    "ri"  'org-roam-node-insert
+    "rl"  'org-roam-buffer-toggle
+    "ra"  'org-roam-alias-add)
   :config
   (defvar oc-capture-prmt-history nil
     "History of prompt answers for org capture.")
