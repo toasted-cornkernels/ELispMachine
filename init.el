@@ -964,16 +964,29 @@
   (setq org-latex-create-formula-image-program 'dvisvgm))
 
 (use-package org-roam
-  :ensure t
-  :custom
-  (org-roam-directory (file-truename "~/OrgRoam"))
-  :bind (("C-c n l" . org-roam-buffer-toggle)
-         ("C-c n f" . org-roam-node-find)
-         ("C-c n g" . org-roam-graph)
-         ("C-c n i" . org-roam-node-insert)
-         ("C-c n c" . org-roam-capture)
-         ;; Dailies
-         ("C-c n j" . org-roam-dailies-capture-today))
+  :defer t
+  :general-config
+  (local-leader
+    :major-modes '(org-mode t)
+    :keymaps     '(org-mode-map)
+    "r"  (which-key-prefix "org-roam")
+
+    "rd" (which-key-prefix "org-roam-dailies")
+    "rdy" 'org-roam-dailies-goto-yesterday
+    "rdt" 'org-roam-dailies-goto-today
+    "rdT" 'org-roam-dailies-goto-tomorrow
+    "rdd" 'org-roam-dailies-goto-date
+    
+    "rt" (which-key-prefix "org-roam-tags")
+    "rta" 'org-roam-tag-add
+    "rtr" 'org-roam-tag-remove
+
+    "rc" 'org-roam-capture
+    "rf" 'org-roam-node-find
+    "rg" 'org-roam-graph
+    "ri" 'org-roam-node-insert
+    "rl" 'org-roam-buffer-toggle
+    "ra" 'org-roam-alias-add)
   :config
   (defvar oc-capture-prmt-history nil
     "History of prompt answers for org capture.")
@@ -992,7 +1005,17 @@
   (org-roam-db-autosync-mode))
 
 (use-package org-roam-ui
-  :defer t)
+  :after org-roam
+  :general-config
+  (local-leader
+    :major-modes (org-mode t)
+    :keymaps     (org-mode-map)
+    "ru"         'org-roam-ui-mode)
+  :config
+  (setq org-roam-ui-sync-theme t
+        org-roam-ui-follow t
+        org-roam-ui-update-on-save t
+        org-roam-ui-open-on-start t))
 
 (use-package org-indent
   :straight nil
@@ -5490,6 +5513,23 @@ set so that it clears the whole REPL buffer, not just the output."
   "aojs" 'org-journal-search-forever
   "aojt" 'org-journal-new-scheduled-entry
   "aojv" 'org-journal-schedule-view
+
+  "aor"   (which-key-prefix :org-roam)
+  "aord"  (which-key-prefix :org-roam-dailies)
+  "aordy" 'org-roam-dailies-goto-yesterday
+  "aordt" 'org-roam-dailies-goto-today
+  "aordT" 'org-roam-dailies-goto-tomorrow
+  "aordd" 'org-roam-dailies-goto-date
+  "aorc"  'org-roam-capture
+  "aorf"  'org-roam-node-find
+  "aorg"  'org-roam-graph
+  "aori"  'org-roam-node-insert
+  "aorl"  'org-roam-buffer-toggle
+  "aora"  'org-roam-alias-add
+
+  "aort"  (which-key-prefix :org-roam-tags)
+  "aorta" 'org-roam-tag-add
+  "aortr" 'org-roam-tag-remove
 
   "aw"   (which-key-prefix :web)
   "aww"  (which-key-prefix :eww)
