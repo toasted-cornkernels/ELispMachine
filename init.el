@@ -3345,9 +3345,9 @@ set so that it clears the whole REPL buffer, not just the output."
     "Cu"  'rustic-cargo-update
     "Cv"  'rustic-cargo-check
 
-    "ci"  (which-key-prefix "install")
-    "cii" 'rustic-cargo-install
-    "ciI" 'rustic-cargo-install-rerun
+    "i"   (which-key-prefix "install")
+    "ii"  'rustic-cargo-install
+    "iI"  'rustic-cargo-install-rerun
 
     "l"   (which-key-prefix "clippy")
     "lL"  'rustic-cargo-clippy-rerun
