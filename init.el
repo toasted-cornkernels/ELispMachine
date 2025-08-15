@@ -4581,9 +4581,6 @@ set so that it clears the whole REPL buffer, not just the output."
 (use-package git-modes
   :defer t)
 
-(use-package gitignore-snippets
-  :defer t)
-
 (use-package gitignore-templates
   :defer t
   :general-config
