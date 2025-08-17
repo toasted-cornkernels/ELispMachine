@@ -995,7 +995,8 @@
     (make-local-variable variable)
     (set variable (read-string (concat prompt ": ") nil oc-capture-prmt-history)))
 
-  (setq org-roam-node-display-template (concat "${title:*} " (propertize "${tags:10}" 'face 'org-tag))
+  (setq org-roam-directory "~/OrgRoam/"
+        org-roam-node-display-template (concat "${title:*} " (propertize "${tags:10}" 'face 'org-tag))
         org-roam-completion-everywhere t
         org-roam-capture-templates
         `(("e" "New English Expression" plain
