@@ -995,7 +995,7 @@
     (make-local-variable variable)
     (set variable (read-string (concat prompt ": ") nil oc-capture-prmt-history)))
 
-  (setq org-roam-directory "~/OrgRoam/"
+  (setq org-roam-directory (if android-p "/storage/emulated/0/OrgRoam/" "~/OrgRoam/")
         org-roam-node-display-template (concat "${title:*} " (propertize "${tags:10}" 'face 'org-tag))
         org-roam-completion-everywhere t
         org-roam-capture-templates
