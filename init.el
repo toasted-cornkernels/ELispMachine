@@ -5353,9 +5353,11 @@ set so that it clears the whole REPL buffer, not just the output."
   "wk" 'evil-window-up
   "wl" 'evil-window-right
   "wL" 'evil-window-bottom-right
+  "ws" 'evil-window-split
+  "wv" 'evil-window-vsplit
 
   "wM" 'ace-swap-window
-  "ws" 'ace-swap-window
+  "wS" 'ace-swap-window
 
   "wt" 'transpose-frame
   "wr" 'evil-window-rotate-downwards
