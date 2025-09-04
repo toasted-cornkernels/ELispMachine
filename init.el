@@ -983,6 +983,7 @@
     "rf"  'org-roam-node-find
     "rg"  'org-roam-graph
     "ri"  'org-roam-node-insert
+    "rI"  'org-id-get-create
     "rl"  'org-roam-buffer-toggle
     "ra"  'org-roam-alias-add)
   :config
