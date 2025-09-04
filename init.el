@@ -993,7 +993,8 @@
     (make-local-variable variable)
     (set variable (read-string (concat prompt ": ") nil oc-capture-prmt-history)))
 
-  (setq org-roam-node-display-template (concat "${title:*} " (propertize "${tags:10}" 'face 'org-tag))
+  (setq org-roam-directory (if android-p "~/storage/shared/OrgRoam/" "~/OrgRoam/")
+        org-roam-node-display-template (concat "${title:*} " (propertize "${tags:10}" 'face 'org-tag))
         org-roam-completion-everywhere t
         org-roam-capture-templates
         `(("j" "New Japanese Expression" plain
@@ -4587,9 +4588,6 @@ set so that it clears the whole REPL buffer, not just the output."
 (use-package git-modes
   :defer t)
 
-(use-package gitignore-snippets
-  :defer t)
-
 (use-package gitignore-templates
   :defer t
   :general-config
@@ -5361,9 +5359,11 @@ set so that it clears the whole REPL buffer, not just the output."
   "wk" 'evil-window-up
   "wl" 'evil-window-right
   "wL" 'evil-window-bottom-right
+  "ws" 'evil-window-split
+  "wv" 'evil-window-vsplit
 
   "wM" 'ace-swap-window
-  "ws" 'ace-swap-window
+  "wS" 'ace-swap-window
 
   "wt" 'transpose-frame
   "wr" 'evil-window-rotate-downwards
