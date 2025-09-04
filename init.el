@@ -881,8 +881,6 @@
     "bp"         'org-babel-previous-src-block
     "bn"         'org-babel-next-src-block
     "be"         'org-babel-execute-maybe
-    "bo"         'org-babel-open-src-block-result
-    "bv"         'org-babel-expand-src-block
     "bu"         'org-babel-goto-src-block-head
     "bg"         'org-babel-goto-named-src-block
     "br"         'org-babel-goto-named-result
@@ -998,7 +996,15 @@
   (setq org-roam-node-display-template (concat "${title:*} " (propertize "${tags:10}" 'face 'org-tag))
         org-roam-completion-everywhere t
         org-roam-capture-templates
-        `(("e" "New English Expression" plain
+        `(("j" "New Japanese Expression" plain
+           (file ,(concat user-emacs-directory "/CaptureTemplates/OrgRoam/NewJapaneseWordTemplate.org"))
+           :if-new (file+head "Languages/${slug}.org" "#+TITLE: ${title}\n#+DATE:%U\n")
+           :unnarrowed t)
+          ("v" "New Japanese Lyrics" plain
+           (file ,(concat user-emacs-directory "/CaptureTemplates/OrgRoam/NewJapaneseLyricsTemplate.org"))
+           :if-new (file+head "Languages/${slug}.org" "#+TITLE: ${title}\n#+DATE:%U\n")
+           :unnarrowed t)
+          ("e" "New English Expression" plain
            (file ,(concat user-emacs-directory "/CaptureTemplates/OrgRoam/NewEnglishExpressionTemplate.org"))
            :if-new (file+head "Languages/${slug}.org" "#+TITLE: ${title}\n#+DATE:%U\n")
            :unnarrowed t)))
