@@ -968,6 +968,13 @@
     :major-modes '(org-mode t)
     :keymaps     '(org-mode-map)
     "r"   (which-key-prefix "org-roam")
+    "rc"  'org-roam-capture
+    "rf"  'org-roam-node-find
+    "rg"  'org-roam-graph
+    "ri"  'org-roam-node-insert
+    "rI"  'org-id-get-create
+    "rl"  'org-roam-buffer-toggle
+    "ra"  'org-roam-alias-add
 
     "rd"  (which-key-prefix "org-roam-dailies")
     "rdy" 'org-roam-dailies-goto-yesterday
@@ -977,15 +984,7 @@
     
     "rt"  (which-key-prefix "org-roam-tags")
     "rta" 'org-roam-tag-add
-    "rtr" 'org-roam-tag-remove
-
-    "rc"  'org-roam-capture
-    "rf"  'org-roam-node-find
-    "rg"  'org-roam-graph
-    "ri"  'org-roam-node-insert
-    "rI"  'org-id-get-create
-    "rl"  'org-roam-buffer-toggle
-    "ra"  'org-roam-alias-add)
+    "rtr" 'org-roam-tag-remove)
   :config
   (defvar oc-capture-prmt-history nil
     "History of prompt answers for org capture.")
@@ -5535,6 +5534,7 @@ set so that it clears the whole REPL buffer, not just the output."
   "aorf"  'org-roam-node-find
   "aorg"  'org-roam-graph
   "aori"  'org-roam-node-insert
+  "aorI"  'org-id-get-create
   "aorl"  'org-roam-buffer-toggle
   "aora"  'org-roam-alias-add
 
