@@ -49,6 +49,11 @@
 (setq straight-use-package-by-default t
       package-install-upgrade-built-in t)
 
+(defun elispm/straight-get-repo-dir (package)
+  (straight--repos-dir
+   (plist-get (gethash package straight--recipe-cache) :local-repo)))
+
+
 ;; Profiling ========================================
 ;; ==================================================
 
@@ -382,9 +387,15 @@
 
 (defun set-input-method-to-japanese ()
   (interactive)
-  (set-input-method 'japanese))
+  (set-input-method 'japanese-skk))
 
 (global-set-key (kbd "C-d C-j") 'set-input-method-to-japanese)
+
+(use-package ddskk
+  :ensure t
+  :config
+  (setq skk-tut-file (concat (elispm/straight-get-repo-dir "ddskk") "/etc/SKK.tut")
+        skk-large-jisyo "~/LambdaMachine/ExternalConfigs/SKKJisho/SKK-JISYO.L"))
 
 ;; Manage-minor-mode ================================
 ;; ==================================================
