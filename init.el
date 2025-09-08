@@ -49,6 +49,11 @@
 (setq straight-use-package-by-default t
       package-install-upgrade-built-in t)
 
+(defun elispm/straight-get-repo-dir (package)
+  (straight--repos-dir
+   (plist-get (gethash package straight--recipe-cache) :local-repo)))
+
+
 ;; Profiling ========================================
 ;; ==================================================
 
@@ -382,9 +387,15 @@
 
 (defun set-input-method-to-japanese ()
   (interactive)
-  (set-input-method 'japanese))
+  (set-input-method 'japanese-skk))
 
 (global-set-key (kbd "C-d C-j") 'set-input-method-to-japanese)
+
+(use-package ddskk
+  :ensure t
+  :config
+  (setq skk-tut-file (concat (elispm/straight-get-repo-dir "ddskk") "/etc/SKK.tut")
+        skk-large-jisyo "~/LambdaMachine/ExternalConfigs/SKKJisho/SKK-JISYO.L"))
 
 ;; Manage-minor-mode ================================
 ;; ==================================================
@@ -881,8 +892,6 @@
     "bp"         'org-babel-previous-src-block
     "bn"         'org-babel-next-src-block
     "be"         'org-babel-execute-maybe
-    "bo"         'org-babel-open-src-block-result
-    "bv"         'org-babel-expand-src-block
     "bu"         'org-babel-goto-src-block-head
     "bg"         'org-babel-goto-named-src-block
     "br"         'org-babel-goto-named-result
@@ -970,23 +979,23 @@
     :major-modes '(org-mode t)
     :keymaps     '(org-mode-map)
     "r"   (which-key-prefix "org-roam")
+    "rc"  'org-roam-capture
+    "rf"  'org-roam-node-find
+    "rg"  'org-roam-graph
+    "ri"  'org-roam-node-insert
+    "rI"  'org-id-get-create
+    "rl"  'org-roam-buffer-toggle
+    "ra"  'org-roam-alias-add
 
     "rd"  (which-key-prefix "org-roam-dailies")
     "rdy" 'org-roam-dailies-goto-yesterday
     "rdt" 'org-roam-dailies-goto-today
     "rdT" 'org-roam-dailies-goto-tomorrow
     "rdd" 'org-roam-dailies-goto-date
-    
+
     "rt"  (which-key-prefix "org-roam-tags")
     "rta" 'org-roam-tag-add
-    "rtr" 'org-roam-tag-remove
-
-    "rc"  'org-roam-capture
-    "rf"  'org-roam-node-find
-    "rg"  'org-roam-graph
-    "ri"  'org-roam-node-insert
-    "rl"  'org-roam-buffer-toggle
-    "ra"  'org-roam-alias-add)
+    "rtr" 'org-roam-tag-remove)
   :config
   (defvar oc-capture-prmt-history nil
     "History of prompt answers for org capture.")
@@ -995,10 +1004,23 @@
     (make-local-variable variable)
     (set variable (read-string (concat prompt ": ") nil oc-capture-prmt-history)))
 
-  (setq org-roam-node-display-template (concat "${title:*} " (propertize "${tags:10}" 'face 'org-tag))
+  (setq org-roam-directory (if android-p "~/storage/shared/OrgRoam/" "~/OrgRoam/")
+        org-roam-node-display-template (concat "${title:*} " (propertize "${tags:10}" 'face 'org-tag))
         org-roam-completion-everywhere t
         org-roam-capture-templates
-        `(("e" "New English Expression" plain
+        `(("j" "New Japanese Word" plain
+           (file ,(concat user-emacs-directory "/CaptureTemplates/OrgRoam/NewJapaneseWordTemplate.org"))
+           :if-new (file+head "Languages/${slug}.org" "#+TITLE: ${title}\n#+DATE:%U\n")
+           :unnarrowed t)
+          ("J" "New Japanese Word Group" plain
+           (file ,(concat user-emacs-directory "/CaptureTemplates/OrgRoam/NewJapaneseWordGroupTemplate.org"))
+           :if-new (file+head "Languages/${slug}.org" "#+TITLE: ${title}\n#+DATE:%U\n")
+           :unnarrowed t)
+          ("v" "New Japanese Lyrics" plain
+           (file ,(concat user-emacs-directory "/CaptureTemplates/OrgRoam/NewJapaneseLyricsTemplate.org"))
+           :if-new (file+head "Languages/${slug}.org" "#+TITLE: ${title}\n#+DATE:%U\n")
+           :unnarrowed t)
+          ("e" "New English Expression" plain
            (file ,(concat user-emacs-directory "/CaptureTemplates/OrgRoam/NewEnglishExpressionTemplate.org"))
            :if-new (file+head "Languages/${slug}.org" "#+TITLE: ${title}\n#+DATE:%U\n")
            :unnarrowed t)))
@@ -2404,7 +2426,7 @@ set so that it clears the whole REPL buffer, not just the output."
     "tp"  'cider-test-run-project-tests
     "tr"  'cider-test-rerun-failed-tests
     "tt"  'cider-test-run-focused-test
-          
+
     "g"   (which-key-prefix :goto)
     "gb"  'cider-pop-back
     "gc"  'cider-classpath
@@ -2425,7 +2447,7 @@ set so that it clears the whole REPL buffer, not just the output."
     "hs"  'cider-browse-spec
     "hS"  'cider-browse-spec-all
     "hh"  'cider-doc
-          
+
     "T"   (which-key-prefix :toggle)
     "Te"  'cider-enlighten-mode
     "Tf"  'cider-toggle-repl-font-locking
@@ -4581,9 +4603,6 @@ set so that it clears the whole REPL buffer, not just the output."
 (use-package git-modes
   :defer t)
 
-(use-package gitignore-snippets
-  :defer t)
-
 (use-package gitignore-templates
   :defer t
   :general-config
@@ -5355,9 +5374,11 @@ set so that it clears the whole REPL buffer, not just the output."
   "wk" 'evil-window-up
   "wl" 'evil-window-right
   "wL" 'evil-window-bottom-right
+  "ws" 'evil-window-split
+  "wv" 'evil-window-vsplit
 
   "wM" 'ace-swap-window
-  "ws" 'ace-swap-window
+  "wS" 'ace-swap-window
 
   "wt" 'transpose-frame
   "wr" 'evil-window-rotate-downwards
@@ -5524,6 +5545,7 @@ set so that it clears the whole REPL buffer, not just the output."
   "aorf"  'org-roam-node-find
   "aorg"  'org-roam-graph
   "aori"  'org-roam-node-insert
+  "aorI"  'org-id-get-create
   "aorl"  'org-roam-buffer-toggle
   "aora"  'org-roam-alias-add
 
@@ -6379,6 +6401,43 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (use-package flycheck-hledger
   :after hledger-mode)
+
+;; LLMs =============================================
+;; ==================================================
+
+(use-package gptel
+  :defer t
+  :init
+  (require 'gptel-context)
+  (normal-mode-major-mode
+    :major-modes '(gptel-context-buffer-mode t)
+    :keymaps     '(gptel-context-buffer-mode-map)
+    "C-c C-c"    'gptel-context-confirm
+    "C-c C-k"    'gptel-context-quit
+    "RET"        'gptel-context-visit
+    "n"          'gptel-context-next
+    "p"          'gptel-context-previous
+    "d"          'gptel-context-flag-deletion)
+  (global-leader
+    "$g"         (which-key-prefix :gptel)
+    "$gg"        'gptel
+    "$gm"        'gptel-menu
+    "$gc"        'gptel-add
+    "$gf"        'gptel-add-file
+    "$go"        'gptel-org-set-topic
+    "$gp"        'gptel-org-set-properties))
+
+(use-package ob-gptel
+  :straight '(ob-gptel :type git :host github :repo "jwiegley/ob-gptel")
+  :hook ((org-mode . ob-gptel-install-completions))
+  :defines ob-gptel-install-completions
+  :config
+  (add-to-list 'org-babel-load-languages '(gptel . t))
+  (setq gptel-use-curl nil)
+  ;; Optional, for better completion-at-point
+  (defun ob-gptel-install-completions ()
+    (add-hook 'completion-at-point-functions
+              'ob-gptel-capf nil t)))
 
 ;; Patchups =========================================
 ;; ==================================================
