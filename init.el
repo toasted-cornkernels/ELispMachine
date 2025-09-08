@@ -3645,10 +3645,10 @@ set so that it clears the whole REPL buffer, not just the output."
   (add-to-list 'eglot-server-programs
                '(js-ts-mode . ("typescript-language-server" "--stdio"))))
 
-(use-package jtsx
-  :mode (("\\.jsx?\\'" . jtsx-jsx-mode)
-         ("\\.tsx\\'" . jtsx-tsx-mode)
-         ("\\.ts\\'" . jtsx-typescript-mode)))
+;; (use-package jtsx
+;;   :mode (("\\.jsx?\\'" . jtsx-jsx-mode)
+;;          ("\\.tsx\\'" . jtsx-tsx-mode)
+;;          ("\\.ts\\'" . jtsx-typescript-mode)))
 
 ;; TypeScript config ================================
 ;; ==================================================
