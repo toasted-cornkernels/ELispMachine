@@ -49,6 +49,11 @@
 (setq straight-use-package-by-default t
       package-install-upgrade-built-in t)
 
+(defun elispm/straight-get-repo-dir (package)
+  (straight--repos-dir
+   (plist-get (gethash package straight--recipe-cache) :local-repo)))
+
+
 ;; Profiling ========================================
 ;; ==================================================
 
@@ -382,9 +387,15 @@
 
 (defun set-input-method-to-japanese ()
   (interactive)
-  (set-input-method 'japanese))
+  (set-input-method 'japanese-skk))
 
 (global-set-key (kbd "C-d C-j") 'set-input-method-to-japanese)
+
+(use-package ddskk
+  :ensure t
+  :config
+  (setq skk-tut-file (concat (elispm/straight-get-repo-dir "ddskk") "/etc/SKK.tut")
+        skk-large-jisyo "~/LambdaMachine/ExternalConfigs/SKKJisho/SKK-JISYO.L"))
 
 ;; Manage-minor-mode ================================
 ;; ==================================================
@@ -981,7 +992,7 @@
     "rdt" 'org-roam-dailies-goto-today
     "rdT" 'org-roam-dailies-goto-tomorrow
     "rdd" 'org-roam-dailies-goto-date
-    
+
     "rt"  (which-key-prefix "org-roam-tags")
     "rta" 'org-roam-tag-add
     "rtr" 'org-roam-tag-remove)
@@ -2415,7 +2426,7 @@ set so that it clears the whole REPL buffer, not just the output."
     "tp"  'cider-test-run-project-tests
     "tr"  'cider-test-rerun-failed-tests
     "tt"  'cider-test-run-focused-test
-          
+
     "g"   (which-key-prefix :goto)
     "gb"  'cider-pop-back
     "gc"  'cider-classpath
@@ -2436,7 +2447,7 @@ set so that it clears the whole REPL buffer, not just the output."
     "hs"  'cider-browse-spec
     "hS"  'cider-browse-spec-all
     "hh"  'cider-doc
-          
+
     "T"   (which-key-prefix :toggle)
     "Te"  'cider-enlighten-mode
     "Tf"  'cider-toggle-repl-font-locking
@@ -6390,6 +6401,43 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (use-package flycheck-hledger
   :after hledger-mode)
+
+;; LLMs =============================================
+;; ==================================================
+
+(use-package gptel
+  :defer t
+  :init
+  (require 'gptel-context)
+  (normal-mode-major-mode
+    :major-modes '(gptel-context-buffer-mode t)
+    :keymaps     '(gptel-context-buffer-mode-map)
+    "C-c C-c"    'gptel-context-confirm
+    "C-c C-k"    'gptel-context-quit
+    "RET"        'gptel-context-visit
+    "n"          'gptel-context-next
+    "p"          'gptel-context-previous
+    "d"          'gptel-context-flag-deletion)
+  (global-leader
+    "$g"         (which-key-prefix :gptel)
+    "$gg"        'gptel
+    "$gm"        'gptel-menu
+    "$gc"        'gptel-add
+    "$gf"        'gptel-add-file
+    "$go"        'gptel-org-set-topic
+    "$gp"        'gptel-org-set-properties))
+
+(use-package ob-gptel
+  :straight '(ob-gptel :type git :host github :repo "jwiegley/ob-gptel")
+  :hook ((org-mode . ob-gptel-install-completions))
+  :defines ob-gptel-install-completions
+  :config
+  (add-to-list 'org-babel-load-languages '(gptel . t))
+  (setq gptel-use-curl nil)
+  ;; Optional, for better completion-at-point
+  (defun ob-gptel-install-completions ()
+    (add-hook 'completion-at-point-functions
+              'ob-gptel-capf nil t)))
 
 ;; Patchups =========================================
 ;; ==================================================
