@@ -1027,6 +1027,14 @@
           ("e" "New English Expression" plain
            (file ,(concat user-emacs-directory "/CaptureTemplates/OrgRoam/NewEnglishExpressionTemplate.org"))
            :if-new (file+head "Languages/${slug}.org" "#+TITLE: ${title}\n#+DATE:%U\n")
+           :unnarrowed t)
+          ("r" "New Rust Notes" plain
+           (file ,(concat user-emacs-directory "/CaptureTemplates/OrgRoam/NewRustNotesTemplate.org"))
+           :if-new (file+head "Languages/${slug}.org" "#+TITLE: ${title}\n#+DATE:%U\n")
+           :unnarrowed t)
+          ("p" "New C++ Notes" plain
+           (file ,(concat user-emacs-directory "/CaptureTemplates/OrgRoam/NewCppNotesTemplate.org"))
+           :if-new (file+head "Languages/${slug}.org" "#+TITLE: ${title}\n#+DATE:%U\n")
            :unnarrowed t)))
   (org-roam-db-autosync-mode))
 
