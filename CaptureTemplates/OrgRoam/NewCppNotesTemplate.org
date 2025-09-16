@@ -1,0 +1,17 @@
+* Piece of C++
+
+${title}
+
+* Code example
+
+#+begin_src C++
+  %?
+#+end_src
+
+* Where did you see it?
+
+
+
+* References
+
+- 

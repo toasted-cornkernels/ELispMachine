@@ -1,0 +1,17 @@
+* Piece of Rust
+
+${title}
+
+* Code example
+
+#+begin_src rustic
+  %?
+#+end_src
+
+* Where did you see it?
+
+
+
+* References
+
+- 
