@@ -1,4 +1,7 @@
 * Piece of C++
+:PROPERTIES:
+:header-args:C++: :includes <iostream> <string>
+:END:
 
 ${title}
 
