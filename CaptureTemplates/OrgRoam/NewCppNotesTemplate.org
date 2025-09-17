@@ -1,11 +1,11 @@
 * Piece of C++
-:PROPERTIES:
-:header-args:C++: :includes <iostream> <string>
-:END:
 
 ${title}
 
-* Code example
+* Code examples
+:PROPERTIES:
+:header-args:C++: :includes <iostream> <string>
+:END:
 
 #+begin_src C++
   %?
