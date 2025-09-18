@@ -956,7 +956,7 @@
     "k"          'org-edit-src-abort
     "'"          'org-edit-src-exit)
   :config
-  (setq org-src-window-setup 'current-window
+  (setq org-src-window-setup 'split-window-right
 	      org-src-fontify-natively t
 	      org-src-tab-acts-natively t)
   (setq-default org-src-preserve-indentation nil
