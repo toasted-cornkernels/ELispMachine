@@ -4,7 +4,7 @@ ${title}
 
 * Code examples
 :PROPERTIES:
-:header-args:C++: :includes <iostream> <string>
+:header-args:C++: :includes <iostream> <string> :results output
 :END:
 
 #+begin_src C++

@@ -5068,6 +5068,8 @@ set so that it clears the whole REPL buffer, not just the output."
   (when terminal-p
     (load-theme 'modus-vivendi t)))
 
+(use-package tron-legacy-theme :defer t)
+
 (use-package auto-dark
   :when (not (or chromeOS-p android-p terminal-p))
   :init
@@ -5684,7 +5686,7 @@ set so that it clears the whole REPL buffer, not just the output."
   "s-v"  'mixed-pitch-mode
   "s-u"  'emacs-uptime
   "s-g"  'cleanup-emacs
-  "s-i"  'insert-current-time
+  "s-i"  'emacs-init-time
   "s-t"  'tab-bar-mode
   "s-y"  'youtube-viewer-start
   "s-x"  'delete-trailing-whitespace
