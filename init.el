@@ -711,14 +711,12 @@
    org-startup-with-inline-images t
    org-startup-latex-with-latex-preview t
    org-format-latex-options '(:foreground default
-					                                :background "Transparent"
-					                                :scale 1.5
-					                                :html-foreground "Black"
-					                                :html-background "Transparent"
-					                                :html-scale 1.0
-					                                :matchers ("begin" "$1" "$" "$$" "\\(" "\\["))
-
-
+					                    :background "Transparent"
+					                    :scale 1.5
+					                    :html-foreground "Black"
+					                    :html-background "Transparent"
+					                    :html-scale 1.0
+					                    :matchers ("begin" "$1" "$" "$$" "\\(" "\\["))
    org-image-actual-width nil
    org-imenu-depth 8
    org-link-descriptive t
