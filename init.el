@@ -1028,27 +1028,27 @@
            :unnarrowed t)
           ("j" "New Japanese Word" plain
            (file ,(concat user-emacs-directory "/CaptureTemplates/OrgRoam/NewJapaneseWordTemplate.org"))
-           :if-new (file+head "Languages/${slug}.org" "#+TITLE: ${title}\n#+DATE:%U\n")
+           :if-new (file+head "Languages/Japanese/${slug}.org" "#+TITLE: ${title}\n#+DATE:%U\n")
            :unnarrowed t)
           ("J" "New Japanese Word Group" plain
            (file ,(concat user-emacs-directory "/CaptureTemplates/OrgRoam/NewJapaneseWordGroupTemplate.org"))
-           :if-new (file+head "Languages/${slug}.org" "#+TITLE: ${title}\n#+DATE:%U\n")
+           :if-new (file+head "Languages/Japanese/${slug}.org" "#+TITLE: ${title}\n#+DATE:%U\n")
            :unnarrowed t)
           ("v" "New Japanese Lyrics" plain
            (file ,(concat user-emacs-directory "/CaptureTemplates/OrgRoam/NewJapaneseLyricsTemplate.org"))
-           :if-new (file+head "Languages/${slug}.org" "#+TITLE: ${title}\n#+DATE:%U\n")
+           :if-new (file+head "Languages/Japanese/Lyrics/${slug}.org" "#+TITLE: ${title}\n#+DATE:%U\n")
            :unnarrowed t)
           ("e" "New English Expression" plain
            (file ,(concat user-emacs-directory "/CaptureTemplates/OrgRoam/NewEnglishExpressionTemplate.org"))
-           :if-new (file+head "Languages/${slug}.org" "#+TITLE: ${title}\n#+DATE:%U\n")
+           :if-new (file+head "Languages/English/${slug}.org" "#+TITLE: ${title}\n#+DATE:%U\n")
            :unnarrowed t)
           ("r" "New Rust Notes" plain
            (file ,(concat user-emacs-directory "/CaptureTemplates/OrgRoam/NewRustNotesTemplate.org"))
-           :if-new (file+head "Languages/${slug}.org" "#+TITLE: ${title}\n#+DATE:%U\n")
+           :if-new (file+head "ProgrammingLanguages/Cpp/${slug}.org" "#+TITLE: ${title}\n#+DATE:%U\n")
            :unnarrowed t)
           ("p" "New C++ Notes" plain
            (file ,(concat user-emacs-directory "/CaptureTemplates/OrgRoam/NewCppNotesTemplate.org"))
-           :if-new (file+head "Languages/${slug}.org" "#+TITLE: ${title}\n#+DATE:%U\n")
+           :if-new (file+head "ProgrammingLanguages/Rust/${slug}.org" "#+TITLE: ${title}\n#+DATE:%U\n")
            :unnarrowed t)))
   (org-roam-db-autosync-mode))
 
