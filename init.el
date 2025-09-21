@@ -728,7 +728,23 @@
    '((sequence "TODO" "NEXT" "WORKING" "HOLD" "|"
 	             "DONE" "ABORTED"))
    org-export-backends
-   '(ascii html icalendar latex odt markdown))
+   '(ascii html icalendar latex odt markdown)
+   org-modules
+   (append '(org-crypt
+             org-habit
+             org-bookmark
+             org-eshell
+             ol-eww
+             ol-w3m
+             ol-doi
+             ol-bibtex
+             ol-info
+             ol-man
+             ol-mac-iCal
+             ol-mac-link)
+           (when macOS-p
+             '(ol-mac-iCal
+               ol-mac-link))))
 
   (dolist (fn '(org-insert-drawer
 		            org-insert-heading
@@ -964,7 +980,7 @@
 
 (use-package org-habit
   :straight (:type built-in)
-  :defer t)
+  :after    org)
 
 (use-package org-compat
   :straight nil
