@@ -711,14 +711,12 @@
    org-startup-with-inline-images t
    org-startup-latex-with-latex-preview t
    org-format-latex-options '(:foreground default
-					                                :background "Transparent"
-					                                :scale 1.5
-					                                :html-foreground "Black"
-					                                :html-background "Transparent"
-					                                :html-scale 1.0
-					                                :matchers ("begin" "$1" "$" "$$" "\\(" "\\["))
-
-
+					                    :background "Transparent"
+					                    :scale 1.5
+					                    :html-foreground "Black"
+					                    :html-background "Transparent"
+					                    :html-scale 1.0
+					                    :matchers ("begin" "$1" "$" "$$" "\\(" "\\["))
    org-image-actual-width nil
    org-imenu-depth 8
    org-link-descriptive t
@@ -1379,11 +1377,45 @@
 		            :host github
 		            :repo "anticomputer/emacs-codeql"
 		            :branch "main"
-		            :files (:defaults "bin"))
+		            :files (:defaults "bin")
+                :fork (:host github
+                       :repo "jeongsoolee09/emacs-codeql"))
   :init
   (setq codeql-transient-binding "C-c q"
 	      codeql-configure-eglot-lsp t
 	      codeql-configure-projectile t)
+  :general-config
+  (local-leader
+    :major-modes '(ql-tree-sitter-mode t)
+    :keymaps     '(ql-tree-sitter-mode-map)
+    "="          (which-key-prefix "format")
+    "=="         'codeql-format
+    "=r"         'codeql-format-region
+
+    "r"          (which-key-prefix "results")
+    "rc"         'codeql-clear-state-dirs
+
+    "e"          (which-key-prefix "run")
+    "ee"         'codeql-query-server-run-query
+    "eq"         'codeql-query-server-cancel-query
+
+    "a"          (which-key-prefix "AST")
+    "aa"         'codeql-view-ast
+    "ac"         'codeql-clear-refs-defs-ast-cache
+
+    "d"          (which-key-prefix "database")
+    "dr"         'codeql-query-server-register-database
+    "do"         'codeql-database-open-source-archive-file
+    
+    "h"          (which-key-prefix "history")
+    "hq"         'codeql-query-history
+    "hd"         'codeql-database-history
+
+    "t"          (which-key-prefix "transient")
+
+    "v"          (which-key-prefix "options")
+    "vs"         'codeql-set-max-paths)
+  
   :config
   (setq codeql-search-paths '("./"))
   ;; below defalias is not working...
@@ -4983,20 +5015,20 @@ set so that it clears the whole REPL buffer, not just the output."
   :config
   (ultra-scroll-mode 1))
 
-(use-package spacious-padding
-  :straight (spacious-padding :host github
-                              :repo "protesilaos/spacious-padding")
-  :when GUI-p
-  :config
-  (setq spacious-padding-widths
-      '(:internal-border-width 15
-        :header-line-width 4
-        :mode-line-width 6
-        :tab-width 4
-        :right-divider-width 30
-        :scroll-bar-width 8
-        :fringe-width 8))
-  (spacious-padding-mode 1))
+;; (use-package spacious-padding
+;;   :straight (spacious-padding :host github
+;;                               :repo "protesilaos/spacious-padding")
+;;   :when GUI-p
+;;   :config
+;;   (setq spacious-padding-widths
+;;       '(:internal-border-width 15
+;;         :header-line-width 4
+;;         :mode-line-width 6
+;;         :tab-width 4
+;;         :right-divider-width 30
+;;         :scroll-bar-width 8
+;;         :fringe-width 8))
+;;   (spacious-padding-mode 1))
 
 (setq column-number-mode t)
 
@@ -6415,43 +6447,6 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (use-package flycheck-hledger
   :after hledger-mode)
-
-;; LLMs =============================================
-;; ==================================================
-
-(use-package gptel
-  :defer t
-  :init
-  (require 'gptel-context)
-  (normal-mode-major-mode
-    :major-modes '(gptel-context-buffer-mode t)
-    :keymaps     '(gptel-context-buffer-mode-map)
-    "C-c C-c"    'gptel-context-confirm
-    "C-c C-k"    'gptel-context-quit
-    "RET"        'gptel-context-visit
-    "n"          'gptel-context-next
-    "p"          'gptel-context-previous
-    "d"          'gptel-context-flag-deletion)
-  (global-leader
-    "$g"         (which-key-prefix :gptel)
-    "$gg"        'gptel
-    "$gm"        'gptel-menu
-    "$gc"        'gptel-add
-    "$gf"        'gptel-add-file
-    "$go"        'gptel-org-set-topic
-    "$gp"        'gptel-org-set-properties))
-
-(use-package ob-gptel
-  :straight '(ob-gptel :type git :host github :repo "jwiegley/ob-gptel")
-  :hook ((org-mode . ob-gptel-install-completions))
-  :defines ob-gptel-install-completions
-  :config
-  (add-to-list 'org-babel-load-languages '(gptel . t))
-  (setq gptel-use-curl nil)
-  ;; Optional, for better completion-at-point
-  (defun ob-gptel-install-completions ()
-    (add-hook 'completion-at-point-functions
-              'ob-gptel-capf nil t)))
 
 ;; Patchups =========================================
 ;; ==================================================
