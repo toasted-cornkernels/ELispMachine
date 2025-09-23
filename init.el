@@ -711,14 +711,12 @@
    org-startup-with-inline-images t
    org-startup-latex-with-latex-preview t
    org-format-latex-options '(:foreground default
-					                                :background "Transparent"
-					                                :scale 1.5
-					                                :html-foreground "Black"
-					                                :html-background "Transparent"
-					                                :html-scale 1.0
-					                                :matchers ("begin" "$1" "$" "$$" "\\(" "\\["))
-
-
+					                    :background "Transparent"
+					                    :scale 1.5
+					                    :html-foreground "Black"
+					                    :html-background "Transparent"
+					                    :html-scale 1.0
+					                    :matchers ("begin" "$1" "$" "$$" "\\(" "\\["))
    org-image-actual-width nil
    org-imenu-depth 8
    org-link-descriptive t
@@ -728,7 +726,23 @@
    '((sequence "TODO" "NEXT" "WORKING" "HOLD" "|"
 	             "DONE" "ABORTED"))
    org-export-backends
-   '(ascii html icalendar latex odt markdown))
+   '(ascii html icalendar latex odt markdown)
+   org-modules
+   (append '(org-crypt
+             org-habit
+             org-bookmark
+             org-eshell
+             ol-eww
+             ol-w3m
+             ol-doi
+             ol-bibtex
+             ol-info
+             ol-man
+             ol-mac-iCal
+             ol-mac-link)
+           (when macOS-p
+             '(ol-mac-iCal
+               ol-mac-link))))
 
   (dolist (fn '(org-insert-drawer
 		            org-insert-heading
@@ -956,7 +970,7 @@
     "k"          'org-edit-src-abort
     "'"          'org-edit-src-exit)
   :config
-  (setq org-src-window-setup 'current-window
+  (setq org-src-window-setup 'split-window-right
 	      org-src-fontify-natively t
 	      org-src-tab-acts-natively t)
   (setq-default org-src-preserve-indentation nil
@@ -964,7 +978,7 @@
 
 (use-package org-habit
   :straight (:type built-in)
-  :defer t)
+  :after    org)
 
 (use-package org-compat
   :straight nil
@@ -986,13 +1000,13 @@
     "rI"         'org-id-get-create
     "rl"         'org-roam-buffer-toggle
     "ra"         'org-roam-alias-add
-                 
+
     "rd"         (which-key-prefix "org-roam-dailies")
     "rdy"        'org-roam-dailies-goto-yesterday
     "rdt"        'org-roam-dailies-goto-today
     "rdT"        'org-roam-dailies-goto-tomorrow
     "rdd"        'org-roam-dailies-goto-date
-                 
+
     "rt"         (which-key-prefix "org-roam-tags")
     "rta"        'org-roam-tag-add
     "rtr"        'org-roam-tag-remove)
@@ -1014,27 +1028,27 @@
            :unnarrowed t)
           ("j" "New Japanese Word" plain
            (file ,(concat user-emacs-directory "/CaptureTemplates/OrgRoam/NewJapaneseWordTemplate.org"))
-           :if-new (file+head "Languages/${slug}.org" "#+TITLE: ${title}\n#+DATE:%U\n")
+           :if-new (file+head "Languages/Japanese/${slug}.org" "#+TITLE: ${title}\n#+DATE:%U\n")
            :unnarrowed t)
           ("J" "New Japanese Word Group" plain
            (file ,(concat user-emacs-directory "/CaptureTemplates/OrgRoam/NewJapaneseWordGroupTemplate.org"))
-           :if-new (file+head "Languages/${slug}.org" "#+TITLE: ${title}\n#+DATE:%U\n")
+           :if-new (file+head "Languages/Japanese/${slug}.org" "#+TITLE: ${title}\n#+DATE:%U\n")
            :unnarrowed t)
           ("v" "New Japanese Lyrics" plain
            (file ,(concat user-emacs-directory "/CaptureTemplates/OrgRoam/NewJapaneseLyricsTemplate.org"))
-           :if-new (file+head "Languages/${slug}.org" "#+TITLE: ${title}\n#+DATE:%U\n")
+           :if-new (file+head "Languages/Japanese/Lyrics/${slug}.org" "#+TITLE: ${title}\n#+DATE:%U\n")
            :unnarrowed t)
           ("e" "New English Expression" plain
            (file ,(concat user-emacs-directory "/CaptureTemplates/OrgRoam/NewEnglishExpressionTemplate.org"))
-           :if-new (file+head "Languages/${slug}.org" "#+TITLE: ${title}\n#+DATE:%U\n")
+           :if-new (file+head "Languages/English/${slug}.org" "#+TITLE: ${title}\n#+DATE:%U\n")
            :unnarrowed t)
           ("r" "New Rust Notes" plain
            (file ,(concat user-emacs-directory "/CaptureTemplates/OrgRoam/NewRustNotesTemplate.org"))
-           :if-new (file+head "Languages/${slug}.org" "#+TITLE: ${title}\n#+DATE:%U\n")
+           :if-new (file+head "ProgrammingLanguages/Cpp/${slug}.org" "#+TITLE: ${title}\n#+DATE:%U\n")
            :unnarrowed t)
           ("p" "New C++ Notes" plain
            (file ,(concat user-emacs-directory "/CaptureTemplates/OrgRoam/NewCppNotesTemplate.org"))
-           :if-new (file+head "Languages/${slug}.org" "#+TITLE: ${title}\n#+DATE:%U\n")
+           :if-new (file+head "ProgrammingLanguages/Rust/${slug}.org" "#+TITLE: ${title}\n#+DATE:%U\n")
            :unnarrowed t)))
   (org-roam-db-autosync-mode))
 
@@ -5068,6 +5082,8 @@ set so that it clears the whole REPL buffer, not just the output."
   (when terminal-p
     (load-theme 'modus-vivendi t)))
 
+(use-package tron-legacy-theme :defer t)
+
 (use-package auto-dark
   :when (not (or chromeOS-p android-p terminal-p))
   :init
@@ -5684,7 +5700,7 @@ set so that it clears the whole REPL buffer, not just the output."
   "s-v"  'mixed-pitch-mode
   "s-u"  'emacs-uptime
   "s-g"  'cleanup-emacs
-  "s-i"  'insert-current-time
+  "s-i"  'emacs-init-time
   "s-t"  'tab-bar-mode
   "s-y"  'youtube-viewer-start
   "s-x"  'delete-trailing-whitespace
