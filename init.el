@@ -694,52 +694,51 @@
 
   (add-hook 'org-after-todo-statistics-hook #'cycle-todo-state)
 
-  (setq
-   org-pretty-entities t
-   org-global-properties
-   '(("Effort_ALL" .
-      "0:15 0:30 0:45 1:00 2:00 3:00 4:00 5:00 6:00 0:00"))
-   ;;    1    2    3    4    5    6    7    8    9    0
-   ;; These are the hotkeys ^^
-   org-time-stamp-rounding-minutes '(0 30)
-   org-id-locations-file (cache: ".org-id-locations")
-   org-directory "~/Org"
-   org-work-directory "~/Work/WorkNotes"
-   org-default-notes-file (expand-file-name
-			                     "notes.org" org-directory)
-   org-log-done 'time
-   org-startup-with-inline-images t
-   org-startup-latex-with-latex-preview t
-   org-format-latex-options '(:foreground default
-					                    :background "Transparent"
-					                    :scale 1.5
-					                    :html-foreground "Black"
-					                    :html-background "Transparent"
-					                    :html-scale 1.0
-					                    :matchers ("begin" "$1" "$" "$$" "\\(" "\\["))
-   org-image-actual-width nil
-   org-imenu-depth 8
-   org-link-descriptive t
-   org-hide-emphasis-markers t
-   org-enforce-todo-dependencies t
-   org-todo-keywords '((sequence "TODO" "NEXT" "WORKING" "HOLD" "|"
-	                               "DONE" "ABORTED"))
-   org-export-backends '(ascii html icalendar latex odt markdown)
-   org-modules (append '(org-crypt
-                         org-habit
-                         org-bookmark
-                         org-eshell
-                         ol-eww
-                         ol-w3m
-                         ol-doi
-                         ol-bibtex
-                         ol-info
-                         ol-man
-                         ol-mac-iCal
-                         ol-mac-link)
-                       (when macOS-p
-                         '(ol-mac-iCal
-                           ol-mac-link))))
+  (setq org-pretty-entities t
+        org-global-properties
+        '(("Effort_ALL" .
+           "0:15 0:30 0:45 1:00 2:00 3:00 4:00 5:00 6:00 0:00"))
+        ;;    1    2    3    4    5    6    7    8    9    0
+        ;; These are the hotkeys ^^
+        org-time-stamp-rounding-minutes '(0 30)
+        org-id-locations-file (cache: ".org-id-locations")
+        org-directory "~/Org"
+        org-work-directory "~/Work/WorkNotes"
+        org-default-notes-file (expand-file-name
+			                          "notes.org" org-directory)
+        org-log-done 'time
+        org-startup-with-inline-images t
+        org-startup-latex-with-latex-preview t
+        org-format-latex-options '(:foreground default
+					                         :background "Transparent"
+					                         :scale 1.5
+					                         :html-foreground "Black"
+					                         :html-background "Transparent"
+					                         :html-scale 1.0
+					                         :matchers ("begin" "$1" "$" "$$" "\\(" "\\["))
+        org-image-actual-width nil
+        org-imenu-depth 8
+        org-link-descriptive t
+        org-hide-emphasis-markers t
+        org-enforce-todo-dependencies t
+        org-todo-keywords '((sequence "TODO" "NEXT" "WORKING" "HOLD" "|"
+	                                    "DONE" "ABORTED"))
+        org-export-backends '(ascii html icalendar latex odt markdown)
+        org-modules (append '(org-crypt
+                              org-habit
+                              org-bookmark
+                              org-eshell
+                              ol-eww
+                              ol-w3m
+                              ol-doi
+                              ol-bibtex
+                              ol-info
+                              ol-man
+                              ol-mac-iCal
+                              ol-mac-link)
+                            (when macOS-p
+                              '(ol-mac-iCal
+                                ol-mac-link))))
 
   (dolist (fn '(org-insert-drawer
 		            org-insert-heading
