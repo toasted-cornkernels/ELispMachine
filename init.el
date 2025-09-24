@@ -5027,20 +5027,20 @@ set so that it clears the whole REPL buffer, not just the output."
   :config
   (ultra-scroll-mode 1))
 
-;; (use-package spacious-padding
-;;   :straight (spacious-padding :host github
-;;                               :repo "protesilaos/spacious-padding")
-;;   :when GUI-p
-;;   :config
-;;   (setq spacious-padding-widths
-;;       '(:internal-border-width 15
-;;         :header-line-width 4
-;;         :mode-line-width 6
-;;         :tab-width 4
-;;         :right-divider-width 30
-;;         :scroll-bar-width 8
-;;         :fringe-width 8))
-;;   (spacious-padding-mode 1))
+(use-package spacious-padding
+  :straight (spacious-padding :host github
+                              :repo "protesilaos/spacious-padding")
+  :when GUI-p
+  :config
+  (setq spacious-padding-widths
+      '(:internal-border-width 15
+        :header-line-width 4
+        :mode-line-width 6
+        :tab-width 4
+        :right-divider-width 30
+        :scroll-bar-width 8
+        :fringe-width 8))
+  (spacious-padding-mode 1))
 
 (setq column-number-mode t)
 
