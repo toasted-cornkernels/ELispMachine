@@ -79,6 +79,55 @@
 ;; (setq use-package-verbose t
 ;;       use-package-compute-statistics t)
 
+;; General.el config ================================
+;; ==================================================
+
+(use-package general
+  :config
+  (general-override-mode)
+  (general-auto-unbind-keys)
+  (setq general-use-package-emit-autoloads t)
+
+  ;; global-leader-prefixed major mode bindings
+  (general-create-definer global-leader
+    :keymaps 'override
+    :states  '(insert emacs normal hybrid motion visual operator)
+    :prefix  "SPC"
+    :non-normal-prefix "S-SPC"
+    "" '(:ignore t :which-key "Global"))
+
+  ;; local-leader-prefixed major mode bindings
+  (general-create-definer local-leader
+    :keymaps 'override
+    :states  '(emacs normal hybrid motion visual operator)
+    :prefix  ","
+    "" '(:ignore t :which-key
+		             (lambda (arg)
+		               (cons
+		                (cadr (split-string (car arg) " "))
+		                (replace-regexp-in-string
+		                 "-mode$" ""
+		                 (symbol-name major-mode))))))
+
+  ;; works everywhere irrelevant of evil state
+  (general-create-definer agnostic-key
+    :keymaps 'override
+    :states  '(insert emacs normal hybrid motion visual operator)
+    :prefix  ""
+    "" '(:ignore t))
+
+  ;; extends basic emacs mode for a major mode
+  (general-create-definer insert-mode-major-mode
+    :keymaps 'override
+    :states  '(insert)
+    :prefix  "")
+
+  ;; extends evil mode for a major mode
+  (general-create-definer normal-mode-major-mode
+    :keymaps 'override
+    :states  '(normal)
+    :prefix  ""))
+
 ;; No Littering! ====================================
 ;; ==================================================
 
@@ -356,10 +405,11 @@
 
 (use-package evil-lisp-state
   :after evil
-  :general
+  :init
+  (setq evil-lisp-state-global t)
+  :general-config
   (global-leader
     "k"   (which-key-prefix :lisp)
-    ;; "k"   'evil-lisp-state
     "k$"  'evil-lisp-state-sp-end-of-sexp
     "k%"  'evil-lisp-state-evil-jump-item
     "k("  'evil-lisp-state-insert-sexp-before
@@ -471,55 +521,6 @@
 ;; ==================================================
 
 (use-package manage-minor-mode)
-
-;; General.el config ================================
-;; ==================================================
-
-(use-package general
-  :config
-  (general-override-mode)
-  (general-auto-unbind-keys)
-  (setq general-use-package-emit-autoloads t)
-
-  ;; global-leader-prefixed major mode bindings
-  (general-create-definer global-leader
-    :keymaps 'override
-    :states  '(insert emacs normal hybrid motion visual operator)
-    :prefix  "SPC"
-    :non-normal-prefix "S-SPC"
-    "" '(:ignore t :which-key "Global"))
-
-  ;; local-leader-prefixed major mode bindings
-  (general-create-definer local-leader
-    :keymaps 'override
-    :states  '(emacs normal hybrid motion visual operator)
-    :prefix  ","
-    "" '(:ignore t :which-key
-		             (lambda (arg)
-		               (cons
-		                (cadr (split-string (car arg) " "))
-		                (replace-regexp-in-string
-		                 "-mode$" ""
-		                 (symbol-name major-mode))))))
-
-  ;; works everywhere irrelevant of evil state
-  (general-create-definer agnostic-key
-    :keymaps 'override
-    :states  '(insert emacs normal hybrid motion visual operator)
-    :prefix  ""
-    "" '(:ignore t))
-
-  ;; extends basic emacs mode for a major mode
-  (general-create-definer insert-mode-major-mode
-    :keymaps 'override
-    :states  '(insert)
-    :prefix  "")
-
-  ;; extends evil mode for a major mode
-  (general-create-definer normal-mode-major-mode
-    :keymaps 'override
-    :states  '(normal)
-    :prefix  ""))
 
 ;; Emoji config =====================================
 ;; ==================================================
