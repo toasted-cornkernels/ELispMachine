@@ -50,15 +50,83 @@
       package-install-upgrade-built-in t)
 
 (defun elispm/straight-get-repo-dir (package)
+  "Return the path of the package in straight's `repo` redirectory."
   (straight--repos-dir
    (plist-get (gethash package straight--recipe-cache) :local-repo)))
 
+;; Custom Lisp files ================================
+;; ==================================================
+
+(setq custom-lisp-directory (concat user-emacs-directory "lisp/"))
+(setq global-cache-directory (concat user-emacs-directory "cache/"))
+
+(dolist (dir (list custom-lisp-directory global-cache-directory))
+  (unless (file-directory-p dir)
+    (make-directory dir))
+  (add-to-list 'load-path dir))
+
+(add-to-list 'load-path
+             (concat user-emacs-directory
+                     "straight/repos/vertico/extensions/"))
+
+(defun cache: (subpath)
+  "Concatenate the SUBPATH to the global-cache-directory."
+  (concat global-cache-directory (s-chop-prefix "/" subpath)))
 
 ;; Profiling ========================================
 ;; ==================================================
 
 ;; (setq use-package-verbose t
 ;;       use-package-compute-statistics t)
+
+;; General.el config ================================
+;; ==================================================
+
+(use-package general
+  :config
+  (general-override-mode)
+  (general-auto-unbind-keys)
+  (setq general-use-package-emit-autoloads t)
+
+  ;; global-leader-prefixed major mode bindings
+  (general-create-definer global-leader
+    :keymaps 'override
+    :states  '(insert emacs normal hybrid motion visual operator)
+    :prefix  "SPC"
+    :non-normal-prefix "S-SPC"
+    "" '(:ignore t :which-key "Global"))
+
+  ;; local-leader-prefixed major mode bindings
+  (general-create-definer local-leader
+    :keymaps 'override
+    :states  '(emacs normal hybrid motion visual operator)
+    :prefix  ","
+    "" '(:ignore t :which-key
+		             (lambda (arg)
+		               (cons
+		                (cadr (split-string (car arg) " "))
+		                (replace-regexp-in-string
+		                 "-mode$" ""
+		                 (symbol-name major-mode))))))
+
+  ;; works everywhere irrelevant of evil state
+  (general-create-definer agnostic-key
+    :keymaps 'override
+    :states  '(insert emacs normal hybrid motion visual operator)
+    :prefix  ""
+    "" '(:ignore t))
+
+  ;; extends basic emacs mode for a major mode
+  (general-create-definer insert-mode-major-mode
+    :keymaps 'override
+    :states  '(insert)
+    :prefix  "")
+
+  ;; extends evil mode for a major mode
+  (general-create-definer normal-mode-major-mode
+    :keymaps 'override
+    :states  '(normal)
+    :prefix  ""))
 
 ;; No Littering! ====================================
 ;; ==================================================
@@ -335,24 +403,74 @@
   :config
   (evil-terminal-cursor-changer-activate))
 
-;; Custom Lisp files ================================
-;; ==================================================
+(use-package evil-lisp-state
+  :after evil
+  :general
+  (global-leader
+    "k"   (which-key-prefix :lisp)
+    "k$"  'evil-lisp-state-sp-end-of-sexp
+    "k%"  'evil-lisp-state-evil-jump-item
+    "k("  'evil-lisp-state-insert-sexp-before
+    "k)"  'evil-lisp-state-insert-sexp-after
+    "k."  'lisp-state-toggle-lisp-state
+    "k0"  'evil-lisp-state-beginning-of-sexp
+    "k1"  'evil-lisp-state-digit-argument
+    "k2"  'evil-lisp-state-digit-argument
+    "k3"  'evil-lisp-state-digit-argument
+    "k4"  'evil-lisp-state-digit-argument
+    "k5"  'evil-lisp-state-digit-argument
+    "k6"  'evil-lisp-state-digit-argument
+    "k7"  'evil-lisp-state-digit-argument
+    "k8"  'evil-lisp-state-digit-argument
+    "k9"  'evil-lisp-state-digit-argument
+    "k:"  'evil-lisp-state-evil-ex
+    "ka"  'evil-lisp-state-sp-absorb-sexp
+    "kb"  'evil-lisp-state-sp-forward-barf-sexp
+    "kc"  'evil-lisp-state-sp-convolute-sexp
+    "ke"  'evil-lisp-state-sp-splice-sexp-killing-forward
+    "kh"  'evil-lisp-state-sp-backward-symbol
+    "ki"  'evil-lisp-state-evil-insert-state
+    "kj"  'evil-lisp-state-next-closing-paren
+    "kk"  'evil-lisp-state-prev-opening-paren
+    "kl"  'evil-lisp-state-forward-symbol
+    "kp"  'evil-lisp-state-evil-paste-after
+    "kr"  'evil-lisp-state-sp-raise-sexp
+    "ks"  'evil-lisp-state-sp-forward-slurp-sexp
+    "kt"  'evil-lisp-state-sp-transpose-sexp
+    "ku"  'evil-lisp-state-evil-undo
+    "kv"  'evil-visual-char
+    "kw"  'evil-lisp-state-wrap
+    "ky"  'evil-lisp-state-sp-copy-sexp
+    "kB"  'evil-lisp-state-sp-backward-barf-sexp
+    "kE"  'evil-lisp-state-sp-splice-sexp-killing-backward
+    "kH"  'evil-lisp-state-sp-backward-sexp
+    "kI"  'evil-lisp-state-evil-insert-line
+    "kJ"  'evil-lisp-state-sp-join-sexp
+    "kL"  'evil-lisp-state-sp-forward-sexp
+    "kP"  'evil-lisp-state-evil-paste-before
+    "kS"  'evil-lisp-state-sp-backward-slurp-sexp
+    "kU"  'evil-lisp-state-up-sexp
+    "kV"  'evil-lisp-state-evil-visual-line
+    "kW"  'evil-lisp-state-sp-unwrap-sexp
+    "C-r" 'evil-redo
+    "C-v" 'evil-visual-block
+    "ESC" 'evil-lisp-state/quit
 
-(setq custom-lisp-directory (concat user-emacs-directory "lisp/"))
-(setq global-cache-directory (concat user-emacs-directory "cache/"))
+    "k`"  (which-key-prefix :hybrid)
+    "k`k" 'evil-lisp-state-sp-kill-hybrid-sexp
+    "k`p" 'evil-lisp-state-sp-push-hybrid-sexp
+    "k`s" 'evil-lisp-state-sp-slurp-hybrid-sexp
+    "k`t" 'evil-lisp-state-sp-transpose-hybrid-sexp
 
-(dolist (dir (list custom-lisp-directory global-cache-directory))
-  (unless (file-directory-p dir)
-    (make-directory dir))
-  (add-to-list 'load-path dir))
+    "kd"  (which-key-prefix :kill)
+    "kds" 'evil-lisp-state-sp-kill-symbol
+    "kdw" 'evil-lisp-state-sp-kill-word
+    "kdx" 'evil-lisp-state-sp-kill-sexp
 
-(add-to-list 'load-path
-	           (concat user-emacs-directory
-		                 "straight/repos/vertico/extensions/"))
-
-(defun cache: (subpath)
-  "Concatenate the SUBPATH to the global-cache-directory."
-  (concat global-cache-directory (s-chop-prefix "/" subpath)))
+    "kD"  (which-key-prefix :kill-backwards)
+    "kDs" 'evil-lisp-state-sp-backward-kill-symbol
+    "kDw" 'evil-lisp-state-sp-backward-kill-word
+    "kDx" 'evil-lisp-state-sp-backward-kill-sexp))
 
 ;; GPG config =======================================
 ;; ==================================================
@@ -401,55 +519,6 @@
 ;; ==================================================
 
 (use-package manage-minor-mode)
-
-;; General.el config ================================
-;; ==================================================
-
-(use-package general
-  :config
-  (general-override-mode)
-  (general-auto-unbind-keys)
-  (setq general-use-package-emit-autoloads t)
-
-  ;; global-leader-prefixed major mode bindings
-  (general-create-definer global-leader
-    :keymaps 'override
-    :states  '(insert emacs normal hybrid motion visual operator)
-    :prefix  "SPC"
-    :non-normal-prefix "S-SPC"
-    "" '(:ignore t :which-key "Global"))
-
-  ;; local-leader-prefixed major mode bindings
-  (general-create-definer local-leader
-    :keymaps 'override
-    :states  '(emacs normal hybrid motion visual operator)
-    :prefix  ","
-    "" '(:ignore t :which-key
-		             (lambda (arg)
-		               (cons
-		                (cadr (split-string (car arg) " "))
-		                (replace-regexp-in-string
-		                 "-mode$" ""
-		                 (symbol-name major-mode))))))
-
-  ;; works everywhere irrelevant of evil state
-  (general-create-definer agnostic-key
-    :keymaps 'override
-    :states  '(insert emacs normal hybrid motion visual operator)
-    :prefix  ""
-    "" '(:ignore t))
-
-  ;; extends basic emacs mode for a major mode
-  (general-create-definer insert-mode-major-mode
-    :keymaps 'override
-    :states  '(insert)
-    :prefix  "")
-
-  ;; extends evil mode for a major mode
-  (general-create-definer normal-mode-major-mode
-    :keymaps 'override
-    :states  '(normal)
-    :prefix  ""))
 
 ;; Emoji config =====================================
 ;; ==================================================
@@ -1152,7 +1221,9 @@
     "n"          'org-journal-next-entry
     "p"          'org-journal-previous-entry)
   :config
-  (setq org-journal-dir "~/Org/Journal"))
+  (setq org-journal-dir (if android-p
+                            "~/storage/shared/Org/Journal/"
+                          "~/Org/Journal/")))
 
 (use-package org-tempo
   :straight (:type built-in)
@@ -1418,7 +1489,7 @@
     "d"          (which-key-prefix "database")
     "dr"         'codeql-query-server-register-database
     "do"         'codeql-database-open-source-archive-file
-    
+
     "h"          (which-key-prefix "history")
     "hq"         'codeql-query-history
     "hd"         'codeql-database-history
@@ -1427,7 +1498,7 @@
 
     "v"          (which-key-prefix "options")
     "vs"         'codeql-set-max-paths)
-  
+
   :config
   (setq codeql-search-paths '("./"))
   ;; below defalias is not working...
@@ -5453,6 +5524,7 @@ set so that it clears the whole REPL buffer, not just the output."
   "w'" 'evil-window-split
 
   ";"  'evil-window-vsplit
+  ":"  'consult-complex-command
   "'"  'evil-window-split
 
   "1"  'winum-select-window-1
@@ -5482,21 +5554,105 @@ set so that it clears the whole REPL buffer, not just the output."
      (concat buffer-file-name "::"
 	           (number-to-string (current-line))))))
 
+(defun elipsm/avy-goto-url ()
+  "Use avy to go to an URL in the buffer."
+  (interactive)
+  (avy-jump "https?://"))
+
+(defun elipsm/avy-open-url ()
+  "Use avy to select an URL in the buffer and open it."
+  (interactive)
+  (save-excursion
+    (spacemacs/avy-goto-url)
+    (browse-url-at-point)))
+
+(global-leader
+  "j"   (which-key-prefix :jump)
+  "jl"  'avy-goto-line
+  "jL"  'consult-line
+  "jc"  'avy-goto-char
+  "jC"  'avy-goto-char-2
+  "jw"  'avy-goto-word-or-subword-1
+  "jW"  'avy-goto-word-0
+  "jh"  'goto-last-change
+  "jH"  'goto-last-change-reverse
+  "jn"  'sp-newline
+  "jf"  'find-function
+  "jo"  'open-newline
+  "ju"  'elipsm/avy-goto-url
+  "jU"  'elipsm/avy-open-url
+  "jv"  'find-variable)
+
+;; Stolen from Spacemacs
+(defun elispm/sudo-edit (&optional arg)
+  (interactive "P")
+  (require 'tramp)
+  (let ((fname (if (or arg (not buffer-file-name))
+                   (read-file-name "File: ")
+                 buffer-file-name)))
+    (find-file
+     (if (not (tramp-tramp-file-p fname))
+         (concat "/sudo:root@localhost:" fname)
+       (with-parsed-tramp-file-name fname parsed
+         (when (equal parsed-user "root")
+           (error "Already root!"))
+         (let* ((new-hop (tramp-make-tramp-file-name
+                          ;; Try to retrieve a tramp method suitable for
+                          ;; multi-hopping
+                          (cond ((tramp-get-method-parameter
+                                  parsed 'tramp-login-program))
+                                ((tramp-get-method-parameter
+                                  parsed 'tramp-copy-program))
+                                (t parsed-method))
+                          parsed-user
+                          parsed-domain
+                          parsed-host
+                          parsed-port
+                          nil
+                          parsed-hop))
+                (new-hop (substring new-hop 1 -1))
+                (new-hop (concat new-hop "|"))
+                (new-fname (tramp-make-tramp-file-name
+                            "sudo"
+                            parsed-user
+                            parsed-domain
+                            parsed-host
+                            parsed-port
+                            parsed-localname
+                            new-hop)))
+           new-fname))))))
+
 (global-leader
   "f"   (which-key-prefix :file)
+  "fb"  'consult-bookmark
+  "fp"  'consult-project-buffer
   "ff"  'find-file
   "fs"  'save-buffer
-  "fed" 'visit-init-dot-el
-  "feR" 'eval-init-dot-el
+
+  "fg"  (which-key-prefix :find/grep)
+  "fgd" 'consult-fd
+  "fgD" 'consult-find
+
+  "fgr" 'consult-rg
+  "fgR" 'consult-grep
+  "fgg" 'consult-git-grep
+
   "fr"  'consult-recent-file
   "fj"  'dired-jump
   "fF"  'find-name-dired
+  "fG"  'find-grep-dired
+
+  "fe"  (which-key-prefix :emacs)
+  "fed" 'visit-init-dot-el
+  "feR" 'eval-init-dot-el
+
   "o"   'find-file)
 
 (global-leader
   "b"  (which-key-prefix :buffer)
   "bd" 'kill-current-buffer
-  "bb" 'switch-to-buffer
+  "bb" 'consult-buffer
+  "bB" 'consult-buffer-other-tab
   "bp" 'previous-buffer
   "bn" 'next-buffer
   "bh" (lambda ()
@@ -5715,9 +5871,13 @@ set so that it clears the whole REPL buffer, not just the output."
   "xie"   'emojify-insert-emoji
   "xiE"   'emoji-insert
   "x TAB" 'indent-rigidly
+
+  "xc"    'count-words
+
   "xw"    (which-key-prefix "word")
   "xwd"   'osx-dictionary-search-pointer
   "xwD"   'define-word-at-point
+
   "xwt"   (which-key-prefix "thesaurus"))
 
 (global-leader
@@ -6166,7 +6326,7 @@ set so that it clears the whole REPL buffer, not just the output."
 (use-package hnreader
   :general-config
   (global-leader
-    "awh" (which-key-prefix "hackernews")
+    "awh"  (which-key-prefix "hackernews")
     "awhn" 'hnreader-news
     "awhp" 'hnreader-past
     "awhN" 'hnreader-newest
@@ -6186,16 +6346,16 @@ set so that it clears the whole REPL buffer, not just the output."
 (use-package eradio
   :defer t
   :config
-  (setq eradio-player '("mpv" "--no-video" "--no-terminal" "--really-quiet")
-	      eradio-channels '(("MBC FM4U"    . "http://serpent0.duckdns.org:8088/mbcfm.pls")
-			                    ("MBC 표준FM"   . "http://serpent0.duckdns.org:8088/mbcsfm.pls")
-			                    ("KBS 쿨FM"     . "http://serpent0.duckdns.org:8088/kbs2fm.pls")
-			                    ("KBS 해피FM"   . "http://serpent0.duckdns.org:8088/kbs2radio.pls")
+  (setq eradio-player   '("mpv" "--no-video" "--no-terminal" "--really-quiet")
+	      eradio-channels '(("MBC FM4U"      . "http://serpent0.duckdns.org:8088/mbcfm.pls")
+			                    ("MBC 표준FM"    . "http://serpent0.duckdns.org:8088/mbcsfm.pls")
+			                    ("KBS 쿨FM"      . "http://serpent0.duckdns.org:8088/kbs2fm.pls")
+			                    ("KBS 해피FM"    . "http://serpent0.duckdns.org:8088/kbs2radio.pls")
 			                    ("KBS 클래식 FM" . "http://serpent0.duckdns.org:8088/kbsfm.pls")
-			                    ("SBS 파워FM"   . "http://serpent0.duckdns.org:8088/sbsfm.pls")
-			                    ("SBS 러브FM"   . "http://serpent0.duckdns.org:8088/sbs2fm.pls")
+			                    ("SBS 파워FM"    . "http://serpent0.duckdns.org:8088/sbsfm.pls")
+			                    ("SBS 러브FM"    . "http://serpent0.duckdns.org:8088/sbs2fm.pls")
 			                    ("TBS 교통방송"  . "http://tbs.hscdn.com/tbsradio/fm/playlist.m3u8")
-			                    ("TBS eFM"     . "http://tbs.hscdn.com/tbsradio/efm/playlist.m3u8")
+			                    ("TBS eFM"       . "http://tbs.hscdn.com/tbsradio/efm/playlist.m3u8")
 			                    ("CBS 음악방송"  . "http://aac.cbs.co.kr/cbs939/cbs939.stream/playlist.m3u8"))))
 
 ;; Elfeed config ====================================
