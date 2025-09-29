@@ -456,7 +456,6 @@
     "kW"  'evil-lisp-state-sp-unwrap-sexp
     "C-r" 'evil-redo
     "C-v" 'evil-visual-block
-    "ESC" 'evil-lisp-state/quit
 
     "k`"  (which-key-prefix :hybrid)
     "k`k" 'evil-lisp-state-sp-kill-hybrid-sexp
