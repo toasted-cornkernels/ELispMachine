@@ -5573,8 +5573,7 @@ set so that it clears the whole REPL buffer, not just the output."
   "jL"  'consult-line
   "jc"  'avy-goto-char
   "jC"  'avy-goto-char-2
-  "jw"  'avy-goto-word-or-subword-1
-  "jW"  'avy-goto-word-0
+  "jw"  'avy-goto-whitespace-end
   "jh"  'goto-last-change
   "jH"  'goto-last-change-reverse
   "jn"  'sp-newline
