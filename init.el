@@ -5633,7 +5633,7 @@ set so that it clears the whole REPL buffer, not just the output."
   "fgd" 'consult-fd
   "fgD" 'consult-find
 
-  "fgr" 'consult-rg
+  "fgr" 'consult-ripgrep
   "fgR" 'consult-grep
   "fgg" 'consult-git-grep
 
