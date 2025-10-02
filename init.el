@@ -38,8 +38,8 @@
       (bootstrap-version 6))
   (unless (file-exists-p bootstrap-file)
     (with-current-buffer
-	      (url-retrieve-synchronously
-	       "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el" 'silent 'inhibit-cookies)
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el" 'silent 'inhibit-cookies)
       (goto-char (point-max))
       (eval-print-last-sexp)))
   (load bootstrap-file nil 'nomessage))
@@ -102,12 +102,12 @@
     :states  '(emacs normal hybrid motion visual operator)
     :prefix  ","
     "" '(:ignore t :which-key
-		             (lambda (arg)
-		               (cons
-		                (cadr (split-string (car arg) " "))
-		                (replace-regexp-in-string
-		                 "-mode$" ""
-		                 (symbol-name major-mode))))))
+                 (lambda (arg)
+                   (cons
+                    (cadr (split-string (car arg) " "))
+                    (replace-regexp-in-string
+                     "-mode$" ""
+                     (symbol-name major-mode))))))
 
   ;; works everywhere irrelevant of evil state
   (general-create-definer agnostic-key
@@ -134,7 +134,7 @@
 (use-package no-littering
   :config
   (setq auto-save-file-name-transforms
-	      `((".*" ,(no-littering-expand-var-file-name "auto-save/") t)))
+        `((".*" ,(no-littering-expand-var-file-name "auto-save/") t)))
   (setq custom-file (no-littering-expand-etc-file-name "custom.el"))
   (when (fboundp 'startup-redirect-eln-cache)
     (defvar native-comp-eln-load-path nil)
@@ -159,18 +159,18 @@
 (use-package which-key
   :config
   (setq which-key-add-column-padding 1
-	      which-key-echo-keystrokes 0.02
-	      which-key-idle-delay 0.2
-	      which-key-idle-secondary-delay 0.01
-	      which-key-max-description-length 32
-	      which-key-max-display-columns nil
-	      which-key-min-display-lines 6
-	      which-key-prevent-C-h-from-cycling t
-	      which-key-sort-order 'which-key-prefix-then-key-order
-	      which-key-sort-uppercase-first nil
-	      which-key-special-keys nil
-	      which-key-use-C-h-for-paging t
-	      which-key-allow-evil-operators t)
+        which-key-echo-keystrokes 0.02
+        which-key-idle-delay 0.2
+        which-key-idle-secondary-delay 0.01
+        which-key-max-description-length 32
+        which-key-max-display-columns nil
+        which-key-min-display-lines 6
+        which-key-prevent-C-h-from-cycling t
+        which-key-sort-order 'which-key-prefix-then-key-order
+        which-key-sort-uppercase-first nil
+        which-key-special-keys nil
+        which-key-use-C-h-for-paging t
+        which-key-allow-evil-operators t)
   (which-key-mode))
 
 ;; Useful Elisp Libraries ===========================
@@ -226,11 +226,11 @@
   "Concat everything in the BODY in a single string. Backslash breaks a line."
   (string-join
    (-interpose " "
-	             (mapcar (lambda (elem)
-			                   (cond
-			                    ((stringp elem) elem)
-			                    ((symbolp elem) (symbol-name elem))
-			                    (t (error (format "Unrecognized string: %s" elem))))) body))))
+               (mapcar (lambda (elem)
+                         (cond
+                          ((stringp elem) elem)
+                          ((symbolp elem) (symbol-name elem))
+                          (t (error (format "Unrecognized string: %s" elem))))) body))))
 
 (defmacro comment (&rest args)
   "Rich comment: ignore whatever that is in ARGS."
@@ -266,7 +266,7 @@
 
 (defvar android-p
   (let ((uname-output
-	       (s-trim-right (shell-command-to-string "uname -o"))))
+         (s-trim-right (shell-command-to-string "uname -o"))))
     (string= uname-output "Android")))
 
 (defvar GUI-p (display-graphic-p)
@@ -288,8 +288,8 @@
   (interactive)
   (if debug-on-error
       (progn
-	      (setq debug-on-error nil)
-	      (message "%s" "Now disabling stacktrace on error."))
+        (setq debug-on-error nil)
+        (message "%s" "Now disabling stacktrace on error."))
     (setq debug-on-error t)
     (message "%s" "Now showing stacktrace on error.")))
 
@@ -308,13 +308,13 @@
   (interactive "sSwitch to custom theme: ")
   (let ((target-theme-symbol (intern target-theme)))
     (if (eq target-theme-symbol 'default)
-	      (dolist (theme custom-enabled-themes)
-	        (disable-theme theme))
+        (dolist (theme custom-enabled-themes)
+          (disable-theme theme))
       (load-theme target-theme-symbol)
       (dolist (other-theme (remove target-theme-symbol custom-enabled-themes))
-	      (disable-theme other-theme))
+        (disable-theme other-theme))
       (assert (and (= (length custom-enabled-themes) 1)
-		               (eq (car custom-enabled-themes) target-theme-symbol))))))
+                   (eq (car custom-enabled-themes) target-theme-symbol))))))
 
 ;; evil-mode config =================================
 ;; ==================================================
@@ -322,9 +322,9 @@
 (use-package evil
   :init
   (setq evil-want-keybinding nil
-	      evil-disable-insert-state-bindings t
-	      evil-want-C-u-scroll t
-	      evil-want-integration t
+        evil-disable-insert-state-bindings t
+        evil-want-C-u-scroll t
+        evil-want-integration t
         evil-undo-system 'undo-tree
         evil-mode-line-format nil)
   :config
@@ -334,10 +334,10 @@
   ;; set local leader
   (evil-set-leader 'normal "," t)
   (setq evil-motion-state-cursor 'box
-	      evil-visual-state-cursor 'box
-	      evil-normal-state-cursor 'box
-	      evil-insert-state-cursor 'bar
-	      evil-emacs-state-cursor  'bar)
+        evil-visual-state-cursor 'box
+        evil-normal-state-cursor 'box
+        evil-insert-state-cursor 'bar
+        evil-emacs-state-cursor  'bar)
   (setq evil-insert-state-message nil
         evil-motion-state-message nil
         evil-normal-state-message nil
@@ -353,7 +353,7 @@
   (evil-ex-define-cmd "WQ" 'evil-save-and-close)
   (evil-ex-define-cmd "E" 'evil-edit)
   (setq evil-vsplit-window-right t
-	      evil-split-window-below t)
+        evil-split-window-below t)
 
   (evil-define-key* 'normal 'global
     (kbd "C-w C-h") 'evil-window-left
@@ -372,10 +372,10 @@
   when toggle off input method, switch to evil-normal-state if current state is evil-insert-state"
     (interactive)
     (if (not current-input-method)
-	      (if (not (string= evil-state "insert"))
-	          (evil-insert-state))
+        (if (not (string= evil-state "insert"))
+            (evil-insert-state))
       (if (string= evil-state "insert")
-	        (evil-normal-state)))
+          (evil-normal-state)))
     (toggle-input-method)))
 
 (use-package evil-collection
@@ -538,8 +538,8 @@
   :config
   (add-to-list 'align-rules-list
                '(haskell-types
-		             (regexp . "\\(\\s-+\\)\\(::\\|∷\\)\\s-+")
-		             (modes . haskell-modes)))
+                 (regexp . "\\(\\s-+\\)\\(::\\|∷\\)\\s-+")
+                 (modes . haskell-modes)))
   (add-to-list 'align-rules-list
                '(haskell-assignment
                  (regexp . "\\(\\s-+\\)=\\s-+")
@@ -752,9 +752,9 @@
 
   (defun cycle-todo-state ()
     (and (org-get-todo-state)
-	       (when (or (and (org-entry-is-todo-p) (= n-not-done 0))
-		               (and (org-entry-is-done-p) (> n-not-done 0)))
-	         (org-todo))))
+         (when (or (and (org-entry-is-todo-p) (= n-not-done 0))
+                   (and (org-entry-is-done-p) (> n-not-done 0)))
+           (org-todo))))
 
   (defmacro org-insert-structure (fname code)
     "Make function called FNAME for inserting structure (signified by CODE) in org mode."
@@ -775,24 +775,24 @@
         org-directory "~/Org"
         org-work-directory "~/Work/WorkNotes"
         org-default-notes-file (expand-file-name
-			                          "notes.org" org-directory)
+                                "notes.org" org-directory)
         org-log-done 'time
         org-startup-with-inline-images t
         org-startup-latex-with-latex-preview t
         org-format-latex-options '(:foreground default
-					                         :background "Transparent"
-					                         :scale 1.5
-					                         :html-foreground "Black"
-					                         :html-background "Transparent"
-					                         :html-scale 1.0
-					                         :matchers ("begin" "$1" "$" "$$" "\\(" "\\["))
+                                   :background "Transparent"
+                                   :scale 1.5
+                                   :html-foreground "Black"
+                                   :html-background "Transparent"
+                                   :html-scale 1.0
+                                   :matchers ("begin" "$1" "$" "$$" "\\(" "\\["))
         org-image-actual-width nil
         org-imenu-depth 8
         org-link-descriptive t
         org-hide-emphasis-markers t
         org-enforce-todo-dependencies t
         org-todo-keywords '((sequence "TODO" "NEXT" "WORKING" "HOLD" "|"
-	                                    "DONE" "ABORTED"))
+                                      "DONE" "ABORTED"))
         org-export-backends '(ascii html icalendar latex odt markdown)
         org-modules (append '(org-crypt
                               org-habit
@@ -811,19 +811,19 @@
                                 ol-mac-link))))
 
   (dolist (fn '(org-insert-drawer
-		            org-insert-heading
-		            org-insert-item
-		            org-insert-structure-template))
+                org-insert-heading
+                org-insert-item
+                org-insert-structure-template))
     (advice-add fn :after #'evil-insert-state)))
 
 (use-package evil-org
   :after (evil org)
   :init
   (add-hook 'org-mode-hook (lambda ()
-			                       (evil-org-mode)
-			                       (evil-normalize-keymaps)))
+                             (evil-org-mode)
+                             (evil-normalize-keymaps)))
   (setq evil-org-use-additional-insert t
-	      evil-org-key-theme '(textobjects navigation additional todo)))
+        evil-org-key-theme '(textobjects navigation additional todo)))
 
 (use-package org-modern
   :hook (org-mode . global-org-modern-mode)
@@ -837,7 +837,7 @@
   :defer    t
   :config
   (setq org-return-follows-link t
-	      org-mouse-1-follows-link t)
+        org-mouse-1-follows-link t)
 
   (defun calendar-one-day-forward ()
     (interactive)
@@ -925,12 +925,12 @@
 
 (use-package ob-racket
   :straight (ob-racket
-	           :type git :host github :repo "hasu/emacs-ob-racket"
-	           :files ("*.el" "*.rkt"))
+             :type git :host github :repo "hasu/emacs-ob-racket"
+             :files ("*.el" "*.rkt"))
   :defer t
   :config
   (add-hook 'ob-racket-pre-runtime-library-load-hook
-	          #'ob-racket-raco-make-runtime-library)
+            #'ob-racket-raco-make-runtime-library)
   (add-to-list 'org-src-lang-modes '("racket" . racket)))
 
 (use-package ob-restclient :defer t)
@@ -950,9 +950,9 @@
   :defer t
   :init
   (add-hook 'org-babel-after-execute-hook
-	          (lambda ()
-	            (when org-inline-image-overlays
-		            (org-redisplay-inline-images))))
+            (lambda ()
+              (when org-inline-image-overlays
+                (org-redisplay-inline-images))))
 
   :config
   (setq org-babel-languages '(lisp clojure scheme
@@ -1005,16 +1005,16 @@
 
   :config
   (setq org-capture-templates
-	      `(("t" "TODO" entry (file+headline ,(concat org-directory "/TODO.org") "Tasks")
-	         "** TODO %?          :%^{Tag}:\n\nEntered on %U\n%i\n%a\n")
-	        ("l" "TIL" entry (file+headline ,(concat org-directory "/TIL.org") "TIL")
-	         "** %?          :%^{Tag}:\n\nEntered on %U\n%i\n%a\n")
-	        ("c" "Clipboard" entry (file+headline ,(concat org-directory "/Clipboard.org") "Clipboard")
-	         "** %?          :%^{Tag}:\n\nEntered on %U\n%i\n%a\n")
-	        ("a" "Journal" entry (file+datetree,(concat org-directory "/Journal.org"))
-	         "** %U\n\n%?\n%i\n")
-	        ("n" "ShowerThoughts" entry (file+headline ,(concat org-directory "/ShowerThoughts.org") "ShowerThoughts")
-	         "** %?          :%^{Tag}:\n\nEntered on %U\n%i\n%a\n"))))
+        `(("t" "TODO" entry (file+headline ,(concat org-directory "/TODO.org") "Tasks")
+           "** TODO %?          :%^{Tag}:\n\nEntered on %U\n%i\n%a\n")
+          ("l" "TIL" entry (file+headline ,(concat org-directory "/TIL.org") "TIL")
+           "** %?          :%^{Tag}:\n\nEntered on %U\n%i\n%a\n")
+          ("c" "Clipboard" entry (file+headline ,(concat org-directory "/Clipboard.org") "Clipboard")
+           "** %?          :%^{Tag}:\n\nEntered on %U\n%i\n%a\n")
+          ("a" "Journal" entry (file+datetree,(concat org-directory "/Journal.org"))
+           "** %U\n\n%?\n%i\n")
+          ("n" "ShowerThoughts" entry (file+headline ,(concat org-directory "/ShowerThoughts.org") "ShowerThoughts")
+           "** %?          :%^{Tag}:\n\nEntered on %U\n%i\n%a\n"))))
 
 (use-package org-agenda
   :straight nil
@@ -1037,8 +1037,8 @@
     "'"          'org-edit-src-exit)
   :config
   (setq org-src-window-setup 'split-window-right
-	      org-src-fontify-natively t
-	      org-src-tab-acts-natively t)
+        org-src-fontify-natively t
+        org-src-tab-acts-natively t)
   (setq-default org-src-preserve-indentation nil
                 org-edit-src-content-indentation 2))
 
@@ -1313,10 +1313,10 @@
 (when (and macOS-p (boundp 'mac-system-move-file-to-trash-use-finder))
   (setq mac-system-move-file-to-trash-use-finder t)
   (setq mac-function-modifier 'hyper
-	      mac-option-modifier   'meta
-	      mac-command-modifier  'super)
+        mac-option-modifier   'meta
+        mac-command-modifier  'super)
   (setq mac-pass-command-to-system nil
-	      mac-pass-control-to-system nil))
+        mac-pass-control-to-system nil))
 
 (when-let ((gls (executable-find "gls")))
   (setq insert-directory-program gls))
@@ -1375,13 +1375,13 @@
   (osx-clipboard-paste-function osx-clipboard-cut-function)
   :init
   (setq interprogram-cut-function (lambda (text &rest ignore)
-				                            (if (display-graphic-p)
-					                              (gui-select-text text)
-				                              (osx-clipboard-cut-function text)))
-	      interprogram-paste-function (lambda ()
-				                              (if (display-graphic-p)
-					                                (gui-selection-value)
-					                              (osx-clipboard-paste-function)))))
+                                    (if (display-graphic-p)
+                                        (gui-select-text text)
+                                      (osx-clipboard-cut-function text)))
+        interprogram-paste-function (lambda ()
+                                      (if (display-graphic-p)
+                                          (gui-selection-value)
+                                        (osx-clipboard-paste-function)))))
 
 (use-package reveal-in-osx-finder
   :when macOS-p
@@ -1409,7 +1409,7 @@
 
 (when chromeOS-p
   (setq x-super-keysym 'meta
-	      x-meta-keysym 'super))
+        x-meta-keysym 'super))
 
 ;; Quickrun config ==================================
 ;; ==================================================
@@ -1458,16 +1458,16 @@
                                  (setq indent-tabs-mode nil)))
   :straight
   (emacs-codeql :type git
-		            :host github
-		            :repo "anticomputer/emacs-codeql"
-		            :branch "main"
-		            :files (:defaults "bin")
+                :host github
+                :repo "anticomputer/emacs-codeql"
+                :branch "main"
+                :files (:defaults "bin")
                 :fork (:host github
                        :repo "jeongsoolee09/emacs-codeql"))
   :init
   (setq codeql-transient-binding "C-c q"
-	      codeql-configure-eglot-lsp t
-	      codeql-configure-projectile t)
+        codeql-configure-eglot-lsp t
+        codeql-configure-projectile t)
   :general-config
   (local-leader
     :major-modes '(ql-tree-sitter-mode t)
@@ -1570,10 +1570,10 @@
   (shell-script-mode . (lambda ()
                          (setq indent-tabs-mode nil)))
   :mode (("\\.sh\\'"           . shell-script-mode)
-	       ("\\.(ba|z)shrc.*\\'" . shell-script-mode)
-	       ("\\.zshenv.*\\'"     . shell-script-mode)
-	       ("\\.bash_profile\\'" . shell-script-mode)
-	       ("\\.zprofile\\'"     . shell-script-mode)))
+         ("\\.(ba|z)shrc.*\\'" . shell-script-mode)
+         ("\\.zshenv.*\\'"     . shell-script-mode)
+         ("\\.bash_profile\\'" . shell-script-mode)
+         ("\\.zprofile\\'"     . shell-script-mode)))
 
 ;; Python config ====================================
 ;; ==================================================
@@ -1855,41 +1855,41 @@
       "Swap between *lua* and *hs*, depending on the current lua process."
       (interactive)
       (let ((lua-process-buffer-name (buffer-name lua-process-buffer)))
-	      (cond ((string= lua-process-buffer-name "*lua*")
-	             (let ((hammerspoon-buffer (get-buffer "*hs*")))
-		             (if hammerspoon-buffer
-		                 (progn
-		                   (setq lua-process (get-buffer-process hammerspoon-buffer)
-			                       lua-process-buffer hammerspoon-buffer)
-		                   (comint-send-string (get-buffer-process hammerspoon-buffer)
-					                                 (concat lua-process-init-code "\n")))
-		               (progn
-		                 (run-hammerspoon)
-		                 (let ((new-hammerspoon-buffer (get-buffer "*hs*")))
-		                   (setq lua-process (get-buffer-process new-hammerspoon-buffer)
-			                       lua-process-buffer new-hammerspoon-buffer)
-		                   (comint-send-string (get-buffer-process new-hammerspoon-buffer)
-					                                 (concat lua-process-init-code "\n")))))
-		             (message "Switched to Hammerspoon.")))
-	            ((string= lua-process-buffer-name "*hs*")
-	             (let ((lua-buffer (get-buffer "*lua*")))
-		             (if lua-buffer
-		                 (progn
-		                   (setq lua-process (get-buffer-process lua-buffer)
-			                       lua-process-buffer lua-buffer)
-		                   (comint-send-string (get-buffer-process lua-buffer)
-					                                 (concat lua-process-init-code "\n")))
-		               (progn
-		                 (run-lua)
-		                 (let ((new-lua-buffer (get-buffer "*lua*")))
-		                   (setq lua-process (get-buffer-process new-lua-buffer)
-			                       lua-process-buffer new-lua-buffer)
-		                   (comint-send-string (get-buffer-process new-lua-buffer)
-					                                 (concat lua-process-init-code "\n")))))
-		             (message "Switched to Lua.")))))))
+        (cond ((string= lua-process-buffer-name "*lua*")
+               (let ((hammerspoon-buffer (get-buffer "*hs*")))
+                 (if hammerspoon-buffer
+                     (progn
+                       (setq lua-process (get-buffer-process hammerspoon-buffer)
+                             lua-process-buffer hammerspoon-buffer)
+                       (comint-send-string (get-buffer-process hammerspoon-buffer)
+                                           (concat lua-process-init-code "\n")))
+                   (progn
+                     (run-hammerspoon)
+                     (let ((new-hammerspoon-buffer (get-buffer "*hs*")))
+                       (setq lua-process (get-buffer-process new-hammerspoon-buffer)
+                             lua-process-buffer new-hammerspoon-buffer)
+                       (comint-send-string (get-buffer-process new-hammerspoon-buffer)
+                                           (concat lua-process-init-code "\n")))))
+                 (message "Switched to Hammerspoon.")))
+              ((string= lua-process-buffer-name "*hs*")
+               (let ((lua-buffer (get-buffer "*lua*")))
+                 (if lua-buffer
+                     (progn
+                       (setq lua-process (get-buffer-process lua-buffer)
+                             lua-process-buffer lua-buffer)
+                       (comint-send-string (get-buffer-process lua-buffer)
+                                           (concat lua-process-init-code "\n")))
+                   (progn
+                     (run-lua)
+                     (let ((new-lua-buffer (get-buffer "*lua*")))
+                       (setq lua-process (get-buffer-process new-lua-buffer)
+                             lua-process-buffer new-lua-buffer)
+                       (comint-send-string (get-buffer-process new-lua-buffer)
+                                           (concat lua-process-init-code "\n")))))
+                 (message "Switched to Lua.")))))))
 
   (setq lua-indent-level 2
-	      lua-indent-string-contents t)
+        lua-indent-string-contents t)
 
   (define-key lua-mode-map (kbd "q") nil)
 
@@ -1923,7 +1923,7 @@
 
 (use-package notify
   :straight (notify :type git :host github
-		                :repo "tkhoa2711/notify.el"))
+                    :repo "tkhoa2711/notify.el"))
 
 ;; REPL config ======================================
 ;; ==================================================
@@ -1980,22 +1980,22 @@
   (smartparens-global-mode)
   ;; Regular quote
   (sp-local-pair '(fennel-mode hy-mode clojure-mode lisp-mode emacs-lisp-mode
-			                         geiser-mode scheme-mode racket-mode
-			                         newlisp-mode picolisp-mode janet-mode
-			                         lisp-interaction-mode ielm-mode minibuffer-mode
-			                         fennel-repl-mode cider-repl-mode racket-repl-mode
-			                         fundamental-mode markdown-mode slime-repl-mode
+                               geiser-mode scheme-mode racket-mode
+                               newlisp-mode picolisp-mode janet-mode
+                               lisp-interaction-mode ielm-mode minibuffer-mode
+                               fennel-repl-mode cider-repl-mode racket-repl-mode
+                               fundamental-mode markdown-mode slime-repl-mode
                                tuareg-mode rust-mode rustic-mode)
-		             "'" "'" :actions nil)
+                 "'" "'" :actions nil)
   ;; Backquote
   (sp-local-pair '(fennel-mode hy-mode clojure-mode lisp-mode emacs-lisp-mode
-			                         geiser-mode scheme-mode racket-mode
-			                         newlisp-mode picolisp-mode janet-mode
-			                         lisp-interaction-mode ielm-mode minibuffer-mode
-			                         fennel-repl-mode cider-repl-mode racket-repl-mode
+                               geiser-mode scheme-mode racket-mode
+                               newlisp-mode picolisp-mode janet-mode
+                               lisp-interaction-mode ielm-mode minibuffer-mode
+                               fennel-repl-mode cider-repl-mode racket-repl-mode
                                tuareg-mode
-			                         fundamental-mode)
-		             "`" "`" :actions nil)
+                               fundamental-mode)
+                 "`" "`" :actions nil)
   ;; Pound sign
   (sp-local-pair '(markdown-mode) "#" "#" :actions nil)
 
@@ -2017,7 +2017,7 @@
   (setq evil-cleverparens-use-additional-bindings t)
   (unless window-system
     (setq evil-cp-additional-bindings (assoc-delete-all "M-[" evil-cp-additional-bindings)
-	        evil-cp-additional-bindings (assoc-delete-all "M-]" evil-cp-additional-bindings)))
+          evil-cp-additional-bindings (assoc-delete-all "M-]" evil-cp-additional-bindings)))
   (evil-cp-set-additional-bindings))
 
 ;; KMonad ===========================================
@@ -2047,7 +2047,7 @@
                          slime-scratch)
         inferior-lisp-program "sbcl")
   (setq slime-complete-symbol*-fancy t
-	      slime-complete-symbol-function 'slime-fuzzy-complete-symbol)
+        slime-complete-symbol-function 'slime-fuzzy-complete-symbol)
 
   :config
   (slime-setup)
@@ -2058,8 +2058,8 @@ Requires smartparens because all movement is done using `sp-forward-symbol'."
     (let ((evil-move-beyond-eol t))
       ;; evil-move-beyond-eol disables the evil advices around eval-last-sexp
       (save-excursion
-	      (sp-forward-symbol)
-	      (call-interactively 'slime-eval-last-expression))))
+        (sp-forward-symbol)
+        (call-interactively 'slime-eval-last-expression))))
 
   (defun cl-eval-current-form-sp (&optional arg)
     "Call `eval-last-sexp' after moving out of one level of
@@ -2071,13 +2071,13 @@ Requires smartparens because all movement is done using `sp-up-sexp'."
     (let ((evil-move-beyond-eol t))
       ;; evil-move-beyond-eol disables the evil advices around eval-last-sexp
       (save-excursion
-	      (let ((max 10))
-	        (while (and (> max 0)
-		                  (sp-point-in-string-or-comment))
-	          (decf max)
-	          (sp-up-sexp)))
-	      (sp-up-sexp arg)
-	      (call-interactively 'slime-eval-last-expression))))
+        (let ((max 10))
+          (while (and (> max 0)
+                      (sp-point-in-string-or-comment))
+            (decf max)
+            (sp-up-sexp)))
+        (sp-up-sexp arg)
+        (call-interactively 'slime-eval-last-expression))))
 
   (defun slime-eval-sexp-end-of-line ()
     "Evaluate current line."
@@ -2159,7 +2159,7 @@ Unlike `eval-defun', this does not go to topmost function."
   :straight nil
   :defer    t
   :hook     (emacs-lisp-mode
-	           . evil-cleverparens-mode)
+             . evil-cleverparens-mode)
 
   :general-config
   (local-leader
@@ -2170,7 +2170,7 @@ Unlike `eval-defun', this does not go to topmost function."
 
     "c"          (which-key-prefix :compile)
     "cc"         'emacs-lisp-byte-compile
-    
+
     "d"          (which-key-prefix :debug)
 
     "e"          (which-key-prefix :eval)
@@ -2189,7 +2189,7 @@ Unlike `eval-defun', this does not go to topmost function."
     "g"          (which-key-prefix :find-symbol)
     "gb"         'xref-go-back
     "gG"         'elispm/nav-find-elisp-thing-at-point-other-window
-    
+
     "h"          (which-key-prefix :help)
     "i"          'elisp-index-search
 
@@ -2203,12 +2203,12 @@ Unlike `eval-defun', this does not go to topmost function."
     (interactive)
     (let ((expr (read (thing-at-point 'sexp))))
       (cond ((and (symbolp expr) (fboundp expr))
-	           (helpful-callable expr))
-	          ((and (symbolp expr) (boundp expr))
-	           (describe-variable expr)
-	           (eval-expression (read (thing-at-point 'sexp))))
-	          ((consp expr) (eval-expression (read (thing-at-point 'sexp))))
-	          (t (eval-expression (read (thing-at-point 'sexp)))))))
+             (helpful-callable expr))
+            ((and (symbolp expr) (boundp expr))
+             (describe-variable expr)
+             (eval-expression (read (thing-at-point 'sexp))))
+            ((consp expr) (eval-expression (read (thing-at-point 'sexp))))
+            (t (eval-expression (read (thing-at-point 'sexp)))))))
 
   ;; Stolen from Spacemacs
   (defun elispm/eval-current-form ()
@@ -2265,7 +2265,7 @@ Requires smartparens because all movement is done using `sp-forward-symbol'."
           (open-line 1)
           (forward-line 1)
           (insert ret-val)))))
-  
+
   (defun elispm/nav-find-elisp-thing-at-point-other-window ()
     "Find thing under point and go to it another window."
     (interactive)
@@ -2275,7 +2275,7 @@ Requires smartparens because all movement is done using `sp-forward-symbol'."
                (not (fboundp symb)))
           (find-variable-other-window symb)
         (find-function-at-point)))))
- 
+
  (use-package ielm
    :defer t
    :config
@@ -2285,7 +2285,7 @@ Requires smartparens because all movement is done using `sp-forward-symbol'."
        (save-restriction
          (narrow-to-region (search-backward-regexp "^ELISP>") (goto-char current-point))
         (lisp-indent-line))))
-  
+
   :general-config
   (local-leader
     :major-modes '(inferior-emacs-lisp-mode t)
@@ -2327,7 +2327,7 @@ Requires smartparens because all movement is done using `sp-forward-symbol'."
 (use-package srefactor-lisp
   :defer t
   :straight (srefactor
-	           :type git :host github :repo "emacsmirror/srefactor")
+             :type git :host github :repo "emacsmirror/srefactor")
   :general-config
   (local-leader
     :major-modes '(emacs-lisp-mode lisp-interaction-mode t)
@@ -2346,24 +2346,24 @@ Requires smartparens because all movement is done using `sp-forward-symbol'."
     "rf"         (which-key-prefix :find/function)
     "rfe"        'emr-el-implement-function
     "rfd"        'emr-el-find-unused-definitions
-                 
+
     "re"         (which-key-prefix :extract/expand)
     "ref"        'emr-el-extract-function
     "rev"        'emr-el-extract-variable
     "rel"        'emr-el-extract-to-let
     "rec"        'emr-el-extract-constant
     "rea"        'emr-el-extract-autoload
-                 
+
     "ri"         (which-key-prefix :insert/inline)
     "riv"        'emr-el-inline-variable
     "ris"        'emr-el-inline-let-variable
     "rif"        'emr-el-inline-function
     "ria"        'emr-el-insert-autoload-directive
-                 
+
     "rd"         (which-key-prefix :delete)
     "rdl"        'emr-el-delete-let-binding-form
     "rdd"        'emr-el-delete-unused-definition
-                 
+
     "ew"         'emr-el-eval-and-replace))
 
 ;; Clojure config ===================================
@@ -2375,17 +2375,17 @@ Requires smartparens because all movement is done using `sp-forward-symbol'."
   :general-config
   (local-leader
     :major-modes '(clojure-mode
-		               clojurec-mode
-		               clojurescript-mode
-		               clojurex-mode
-		               cider-repl-mode
-		               cider-clojure-interaction-mode t)
+                   clojurec-mode
+                   clojurescript-mode
+                   clojurex-mode
+                   cider-repl-mode
+                   cider-clojure-interaction-mode t)
     :keymaps '(clojure-mode-map
-	             clojurec-mode-map
-	             clojurescript-mode-map
-	             clojurex-mode-map
-	             cider-repl-mode-map
-	             cider-clojure-interaction-mode-map)
+               clojurec-mode-map
+               clojurescript-mode-map
+               clojurex-mode-map
+               cider-repl-mode-map
+               cider-clojure-interaction-mode-map)
     "=l"  'clojure-align
 
     "ra"  (which-key-prefix :add)
@@ -2428,9 +2428,9 @@ Requires smartparens because all movement is done using `sp-forward-symbol'."
   ;; :after clojure-mode
   :init
   (setq cider-stacktrace-default-filters '(tooling dup)
-	      cider-repl-pop-to-buffer-on-connect nil
-	      cider-prompt-save-file-on-load nil
-	      cider-repl-use-clojure-font-lock t)
+        cider-repl-pop-to-buffer-on-connect nil
+        cider-prompt-save-file-on-load nil
+        cider-repl-use-clojure-font-lock t)
 
   (defun cider-eval-sexp-end-of-line ()
     "Evaluate the last sexp at the end of the current line."
@@ -2445,12 +2445,12 @@ Requires smartparens because all movement is done using `sp-forward-symbol'."
       (setq form (replace-match "" t t form)))
     (with-current-buffer (cider-current-connection)
       (let ((pt-max (point-max)))
-	      (goto-char pt-max)
-	      (insert form)
-	      (indent-region pt-max (point))
-	      (cider-repl-return)
-	      (with-selected-window (get-buffer-window (cider-current-connection))
-	        (goto-char (point-max))))))
+        (goto-char pt-max)
+        (insert form)
+        (indent-region pt-max (point))
+        (cider-repl-return)
+        (with-selected-window (get-buffer-window (cider-current-connection))
+          (goto-char (point-max))))))
 
   (defun cider-send-last-sexp-to-repl ()
     "Send last sexp to REPL and evaluate it without changing
@@ -2553,26 +2553,26 @@ If called with a prefix argument, uses the other-window instead."
     (interactive "P")
     (let ((buffer (get-buffer cider-error-buffer)))
       (when buffer
-	      (funcall (if (equal arg '(4))
-		                 'switch-to-buffer-other-window
-		               'switch-to-buffer)
-		             buffer))))
+        (funcall (if (equal arg '(4))
+                     'switch-to-buffer-other-window
+                   'switch-to-buffer)
+                 buffer))))
 
   (defun cider-toggle-repl-pretty-printing ()
     "Toggle REPL pretty printing on and off."
     (interactive)
     (setq cider-repl-use-pretty-printing
-	        (if cider-repl-use-pretty-printing nil t))
+          (if cider-repl-use-pretty-printing nil t))
     (message "Cider REPL pretty printing: %s"
-	           (if cider-repl-use-pretty-printing "ON" "OFF")))
+             (if cider-repl-use-pretty-printing "ON" "OFF")))
 
   (defun cider-toggle-repl-font-locking ()
     "Toggle font locking in REPL."
     (interactive)
     (setq cider-repl-use-clojure-font-lock
-	        (if cider-repl-use-pretty-printing nil t))
+          (if cider-repl-use-pretty-printing nil t))
     (message "Cider REPL clojure-mode font-lock: %s"
-	           (if cider-repl-use-clojure-font-lock "ON" "OFF")))
+             (if cider-repl-use-clojure-font-lock "ON" "OFF")))
 
   (defun cider-debug-setup ()
     "Initialize debug mode."
@@ -2585,8 +2585,8 @@ If called with a prefix argument, uses the other-window instead."
 If CIDER fails, or not available, falls back to dumb-jump's xref interface."
     (interactive (list (cider-symbol-at-point)))
     (if (and (cider-connected-p) (cider-var-info sym-name))
-	      (unless (symbolp (cider-find-var nil sym-name))
-	        (xref-find-definitions sym-name))
+        (unless (symbolp (cider-find-var nil sym-name))
+          (xref-find-definitions sym-name))
       (xref-find-definitions sym-name)))
 
   (defun cider-find-and-clear-repl-buffer ()
@@ -2599,17 +2599,17 @@ set so that it clears the whole REPL buffer, not just the output."
   :general-config
   (local-leader
     :major-modes '(clojure-mode
-		               clojurec-mode
-		               clojurescript-mode
-		               clojurex-mode
-		               cider-repl-mode
-		               cider-clojure-interaction-mode t)
+                   clojurec-mode
+                   clojurescript-mode
+                   clojurex-mode
+                   cider-repl-mode
+                   cider-clojure-interaction-mode t)
     :keymaps '(clojure-mode-map
-	             clojurec-mode-map
-	             clojurescript-mode-map
-	             clojurex-mode-map
-	             cider-repl-mode-map
-	             cider-clojure-interaction-mode-map)
+               clojurec-mode-map
+               clojurescript-mode-map
+               clojurex-mode-map
+               cider-repl-mode-map
+               cider-clojure-interaction-mode-map)
     "'"   'sesman-start
 
     "="   (which-key-prefix :format)
@@ -2693,8 +2693,8 @@ set so that it clears the whole REPL buffer, not just the output."
 
     "s"   (which-key-prefix "send to repl")
     "sa"  (if (eq major-mode 'cider-repl-mode)
-	           'cider-switch-to-last-clojure-buffer
-	         'cider-switch-to-repl-buffer)
+             'cider-switch-to-last-clojure-buffer
+           'cider-switch-to-repl-buffer)
     "sb"  'cider-load-buffer
     "sB"  'cider-send-buffer-in-repl-and-focus
     "se"  'cider-send-last-sexp-to-repl
@@ -2878,17 +2878,17 @@ set so that it clears the whole REPL buffer, not just the output."
   :general-config
   (local-leader
     :major-modes '(clojure-mode
-		               clojurec-mode
-		               clojurescript-mode
-		               clojurex-mode
-		               cider-repl-mode
-		               cider-clojure-interaction-mode t)
+                   clojurec-mode
+                   clojurescript-mode
+                   clojurex-mode
+                   cider-repl-mode
+                   cider-clojure-interaction-mode t)
     :keymaps '(clojure-mode-map
-	             clojurec-mode-map
-	             clojurescript-mode-map
-	             clojurex-mode-map
-	             cider-repl-mode-map
-	             cider-clojure-interaction-mode-map)
+               clojurec-mode-map
+               clojurescript-mode-map
+               clojurex-mode-map
+               cider-repl-mode-map
+               cider-clojure-interaction-mode-map)
     "tk"  (which-key-prefix :kaocha)
     "tka" 'kaocha-runner-run-all-tests
     "tkt" 'kaocha-runner-run-test-at-point
@@ -3013,11 +3013,11 @@ set so that it clears the whole REPL buffer, not just the output."
   :general-config
   (local-leader
     :major-modes '(racket-mode
-		               racket-repl-mode
-		               racket-xp-mode t)
+                   racket-repl-mode
+                   racket-xp-mode t)
     :keymaps     '(racket-mode-map
-		               racket-repl-mode-map
-		               racket-xp-mode-map)
+                   racket-repl-mode-map
+                   racket-xp-mode-map)
     "E"  (which-key-prefix :error)
     "En" 'racket-xp-next-error
     "EN" 'racket-xp-previous-error
@@ -3058,7 +3058,7 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (use-package scribble
   :straight (scribble
-	           :type git :host github :repo "toasted-cornkernels/scribble.el"))
+             :type git :host github :repo "toasted-cornkernels/scribble.el"))
 
 ;; Scheme config ====================================
 ;; ==================================================
@@ -3240,10 +3240,10 @@ set so that it clears the whole REPL buffer, not just the output."
   :mode "\\.(hs|lhs|cabal)\\'"
   :init
   (setq haskell-notify-p t
-	      haskell-interactive-popup-errors nil
-	      haskell-process-suggest-remove-import-lines t
-	      haskell-process-auto-import-loaded-modules t
-	      haskell-stylish-on-save nil)
+        haskell-interactive-popup-errors nil
+        haskell-process-suggest-remove-import-lines t
+        haskell-process-auto-import-loaded-modules t
+        haskell-stylish-on-save nil)
 
   :config
   (defun haskell-interactive-bring ()
@@ -3518,7 +3518,7 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (use-package tuareg
   :mode (("\\.ml[ily]?$" . tuareg-mode)
-	       ("\\.topml$" . tuareg-mode)
+         ("\\.topml$" . tuareg-mode)
          (".ocamlinit" . tuareg-mode))
   :init
   (defun merlin-locate-other-window ()
@@ -3742,7 +3742,7 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (use-package toml-mode
   :mode (("/\\(Cargo.lock\\|\\.cargo/config\\)\\'" . toml-mode)
-	       ("\\.toml\\'" . toml-mode)))
+         ("\\.toml\\'" . toml-mode)))
 
 ;; Golang config ====================================
 ;; ==================================================
@@ -3975,17 +3975,17 @@ set so that it clears the whole REPL buffer, not just the output."
 
   :config
   (setq markdown-fontify-code-blocks-natively t
-	      markdown-command "pandoc")
+        markdown-command "pandoc")
   (defun insert-keybinding-markdown (key)
     "Ask for a key then insert its description.
      Will work on both org-mode and any mode that accepts plain html."
     (interactive "kType key sequence: ")
     (let* ((tag "~%s~"))
       (if (null (equal key "\r"))
-	        (insert
-	         (format tag (help-key-description key nil)))
-	      (insert (format tag ""))
-	      (forward-char -6))))
+          (insert
+           (format tag (help-key-description key nil)))
+        (insert (format tag ""))
+        (forward-char -6))))
 
   :general-config
   (local-leader
@@ -4171,7 +4171,7 @@ set so that it clears the whole REPL buffer, not just the output."
 (use-package wiktionary-bro
   :defer t
   :straight (wiktionary-bro
-	           :type git :host github :repo "agzam/wiktionary-bro.el"))
+             :type git :host github :repo "agzam/wiktionary-bro.el"))
 
 (use-package define-word
   :defer t)
@@ -4253,7 +4253,7 @@ set so that it clears the whole REPL buffer, not just the output."
   :straight
   (sln-mode :type git
             :host github
-	          :repo "sensorflo/sln-mode"
+            :repo "sensorflo/sln-mode"
             :branch "master"))
 
 ;; auto-indent on RET ===============================
@@ -4277,8 +4277,8 @@ set so that it clears the whole REPL buffer, not just the output."
 ;;   :when (or macOS-p linux-p)
 ;;   :config
 ;;   (setq exec-path-from-shell-variables '("PATH" "JAVA_HOME" "BROWSER"
-;; 					                               "OPAMCLI" "WORK_MACHINE")
-;; 	      exec-path-from-shell-arguments '("-l"))
+;;                                         "OPAMCLI" "WORK_MACHINE")
+;;        exec-path-from-shell-arguments '("-l"))
 ;;   (exec-path-from-shell-initialize))
 
 ;; Hide-mode-line ===================================
@@ -4292,9 +4292,9 @@ set so that it clears the whole REPL buffer, not just the output."
 (use-package vertico
   :init
   (setq vertico-scroll-margin 0
-	      vertico-count 20
-	      vertico-resize t
-	      vertico-cycle t)
+        vertico-count 20
+        vertico-resize t
+        vertico-cycle t)
   :config
   (vertico-mode)
   (define-key vertico-map (kbd "C-l") #'vertico-directory-up))
@@ -4320,15 +4320,15 @@ set so that it clears the whole REPL buffer, not just the output."
   :init
   (defun crm-indicator (args)
     (cons (format "[CRM%s] %s"
-		              (replace-regexp-in-string
-		               "\\`\\[.*?]\\*\\|\\[.*?]\\*\\'" ""
-		               crm-separator)
-		              (car args))
-	        (cdr args)))
+                  (replace-regexp-in-string
+                   "\\`\\[.*?]\\*\\|\\[.*?]\\*\\'" ""
+                   crm-separator)
+                  (car args))
+          (cdr args)))
   (advice-add #'completing-read-multiple :filter-args #'crm-indicator)
 
   (setq minibuffer-prompt-properties
-	      '(read-only t cursor-intangible t face minibuffer-prompt))
+        '(read-only t cursor-intangible t face minibuffer-prompt))
   (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
 
   (setq enable-recursive-minibuffers t)
@@ -4355,23 +4355,23 @@ set so that it clears the whole REPL buffer, not just the output."
   :init
   (setq
    ;; orderless-style-dispatchers '(first-initialism flex-if-twiddle
-   ;; 				      without-if-bang)
+   ;;               without-if-bang)
    orderless-matching-styles '(orderless-regexp)
    orderless-component-separator #'orderless-escapable-split-on-space)
   (setq completion-styles '(basic substring partial-completion flex orderless)
-	      completion-category-defaults nil
-	      completion-category-overrides '((file (styles partial-completion))))
+        completion-category-defaults nil
+        completion-category-overrides '((file (styles partial-completion))))
   (setq read-file-name-completion-ignore-case t
-	      read-buffer-completion-ignore-case t
-	      completion-ignore-case t))
+        read-buffer-completion-ignore-case t
+        completion-ignore-case t))
 
 (use-package vertico-directory
   :straight nil
   :after vertico
   :bind (:map vertico-map
-	            ("RET" . vertico-directory-enter)
-	            ("DEL" . vertico-directory-delete-char)
-	            ("M-DEL" . vertico-directory-delete-word))
+              ("RET" . vertico-directory-enter)
+              ("DEL" . vertico-directory-delete-char)
+              ("M-DEL" . vertico-directory-delete-word))
   :hook (rfn-eshadow-update-overlay . vertico-directory-tidy))
 
 ;; Marginalia config ================================
@@ -4379,8 +4379,8 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (use-package marginalia
   :bind (("M-A" . marginalia-cycle)
-	       :map minibuffer-local-map
-	       ("M-A" . marginalia-cycle))
+         :map minibuffer-local-map
+         ("M-A" . marginalia-cycle))
   :init
   (marginalia-mode))
 
@@ -4390,66 +4390,66 @@ set so that it clears the whole REPL buffer, not just the output."
 (use-package consult
   ;; Replace bindings. Lazily loaded due by `use-package'.
   :bind (("C-c h" . consult-history)
-	       ("C-c m" . consult-mode-command)
-	       ("C-c k" . consult-yank-from-kill-ring)
+         ("C-c m" . consult-mode-command)
+         ("C-c k" . consult-yank-from-kill-ring)
 
-	       ("C-x M-:" . consult-complex-command)
-	       ("C-x b" . consult-buffer)
-	       ("C-x 4 b" . consult-buffer-other-window)
-	       ("C-x 5 b" . consult-buffer-other-frame)
-	       ("C-x r b" . consult-bookmark)
-	       ("C-x p b" . consult-project-buffer)
+         ("C-x M-:" . consult-complex-command)
+         ("C-x b" . consult-buffer)
+         ("C-x 4 b" . consult-buffer-other-window)
+         ("C-x 5 b" . consult-buffer-other-frame)
+         ("C-x r b" . consult-bookmark)
+         ("C-x p b" . consult-project-buffer)
 
-	       ("M-#" . consult-register-load)
-	       ("M-'" . consult-register-store)
-	       ("C-M-#" . consult-register)
+         ("M-#" . consult-register-load)
+         ("M-'" . consult-register-store)
+         ("C-M-#" . consult-register)
 
-	       ("M-y" . consult-yank-pop)
-	       ("<help> a" . consult-apropos)
+         ("M-y" . consult-yank-pop)
+         ("<help> a" . consult-apropos)
 
-	       ("M-g e" . consult-compile-error)
-	       ("M-g f" . consult-flymake)
-	       ("M-g g" . consult-goto-line)
-	       ("M-g M-g" . consult-goto-line)
-	       ("M-g o" . consult-outline)
-	       ("M-g m" . consult-mark)
-	       ("M-g k" . consult-global-mark)
-	       ("M-g i" . consult-imenu)
-	       ("M-g I" . consult-imenu-multi)
+         ("M-g e" . consult-compile-error)
+         ("M-g f" . consult-flymake)
+         ("M-g g" . consult-goto-line)
+         ("M-g M-g" . consult-goto-line)
+         ("M-g o" . consult-outline)
+         ("M-g m" . consult-mark)
+         ("M-g k" . consult-global-mark)
+         ("M-g i" . consult-imenu)
+         ("M-g I" . consult-imenu-multi)
 
-	       ("M-s d" . consult-find)
-	       ("M-s D" . consult-locate)
-	       ("M-s g" . consult-grep)
-	       ("M-s G" . consult-git-grep)
-	       ("M-s r" . consult-ripgrep)
-	       ("M-s l" . consult-line)
-	       ("M-s L" . consult-line-multi)
-	       ("M-s m" . consult-multi-occur)
-	       ("M-s k" . consult-keep-lines)
-	       ("M-s u" . consult-focus-lines)
+         ("M-s d" . consult-find)
+         ("M-s D" . consult-locate)
+         ("M-s g" . consult-grep)
+         ("M-s G" . consult-git-grep)
+         ("M-s r" . consult-ripgrep)
+         ("M-s l" . consult-line)
+         ("M-s L" . consult-line-multi)
+         ("M-s m" . consult-multi-occur)
+         ("M-s k" . consult-keep-lines)
+         ("M-s u" . consult-focus-lines)
 
-	       ("M-s e" . consult-isearch-history)
+         ("M-s e" . consult-isearch-history)
 
-	       :map isearch-mode-map
-	       ("M-e" . consult-isearch-history)
-	       ("M-s e" . consult-isearch-history)
-	       ("M-s l" . consult-line)
-	       ("M-s L" . consult-line-multi)
+         :map isearch-mode-map
+         ("M-e" . consult-isearch-history)
+         ("M-s e" . consult-isearch-history)
+         ("M-s l" . consult-line)
+         ("M-s L" . consult-line-multi)
 
-	       :map minibuffer-local-map
-	       ("M-s" . consult-history)
-	       ("M-r" . consult-history))
+         :map minibuffer-local-map
+         ("M-s" . consult-history)
+         ("M-r" . consult-history))
 
   :hook
   (completion-list-mode . consult-preview-at-point-mode)
   :init
   (setq register-preview-delay 0.5
-	      register-preview-function #'consult-register-format)
+        register-preview-function #'consult-register-format)
 
   (advice-add #'register-preview :override #'consult-register-window)
 
   (setq xref-show-xrefs-function #'consult-xref
-	      xref-show-definitions-function #'consult-xref)
+        xref-show-definitions-function #'consult-xref)
 
   :config
   (consult-customize
@@ -4472,15 +4472,15 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (use-package company
   :hook ((prog-mode . global-company-mode)
-	       (org-mode  . global-company-mode))
+         (org-mode  . global-company-mode))
   :commands (company-mode)
   :config
   ;; (global-company-mode)
   (setq company-idle-delay 0.2
-	      company-echo-delay 0.2
-	      company-tooltip-idle-delay 0
-	      company-async-redisplay-delay 0
-	      company-dabbrev-downcase nil)
+        company-echo-delay 0.2
+        company-tooltip-idle-delay 0
+        company-async-redisplay-delay 0
+        company-dabbrev-downcase nil)
   (define-key company-active-map (kbd "<return>") nil)
   (define-key company-active-map (kbd "RET") nil)
   (define-key company-active-map (kbd "C-h") nil)
@@ -4582,13 +4582,13 @@ set so that it clears the whole REPL buffer, not just the output."
   (setq dired-kill-when-opening-new-dired-buffer t)
 
   (add-hook 'dired-mode-hook
-	          (lambda ()
-	            (when (file-remote-p dired-directory)
-		            (setq-local dired-actual-switches "-alhB"))))
+            (lambda ()
+              (when (file-remote-p dired-directory)
+                (setq-local dired-actual-switches "-alhB"))))
 
   (add-hook 'dired-mode-hook
-	          (lambda ()
-	            (evil-define-key 'normal dired-mode-map (kbd "SPC") nil))))
+            (lambda ()
+              (evil-define-key 'normal dired-mode-map (kbd "SPC") nil))))
 
 (use-package diff-hl
   :after dired
@@ -4624,10 +4624,10 @@ set so that it clears the whole REPL buffer, not just the output."
   (setq xwidget-webkit-enable-plugins t)
   (setq browse-url-browser-function
         (lambda (url session)
-				  (if (or (string-match ".*youtube.com.*" url)
-					        (string-match ".*youtu.be.*" url))
-					    (xwidget-webkit-browse-url url session)
-					  (eww-browse-url url))))
+          (if (or (string-match ".*youtube.com.*" url)
+                  (string-match ".*youtu.be.*" url))
+              (xwidget-webkit-browse-url url session)
+            (eww-browse-url url))))
 
   (defun xwidget-webkit-find-file (file)
     (interactive "fFilename: ")
@@ -4637,13 +4637,13 @@ set so that it clears the whole REPL buffer, not just the output."
     (interactive)
     (let ((url (read-from-minibuffer "URL: " "https://")))
       (if (or (s-starts-with-p "https://https://" url)
-	            (s-starts-with-p "https://http://" url)
-	            (s-starts-with-p "http://http://" url)
-	            (s-starts-with-p "http://https://" url))
-	        (let ((trimmed (s-chop-prefixes '("https://" "http://") url)))
-	          (message (concat "opening " trimmed))
-	          (xwidget-webkit-new-session trimmed))
-	      (xwidget-webkit-new-session url))))
+              (s-starts-with-p "https://http://" url)
+              (s-starts-with-p "http://http://" url)
+              (s-starts-with-p "http://https://" url))
+          (let ((trimmed (s-chop-prefixes '("https://" "http://") url)))
+            (message (concat "opening " trimmed))
+            (xwidget-webkit-new-session trimmed))
+        (xwidget-webkit-new-session url))))
 
   (add-hook 'xwidget-webkit-mode-hook (lambda () (local-unset-key (kbd "<backspace>")))))
 
@@ -4669,8 +4669,8 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (use-package yaml-mode
   :mode ("\\.ya?ml\\'"
-	       "Procfile\\'"
-	       "\\.qlpack\\'"
+         "Procfile\\'"
+         "\\.qlpack\\'"
          "\\.qls" ))
 
 ;; csv config ======================================
@@ -4748,7 +4748,7 @@ set so that it clears the whole REPL buffer, not just the output."
 
   :init
   (setq magit-completing-read-function 'magit-builtin-completing-read
-	      magit-revision-show-gravatars  '("^Author:     " . "^Commit:     "))
+        magit-revision-show-gravatars  '("^Author:     " . "^Commit:     "))
   ;; TODO
   ;; (spacemacs|define-transient-state git-blame
   ;;       :title "Git Blame Transient State"
@@ -4782,9 +4782,9 @@ set so that it clears the whole REPL buffer, not just the output."
   :config
   (require 'git-rebase)
   (add-hook 'magit-mode-hook
-	          (lambda ()
-	            (evil-define-key 'normal
-		            magit-mode-map (kbd "SPC") nil))))
+            (lambda ()
+              (evil-define-key 'normal
+                magit-mode-map (kbd "SPC") nil))))
 
 (use-package magit-section
   :defer t
@@ -4864,7 +4864,7 @@ set so that it clears the whole REPL buffer, not just the output."
     "Allow the user to get a permalink via git-link in a git-timemachine buffer."
     (interactive)
     (let (git-link-open-in-browser
-	        (git-link-use-commit t))
+          (git-link-use-commit t))
       (call-interactively 'git-link-commit)))
 
   (defun git-link-copy-url-only ()
@@ -4891,23 +4891,23 @@ set so that it clears the whole REPL buffer, not just the output."
 ;;    "gt" 'time-machine-transient-state/body)
 ;;   :config
 ;;   (spacemacs|define-transient-state time-machine
-;; 				    :title "Git Timemachine Transient State"
-;; 				    :doc "
+;;            :title "Git Timemachine Transient State"
+;;            :doc "
 ;;   [_p_/_N_] previous [_n_] next [_c_] current [_g_] goto nth rev [_Y_] copy hash [_q_] quit"
-;; 				    :on-enter (let (golden-ratio-mode)
-;; 						(unless (bound-and-true-p git-timemachine-mode)
-;; 						  (call-interactively 'git-timemachine)))
-;; 				    :on-exit (when (bound-and-true-p git-timemachine-mode)
-;; 					       (git-timemachine-quit))
-;; 				    :foreign-keys run
-;; 				    :bindings
-;; 				    ("c" git-timemachine-show-current-revision)
-;; 				    ("g" git-timemachine-show-nth-revision)
-;; 				    ("p" git-timemachine-show-previous-revision)
-;; 				    ("n" git-timemachine-show-next-revision)
-;; 				    ("N" git-timemachine-show-previous-revision)
-;; 				    ("Y" git-timemachine-kill-revision)
-;; 				    ("q" nil :exit t)))
+;;            :on-enter (let (golden-ratio-mode)
+;;            (unless (bound-and-true-p git-timemachine-mode)
+;;              (call-interactively 'git-timemachine)))
+;;            :on-exit (when (bound-and-true-p git-timemachine-mode)
+;;                 (git-timemachine-quit))
+;;            :foreign-keys run
+;;            :bindings
+;;            ("c" git-timemachine-show-current-revision)
+;;            ("g" git-timemachine-show-nth-revision)
+;;            ("p" git-timemachine-show-previous-revision)
+;;            ("n" git-timemachine-show-next-revision)
+;;            ("N" git-timemachine-show-previous-revision)
+;;            ("Y" git-timemachine-kill-revision)
+;;            ("q" nil :exit t)))
 
 (use-package git-modes
   :defer t)
@@ -4958,18 +4958,18 @@ set so that it clears the whole REPL buffer, not just the output."
   :defer t
   :init
   (let ((descr '(("smeargle"         . "highlight by last update time")
-		             ("smeargle-commits" . "highlight by age of changes")
-		             ("smeargle-clear"   . "clear"))))
+                 ("smeargle-commits" . "highlight by age of changes")
+                 ("smeargle-clear"   . "clear"))))
     (dolist (nd descr)
       (push (cons (cons nil (concat "\\`" (car nd) "\\'"))
-		              (cons nil (cdr nd)))
-	          which-key-replacement-alist))))
+                  (cons nil (cdr nd)))
+            which-key-replacement-alist))))
 
 ;; (use-package forge
 ;;   :after magit
 ;;   :init
 ;;   (setq forge-database-file "forge-database.sqlite"
-;; 	forge-add-default-bindings nil)
+;;  forge-add-default-bindings nil)
 
 ;;   :general-config
 ;;   (local-leader
@@ -5028,11 +5028,11 @@ set so that it clears the whole REPL buffer, not just the output."
 
   :config
   (setq git-gutter:modified-sign " "
-	      git-gutter:added-sign "+"
-	      git-gutter:deleted-sign "-"
-	      git-gutter:diff-option "-w"
-	      git-gutter:hide-gutter t ; Hide gutter when there are no changes
-	      git-gutter:disabled-modes '(pdf-view-mode doc-view-mode image-mode))
+        git-gutter:added-sign "+"
+        git-gutter:deleted-sign "-"
+        git-gutter:diff-option "-w"
+        git-gutter:hide-gutter t ; Hide gutter when there are no changes
+        git-gutter:disabled-modes '(pdf-view-mode doc-view-mode image-mode))
   (global-git-gutter-mode))
 
 (use-package git-gutter-fringe
@@ -5134,10 +5134,10 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (setq hippie-expand-try-functions-list
       '(try-expand-dabbrev
-	      try-expand-dabbrev-all-buffers
-	      try-expand-dabbrev-from-kill
-	      try-complete-lisp-symbol-partially
-	      try-complete-lisp-symbol))
+        try-expand-dabbrev-all-buffers
+        try-expand-dabbrev-from-kill
+        try-complete-lisp-symbol-partially
+        try-complete-lisp-symbol))
 
 ;; Uniquify configs =================================
 ;; ==================================================
@@ -5160,10 +5160,10 @@ set so that it clears the whole REPL buffer, not just the output."
   :straight (:type built-in)
   :init
   (setq recentf-keep '(file-remote-p file-readable-p)
-	      recentf-save-file (concat user-emacs-directory ".recentf")
+        recentf-save-file (concat user-emacs-directory ".recentf")
         recentf-max-saved-items 1000
         recentf-max-menu-items 40
-	      recentf-auto-cleanup 'never)
+        recentf-auto-cleanup 'never)
   :config
   (setq recentf-auto-save-timer (run-with-idle-timer 600 t 'recentf-save-list))
   (recentf-mode 1)
@@ -5257,8 +5257,8 @@ set so that it clears the whole REPL buffer, not just the output."
   :config
   (projectile-mode)
   (setq projectile-mode-line            "Projectile"
-	      anaconda-mode-localhost-address "localhost"
-	      projectile-enable-caching       nil))
+        anaconda-mode-localhost-address "localhost"
+        projectile-enable-caching       nil))
 
 ;; Minions config ===================================
 ;; ==================================================
@@ -5348,13 +5348,13 @@ set so that it clears the whole REPL buffer, not just the output."
   :config
   (if (not chromeOS-p)
       (set-face-attribute 'default nil
-			                    :font "D2Coding ligature"
-			                    :weight 'light
-			                    :height 180)
+                          :font "D2Coding ligature"
+                          :weight 'light
+                          :height 180)
     (set-face-attribute 'default nil
-		                    :height 140)
+                        :height 140)
     (set-fontset-font t 'hangul
-		                  (font-spec :name "NanumGothic"))))
+                      (font-spec :name "NanumGothic"))))
 
 (use-package modus-themes
   :config
@@ -5386,23 +5386,23 @@ set so that it clears the whole REPL buffer, not just the output."
   :config
   (global-hl-todo-mode)
   (setq hl-todo-keyword-faces
-	      '(("HOLD"    . "#d0bf8f")
-	        ("TODO"    . "#cc9393")
-	        ("NEXT"    . "#dca3a3")
-	        ("THEM"    . "#dc8cc3")
-	        ("WORKING" . "#7cb8bb")
-	        ("PROG"    . "#7cb8bb")
-	        ("OKAY"    . "#7cb8bb")
-	        ("DONT"    . "#5f7f5f")
-	        ("FAIL"    . "#8c5353")
-	        ("DONE"    . "#afd8af")
-	        ("NOTE"    . "#d0bf8f")
-	        ("KLUDGE"  . "#d0bf8f")
-	        ("HACK"    . "#d0bf8f")
-	        ("TEMP"    . "#d0bf8f")
-	        ("FIXME"   . "#cc9393")
-	        ("UNSURE"  . "#cc9393")
-	        ("WORKAROUND"    . "#d0bf8f"))))
+        '(("HOLD"    . "#d0bf8f")
+          ("TODO"    . "#cc9393")
+          ("NEXT"    . "#dca3a3")
+          ("THEM"    . "#dc8cc3")
+          ("WORKING" . "#7cb8bb")
+          ("PROG"    . "#7cb8bb")
+          ("OKAY"    . "#7cb8bb")
+          ("DONT"    . "#5f7f5f")
+          ("FAIL"    . "#8c5353")
+          ("DONE"    . "#afd8af")
+          ("NOTE"    . "#d0bf8f")
+          ("KLUDGE"  . "#d0bf8f")
+          ("HACK"    . "#d0bf8f")
+          ("TEMP"    . "#d0bf8f")
+          ("FIXME"   . "#cc9393")
+          ("UNSURE"  . "#cc9393")
+          ("WORKAROUND"    . "#d0bf8f"))))
 
 ;; line numbers ====================================
 ;; =================================================
@@ -5411,16 +5411,16 @@ set so that it clears the whole REPL buffer, not just the output."
   :straight nil
   :config
   (let ((hooks '(doc-view-mode-hook
-		             pdf-view-mode-hook
-		             w3m-mode-hook
-		             eww-mode-hook
-		             inferior-hy-mode-hook
-		             inferior-python-mode-hook
-		             vterm-mode-hook)))
+                 pdf-view-mode-hook
+                 w3m-mode-hook
+                 eww-mode-hook
+                 inferior-hy-mode-hook
+                 inferior-python-mode-hook
+                 vterm-mode-hook)))
     (dolist (hook hooks)
       (add-hook hook
-		            (lambda ()
-		              (display-line-numbers-mode -1))))))
+                (lambda ()
+                  (display-line-numbers-mode -1))))))
 
 ;; Eshell config ====================================
 ;; ==================================================
@@ -5457,9 +5457,9 @@ set so that it clears the whole REPL buffer, not just the output."
   :after (vterm projectile)
   :config
   (add-hook 'vterm-mode-hook
-	          (lambda ()
-	            (setq-local evil-insert-state-cursor 'box)
-	            (evil-insert-state)))
+            (lambda ()
+              (setq-local evil-insert-state-cursor 'box)
+              (evil-insert-state)))
 
   (define-key vterm-mode-map (kbd "<return>") #'vterm-send-return)
 
@@ -5511,17 +5511,17 @@ set so that it clears the whole REPL buffer, not just the output."
   :straight (:type built-in)
   :config
   (let ((cities '(("America/Los_Angeles" "Los Angeles")
-	                ("America/New_York" "New York")
-	                ("Europe/London" "Oxford")
-	                ("Europe/Zurich" "Zurich")
-	                ("Asia/Tokyo" "Tokyo"))))
+                  ("America/New_York" "New York")
+                  ("Europe/London" "Oxford")
+                  ("Europe/Zurich" "Zurich")
+                  ("Asia/Tokyo" "Tokyo"))))
     (setq display-time-default-load-average nil
           display-time-load-average nil
           display-time-format "%b %d %l:%M %p"
           display-time-world-time-format "%a %d %b %I:%M %p %Z"
           display-time-world-list cities
           world-clock-list t
-	        zoneinfo-style-world-list cities))
+          zoneinfo-style-world-list cities))
   (defun display-current-time ()
     "Display the current time in the buffer."
     (interactive)
@@ -5613,14 +5613,14 @@ set so that it clears the whole REPL buffer, not just the output."
   (if (executable-find "youtube-viewer")
       (cond
        ((null with-screen) (progn
-			                       (message "Running with video.")
-			                       (comint-run "youtube-viewer" '())))
+                             (message "Running with video.")
+                             (comint-run "youtube-viewer" '())))
        ((equal with-screen '(4)) (progn
-				                           (message "Running without video.")
-				                           (comint-run "youtube-viewer" '("-n"))))
+                                   (message "Running without video.")
+                                   (comint-run "youtube-viewer" '("-n"))))
        ((equal with-screen '(16)) (progn
-				                            (message "Running with video and without audio.")
-				                            (comint-run "youtube-viewer" '("--append-arg='--no-audio'")))))
+                                    (message "Running with video and without audio.")
+                                    (comint-run "youtube-viewer" '("--append-arg='--no-audio'")))))
     (message "youtube-viewer not found")))
 
 ;; c-s-shortcuts
@@ -5734,7 +5734,7 @@ set so that it clears the whole REPL buffer, not just the output."
       (error "You're not visiting a file!")
     (kill-new
      (concat buffer-file-name "::"
-	           (number-to-string (current-line))))))
+             (number-to-string (current-line))))))
 
 (defun elipsm/avy-goto-url ()
   "Use avy to go to an URL in the buffer."
@@ -5871,11 +5871,11 @@ removal."
   "fE"  'elispm/sudo-edit
 
   ;; TODO: rename-current-buffer-file
-  
+
   "fd"  (which-key-prefix :delete)
   "fdc" 'elispm/delete-current-buffer-file
   "fdd" 'elispm/delete-file
-  
+
   "fp"  'consult-project-buffer
   "ff"  'find-file
   "fa"  'write-file
@@ -5909,12 +5909,12 @@ removal."
   "bp" 'previous-buffer
   "bn" 'next-buffer
   "bh" (lambda ()
-	       (interactive)
-	       (kill-buffer (get-buffer "*Help*")))
+         (interactive)
+         (kill-buffer (get-buffer "*Help*")))
   "bs" (lambda ()
-	       (interactive)
-	       (setq initial-major-mode 'org-mode)
-	       (switch-to-buffer "*scratch*")))
+         (interactive)
+         (setq initial-major-mode 'org-mode)
+         (switch-to-buffer "*scratch*")))
 
 (global-leader
   "."  'tab-new
@@ -5928,7 +5928,7 @@ removal."
 
 (global-leader
   "g"   (which-key-prefix :git)
-  "gb"  'magit-blame	   ; 'git-blame-transient-state/body
+  "gb"  'magit-blame     ; 'git-blame-transient-state/body
 
   "gf"  (which-key-prefix :file)
   "gfF" 'magit-find-file
@@ -6159,7 +6159,7 @@ removal."
   (global-set-key (kbd "<mouse-4>") 'scroll-down-line)
   (global-set-key (kbd "<mouse-5>") 'scroll-up-line)
   (setq mouse-wheel-up-event 'mouse-5
-	      mouse-wheel-down-event 'mouse-4))
+        mouse-wheel-down-event 'mouse-4))
 
 ;; graphviz-dot-mode ================================
 ;; ==================================================
@@ -6192,7 +6192,7 @@ removal."
   :defer t
   :init
   (setq aw-keys '(?q ?w ?e ?r ?t ?y ?u ?i ?o ?p)
-	      aw-background nil))
+        aw-background nil))
 
 (use-package ace-jump-mode
   :defer t)
@@ -6226,39 +6226,39 @@ removal."
   (defun w3m-save-buffer-to-file ()
     (interactive)
     (let* ((curr (buffer-file-name))
-	         (new (read-file-name
-		             "Save to file: " nil nil nil
-		             (and curr (file-name-nondirectory curr))))
-	         (mustbenew (if (and curr (file-equal-p new curr)) 'excl t)))
+           (new (read-file-name
+                 "Save to file: " nil nil nil
+                 (and curr (file-name-nondirectory curr))))
+           (mustbenew (if (and curr (file-equal-p new curr)) 'excl t)))
       (if (use-region-p)
-	        (write-region (region-beginning) (region-end) new nil nil nil mustbenew)
-	      (save-restriction
-	        (widen)
-	        (write-region (point-min) (point-max) new nil nil nil mustbenew)))))
+          (write-region (region-beginning) (region-end) new nil nil nil mustbenew)
+        (save-restriction
+          (widen)
+          (write-region (point-min) (point-max) new nil nil nil mustbenew)))))
 
   (defun w3m-player-movie ()
     (interactive)
     (let ((link (w3m-anchor)))
       (if (not link)
-	        (message "Thing on point is not a link.")
-	      (cond ((string-match "/\\/www\\.youtube\\.com\\/watch\\/?" link)
-	             (message (concat "loading from youtube..." link))
-	             (call-process "mpv" nil nil nil link)))
-	      (message "Sorry, playback error. Please check the url."))))
+          (message "Thing on point is not a link.")
+        (cond ((string-match "/\\/www\\.youtube\\.com\\/watch\\/?" link)
+               (message (concat "loading from youtube..." link))
+               (call-process "mpv" nil nil nil link)))
+        (message "Sorry, playback error. Please check the url."))))
 
   (defun w3m-copy-link ()
     (interactive)
     (let ((link (w3m-anchor)))
       (if (not link)
-	        (message "")
-	      (kill-new link)
-	      (message "Copy \"%s\" to clipboard." link))))
+          (message "")
+        (kill-new link)
+        (message "Copy \"%s\" to clipboard." link))))
 
   (defun w3m-open-url-with (fn url)
     "Open url according to w3m url open function 'fn', and auto handle url prefix"
     (cond ((string-prefix-p "http://" url) (funcall fn url))
-	        ((string-prefix-p "https://" url) (funcall fn url))
-	        (t (funcall fn (concat "http://" url)))))
+          ((string-prefix-p "https://" url) (funcall fn url))
+          (t (funcall fn (concat "http://" url)))))
 
   (defun w3m-open-url (url)
     "Opens url in new w3m session with `http://` appended"
@@ -6273,13 +6273,13 @@ removal."
     (w3m-open-url-with 'w3m-goto-url-new-session url))
 
   (setq browse-url-browser-function 'w3m-goto-url-new-session
-	      w3m-user-agent "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36"
-	      w3m-coding-system 'utf-8
-	      w3m-file-coding-system 'utf-8
-	      w3m-file-name-coding-system 'utf-8
-	      w3m-input-coding-system 'utf-8
-	      w3m-output-coding-system 'utf-8
-	      w3m-terminal-coding-system 'utf-8)
+        w3m-user-agent "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36"
+        w3m-coding-system 'utf-8
+        w3m-file-coding-system 'utf-8
+        w3m-file-name-coding-system 'utf-8
+        w3m-input-coding-system 'utf-8
+        w3m-output-coding-system 'utf-8
+        w3m-terminal-coding-system 'utf-8)
 
   :general-config
   (local-leader
@@ -6337,8 +6337,8 @@ removal."
       (setq browse-url-browser-function 'browse-url-default-browser)
     (setq browse-url-browser-function 'w3m-browse-url))
   (setq w3m-default-display-inline-images t
-	      w3m-session-load-crashed-sessions 'never
-	      w3m-search-word-at-point nil))
+        w3m-session-load-crashed-sessions 'never
+        w3m-search-word-at-point nil))
 
 ;; eww config =======================================
 ;; ==================================================
@@ -6358,10 +6358,10 @@ removal."
   (evil-define-key 'normal eww-mode-map (kbd "c") 'eww-copy-page-url)
   (setq eww-search-prefix "https://www.duckduckgo.com/search?q=")
   (setq browse-url-browser-function (lambda (url session)
-				                              (if (or (string-match ".*youtube.com.*" url)
-					                                    (string-match ".*youtu.be.*" url))
-					                                (xwidget-webkit-browse-url url session)
-					                              (eww-browse-url url))))
+                                      (if (or (string-match ".*youtube.com.*" url)
+                                              (string-match ".*youtu.be.*" url))
+                                          (xwidget-webkit-browse-url url session)
+                                        (eww-browse-url url))))
   :bind
   (:map eww-mode-map
         ("<mouse-4>" . eww-back-url)
@@ -6460,8 +6460,8 @@ removal."
     "gk"              'outline-backward-same-level
     "gj"              'outline-forward-same-level
     (kbd "<backtab>") (if (version< emacs-version "28.0")
-			                    'outline-show-all
-			                  'outline-cycle-buffer)
+                          'outline-show-all
+                        'outline-cycle-buffer)
     "gh"              'pdf-outline-up-heading
     "gg"              'beginning-of-buffer
     "G"               'pdf-outline-end-of-buffer
@@ -6571,7 +6571,7 @@ removal."
                        scala
                        spacemacs
                        vim)
-	      org-confirm-elisp-link-function nil))
+        org-confirm-elisp-link-function nil))
 
 ;; hnreader config ==================================
 ;; ==================================================
@@ -6600,16 +6600,16 @@ removal."
   :defer t
   :config
   (setq eradio-player   '("mpv" "--no-video" "--no-terminal" "--really-quiet")
-	      eradio-channels '(("MBC FM4U"      . "http://serpent0.duckdns.org:8088/mbcfm.pls")
-			                    ("MBC 표준FM"    . "http://serpent0.duckdns.org:8088/mbcsfm.pls")
-			                    ("KBS 쿨FM"      . "http://serpent0.duckdns.org:8088/kbs2fm.pls")
-			                    ("KBS 해피FM"    . "http://serpent0.duckdns.org:8088/kbs2radio.pls")
-			                    ("KBS 클래식 FM" . "http://serpent0.duckdns.org:8088/kbsfm.pls")
-			                    ("SBS 파워FM"    . "http://serpent0.duckdns.org:8088/sbsfm.pls")
-			                    ("SBS 러브FM"    . "http://serpent0.duckdns.org:8088/sbs2fm.pls")
-			                    ("TBS 교통방송"  . "http://tbs.hscdn.com/tbsradio/fm/playlist.m3u8")
-			                    ("TBS eFM"       . "http://tbs.hscdn.com/tbsradio/efm/playlist.m3u8")
-			                    ("CBS 음악방송"  . "http://aac.cbs.co.kr/cbs939/cbs939.stream/playlist.m3u8"))))
+        eradio-channels '(("MBC FM4U"      . "http://serpent0.duckdns.org:8088/mbcfm.pls")
+                          ("MBC 표준FM"    . "http://serpent0.duckdns.org:8088/mbcsfm.pls")
+                          ("KBS 쿨FM"      . "http://serpent0.duckdns.org:8088/kbs2fm.pls")
+                          ("KBS 해피FM"    . "http://serpent0.duckdns.org:8088/kbs2radio.pls")
+                          ("KBS 클래식 FM" . "http://serpent0.duckdns.org:8088/kbsfm.pls")
+                          ("SBS 파워FM"    . "http://serpent0.duckdns.org:8088/sbsfm.pls")
+                          ("SBS 러브FM"    . "http://serpent0.duckdns.org:8088/sbs2fm.pls")
+                          ("TBS 교통방송"  . "http://tbs.hscdn.com/tbsradio/fm/playlist.m3u8")
+                          ("TBS eFM"       . "http://tbs.hscdn.com/tbsradio/efm/playlist.m3u8")
+                          ("CBS 음악방송"  . "http://aac.cbs.co.kr/cbs939/cbs939.stream/playlist.m3u8"))))
 
 ;; Elfeed config ====================================
 ;; ==================================================
@@ -6633,10 +6633,10 @@ removal."
     "Play the podcast at elfeed podcast entry."
     (interactive)
     (let ((enclosure-link (elfeed-entry-enclosures (elfeed-search-selected :single)))
-	        (entry-link     (elfeed-entry-link       (elfeed-search-selected :single))))
+          (entry-link     (elfeed-entry-link       (elfeed-search-selected :single))))
       (if enclosure-link
-	        (emms-play-url (caar enclosure-link))
-	      (emms-play-url entry-link))
+          (emms-play-url (caar enclosure-link))
+        (emms-play-url entry-link))
       (elfeed-search-untag-all-unread)))
 
   (defun elfeed-youtube-player ()
@@ -6740,8 +6740,8 @@ removal."
         emms-source-file-default-directory (cond (macOS-p "~/Music/MyMusic/")
                                                  (chromeOS-p "/mnt/chromeos/removable/SD Card/Music/")
                                                  (t "~/"))
-	      emms-playlist-buffer-name "*Music*"
-	      emms-info-asynchronously t))
+        emms-playlist-buffer-name "*Music*"
+        emms-info-asynchronously t))
 
 (use-package emms-mode-line
   :after    emms
@@ -6791,7 +6791,7 @@ removal."
   :defer t
   :config
   (setq tramp-copy-size-limit 10000000
-	      tramp-inline-compress-start-size 10000000))
+        tramp-inline-compress-start-size 10000000))
 
 ;; killing ==========================================
 ;; ==================================================
