@@ -4388,58 +4388,6 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; ==================================================
 
 (use-package consult
-  ;; Replace bindings. Lazily loaded due by `use-package'.
-  :bind (("C-c h" . consult-history)
-         ("C-c m" . consult-mode-command)
-         ("C-c k" . consult-yank-from-kill-ring)
-
-         ("C-x M-:" . consult-complex-command)
-         ("C-x b" . consult-buffer)
-         ("C-x 4 b" . consult-buffer-other-window)
-         ("C-x 5 b" . consult-buffer-other-frame)
-         ("C-x r b" . consult-bookmark)
-         ("C-x p b" . consult-project-buffer)
-
-         ("M-#" . consult-register-load)
-         ("M-'" . consult-register-store)
-         ("C-M-#" . consult-register)
-
-         ("M-y" . consult-yank-pop)
-         ("<help> a" . consult-apropos)
-
-         ("M-g e" . consult-compile-error)
-         ("M-g f" . consult-flymake)
-         ("M-g g" . consult-goto-line)
-         ("M-g M-g" . consult-goto-line)
-         ("M-g o" . consult-outline)
-         ("M-g m" . consult-mark)
-         ("M-g k" . consult-global-mark)
-         ("M-g i" . consult-imenu)
-         ("M-g I" . consult-imenu-multi)
-
-         ("M-s d" . consult-find)
-         ("M-s D" . consult-locate)
-         ("M-s g" . consult-grep)
-         ("M-s G" . consult-git-grep)
-         ("M-s r" . consult-ripgrep)
-         ("M-s l" . consult-line)
-         ("M-s L" . consult-line-multi)
-         ("M-s m" . consult-multi-occur)
-         ("M-s k" . consult-keep-lines)
-         ("M-s u" . consult-focus-lines)
-
-         ("M-s e" . consult-isearch-history)
-
-         :map isearch-mode-map
-         ("M-e" . consult-isearch-history)
-         ("M-s e" . consult-isearch-history)
-         ("M-s l" . consult-line)
-         ("M-s L" . consult-line-multi)
-
-         :map minibuffer-local-map
-         ("M-s" . consult-history)
-         ("M-r" . consult-history))
-
   :hook
   (completion-list-mode . consult-preview-at-point-mode)
   :init
@@ -5863,6 +5811,8 @@ removal."
 (global-leader
   "f"   (which-key-prefix :file)
   "fA"  'find-file-other-frame
+  "fF"  'find-file-other-window
+  "fT"  'find-file-other-tab
   "fb"  'consult-bookmark
   "fc"  'elispm/copy-this-file
   "fR"  'write-region
