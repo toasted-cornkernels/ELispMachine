@@ -5886,7 +5886,7 @@ removal."
   "fgd" 'consult-fd
   "fgD" 'consult-find
 
-  "fgr" 'consult-rg
+  "fgr" 'consult-ripgrep
   "fgR" 'consult-grep
   "fgg" 'consult-git-grep
 
