@@ -1581,6 +1581,8 @@
 (use-package python
   :straight (:type built-in)
   :config
+  ;;; stolen from Spacemacs!
+
   (defun elispm/python-start-or-switch-repl ()
     "Start and/or switch to the REPL."
     (interactive)
@@ -2163,18 +2165,41 @@ Unlike `eval-defun', this does not go to topmost function."
   (local-leader
     :major-modes '(emacs-lisp-mode t)
     :keymaps     '(emacs-lisp-mode-map)
+    "'"          'ielm
+    ","          'lisp-state-toggle-lisp-state
+
+    "c"          (which-key-prefix :compile)
+    "cc"         'emacs-lisp-byte-compile
+    
+    "d"          (which-key-prefix :debug)
+
     "e"          (which-key-prefix :eval)
+    "e$"         'lisp-state-eval-sexp-end-of-line
     "eb"         'eval-buffer
-    "ef"         'eval-defun
-    "er"         'eval-region
-    "ep"         'pp-eval-last-sexp
+    "eC"         'elispm/eval-current-form
     "ee"         'eval-last-sexp
-    "es"         'eval-last-sexp
-    "ec"         'eval-expression-at-point
-    "i"          'elisp-index-search)
+    "er"         'eval-region
+    "ef"         'eval-defun
+    "el"         'lisp-state-eval-sexp-end-of-line
+    "ec"         'elispm/eval-current-form-sp
+    "e;"         'elispm/eval-current-form-to-comment-sp
+    "es"         'elispm/eval-current-symbol-sp
+    "ep"         'pp-eval-last-sexp
+
+    "g"          (which-key-prefix :find-symbol)
+    "gb"         'xref-go-back
+    "gG"         'elispm/nav-find-elisp-thing-at-point-other-window
+    
+    "h"          (which-key-prefix :help)
+    "i"          'elisp-index-search
+
+    "t"          (which-key-prefix :test)
+    "tq"         'ert
+
+    "="          (which-key-prefix :refactor))
 
   :config
-  (defun eval-expression-at-point ()
+  (defun elispm/eval-expression-at-point ()
     (interactive)
     (let ((expr (read (thing-at-point 'sexp))))
       (cond ((and (symbolp expr) (fboundp expr))
@@ -2183,7 +2208,163 @@ Unlike `eval-defun', this does not go to topmost function."
 	           (describe-variable expr)
 	           (eval-expression (read (thing-at-point 'sexp))))
 	          ((consp expr) (eval-expression (read (thing-at-point 'sexp))))
-	          (t (eval-expression (read (thing-at-point 'sexp))))))))
+	          (t (eval-expression (read (thing-at-point 'sexp)))))))
+
+  ;; Stolen from Spacemacs
+  (defun elispm/eval-current-form ()
+    "Find and evaluate the current def* or set* command.
+Unlike `eval-defun', this does not go to topmost function."
+    (interactive)
+    (save-excursion
+      (search-backward-regexp "(def\\|(set")
+      (forward-list)
+      (call-interactively 'eval-last-sexp)))
+
+  (defun elispm/eval-current-form-sp (&optional arg)
+    "Call `eval-last-sexp' after moving out of one level of
+parentheses. Will exit any strings and/or comments first.
+An optional ARG can be used which is passed to `sp-up-sexp' to move out of more
+than one sexp.
+Requires smartparens because all movement is done using `sp-up-sexp'."
+    (interactive "p")
+    (let ((evil-move-beyond-eol t))
+      ;; evil-move-beyond-eol disables the evil advices around eval-last-sexp
+      (save-excursion
+        (let ((max 10))
+          (while (and (> max 0)
+                      (sp-point-in-string-or-comment))
+            (cl-decf max)
+            (sp-up-sexp)))
+        (sp-up-sexp arg)
+        (call-interactively 'eval-last-sexp))))
+
+  (defun elispm/eval-current-symbol-sp ()
+    "Call `eval-last-sexp' on the symbol around point.
+Requires smartparens because all movement is done using `sp-forward-symbol'."
+    (interactive)
+    (let ((evil-move-beyond-eol t))
+      ;; evil-move-beyond-eol disables the evil advices around eval-last-sexp
+      (save-excursion
+        (sp-forward-symbol)
+        (call-interactively 'eval-last-sexp))))
+
+  (defun elispm/eval-current-form-to-comment-sp (&optional arg)
+    "Same as `elispm/eval-current-form-sp' but inserts output as a comment."
+    (interactive "p")
+    (let ((evil-move-beyond-eol t))
+      ;; evil-move-beyond-eol disables the evil advices around eval-last-sexp
+      (save-excursion
+        (let ((max 10))
+          (while (and (> max 0)
+                      (sp-point-in-string-or-comment))
+            (cl-decf max)
+            (sp-up-sexp)))
+        (sp-up-sexp arg)
+        (let ((ret-val (format ";; %S" (call-interactively 'eval-last-sexp))))
+          (goto-char (point-at-eol))
+          (open-line 1)
+          (forward-line 1)
+          (insert ret-val)))))
+  
+  (defun elispm/nav-find-elisp-thing-at-point-other-window ()
+    "Find thing under point and go to it another window."
+    (interactive)
+    (let ((symb (variable-at-point)))
+      (if (and symb
+               (not (equal symb 0))
+               (not (fboundp symb)))
+          (find-variable-other-window symb)
+        (find-function-at-point)))))
+ 
+ (use-package ielm
+   :defer t
+   :config
+   (defun ielm-indent-line ()
+     (interactive)
+     (let ((current-point (point)))
+       (save-restriction
+         (narrow-to-region (search-backward-regexp "^ELISP>") (goto-char current-point))
+        (lisp-indent-line))))
+  
+  :general-config
+  (local-leader
+    :major-modes '(inferior-emacs-lisp-mode t)
+    :keymaps     '(inferior-emacs-lisp-mode-map)
+    "hh"         'helpful-at-point))
+
+(use-package elisp-def
+  :defer t
+  :hook ((elisp-mode ielm-mode) . elisp-def-mode))
+
+(use-package elisp-demos
+  :defer t
+  :init
+  (advice-add 'helpful-update :after #'elisp-demos-advice-helpful-update)
+  :commands (elisp-demos-add-demo elisp-demos-find-demo))
+
+(use-package elisp-slime-nav
+  :defer t
+  :hook  ((elisp-mode ielm-mode) . elisp-slime-nav-mode))
+
+(use-package overseer
+  :defer t
+  :general-config
+  (local-leader
+    :major-modes '(emacs-lisp-mode t)
+    :keymaps     '(emacs-lisp-mode-map)
+    "ta"         'overseer-test
+    "ta"         'overseer-test
+    "tt"         'overseer-test-run-test
+    "tb"         'overseer-test-this-buffer
+    "tf"         'overseer-test-file
+    "tg"         'overseer-test-tags
+    "tp"         'overseer-test-prompt
+    "tA"         'overseer-test-debug
+    "tq"         'overseer-test-quiet
+    "tv"         'overseer-test-verbose
+    "th"         'overseer-help))
+
+(use-package srefactor-lisp
+  :defer t
+  :straight (srefactor
+	           :type git :host github :repo "emacsmirror/srefactor")
+  :general-config
+  (local-leader
+    :major-modes '(emacs-lisp-mode lisp-interaction-mode t)
+    :keymaps     '(emacs-lisp-mode-map lisp-interaction-mode-map)
+    "=b"         'srefactor-lisp-format-buffer
+    "=d"         'srefactor-lisp-format-defun
+    "=o"         'srefactor-lisp-one-line
+    "=s"         'srefactor-lisp-format-sexp))
+
+(use-package emr
+  :defer t
+  :general-config
+  (local-leader
+    :major-modes '(emacs-lisp-mode t)
+    :keymaps     '(emacs-lisp-mode-map)
+    "rf"         (which-key-prefix :find/function)
+    "rfe"        'emr-el-implement-function
+    "rfd"        'emr-el-find-unused-definitions
+                 
+    "re"         (which-key-prefix :extract/expand)
+    "ref"        'emr-el-extract-function
+    "rev"        'emr-el-extract-variable
+    "rel"        'emr-el-extract-to-let
+    "rec"        'emr-el-extract-constant
+    "rea"        'emr-el-extract-autoload
+                 
+    "ri"         (which-key-prefix :insert/inline)
+    "riv"        'emr-el-inline-variable
+    "ris"        'emr-el-inline-let-variable
+    "rif"        'emr-el-inline-function
+    "ria"        'emr-el-insert-autoload-directive
+                 
+    "rd"         (which-key-prefix :delete)
+    "rdl"        'emr-el-delete-let-binding-form
+    "rdd"        'emr-el-delete-unused-definition
+                 
+    "ew"         'emr-el-eval-and-replace))
 
 ;; Clojure config ===================================
 ;; ==================================================
@@ -5622,12 +5803,84 @@ set so that it clears the whole REPL buffer, not just the output."
                             new-hop)))
            new-fname))))))
 
+;; Stolen from Doom
+(defun elispm/copy-this-file (new-path &optional force-p)
+  "Copy current buffer's file to NEW-PATH then open NEW-PATH.
+
+If FORCE-P, overwrite the destination file if it exists, without confirmation."
+ (interactive
+   (list (read-file-name "Copy file to: ")
+         current-prefix-arg))
+  (unless (and buffer-file-name (file-exists-p buffer-file-name))
+    (user-error "Buffer is not visiting any file"))
+  (let ((old-path (buffer-file-name (buffer-base-buffer)))
+        (new-path (expand-file-name new-path)))
+    (make-directory (file-name-directory new-path) 't)
+    (copy-file old-path new-path (or force-p 1))
+    (find-file new-path)
+    (message "File copied to %S" (abbreviate-file-name new-path))))
+
+;; Stolen from Spacemacs
+(defun elispm/delete-current-buffer-file (&optional arg)
+  "Remove file connected to current buffer and kill buffer.
+
+If prefix ARG is non-nil, delete without confirmation."
+  (interactive "P")
+  (let ((filename (buffer-file-name))
+        (buffer (current-buffer))
+        (name (buffer-name)))
+    (if (not (and filename (file-exists-p filename)))
+        (ido-kill-buffer)
+      (if (or arg
+              (yes-or-no-p
+               (format "Are you sure you want to delete this file: '%s'?" name)))
+          (progn
+            (delete-file filename t)
+            (kill-buffer buffer)
+            (message "File deleted: '%s'" filename))
+        (message "Canceled: File deletion")))))
+
+;; Stolen from Spacemacs
+(defun elispm/delete-file (filename &optional ask-user)
+  "Remove file or directory specified by FILENAME.
+
+Interactively, delete the file visited by the current buffer.
+
+Also kills associated buffer (if any exists) and invalidates
+projectile cache when it's possible.
+
+When ASK-USER is non-nil, user will be asked to confirm file
+removal."
+  (interactive "f")
+  (when (and filename (file-exists-p filename))
+    (let ((buffer (find-buffer-visiting filename)))
+      (when buffer
+        (kill-buffer buffer)))
+    (when (or (not ask-user)
+              (yes-or-no-p "Are you sure you want to delete this file? "))
+      (delete-file filename))))
+
 (global-leader
   "f"   (which-key-prefix :file)
+  "fA"  'find-file-other-frame
   "fb"  'consult-bookmark
+  "fc"  'elispm/copy-this-file
+  "fR"  'write-region
+  "fi"  'insert-file
+  "fl"  'locate
+  "fE"  'elispm/sudo-edit
+
+  ;; TODO: rename-current-buffer-file
+  
+  "fd"  (which-key-prefix :delete)
+  "fdc" 'elispm/delete-current-buffer-file
+  "fdd" 'elispm/delete-file
+  
   "fp"  'consult-project-buffer
   "ff"  'find-file
+  "fa"  'write-file
   "fs"  'save-buffer
+  "fS"  'evil-write-all
 
   "fg"  (which-key-prefix :find/grep)
   "fgd" 'consult-fd
@@ -6287,13 +6540,13 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; ==================================================
 
 (use-package reddigg
+  :defer t
   :general-config
   (global-leader
     "awr"  (which-key-prefix "reddit")
     "awrm" 'reddigg-view-main
     "awrr" 'reddigg-view-main
     "awrs" 'reddigg-view-sub)
-
   :config
   (setq reddigg-subs '(Common_Lisp
                        GUIX
@@ -6324,6 +6577,7 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; ==================================================
 
 (use-package hnreader
+  :defer t
   :general-config
   (global-leader
     "awh"  (which-key-prefix "hackernews")
@@ -6336,7 +6590,6 @@ set so that it clears the whole REPL buffer, not just the output."
     "awhb" 'hnreader-best
     "awhh" 'hnreader-best
     "awhm" 'hnreader-more)
-
   :config
   (setq org-confirm-elisp-link-function nil))
 
