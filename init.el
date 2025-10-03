@@ -6063,15 +6063,17 @@ removal."
   "pA" 'project-remember-project-under
   "pb" 'project-switch-to-buffer
   "pc" 'project-compile
+  "pC" 'project-recompile
   "pd" 'project-forget-project
   "pD" 'project-forget-zombie-projects
-  "pC" 'project-recompile
   "pu" 'project-any-command
   "pd" 'projectile-find-dir
   "pD" 'project-dired
   "pe" 'project-customize-dirlocals
   "pf" 'project-find-file
   "pF" 'project-or-external-find-file
+  "pg" 'project-find-regexp
+  "pG" 'project-or-external-find-regexp
   "pk" 'project-kill-buffers
   "pp" 'project-switch-project
   "ps" 'project-save-some-buffers
