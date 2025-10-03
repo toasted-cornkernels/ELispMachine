@@ -6056,11 +6056,26 @@ removal."
 
 (global-leader
   "p"  (which-key-prefix "project")
-  "p/" 'projectile-ripgrep
-  "pf" 'projectile-find-file
-  "pp" 'projectile-switch-project
-  "pP" 'projectile-switch-open-project
-  "pc" 'projectile-compile-project)
+  "p!" 'project-shell-command
+  "p&" 'project-async-shell-command
+  "p%" 'project-query-replace-regexp
+  "pa" 'project-remember-project
+  "pA" 'project-remember-project-under
+  "pb" 'project-switch-to-buffer
+  "pc" 'project-compile
+  "pd" 'project-forget-project
+  "pD" 'project-forget-zombie-projects
+  "pC" 'project-recompile
+  "pu" 'project-any-command
+  "pd" 'projectile-find-dir
+  "pD" 'project-dired
+  "pe" 'project-customize-dirlocals
+  "pf" 'project-find-file
+  "pF" 'project-or-external-find-file
+  "pk" 'project-kill-buffers
+  "pp" 'project-switch-project
+  "ps" 'project-save-some-buffers
+  "pv" 'project-vs-dir)
 
 (defun insert-lambda ()
   "Insert λ."
