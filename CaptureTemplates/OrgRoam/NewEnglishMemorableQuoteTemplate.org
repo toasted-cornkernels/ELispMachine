@@ -1,0 +1,7 @@
+* Quote
+
+${title}
+
+* Link
+
+%^{Link}

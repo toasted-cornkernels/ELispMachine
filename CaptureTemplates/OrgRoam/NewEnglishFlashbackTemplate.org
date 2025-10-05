@@ -1,0 +1,11 @@
+* What did you say?
+
+${title}
+
+* What should you have said instead?
+
+%^{What should you have said instead?}
+
+#+begin_src comment
+  Dang it
+#+end_src
