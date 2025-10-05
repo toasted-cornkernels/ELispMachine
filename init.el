@@ -1092,6 +1092,18 @@
            (file ,(concat user-emacs-directory "/CaptureTemplates/OrgRoam/DefaultTemplate.org"))
            :if-new (file+head "${slug}.org" "#+TITLE: ${title}\n#+DATE:%U\n")
            :unnarrowed t)
+          ("e" "New English Expression" plain
+           (file ,(concat user-emacs-directory "/CaptureTemplates/OrgRoam/NewEnglishExpressionTemplate.org"))
+           :if-new (file+head "Languages/English/${slug}.org" "#+TITLE: ${title}\n#+DATE:%U\n")
+           :unnarrowed t)
+          ("q" "New English Memorable Quote" plain
+           (file ,(concat user-emacs-directory "/CaptureTemplates/OrgRoam/NewEnglishMemorableQuoteTemplate.org"))
+           :if-new (file+head "Languages/English/Quotes/${slug}.org" "#+TITLE: ${title}\n#+DATE:%U\n")
+           :unnarrowed t)
+          ("f" "New English Flashback" plain
+           (file ,(concat user-emacs-directory "/CaptureTemplates/OrgRoam/NewEnglishFlashbackTemplate.org"))
+           :if-new (file+head "Languages/English/Flashbacks/${slug}.org" "#+TITLE: ${title}\n#+DATE:%U\n")
+           :unnarrowed t)
           ("j" "New Japanese Word" plain
            (file ,(concat user-emacs-directory "/CaptureTemplates/OrgRoam/NewJapaneseWordTemplate.org"))
            :if-new (file+head "Languages/Japanese/${slug}.org" "#+TITLE: ${title}\n#+DATE:%U\n")
@@ -1107,18 +1119,6 @@
           ("F" "New Japanese Flashback" plain
            (file ,(concat user-emacs-directory "/CaptureTemplates/OrgRoam/NewJapaneseFlashbackTemplate.org"))
            :if-new (file+head "Languages/Japanese/Flashbacks/${slug}.org" "#+TITLE: ${title}\n#+DATE:%U\n")
-           :unnarrowed t)
-          ("e" "New English Expression" plain
-           (file ,(concat user-emacs-directory "/CaptureTemplates/OrgRoam/NewEnglishExpressionTemplate.org"))
-           :if-new (file+head "Languages/English/${slug}.org" "#+TITLE: ${title}\n#+DATE:%U\n")
-           :unnarrowed t)
-          ("E" "New English Memorable Quote" plain
-           (file ,(concat user-emacs-directory "/CaptureTemplates/OrgRoam/NewEnglishMemorableQuoteTemplate.org"))
-           :if-new (file+head "Languages/English/Quotes/${slug}.org" "#+TITLE: ${title}\n#+DATE:%U\n")
-           :unnarrowed t)
-          ("f" "New English Flashback" plain
-           (file ,(concat user-emacs-directory "/CaptureTemplates/OrgRoam/NewEnglishFlashbackTemplate.org"))
-           :if-new (file+head "Languages/English/Flashbacks/${slug}.org" "#+TITLE: ${title}\n#+DATE:%U\n")
            :unnarrowed t)
           ("r" "New Rust Notes" plain
            (file ,(concat user-emacs-directory "/CaptureTemplates/OrgRoam/NewRustNotesTemplate.org"))
