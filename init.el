@@ -6038,6 +6038,11 @@ removal."
   "ameu" 'emms-play-url)
 
 (global-leader
+  "A"    (which-key-prefix :admin)
+  "Ai"   'emacs-init-time
+  "Au"   'emacs-uptime)
+
+(global-leader
   "Cc"   'org-capture)
 
 (global-leader
