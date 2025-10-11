@@ -236,6 +236,8 @@
   "Rich comment: ignore whatever that is in ARGS."
   nil)
 
+(function-put 'comment 'lisp-indent-function 1)
+
 (defun minor-mode-activated-p (minor-mode)
   "Is the given MINOR-MODE activated?"
   (let ((activated-minor-modes (mapcar #'car minor-mode-alist)))
