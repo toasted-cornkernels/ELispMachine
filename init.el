@@ -925,6 +925,8 @@
   :defer t
   :hook  (org-mode . org-auto-tangle-mode))
 
+(use-package org-anki :defer t)
+
 (use-package ob-racket
   :straight (ob-racket
              :type git :host github :repo "hasu/emacs-ob-racket"
@@ -5876,6 +5878,7 @@ removal."
   "bb" 'consult-buffer
   "bB" 'consult-buffer-other-tab
   "bp" 'previous-buffer
+  "br" 'rename-buffer
   "bn" 'next-buffer
   "bh" (lambda ()
          (interactive)
