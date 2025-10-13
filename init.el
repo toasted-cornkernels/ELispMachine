@@ -2208,6 +2208,8 @@ Unlike `eval-defun', this does not go to topmost function."
     "gG"         'elispm/nav-find-elisp-thing-at-point-other-window
 
     "h"          (which-key-prefix :help)
+    "hh"         'helpful-at-point
+
     "i"          'elisp-index-search
 
     "t"          (which-key-prefix :test)
@@ -6530,7 +6532,7 @@ removal."
 
 (use-package reddigg
   :defer t
-  :general-config
+  :general
   (global-leader
     "awr"  (which-key-prefix "reddit")
     "awrm" 'reddigg-view-main
@@ -6567,7 +6569,7 @@ removal."
 
 (use-package hnreader
   :defer t
-  :general-config
+  :general
   (global-leader
     "awh"  (which-key-prefix "hackernews")
     "awhn" 'hnreader-news
