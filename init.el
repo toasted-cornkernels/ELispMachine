@@ -6437,7 +6437,6 @@ removal."
     "O"   'pdf-outline
     "zr"  'pdf-view-scale-reset
 
-
     "<"   'beginning-of-buffer
 
     "H"   'pdf-view-fit-height-to-window
