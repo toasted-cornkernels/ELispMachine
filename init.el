@@ -1281,6 +1281,8 @@
 
 (use-package org-noter :defer t)
 
+(use-package org-web-tools :defer t)
+
 ;; Exporters
 
 (use-package ox-latex
