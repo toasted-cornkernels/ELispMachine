@@ -925,6 +925,8 @@
   :defer t
   :hook  (org-mode . org-auto-tangle-mode))
 
+(use-package org-anki :defer t)
+
 (use-package ob-racket
   :straight (ob-racket
              :type git :host github :repo "hasu/emacs-ob-racket"
@@ -2212,6 +2214,8 @@ Unlike `eval-defun', this does not go to topmost function."
     "gG"         'elispm/nav-find-elisp-thing-at-point-other-window
 
     "h"          (which-key-prefix :help)
+    "hh"         'helpful-at-point
+
     "i"          'elisp-index-search
 
     "t"          (which-key-prefix :test)
@@ -5878,6 +5882,7 @@ removal."
   "bb" 'consult-buffer
   "bB" 'consult-buffer-other-tab
   "bp" 'previous-buffer
+  "br" 'rename-buffer
   "bn" 'next-buffer
   "bh" (lambda ()
          (interactive)
@@ -6534,7 +6539,7 @@ removal."
 
 (use-package reddigg
   :defer t
-  :general-config
+  :general
   (global-leader
     "awr"  (which-key-prefix "reddit")
     "awrm" 'reddigg-view-main
@@ -6571,7 +6576,7 @@ removal."
 
 (use-package hnreader
   :defer t
-  :general-config
+  :general
   (global-leader
     "awh"  (which-key-prefix "hackernews")
     "awhn" 'hnreader-news
