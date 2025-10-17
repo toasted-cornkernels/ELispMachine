@@ -473,7 +473,9 @@
     "kD"  (which-key-prefix :kill-backwards)
     "kDs" 'evil-lisp-state-sp-backward-kill-symbol
     "kDw" 'evil-lisp-state-sp-backward-kill-word
-    "kDx" 'evil-lisp-state-sp-backward-kill-sexp))
+    "kDx" 'evil-lisp-state-sp-backward-kill-sexp)
+  :config
+  (setq evil-lisp-state-cursor '(hbar . 2)))
 
 ;; GPG config =======================================
 ;; ==================================================
