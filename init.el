@@ -738,7 +738,7 @@
     "C-M-l"      'org-shiftright)
 
   :config
-  (defmacro org-emphasize-this (fname char)
+  (defmacro elispm/org-emphasize-this (fname char)
     "Make function called FNAME for setting the emphasis (signified by CHAR) in org mode."
     `(defun ,fname ()
        (interactive)
@@ -6128,6 +6128,12 @@ removal."
 
   "xwt"   (which-key-prefix :thesaurus))
 
+(defmacro elispm/switch-to-tab-by-index (index)
+  (let ((function-name (intern (concat "switch-tab-" (number-to-string index)))))
+    `(defun ,function-name ()
+       (interactive)
+       (tab-select ,index))))
+
 (global-leader
   "t"      (which-key-prefix :tab)
   "tp"     'tab-previous
@@ -6148,7 +6154,17 @@ removal."
   "tt"     'other-tab-prefix
   "tg"     'tab-group
   "tG"     'tab-close-group
-  "tu"     'tab-undo)
+  "tu"     'tab-undo
+
+  "t1"     (elispm/switch-to-tab-by-index 1)
+  "t2"     (elispm/switch-to-tab-by-index 2)
+  "t3"     (elispm/switch-to-tab-by-index 3)
+  "t4"     (elispm/switch-to-tab-by-index 4)
+  "t5"     (elispm/switch-to-tab-by-index 5)
+  "t6"     (elispm/switch-to-tab-by-index 6)
+  "t7"     (elispm/switch-to-tab-by-index 7)
+  "t8"     (elispm/switch-to-tab-by-index 8)
+  "t9"     (elispm/switch-to-tab-by-index 9))
 
 (global-leader
   "T"    (which-key-prefix :toggle)
