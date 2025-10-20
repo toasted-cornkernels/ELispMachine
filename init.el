@@ -6599,7 +6599,9 @@ removal."
   :defer t
   :config
   (setq eradio-player   '("mpv" "--no-video" "--no-terminal" "--really-quiet")
-        eradio-channels '(("MBC FM4U"      . "http://serpent0.duckdns.org:8088/mbcfm.pls")
+        eradio-channels '(("WFUV 90.7"     . "https://onair.wfuv.org/onair-aacplus")
+                          ("WNYC 93.9 FM"  . "https://fm939.wnyc.org/wnycfm.aac")
+                          ("MBC FM4U"      . "http://serpent0.duckdns.org:8088/mbcfm.pls")
                           ("MBC 표준FM"    . "http://serpent0.duckdns.org:8088/mbcsfm.pls")
                           ("KBS 쿨FM"      . "http://serpent0.duckdns.org:8088/kbs2fm.pls")
                           ("KBS 해피FM"    . "http://serpent0.duckdns.org:8088/kbs2radio.pls")
@@ -6938,7 +6940,12 @@ Optional argument MSG First message shown in buffer."
 (put 'narrow-to-region 'disabled nil)   ; I need it
 
 (defun display-startup-echo-area-message ()
-  (message "You think with your keyboard"))
+  (let ((quotes '("그대 따라갈 이 언덕에"
+                  "Layla"
+                  "날아가줘, 멀리!"
+                  "Love is our resistance"
+                  "Send our codes to the stars")))
+    (message (nth (random 3)) quotes)))
 
 (global-auto-revert-mode 1)    ; Refresh buffers with changed local files
 
