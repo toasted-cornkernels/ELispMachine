@@ -5295,14 +5295,14 @@ set so that it clears the whole REPL buffer, not just the output."
 
   :general-config
   (agnostic-key
-    "C-H-<up>" 'tab-move-previous
+    "C-H-<up>"   'tab-move-previous
     "C-H-<down>" 'tab-move
-    "s-{" 'tab-previous
-    "s-}" 'tab-next
-    "s-[" 'tab-previous
-    "s-]" 'tab-next
-    "s-." 'tab-new
-    "s-," 'tab-close))
+    "s-{"        'tab-previous
+    "s-}"        'tab-next
+    "s-["        'tab-previous
+    "s-]"        'tab-next
+    "s-."        'tab-new
+    "s-,"        'tab-close))
 
 (blink-cursor-mode 0)
 (global-visual-line-mode t)
@@ -5480,11 +5480,11 @@ set so that it clears the whole REPL buffer, not just the output."
 (use-package time
   :straight (:type built-in)
   :config
-  (let ((cities '(("America/Los_Angeles" "Los Angeles")
-                  ("America/New_York" "New York")
-                  ("Europe/London" "Oxford")
-                  ("Europe/Zurich" "Zurich")
-                  ("Asia/Tokyo" "Tokyo"))))
+  (let ((cities '(("America/New_York"    "New York")
+                  ("America/Los_Angeles" "Los Angeles")
+                  ("Europe/London"       "Oxford")
+                  ("Europe/Zurich"       "Zurich")
+                  ("Asia/Tokyo"          "Tokyo"))))
     (setq display-time-default-load-average nil
           display-time-load-average nil
           display-time-format "%b %d %l:%M %p"
@@ -5511,7 +5511,7 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; Mode-agnostic keybindings ==========================
 ;; ====================================================
 
-;; emacs key remappings
+;; Emacs key remappings
 (agnostic-key
   "C-x C-l" 'count-lines-page
   "C-x C-b" 'ibuffer)
@@ -6113,8 +6113,8 @@ removal."
   (insert "λ"))
 
 (global-leader
-  "x"     (which-key-prefix "text")
-  "xi"    (which-key-prefix "insert")
+  "x"     (which-key-prefix :text)
+  "xi"    (which-key-prefix :insert)
   "xil"   'insert-lambda
   "xie"   'emojify-insert-emoji
   "xiE"   'emoji-insert
@@ -6122,15 +6122,37 @@ removal."
 
   "xc"    'count-words
 
-  "xw"    (which-key-prefix "word")
+  "xw"    (which-key-prefix :word)
   "xwd"   'osx-dictionary-search-pointer
   "xwD"   'define-word-at-point
 
-  "xwt"   (which-key-prefix "thesaurus"))
+  "xwt"   (which-key-prefix :thesaurus))
 
 (global-leader
-  "t"    (which-key-prefix "toggle")
-  "tD"   'toggle-debug-on-error)
+  "t"      (which-key-prefix :tab)
+  "tp"     'tab-previous
+  "th"     'tab-previous
+  "tn"     'tab-next
+  "tl"     'tab-next
+  "tr"     'tab-rename
+  "t TAB"  'tab-recent
+  "td"     'tab-close
+  "tD"     'tab-close-other
+  "tN"     'tab-new
+  "tb"     'switch-to-buffer-other-tab
+  "tF"     'dired-other-tab
+  "tf"     'find-file-other-tab
+  "tm"     'tab-move-to
+  "ty"     'tab-duplicate
+  "tP"     'project-other-tab-command
+  "tt"     'other-tab-prefix
+  "tg"     'tab-group
+  "tG"     'tab-close-group
+  "tu"     'tab-undo)
+
+(global-leader
+  "T"    (which-key-prefix :toggle)
+  "TD"   'toggle-debug-on-error)
 
 (global-leader
   "s-o"  'reveal-in-osx-finder
