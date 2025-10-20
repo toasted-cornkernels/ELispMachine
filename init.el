@@ -4917,11 +4917,6 @@ set so that it clears the whole REPL buffer, not just the output."
 (use-package magit-section
   :defer t)
 
-(use-package magit-todos
-  :hook (magit-mode . magit-todos-mode)
-  :config
-  (evil-collection-magit-todos-setup))
-
 (use-package orgit
   :defer t)
 
