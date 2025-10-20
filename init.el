@@ -6945,7 +6945,7 @@ Optional argument MSG First message shown in buffer."
                   "날아가줘, 멀리!"
                   "Love is our resistance"
                   "Send our codes to the stars")))
-    (message (nth (random 3)) quotes)))
+    (message (nth (random 3) quotes))))
 
 (global-auto-revert-mode 1)    ; Refresh buffers with changed local files
 
