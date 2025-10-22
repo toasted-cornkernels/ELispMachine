@@ -1042,7 +1042,7 @@
     "k"          'org-edit-src-abort
     "'"          'org-edit-src-exit)
   :config
-  (setq org-src-window-setup 'split-window-right
+  (setq org-src-window-setup 'split-window-below
         org-src-fontify-natively t
         org-src-tab-acts-natively t)
   (setq-default org-src-preserve-indentation nil
@@ -5280,6 +5280,8 @@ set so that it clears the whole REPL buffer, not just the output."
 (use-package tab-bar
   :straight nil
   :config
+  (setq tab-bar-position t) ; place the tab-bar below the tool bar
+
   (defun disable-tab-bar-if-unnecessary (_)
     "Hide the tab bar if there is only one tab left."
     (when (= (length (tab-bar-tabs)) 1)
