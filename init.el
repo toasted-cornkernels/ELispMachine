@@ -2881,7 +2881,7 @@ set so that it clears the whole REPL buffer, not just the output."
   (evil-set-initial-state 'cider-popup-buffer-mode 'motion)
   (add-hook 'cider--debug-mode-hook 'cider-debug-setup)
   (setq cider-prompt-for-symbol t)
-  (defadvice cider-find-var (before add-evil-jump activate)
+  (cl-defadvice cider-find-var (before add-evil-jump activate)
     (evil-set-jump)))
 
 (use-package cider-eval-sexp-fu
