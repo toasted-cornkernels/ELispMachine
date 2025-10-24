@@ -718,13 +718,13 @@
 
     "x"          (which-key-prefix :text)
     "xo"         'org-open-at-point
-    "xb"         (org-emphasize-this org-bold ?*)
-    "xc"         (org-emphasize-this org-code ?~)
-    "xi"         (org-emphasize-this org-italic ?/)
-    "xr"         (org-emphasize-this org-clear ? )
-    "xs"         (org-emphasize-this org-strike-through ?+)
-    "xu"         (org-emphasize-this org-underline ?_)
-    "xv"         (org-emphasize-this org-verbatim ?=))
+    "xb"         (elispm/org-emphasize-this org-bold ?*)
+    "xc"         (elispm/org-emphasize-this org-code ?~)
+    "xi"         (elispm/org-emphasize-this org-italic ?/)
+    "xr"         (elispm/org-emphasize-this org-clear ? )
+    "xs"         (elispm/org-emphasize-this org-strike-through ?+)
+    "xu"         (elispm/org-emphasize-this org-underline ?_)
+    "xv"         (elispm/org-emphasize-this org-verbatim ?=))
 
   (normal-mode-major-mode
     :major-modes '(org-mode t)
@@ -1483,7 +1483,8 @@
                 :branch "main"
                 :files (:defaults "bin")
                 :fork (:host github
-                       :repo "jeongsoolee09/emacs-codeql"))
+                       :repo "jeongsoolee09/emacs-codeql"
+                       :branch "unlocalize-database"))
   :init
   (setq codeql-transient-binding "C-c q"
         codeql-configure-eglot-lsp t
@@ -5264,6 +5265,12 @@ set so that it clears the whole REPL buffer, not just the output."
         :scroll-bar-width 8
         :fringe-width 8))
   (spacious-padding-mode 1))
+
+(use-package adaptive-wrap
+  :config
+  (define-globalized-minor-mode elispm/global-adaptive-wrap-prefix-mode adaptive-wrap-prefix-mode
+    (lambda () (adaptive-wrap-prefix-mode 1)))
+  (elispm/global-adaptive-wrap-prefix-mode 1))
 
 (setq column-number-mode t)
 
