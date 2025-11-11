@@ -3777,7 +3777,8 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (use-package toml-mode
   :mode (("/\\(Cargo.lock\\|\\.cargo/config\\)\\'" . toml-mode)
-         ("\\.toml\\'" . toml-mode)))
+         ("\\.toml\\'" . toml-mode)
+         ("poetry.lock" . toml-mode)))
 
 ;; Golang config ====================================
 ;; ==================================================
