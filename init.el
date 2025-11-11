@@ -76,8 +76,8 @@
 ;; Profiling ========================================
 ;; ==================================================
 
-;; (setq use-package-verbose t
-;;       use-package-compute-statistics t)
+(setq use-package-verbose t
+      use-package-compute-statistics t)
 
 ;; General.el config ================================
 ;; ==================================================
@@ -2453,7 +2453,7 @@ Requires smartparens because all movement is done using `sp-forward-symbol'."
   (require 'cider))
 
 (use-package cider
-  ;; :after clojure-mode
+  :after clojure-mode
   :init
   (setq cider-stacktrace-default-filters '(tooling dup)
         cider-repl-pop-to-buffer-on-connect nil
@@ -3498,6 +3498,13 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (use-package nix-sandbox
   :after nix-mode)
+
+;; Direnv config ====================================
+;; ==================================================
+
+(use-package direnv
+ :config
+ (direnv-mode))
 
 ;; OCaml config =====================================
 ;; ==================================================
