@@ -76,8 +76,8 @@
 ;; Profiling ========================================
 ;; ==================================================
 
-;; (setq use-package-verbose t
-;;       use-package-compute-statistics t)
+(setq use-package-verbose t
+      use-package-compute-statistics t)
 
 ;; General.el config ================================
 ;; ==================================================
@@ -2455,7 +2455,7 @@ Requires smartparens because all movement is done using `sp-forward-symbol'."
   (require 'cider))
 
 (use-package cider
-  :defer t
+  :after clojure-mode
   :init
   (setq cider-stacktrace-default-filters '(tooling dup)
         cider-repl-pop-to-buffer-on-connect nil
@@ -2883,7 +2883,7 @@ set so that it clears the whole REPL buffer, not just the output."
   (evil-set-initial-state 'cider-popup-buffer-mode 'motion)
   (add-hook 'cider--debug-mode-hook 'cider-debug-setup)
   (setq cider-prompt-for-symbol t)
-  (defadvice cider-find-var (before add-evil-jump activate)
+  (cl-defadvice cider-find-var (before add-evil-jump activate)
     (evil-set-jump)))
 
 (use-package cider-eval-sexp-fu
@@ -3501,6 +3501,13 @@ set so that it clears the whole REPL buffer, not just the output."
 (use-package nix-sandbox
   :after nix-mode)
 
+;; Direnv config ====================================
+;; ==================================================
+
+(use-package direnv
+ :config
+ (direnv-mode))
+
 ;; OCaml config =====================================
 ;; ==================================================
 
@@ -3772,7 +3779,8 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (use-package toml-mode
   :mode (("/\\(Cargo.lock\\|\\.cargo/config\\)\\'" . toml-mode)
-         ("\\.toml\\'" . toml-mode)))
+         ("\\.toml\\'" . toml-mode)
+         ("poetry.lock" . toml-mode)))
 
 ;; Golang config ====================================
 ;; ==================================================
