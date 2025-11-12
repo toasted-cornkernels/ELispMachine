@@ -642,6 +642,11 @@
 
     "p"          'org-priority
 
+    "l"          (which-key-prefix :link)
+    "lh"         'org-previous-link
+    "ll"         'org-next-link
+    "lL"         'org-previous-link
+
     "s"          (which-key-prefix :trees/subtrees)
     "sA"         'org-archive-subtree-default
     "sS"         'org-sort
@@ -899,8 +904,6 @@
 (use-package org-cliplink :defer t)
 
 (use-package org-rich-yank :defer t)
-
-(use-package org-projectile :defer t)
 
 (use-package org-element
   :straight (:type built-in)
@@ -1487,8 +1490,7 @@
                        :branch "unlocalize-database"))
   :init
   (setq codeql-transient-binding "C-c q"
-        codeql-configure-eglot-lsp t
-        codeql-configure-projectile t)
+        codeql-configure-eglot-lsp t)
   :general-config
   (local-leader
     :major-modes '(ql-tree-sitter-mode t)
@@ -2453,7 +2455,7 @@ Requires smartparens because all movement is done using `sp-forward-symbol'."
   (require 'cider))
 
 (use-package cider
-  ;; :after clojure-mode
+  :defer t
   :init
   (setq cider-stacktrace-default-filters '(tooling dup)
         cider-repl-pop-to-buffer-on-connect nil
@@ -4377,7 +4379,8 @@ set so that it clears the whole REPL buffer, not just the output."
   (add-hook 'window-setup-hook 'on-after-init)
 
   (add-to-list 'exec-path "/nix/var/nix/profiles/default/bin")
-  (add-to-list 'exec-path (expand-file-name "~/.nix-profile/bin")))
+  (add-to-list 'exec-path (expand-file-name "~/.nix-profile/bin"))
+  (add-to-list 'exec-path (concat "/etc/profiles/per-user/" (user-login-name) "/bin")))
 
 (use-package orderless
   :init
@@ -4440,8 +4443,9 @@ set so that it clears the whole REPL buffer, not just the output."
 
   (define-key consult-narrow-map (vconcat consult-narrow-key "?") #'consult-narrow-help)
 
-  (autoload 'projectile-project-root "projectile")
-  (setq consult-project-function (lambda (_) (projectile-project-root))))
+  ;; (autoload 'projectile-project-root "projectile")
+  ;; (setq consult-project-function (lambda (_) (projectile-project-root)))
+  )
 
 ;; Company config ===================================
 ;; ==================================================
@@ -5220,17 +5224,6 @@ set so that it clears the whole REPL buffer, not just the output."
   :config
   (add-hook 'ibuffer-mode-hook #'ibuffer-set-filter-groups-by-mode))
 
-;; Projectile =======================================
-;; ==================================================
-
-(use-package projectile
-  :defer t
-  :config
-  (projectile-mode)
-  (setq projectile-mode-line            "Projectile"
-        anaconda-mode-localhost-address "localhost"
-        projectile-enable-caching       nil))
-
 ;; Minions config ===================================
 ;; ==================================================
 
@@ -5337,12 +5330,14 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (use-package modus-themes
   :config
+  (setq custom-safe-themes t)
   (setq modus-themes-italic-constructs t
         modus-themes-bold-constructs nil)
-  ;; We choose to not use auto-dark in a terminal, so
-  ;; load the dark theme manually.
   (when terminal-p
     (load-theme 'modus-vivendi t)))
+
+(use-package doric-themes
+  :defer t)
 
 (use-package tron-legacy-theme :defer t)
 
@@ -5350,10 +5345,8 @@ set so that it clears the whole REPL buffer, not just the output."
   :when (not (or chromeOS-p android-p terminal-p))
   :init
   (setq custom-safe-themes t)
-  :config
-  (setq custom-safe-themes t)
   (setq auto-dark-themes '((modus-vivendi) (modus-operandi))
-        auto-dark-allow-osascript macOS-p
+        auto-dark-allow-osascript t
         auto-dark-allow-powershell nil)
   (auto-dark-mode t))
 
@@ -5433,7 +5426,7 @@ set so that it clears the whole REPL buffer, not just the output."
   :defer t)
 
 (use-package multi-vterm
-  :after (vterm projectile)
+  :after (vterm)
   :config
   (add-hook 'vterm-mode-hook
             (lambda ()
@@ -5825,9 +5818,6 @@ If prefix ARG is non-nil, delete without confirmation."
 
 Interactively, delete the file visited by the current buffer.
 
-Also kills associated buffer (if any exists) and invalidates
-projectile cache when it's possible.
-
 When ASK-USER is non-nil, user will be asked to confirm file
 removal."
   (interactive "f")
@@ -6104,7 +6094,6 @@ removal."
   "pd" 'project-forget-project
   "pD" 'project-forget-zombie-projects
   "pu" 'project-any-command
-  "pd" 'projectile-find-dir
   "pD" 'project-dired
   "pe" 'project-customize-dirlocals
   "pf" 'project-find-file
