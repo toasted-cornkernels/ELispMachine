@@ -6053,7 +6053,8 @@ removal."
 (global-leader
   "A"    (which-key-prefix :admin)
   "Ai"   'emacs-init-time
-  "Au"   'emacs-uptime)
+  "Au"   'emacs-uptime
+  "Ap"   'proced)
 
 (global-leader
   "Cc"   'org-capture)
