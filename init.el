@@ -76,8 +76,8 @@
 ;; Profiling ========================================
 ;; ==================================================
 
-(setq use-package-verbose t
-      use-package-compute-statistics t)
+;; (setq use-package-verbose t
+;;       use-package-compute-statistics t)
 
 ;; General.el config ================================
 ;; ==================================================
@@ -1547,6 +1547,7 @@
    (tuareg-mode  . eglot-ensure)
    (cpp-mode     . eglot-ensure)
    (c-mode       . eglot-ensure)
+   (c++-mode     . eglot-ensure)
    (csharp-mode  . eglot-ensure)
    (ql-tree-sitter-mode . eglot-ensure)
    (js-mode      . eglot-ensure)
@@ -3504,9 +3505,12 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; Direnv config ====================================
 ;; ==================================================
 
-(use-package direnv
- :config
- (direnv-mode))
+;; (use-package direnv
+;;  :config
+;;  (direnv-mode))
+
+(use-package envrc
+  :hook (after-init . envrc-global-mode))
 
 ;; OCaml config =====================================
 ;; ==================================================
@@ -5341,8 +5345,8 @@ set so that it clears the whole REPL buffer, not just the output."
   (setq custom-safe-themes t)
   (setq modus-themes-italic-constructs t
         modus-themes-bold-constructs nil)
-  (when terminal-p
-    (load-theme 'modus-vivendi t)))
+  (load-theme 'modus-operandi t)
+  (load-theme 'modus-vivendi t))
 
 (use-package doric-themes
   :defer t)
