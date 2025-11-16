@@ -1602,7 +1602,12 @@
 ;; C/C++ config =====================================
 ;; ==================================================
 
-;; (use-package)
+(use-package cmake-mode
+  :mode (("CMakeLists.txt" . cmake-mode)))
+
+(use-package cmake-integration
+  :straight (cmake-integration :type git :host github
+                               :repo "darcamo/cmake-integration"))
 
 ;; Python config ====================================
 ;; ==================================================
