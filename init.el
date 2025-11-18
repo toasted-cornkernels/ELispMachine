@@ -1325,11 +1325,6 @@
   (setq esup-user-init-file (file-truename "~/.emacs.d/init.el")
         esup-depth 0))
 
-;; Transient config =================================
-;; ==================================================
-
-(use-package transient :defer t)
-
 ;; macOS Settings ===================================
 ;; ==================================================
 
@@ -1352,26 +1347,26 @@
   (normal-mode-major-mode
     :major-modes '(launchctl-mode t)
     :keymaps     '(launchctl-mode-map)
-    "q" 'quit-window
-    "s" 'tabulated-list-sort
-    "g" 'launchctl-refresh
-    "n" 'launchctl-new
-    "e" 'launchctl-edit
-    "v" 'launchctl-view
-    "l" 'launchctl-load
-    "u" 'launchctl-unload
-    "r" 'launchctl-reload
-    "S" 'launchctl-start
-    "K" 'launchctl-stop
-    "R" 'launchctl-restart
-    "D" 'launchctl-remove
-    "d" 'launchctl-disable
-    "E" 'launchctl-enable
-    "i" 'launchctl-info
-    "f" 'launchctl-filter
-    "=" 'launchctl-setenv
-    "#" 'launchctl-unsetenv
-    "h" 'launchctl-help))
+    "q"          'quit-window
+    "s"          'tabulated-list-sort
+    "g"          'launchctl-refresh
+    "n"          'launchctl-new
+    "e"          'launchctl-edit
+    "v"          'launchctl-view
+    "l"          'launchctl-load
+    "u"          'launchctl-unload
+    "r"          'launchctl-reload
+    "S"          'launchctl-start
+    "K"          'launchctl-stop
+    "R"          'launchctl-restart
+    "D"          'launchctl-remove
+    "d"          'launchctl-disable
+    "E"          'launchctl-enable
+    "i"          'launchctl-info
+    "f"          'launchctl-filter
+    "="          'launchctl-setenv
+    "#"          'launchctl-unsetenv
+    "h"          'launchctl-help))
 
 (use-package osx-dictionary
   :if macOS-p
@@ -1443,16 +1438,16 @@
   (local-leader
     :major-modes '(prog-mode t)
     :keymaps     '(prog-mode-map)
-    "q"  '(which-key-prefix "quickrun")
-    "qq" 'quickrun
-    "qs" 'quickrun-select
-    "qr" 'quickrun-region
-    "qa" 'quickrun-with-arg
-    "q$" 'quickrun-shell
-    "qc" 'quickrun-compile-only
-    "qC" 'quickrun-compile-only-select
-    "qR" 'quickrun-replace-region
-    "qm" 'quickrun-autorun-mode))
+    "q"          '(which-key-prefix "quickrun")
+    "qq"         'quickrun
+    "qs"         'quickrun-select
+    "qr"         'quickrun-region
+    "qa"         'quickrun-with-arg
+    "q$"         'quickrun-shell
+    "qc"         'quickrun-compile-only
+    "qC"         'quickrun-compile-only-select
+    "qR"         'quickrun-replace-region
+    "qm"         'quickrun-autorun-mode))
 
 ;; Yasnippet config  ================================
 ;; ==================================================
