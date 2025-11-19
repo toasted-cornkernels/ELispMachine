@@ -1597,6 +1597,11 @@
 ;; C/C++ config =====================================
 ;; ==================================================
 
+(use-package cc-mode
+  :defer t
+  :config
+  (unbind-key "C-d" 'c++-mode-map))
+
 (use-package cmake-mode
   :mode (("CMakeLists.txt" . cmake-mode)))
 
