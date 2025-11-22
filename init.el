@@ -150,7 +150,8 @@
         delete-old-versions t
         kept-new-versions 6
         kept-old-versions 2
-        version-control t)
+        version-control t
+        insert-directory-program "gls")
   (auto-save-visited-mode 1))
 
 ;; Which-key configs ================================
@@ -4577,6 +4578,11 @@ set so that it clears the whole REPL buffer, not just the output."
   :config
   ;; Fix for dired in TRAMP environment
   (setq dired-kill-when-opening-new-dired-buffer t)
+
+  (when macOS-p
+    (setq insert-directory-program "gls"
+          dired-use-ls-dired t)
+    (setq dired-listing-switches "-al --group-directories-first"))
 
   (add-hook 'dired-mode-hook
             (lambda ()
