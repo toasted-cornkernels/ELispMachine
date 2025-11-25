@@ -6054,7 +6054,7 @@ removal."
   "ar"   (which-key-prefix :reader)
   "are"  'elfeed
 
-  "am"   (which-key-prefix "emms")
+  "am"   (which-key-prefix :emms)
   "amee" 'emms
   "ames" 'emms-pause
   "ameh" 'emms-previous
@@ -6063,7 +6063,23 @@ removal."
   "amel" 'emms-next
   "amed" 'emms-play-directory
   "amef" 'emms-play-file
-  "ameu" 'emms-play-url)
+  "ameu" 'emms-play-url
+
+  "ag"   (which-key-prefix :games)
+  "ag5"  '5x5
+  "agB"  'blackbox
+  "agS"  'solitaire
+  "agb"  'bubbles
+  "agc"  'cookie
+  "agd"  'doctor
+  "agf"  'fortune
+  "agg"  'gomoku
+  "agl"  'life
+  "agm"  'mpuz
+  "agp"  'animate
+  "agp"  'pong
+  "ags"  'snake
+  "agt"  'tetris)
 
 (global-leader
   "A"    (which-key-prefix :admin)
