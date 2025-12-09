@@ -6106,7 +6106,15 @@ removal."
   "agm"  'mpuz
   "agp"  'pong
   "ags"  'snake
-  "agt"  'tetris)
+  "agT"  'tetris
+
+  "agt"  (which-key-prefix "typing test")
+  "agtt" 'typit-test
+  "agtb" 'typit-basic-test
+  "agta" 'typit-advanced-test
+
+  "agtc" 'speed-type-buffer
+  "agtx" 'speed-type-text)
 
 (global-leader
   "A"    (which-key-prefix :admin)
@@ -6945,7 +6953,8 @@ removal."
 ;; ==================================================
 
 (use-package speed-type :defer t)
-(use-package typit :defer t)
+(use-package typit
+  :defer t)
 
 ;; Ledger ===========================================
 ;; ==================================================
