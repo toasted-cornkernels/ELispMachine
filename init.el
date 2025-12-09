@@ -4547,10 +4547,12 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; ==================================================
 
 (use-package rainbow-delimiters
-  :config
-  (define-globalized-minor-mode elispm/global-rainbow-delimiters-mode rainbow-delimiters-mode
-    (lambda () (rainbow-delimiters-mode 1)))
-  (elispm/global-rainbow-delimiters-mode 1))
+  :hook (prog-mode . rainbow-delimiters-mode)
+  ;; :config
+  ;; (define-globalized-minor-mode elispm/global-rainbow-delimiters-mode rainbow-delimiters-mode
+  ;;   (lambda () (rainbow-delimiters-mode 1)))
+  ;; (elispm/global-rainbow-delimiters-mode 1)
+  )
 
 ;; undo-tree config =================================
 ;; ==================================================
