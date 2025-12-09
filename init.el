@@ -476,7 +476,9 @@
     "kDw" 'evil-lisp-state-sp-backward-kill-word
     "kDx" 'evil-lisp-state-sp-backward-kill-sexp)
   :config
-  (setq evil-lisp-state-cursor '(hbar . 2)))
+  (setq evil-lisp-state-cursor '(hbar . 2))
+  (bind-key "C-g" 'evil-lisp-state/quit))
+
 
 ;; GPG config =======================================
 ;; ==================================================
@@ -6069,6 +6071,7 @@ removal."
   "ag5"  '5x5
   "agB"  'blackbox
   "agS"  'solitaire
+  "aga"  'animate
   "agb"  'bubbles
   "agc"  'cookie
   "agd"  'doctor
@@ -6076,7 +6079,6 @@ removal."
   "agg"  'gomoku
   "agl"  'life
   "agm"  'mpuz
-  "agp"  'animate
   "agp"  'pong
   "ags"  'snake
   "agt"  'tetris)
