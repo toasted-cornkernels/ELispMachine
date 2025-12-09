@@ -319,6 +319,25 @@
       (assert (and (= (length custom-enabled-themes) 1)
                    (eq (car custom-enabled-themes) target-theme-symbol))))))
 
+(use-package kurecolor :defer t)
+
+(use-package colorful-mode
+  :defer t
+  :config
+  (setq colorful-use-prefix nil
+        colorful-only-strings 'only-prog
+        css-fontify-colors t
+        colorful-extra-color-keyword-functions '(colorful-add-hex-colors
+                                                 ((html-mode css-mode emacs-lisp-mode)
+                                                  colorful-add-css-variables-colors
+                                                  colorful-add-rgb-colors
+                                                  colorful-add-hsl-colors
+                                                  colorful-add-oklab-oklch-colors
+                                                  colorful-add-color-names)
+                                                 (latex-mode . colorful-add-latex-colors)))
+  (global-colorful-mode t)
+  (add-to-list 'global-colorful-modes 'helpful-mode))
+
 ;; evil-mode config =================================
 ;; ==================================================
 
@@ -4525,7 +4544,11 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; rainbow delimiters config ========================
 ;; ==================================================
 
-(use-package rainbow-delimiters)
+(use-package rainbow-delimiters
+  :config
+  (define-globalized-minor-mode elispm/global-rainbow-delimiters-mode rainbow-delimiters-mode
+    (lambda () (rainbow-delimiters-mode 1)))
+  (elispm/global-rainbow-delimiters-mode 1))
 
 ;; undo-tree config =================================
 ;; ==================================================
