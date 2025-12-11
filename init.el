@@ -6069,6 +6069,7 @@ removal."
   "atru" 'utop
   "atrl" 'run-lua
   "atrh" 'run-hammerspoon
+  "atrH" 'run-hy
   "ats"  (which-key-prefix :shells)
   "atsa" 'async-shell-command
   "atst" 'multi-term
