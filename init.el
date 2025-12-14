@@ -5895,6 +5895,7 @@ removal."
   "fb"   (which-key-prefix :bookmarks)
   "fbM"	 'bookmark-set-no-overwrite
   "fbS"	 'bookmark-save
+  "fbb"	 'consult-bookmark
   "fbd"	 'bookmark-delete
   "fbe"	 'edit-bookmarks
   "fbf"	 'bookmark-insert-location
