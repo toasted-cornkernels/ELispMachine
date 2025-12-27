@@ -150,8 +150,9 @@
         delete-old-versions t
         kept-new-versions 6
         kept-old-versions 2
-        version-control t
-        insert-directory-program "gls")
+        version-control t)
+  (when macOS-p
+    (setq insert-directory-program "gls"))
   (auto-save-visited-mode 1))
 
 ;; Which-key configs ================================
