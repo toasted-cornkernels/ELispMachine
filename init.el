@@ -5885,7 +5885,6 @@ removal."
   "fA"  'find-file-other-frame
   "fF"  'find-file-other-window
   "fT"  'find-file-other-tab
-  "fb"  'consult-bookmark
   "fc"  'elispm/copy-this-file
   "fR"  'write-region
   "fi"  'insert-file
@@ -5893,6 +5892,23 @@ removal."
   "fE"  'elispm/sudo-edit
 
   ;; TODO: rename-current-buffer-file
+
+  "fb"   (which-key-prefix :bookmarks)
+  "fbM"	 'bookmark-set-no-overwrite
+  "fbS"	 'bookmark-save
+  "fbb"	 'consult-bookmark
+  "fbd"	 'bookmark-delete
+  "fbe"	 'edit-bookmarks
+  "fbf"	 'bookmark-insert-location
+  "fbg"	 'bookmark-jump
+  "fbi"	 'bookmark-insert
+  "fbj"	 'bookmark-jump
+  "fbl"	 'bookmark-load
+  "fbm"	 'bookmark-set
+  "fbo"	 'bookmark-jump-other-window
+  "fbr"	 'bookmark-rename
+  "fbs"	 'bookmark-set
+  "fbw"	 'bookmark-write
 
   "fd"  (which-key-prefix :delete)
   "fdc" 'elispm/delete-current-buffer-file
@@ -5919,9 +5935,9 @@ removal."
 
   "fe"  (which-key-prefix :emacs)
   "fed" 'visit-init-dot-el
-  "feR" 'eval-init-dot-el
+  "feR" 'eval-init-dot-el)
 
-  "o"   'find-file)
+"o"   'find-file
 
 (global-leader
   "b"  (which-key-prefix :buffer)
@@ -6070,6 +6086,7 @@ removal."
   "atru" 'utop
   "atrl" 'run-lua
   "atrh" 'run-hammerspoon
+  "atrH" 'run-hy
   "ats"  (which-key-prefix :shells)
   "atsa" 'async-shell-command
   "atst" 'multi-term
@@ -6107,7 +6124,15 @@ removal."
   "agm"  'mpuz
   "agp"  'pong
   "ags"  'snake
-  "agt"  'tetris)
+  "agT"  'tetris
+
+  "agt"  (which-key-prefix "typing test")
+  "agtt" 'typit-test
+  "agtb" 'typit-basic-test
+  "agta" 'typit-advanced-test
+
+  "agtc" 'speed-type-buffer
+  "agtx" 'speed-type-text)
 
 (global-leader
   "A"    (which-key-prefix :admin)
@@ -6618,21 +6643,22 @@ removal."
 (use-package nov
   :defer t
   :mode ("\\.epub\\'" . nov-mode)
+  :hook (nov-mode . (lambda () (setq line-spacing 0.3)))
   :config
   (normal-mode-major-mode
     :major-modes '(nov-mode t)
     :keymaps     '(nov-mode-map)
-    "H"  'nov-previous-document
-    "L"  'nov-next-document
-    "d"  'nov-scroll-up
-    "u"  'nov-scroll-down
-    "J"  'nov-scroll-up
-    "K"  'nov-scroll-down
-    "gm" 'nov-display-metadata
-    "gr" 'nov-render-document
-    "gt" 'nov-goto-toc
-    "gv" 'nov-view-source
-    "gV" 'nov-view-content-source))
+    "H"          'nov-previous-document
+    "L"          'nov-next-document
+    "d"          'nov-scroll-up
+    "u"          'nov-scroll-down
+    "J"          'nov-scroll-up
+    "K"          'nov-scroll-down
+    "gm"         'nov-display-metadata
+    "gr"         'nov-render-document
+    "gt"         'nov-goto-toc
+    "gv"         'nov-view-source
+    "gV"         'nov-view-content-source))
 
 ;; reddigg config ===================================
 ;; ==================================================
@@ -6946,7 +6972,8 @@ removal."
 ;; ==================================================
 
 (use-package speed-type :defer t)
-(use-package typit :defer t)
+(use-package typit
+  :defer t)
 
 ;; Ledger ===========================================
 ;; ==================================================
