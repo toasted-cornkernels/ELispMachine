@@ -3599,68 +3599,68 @@ set so that it clears the whole REPL buffer, not just the output."
   (local-leader
     :major-modes '(tuareg-mode t)
     :keymaps     '(tuareg-mode-map)
-    "'"  'utop
-    "`"  'tuareg-run-ocaml
-    "k"  'tuareg-kill-ocaml
-    "="  'ocamlformat
-
-    "E"  (which-key-prefix :errors)
-    "Ec" 'merlin-error-check
-    "En" 'merlin-error-next
-    "EN" 'merlin-error-prev
-
-    "g"  (which-key-prefix :goto)
-    "ga" 'tuareg-find-alternate-file
-    "gb" 'merlin-pop-stack
-    "gG" 'merlin-locate-other-window
-    "gl" 'merlin-locate-ident
-    "gi" 'merlin-switch-to-ml
-    "gI" 'merlin-switch-to-mli
-    "go" 'merlin-occurrences
-    "gn" 'tuareg-interactive-next-error-source
-    "gN" 'tuareg-interactive-next-error-repl
-    "g[" 'ocaml-open-module
-    "g]" 'ocaml-close-module
-
-    "h"  (which-key-prefix :help)
-    "hh" 'merlin-document
-    "ht" 'merlin-type-enclosing
-    "hT" 'merlin-type-expr
-
-    "r"  (which-key-prefix :refactor)
-    "rd" 'merlin-destruct
-    "re" 'merlin-iedit-occurrences
-
-    "c"  (which-key-prefix :compile/check)
-    "cc" 'compile
-
-    "t"  (which-key-prefix :test)
-    "tP" 'dune-promote
-    "tp" 'dune-runtest-and-promote
-
-    "s"  (which-key-prefix :send)
-    "sb" 'utop-eval-buffer
-    "sB" 'utop-eval-buffer-and-go
-    "si" 'utop
-    "sp" 'utop-eval-phrase
-    "sP" 'utop-eval-phrase-and-go
-    "sr" 'utop-eval-region
-    "sR" 'utop-eval-region-and-go
-
-    "e"  (which-key-prefix :eval)
-    "eb" 'tuareg-eval-buffer
-    "ep" 'tuareg-eval-phrase
-    "er" 'tuareg-eval-region
-
-    "i"  (which-key-prefix :insert)
-    "ib" 'tuareg-insert-begin-form
-    "ic" 'tuareg-insert-class-form
-    "if" 'tuareg-insert-for-form
-    "ii" 'tuareg-insert-if-form
-    "il" 'tuareg-insert-let-form
-    "im" 'tuareg-insert-match-form
-    "it" 'tuareg-insert-try-form
-    "iw" 'tuareg-insert-while-form))
+    "'"          'utop
+    "`"          'tuareg-run-ocaml
+    "k"          'tuareg-kill-ocaml
+    "="          'ocamlformat
+                 
+    "E"          (which-key-prefix :errors)
+    "Ec"         'merlin-error-check
+    "En"         'merlin-error-next
+    "EN"         'merlin-error-prev
+                 
+    "g"          (which-key-prefix :goto)
+    "ga"         'tuareg-find-alternate-file
+    "gb"         'merlin-pop-stack
+    "gG"         'merlin-locate-other-window
+    "gl"         'merlin-locate-ident
+    "gi"         'merlin-switch-to-ml
+    "gI"         'merlin-switch-to-mli
+    "go"         'merlin-occurrences
+    "gn"         'tuareg-interactive-next-error-source
+    "gN"         'tuareg-interactive-next-error-repl
+    "g["         'ocaml-open-module
+    "g]"         'ocaml-close-module
+                 
+    "h"          (which-key-prefix :help)
+    "hh"         'merlin-document
+    "ht"         'merlin-type-enclosing
+    "hT"         'merlin-type-expr
+                 
+    "r"          (which-key-prefix :refactor)
+    "rd"         'merlin-destruct
+    "re"         'merlin-iedit-occurrences
+                 
+    "c"          (which-key-prefix :compile/check)
+    "cc"         'compile
+                 
+    "t"          (which-key-prefix :test)
+    "tP"         'dune-promote
+    "tp"         'dune-runtest-and-promote
+                 
+    "s"          (which-key-prefix :send)
+    "sb"         'utop-eval-buffer
+    "sB"         'utop-eval-buffer-and-go
+    "si"         'utop
+    "sp"         'utop-eval-phrase
+    "sP"         'utop-eval-phrase-and-go
+    "sr"         'utop-eval-region
+    "sR"         'utop-eval-region-and-go
+                 
+    "e"          (which-key-prefix :eval)
+    "eb"         'tuareg-eval-buffer
+    "ep"         'tuareg-eval-phrase
+    "er"         'tuareg-eval-region
+                 
+    "i"          (which-key-prefix :insert)
+    "ib"         'tuareg-insert-begin-form
+    "ic"         'tuareg-insert-class-form
+    "if"         'tuareg-insert-for-form
+    "ii"         'tuareg-insert-if-form
+    "il"         'tuareg-insert-let-form
+    "im"         'tuareg-insert-match-form
+    "it"         'tuareg-insert-try-form
+    "iw"         'tuareg-insert-while-form))
 
 (use-package utop
   :after tuareg
