@@ -5696,7 +5696,10 @@ set so that it clears the whole REPL buffer, not just the output."
   "Spb" 'straight-rebuild-package
   "SpB" 'straight-rebuild-all
   "Spv" 'straight-visit-package
-  "SpV" 'straight-visit-package-website)
+  "SpV" 'straight-visit-package-website
+
+  "Sr"  (which-key-prefix :repositories)
+  "Srp" 'straight-pull-recipe-repositories)
 
 (global-leader
   "w"  (which-key-prefix :window)
