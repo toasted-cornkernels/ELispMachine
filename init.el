@@ -5943,7 +5943,7 @@ removal."
   "b"  (which-key-prefix :buffer)
   "bd" 'kill-current-buffer
   "bb" 'consult-buffer
-  "bB" 'consult-buffer-other-tab
+  "bB" 'ibuffer
   "bp" 'previous-buffer
   "br" 'rename-buffer
   "bn" 'next-buffer
