@@ -1578,8 +1578,7 @@
   (local-leader
     :keymaps '(eglot-mode-map)
     "a"      (which-key-prefix "LSP")
-    "aa"     'eglot-code-actions
-    "r"      'eglot-rename)
+    "aa"     'eglot-code-actions)
 
   (normal-mode-major-mode
     :keymaps '(eglot-mode-map)
@@ -3702,111 +3701,112 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; ==================================================
 
 (use-package rustic
-  :mode ("\\.rs\\'" . rustic-mode)
+  :mode ("\\.rs$" . rustic-mode)
   :hook (rustic-mode . (lambda () (setq indent-tabs-mode nil)))
   :config
   (setq rustic-lsp-client 'eglot
         rustic-lsp-server 'rust-analyzer)
+  (setq auto-mode-alist (delete '("\\.rs\\'" . rust-mode) auto-mode-alist))
   (evil-set-initial-state 'rustic-popup-mode 'motion)
   (add-to-list 'eglot-server-programs
                '((rustic-mode) .
                  ("rust-analyzer" :initializationOptions (:check (:command "clippy")))))
-  :general-config
+  :general
   (local-leader
     :major-modes '(rustic-mode t)
     :keymaps     '(rustic-mode-map)
-    "o"   'rustic-cargo-outdated
-    "p"   'rustic-popup
-    "!"   'rustic-run-shell-command
-
-    "b"   (which-key-prefix "babel")
-    "bc"  'rustic-babel-clippy
-    "bf"  'rustic-babel-format-block
-    "bh"  'rustic-babel-header-insert-crates
-    "bm"  'rustic-babel-visit-project
-
-    "C"   (which-key-prefix "cargo")
-    "C!"  'rustic-cargo-init
-    "CC"  'rustic-cargo-clean
-    "CD"  'rustic-cargo-build-doc
-    "CL"  'rustic-cargo-login
-    "CU"  'rustic-cargo-upgrade
-    "CX"  'rustic-cargo-rm
-    "Ca"  'rustic-cargo-add
-    "Cc"  'rustic-cargo-build
-    "Cd"  'rustic-cargo-doc
-    "Ce"  'rustic-cargo-bench
-    "Cl"  'rustic-cargo-lints
-    "Cm"  'rustic-cargo-add-missing-dependencies
-    "Cn"  'rustic-cargo-new
-    "Co"  'rustic-cargo-outdated
-    "Cs"  'rustic-doc-search
-    "Cu"  'rustic-cargo-update
-    "Cv"  'rustic-cargo-check
-
-    "i"   (which-key-prefix "install")
-    "ii"  'rustic-cargo-install
-    "iI"  'rustic-cargo-install-rerun
-
-    "l"   (which-key-prefix "clippy")
-    "lL"  'rustic-cargo-clippy-rerun
-    "ll"  'rustic-cargo-clippy
-    "lr"  'rustic-cargo-clippy-run
-    "lf"  'rustic-cargo-clippy-fix
-
-    "c"   (which-key-prefix "compile")
-    "cc"  'rustic-compile
-    "cC"  'rustic-recompile
-    "ci"  'rustic-compile-send-input
-
-    "d"   (which-key-prefix "docs")
-    "ds"  'rustic-doc-search
-    "dd"  'rustic-doc-dumb-search
-    "dS"  'rustic-doc-setup
-    "dc"  'rustic-doc-convert-current-package
-
-    "e"   (which-key-prefix "macroexpand")
-    "ee"  'rustic-cargo-expand
-    "ec"  'rustic-cargo-expand-command
-
-    "r"   (which-key-prefix "run")
-    "rr"  'rustic-cargo-run
-    "rR"  'rustic-cargo-run-rerun
-    "ri"  'rustic-cargo-comint-run
-    "rI"  'rustic-cargo-comint-run-rerun
-    "rp"  'rustic-cargo-plain-run
-
-    "t"   (which-key-prefix "tests")
-    "tr"  'rustic-cargo-test
-    "ta"  'rustic-cargo-test-run
-    "tc"  'rustic-cargo-current-test
-    "tR"  'rustic-cargo-test-rerun
-    "t."  'rustic-cargo-test-rerun-current
-    "tt"  'rustic-cargo-test-dwim
-
-    "p"   (which-key-prefix "playground")
-    "pp"  'rustic-playground
-    "pb"  'rustic-playground-buffer
-
-    "e"   (which-key-prefix "edit")
-    "ed"  'rustic-docstring-dwim
-    "et"  'rustic-open-dependency-file
-    "ef"  'rustic-beginning-of-defun
-
-    "F"   (which-key-prefix "fix")
-    "FF"  'rustic-rustfix
-
-    "S"   (which-key-prefix "spellcheck")
-    "SS"  'rustic-cargo-spellcheck
-    "SR"  'rustic-cargo-spellcheck-rerun
-
-    "f"   (which-key-prefix "format")
-    "fB"  'rustic-babel-format-block
-    "f="  'rustic-format-file
-    "fb"  'rustic-format-buffer
-    "fc"  'rustic-cargo-fmt
-    "ff"  'rustic-format-dwim
-    "fr"  'rustic-format-region))
+    "o"          'rustic-cargo-outdated
+    "p"          'rustic-popup
+    "!"          'rustic-run-shell-command
+                 
+    "b"          (which-key-prefix "babel")
+    "bc"         'rustic-babel-clippy
+    "bf"         'rustic-babel-format-block
+    "bh"         'rustic-babel-header-insert-crates
+    "bm"         'rustic-babel-visit-project
+                 
+    "C"          (which-key-prefix "cargo")
+    "C!"         'rustic-cargo-init
+    "CC"         'rustic-cargo-clean
+    "CD"         'rustic-cargo-build-doc
+    "CL"         'rustic-cargo-login
+    "CU"         'rustic-cargo-upgrade
+    "CX"         'rustic-cargo-rm
+    "Ca"         'rustic-cargo-add
+    "Cc"         'rustic-cargo-build
+    "Cd"         'rustic-cargo-doc
+    "Ce"         'rustic-cargo-bench
+    "Cl"         'rustic-cargo-lints
+    "Cm"         'rustic-cargo-add-missing-dependencies
+    "Cn"         'rustic-cargo-new
+    "Co"         'rustic-cargo-outdated
+    "Cs"         'rustic-doc-search
+    "Cu"         'rustic-cargo-update
+    "Cv"         'rustic-cargo-check
+                 
+    "i"          (which-key-prefix "install")
+    "ii"         'rustic-cargo-install
+    "iI"         'rustic-cargo-install-rerun
+                 
+    "l"          (which-key-prefix "clippy")
+    "lL"         'rustic-cargo-clippy-rerun
+    "ll"         'rustic-cargo-clippy
+    "lr"         'rustic-cargo-clippy-run
+    "lf"         'rustic-cargo-clippy-fix
+                 
+    "c"          (which-key-prefix "compile")
+    "cc"         'rustic-compile
+    "cC"         'rustic-recompile
+    "ci"         'rustic-compile-send-input
+                 
+    "d"          (which-key-prefix "docs")
+    "ds"         'rustic-doc-search
+    "dd"         'rustic-doc-dumb-search
+    "dS"         'rustic-doc-setup
+    "dc"         'rustic-doc-convert-current-package
+                 
+    "e"          (which-key-prefix "macroexpand")
+    "ee"         'rustic-cargo-expand
+    "ec"         'rustic-cargo-expand-command
+                 
+    "r"          (which-key-prefix "run")
+    "rr"         'rustic-cargo-run
+    "rR"         'rustic-cargo-run-rerun
+    "ri"         'rustic-cargo-comint-run
+    "rI"         'rustic-cargo-comint-run-rerun
+    "rp"         'rustic-cargo-plain-run
+                 
+    "t"          (which-key-prefix "tests")
+    "tr"         'rustic-cargo-test
+    "ta"         'rustic-cargo-test-run
+    "tc"         'rustic-cargo-current-test
+    "tR"         'rustic-cargo-test-rerun
+    "t."         'rustic-cargo-test-rerun-current
+    "tt"         'rustic-cargo-test-dwim
+                 
+    "p"          (which-key-prefix "playground")
+    "pp"         'rustic-playground
+    "pb"         'rustic-playground-buffer
+                 
+    "e"          (which-key-prefix "edit")
+    "ed"         'rustic-docstring-dwim
+    "et"         'rustic-open-dependency-file
+    "ef"         'rustic-beginning-of-defun
+                 
+    "F"          (which-key-prefix "fix")
+    "FF"         'rustic-rustfix
+                 
+    "S"          (which-key-prefix "spellcheck")
+    "SS"         'rustic-cargo-spellcheck
+    "SR"         'rustic-cargo-spellcheck-rerun
+                 
+    "f"          (which-key-prefix "format")
+    "fB"         'rustic-babel-format-block
+    "f="         'rustic-format-file
+    "fb"         'rustic-format-buffer
+    "fc"         'rustic-cargo-fmt
+    "ff"         'rustic-format-dwim
+    "fr"         'rustic-format-region))
 
 (use-package toml-mode
   :mode (("/\\(Cargo.lock\\|\\.cargo/config\\)\\'" . toml-mode)
@@ -4724,9 +4724,9 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; =================================================
 
 (use-package csv-mode
-  :mode ((".csv" . csv-mode)
-         (".expected" . csv-mode)
-         (".actual" . csv-mode))
+  :mode (("\\.csv\\'" . csv-mode)
+         ("\\.expected\\'" . csv-mode)
+         ("\\.actual\\'" . csv-mode))
   :general-config
   (local-leader
     :major-modes '(csv-mode t)
