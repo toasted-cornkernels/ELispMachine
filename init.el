@@ -5569,7 +5569,9 @@ set so that it clears the whole REPL buffer, not just the output."
   "C-x C-b" 'ibuffer)
 
 (agnostic-key
-  "C-=" 'eglot-format-buffer)
+  :major-modes '(eglot-mode t)
+  :keymaps     '(eglot-mode-map)
+  "C-="        'eglot-format-buffer)
 
 (agnostic-key
   "s-<wheel-up>" 'text-scale-increase
