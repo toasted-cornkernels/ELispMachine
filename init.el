@@ -3815,7 +3815,19 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (use-package pest-mode
   :mode "\\.pest\\'"
-  :hook (pest-mode . flymake-mode))
+  :hook (pest-mode . flymake-mode)
+  :general-config
+  (local-leader
+    :major-modes '(pest-mode t)
+    :keymaps     '(pest-mode-map)
+    "="          'pest-indent-line
+    "i"          'pest-test-grammar
+    "t"          'pest-test-grammar)
+  (local-leader
+    :major-modes '(pest-input-mode t)
+    :keymaps     '(pest-input-mode-map)
+    "a"          'pest-analyze-input
+    "r"          'pest-select-rule))
 
 ;; Golang config ====================================
 ;; ==================================================
