@@ -3517,7 +3517,7 @@ set so that it clears the whole REPL buffer, not just the output."
   :mode "\\.nix\\'"
   :config
   (add-to-list 'eglot-server-programs
-               '((nix-mode nix-ts-mode) . ("nixd" "nil")))
+               '((nix-mode nix-ts-mode) . ("nixd")))
   (setq nix-repl-executable-args '("repl" "--expr" "import <nixpkgs> {}")))
 
 (use-package nix-modeline
@@ -3812,6 +3812,10 @@ set so that it clears the whole REPL buffer, not just the output."
   :mode (("/\\(Cargo.lock\\|\\.cargo/config\\)\\'" . toml-mode)
          ("\\.toml\\'" . toml-mode)
          ("poetry.lock" . toml-mode)))
+
+(use-package pest-mode
+  :mode "\\.pest\\'"
+  :hook (pest-mode . flymake-mode))
 
 ;; Golang config ====================================
 ;; ==================================================
@@ -4419,6 +4423,7 @@ set so that it clears the whole REPL buffer, not just the output."
 
   (add-to-list 'exec-path "/nix/var/nix/profiles/default/bin")
   (add-to-list 'exec-path (expand-file-name "~/.nix-profile/bin"))
+  (add-to-list 'exec-path (expand-file-name "~/.cargo/bin"))
   (add-to-list 'exec-path (concat "/etc/profiles/per-user/" (user-login-name) "/bin")))
 
 (use-package orderless
