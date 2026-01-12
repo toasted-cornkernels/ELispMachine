@@ -6196,28 +6196,28 @@ removal."
   "Hp"   'helpful-at-point)
 
 (global-leader
-  "p"  (which-key-prefix "project")
-  "p!" 'project-shell-command
-  "p&" 'project-async-shell-command
-  "p%" 'project-query-replace-regexp
-  "pa" 'project-remember-project
-  "pA" 'project-remember-project-under
-  "pb" 'project-switch-to-buffer
-  "pc" 'project-compile
-  "pC" 'project-recompile
-  "pd" 'project-forget-project
-  "pD" 'project-forget-zombie-projects
-  "pu" 'project-any-command
-  "pD" 'project-dired
-  "pe" 'project-customize-dirlocals
-  "pf" 'project-find-file
-  "pF" 'project-or-external-find-file
-  "pg" 'project-find-regexp
-  "pG" 'project-or-external-find-regexp
-  "pk" 'project-kill-buffers
-  "pp" 'project-switch-project
-  "ps" 'project-save-some-buffers
-  "pv" 'project-vs-dir)
+  "p"    (which-key-prefix "projectile")
+  "p!"   'projectile-run-shell-command-in-root
+  "p%"   'projectile-replace-regexp
+  "p&"   'projectile-run-async-shell-command-in-root
+  "p/"   'projectile-ripgrep
+  "pB"   'projectile-ibuffer
+  "pd"   'projectile-dired
+  "px"   'projectile-remove-current-project-from-known-projects
+  "pF"   'projectile-find-file-dwim
+  "pa"   'projectile-add-known-project
+  "pb"   'projectile-switch-to-buffer
+  "pc"   'projectile-compile-project
+  "pd"   'projectile-remove-known-project
+  "pe"   'projectile-edit-dir-locals
+  "pf"   'projectile-find-file
+  "pg"   'projectile-ripgrep
+  "pk"   'projectile-kill-buffers
+  "pp"   'projectile-switch-project
+  "pR"   'projectile-replace-regexp
+  "pr"   'projectile-run-project
+  "ps"   'projectile-save-known-projects
+  "pv"   'projectile-vs-dir)
 
 (defun insert-lambda ()
   "Insert λ."
