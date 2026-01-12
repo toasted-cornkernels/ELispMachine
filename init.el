@@ -4750,6 +4750,12 @@ set so that it clears the whole REPL buffer, not just the output."
     "t"  'csv-transpose
     "u"  'csv-unalign-fields))
 
+(use-package rainbow-csv
+  :straight (rainbow-csv :host github
+                         :repo "emacs-vs/rainbow-csv")
+  :hook ((csv-mode . rainbow-csv-mode)
+         (tsv-mode . rainbow-csv-mode)))
+
 ;; kotlin config ===================================
 ;; =================================================
 
@@ -5978,17 +5984,22 @@ removal."
          (switch-to-buffer "*scratch*")))
 
 (global-leader
-  "."  'tab-new
-  ","  'tab-close
-  "["  'tab-previous
-  "]"  'tab-next
-  "{"  'tab-move-previous
-  "}"  'tab-move
-  "/"  'flymake-goto-next-error
-  "\\" 'flymake-goto-prev-error)
+  "."    'tab-new
+  ","    'tab-close
+  "["    'tab-previous
+  "]"    'tab-next
+  "{"    'tab-move-previous
+  "}"    'tab-move
+  "/"    'flymake-goto-next-error
+  "\\"   'flymake-goto-prev-error)
 
 (global-leader
-  "l"   (which-key-prefix :lang-tools))
+  "l"    (which-key-prefix :lang-tools)
+  "lm"   (which-key-prefix :major-modes)
+  "lmc"  'c++-mode
+  "lmr"  'rustic-mode
+  "lmo"  'org-mode
+  "lmm"  'gfm-mode)
 
 (global-leader
   "y"   (which-key-prefix :yank))
@@ -6224,7 +6235,7 @@ removal."
   "pR"   'projectile-replace-regexp
   "pr"   'projectile-run-project
   "ps"   'projectile-save-known-projects
-  "pv"   'projectile-vs-dir)
+  "pv"   'projectile-vc)
 
 (defun insert-lambda ()
   "Insert λ."
