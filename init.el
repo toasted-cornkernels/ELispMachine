@@ -5917,6 +5917,7 @@ removal."
   "fb"   (which-key-prefix :bookmarks)
   "fbM"	 'bookmark-set-no-overwrite
   "fbS"	 'bookmark-save
+  "fba"	 'bookmark-set
   "fbb"	 'consult-bookmark
   "fbd"	 'bookmark-delete
   "fbe"	 'edit-bookmarks
@@ -6205,6 +6206,7 @@ removal."
   "p!"   'projectile-run-shell-command-in-root
   "p%"   'projectile-replace-regexp
   "p&"   'projectile-run-async-shell-command-in-root
+  "p$"   'projectile-run-vterm
   "p/"   'projectile-ripgrep
   "pB"   'projectile-ibuffer
   "pd"   'projectile-dired
