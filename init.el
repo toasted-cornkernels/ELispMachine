@@ -5987,8 +5987,14 @@ removal."
   "\\" 'flymake-goto-prev-error)
 
 (global-leader
+  "l"   (which-key-prefix :lang-tools))
+
+(global-leader
+  "y"   (which-key-prefix :yank))
+
+(global-leader
   "g"   (which-key-prefix :git)
-  "gb"  'magit-blame     ; 'git-blame-transient-state/body
+  "gb"  'magit-blame
 
   "gf"  (which-key-prefix :file)
   "gfF" 'magit-find-file
