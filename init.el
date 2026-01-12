@@ -1546,6 +1546,11 @@
   ;; below defalias is not working...
   (defalias 'codeql-mode 'ql-tree-sitter-mode))
 
+(use-package souffle-mode
+  :straight (souffle-mode :host github
+                          :repo "souffle-lang/souffle-mode")
+  :defer t)
+
 ;; Codespaces config ================================
 ;; ==================================================
 
@@ -4754,7 +4759,8 @@ set so that it clears the whole REPL buffer, not just the output."
   :straight (rainbow-csv :host github
                          :repo "emacs-vs/rainbow-csv")
   :hook ((csv-mode . rainbow-csv-mode)
-         (tsv-mode . rainbow-csv-mode)))
+         (tsv-mode . rainbow-csv-mode))
+  :defer t)
 
 ;; kotlin config ===================================
 ;; =================================================
@@ -6537,6 +6543,7 @@ removal."
   :defer t
   :if (not chromeOS-p)
   :mode (("\\.pdf\\'" . pdf-view-mode))
+  :hook (pdf-view-mode-hook . hide-mode-line-mode)
   :general-config
   (local-leader
     :major-modes '(pdf-view-mode t)
