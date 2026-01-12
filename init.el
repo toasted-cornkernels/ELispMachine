@@ -6154,9 +6154,8 @@ removal."
   "agT"  'tetris
 
   "agt"  (which-key-prefix "typing test")
-  "agtt" 'typit-test
+  "agtt" 'typit-advanced-test
   "agtb" 'typit-basic-test
-  "agta" 'typit-advanced-test
 
   "agtc" 'speed-type-buffer
   "agtx" 'speed-type-text)
