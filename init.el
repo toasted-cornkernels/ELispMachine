@@ -5963,15 +5963,16 @@ removal."
   "fgg" 'consult-git-grep
 
   "fr"  'consult-recent-file
+  "fR"  'rename-visited-file
   "fj"  'dired-jump
   "fF"  'find-name-dired
   "fG"  'find-grep-dired
 
   "fe"  (which-key-prefix :emacs)
   "fed" 'visit-init-dot-el
-  "feR" 'eval-init-dot-el)
+  "feR" 'eval-init-dot-el
 
-"o"   'find-file
+  "o" 'find-file)
 
 (global-leader
   "b"  (which-key-prefix :buffer)
