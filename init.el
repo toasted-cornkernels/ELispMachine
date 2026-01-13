@@ -1337,7 +1337,7 @@
 (use-package ox-pandoc
   :defer t
   :config
-  (setq org-pandoc-options-for-gfm '((wrap . none) (toc . t))))
+  (setq org-pandoc-options-for-gfm '((wrap . none) (toc . n))))
 
 ;; Esup config ======================================
 ;; ==================================================
