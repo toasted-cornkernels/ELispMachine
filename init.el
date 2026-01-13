@@ -2020,6 +2020,12 @@
 (use-package imenu-list
   :after imenu)
 
+;; Dump-jump ========================================
+;; ==================================================
+
+(use-package dumb-jump
+  :defer t)
+
 ;; Lisp config ======================================
 ;; ==================================================
 
@@ -6005,7 +6011,17 @@ removal."
   "lmc"  'c++-mode
   "lmr"  'rustic-mode
   "lmo"  'org-mode
-  "lmm"  'gfm-mode)
+  "lmm"  'gfm-mode
+
+  "ld"   (which-key-prefix :dumb-jump)
+  "ldj"  'dumb-jump-go
+  "ldd"  'dumb-jump-go
+  "ldo"  'dumb-jump-go-other-window
+  "lde"  'dumb-jump-go-prefer-external
+  "ldO"  'dumb-jump-go-prefer-external-other-window
+  "ldp"  'dumb-jump-go-prompt
+  "ldl"  'dumb-jump-quick-look
+  "ldb"  'dumb-jump-back)
 
 (global-leader
   "y"   (which-key-prefix :yank))
