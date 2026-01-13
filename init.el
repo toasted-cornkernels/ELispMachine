@@ -6239,7 +6239,7 @@ removal."
   "p!"   'projectile-run-shell-command-in-root
   "p%"   'projectile-replace-regexp
   "p&"   'projectile-run-async-shell-command-in-root
-  "p$"   'projectile-run-vterm
+  "p$"   'projectile-run-vterm-other-window
   "p/"   'projectile-ripgrep
   "pB"   'projectile-ibuffer
   "pd"   'projectile-dired
@@ -6251,13 +6251,13 @@ removal."
   "pd"   'projectile-remove-known-project
   "pe"   'projectile-edit-dir-locals
   "pf"   'projectile-find-file
-  "pg"   'projectile-ripgrep
+  "pg"   'projectile-vc
   "pk"   'projectile-kill-buffers
   "pp"   'projectile-switch-project
   "pR"   'projectile-replace-regexp
   "pr"   'projectile-run-project
   "ps"   'projectile-save-known-projects
-  "pv"   'projectile-vc)
+  "pv"   'projectile-run-vterm)
 
 (defun insert-lambda ()
   "Insert λ."
