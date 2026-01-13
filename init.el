@@ -4504,9 +4504,8 @@ set so that it clears the whole REPL buffer, not just the output."
 
   (define-key consult-narrow-map (vconcat consult-narrow-key "?") #'consult-narrow-help)
 
-  ;; (autoload 'projectile-project-root "projectile")
-  ;; (setq consult-project-function (lambda (_) (projectile-project-root)))
-  )
+  (autoload 'projectile-project-root "projectile")
+  (setq consult-project-function (lambda (_) (projectile-project-root))))
 
 ;; Company config ===================================
 ;; ==================================================
