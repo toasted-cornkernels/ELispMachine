@@ -6279,7 +6279,7 @@ removal."
   "pp"   'projectile-switch-project
   "pR"   'projectile-replace-regexp
   "pr"   'projectile-run-project
-  "ps"   'projectile-save-known-projects
+  "ps"   'projectile-save-project-buffers
   "pv"   'projectile-run-vterm)
 
 (defun insert-lambda ()
