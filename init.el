@@ -336,7 +336,7 @@
                                                   colorful-add-oklab-oklch-colors
                                                   colorful-add-color-names)
                                                  (latex-mode . colorful-add-latex-colors)))
-  (global-colorful-mode t)
+  (global-colorful-mode)
   (add-to-list 'global-colorful-modes 'helpful-mode))
 
 ;; evil-mode config =================================
@@ -1494,7 +1494,8 @@
 ;; ==================================================
 
 (use-package emacs-codeql
-  :mode ("\\.qll?\\'" . ql-tree-sitter-mode)
+  :mode (("\\.qll?\\'" . ql-tree-sitter-mode)
+         ("\\.dil\\'" . ql-tree-sitter-mode))
   :hook (ql-tree-sitter-mode . (lambda ()
                                  (setq indent-tabs-mode nil)))
   :straight
@@ -1583,7 +1584,10 @@
   (local-leader
     :keymaps '(eglot-mode-map)
     "a"      (which-key-prefix "LSP")
-    "aa"     'eglot-code-actions)
+    "aa"     'eglot-code-actions
+    "as"     'consult-eglot-symbols
+    "at"     'eglot-show-type-hierarchy
+    "ac"     'eglot-show-call-hierarchy)
 
   (normal-mode-major-mode
     :keymaps '(eglot-mode-map)
@@ -1605,7 +1609,11 @@
   :config (eglot-x-setup))
 
 (use-package consult-eglot
-  :after eglot)
+  :after eglot
+  :general-config
+  (local-leader
+    :keymaps '(eglot-mode-map)
+    "as"     'consult-eglot-symbols))
 
 ;; Shell config =====================================
 ;; ==================================================
@@ -1627,7 +1635,15 @@
 (use-package cc-mode
   :defer t
   :config
-  (unbind-key "C-d" 'c++-mode-map))
+  (unbind-key "C-d" 'c-mode-map)
+  (unbind-key "C-d" 'c++-mode-map)
+  :general-config
+  (local-leader
+    :major-modes '(c-mode c++-mode t)
+    :keymaps     '(c-mode-map c++-mode-map)
+    "g"          (which-key-prefix "goto")
+    "ga"         'ff-find-other-file
+    "gA"         'ff-find-other-file-other-window))
 
 (use-package cmake-mode
   :mode (("CMakeLists.txt" . cmake-mode)))
@@ -4447,7 +4463,11 @@ set so that it clears the whole REPL buffer, not just the output."
   (add-to-list 'exec-path "/nix/var/nix/profiles/default/bin")
   (add-to-list 'exec-path (expand-file-name "~/.nix-profile/bin"))
   (add-to-list 'exec-path (expand-file-name "~/.cargo/bin"))
-  (add-to-list 'exec-path (concat "/etc/profiles/per-user/" (user-login-name) "/bin")))
+  (add-to-list 'exec-path (concat "/etc/profiles/per-user/" (user-login-name) "/bin"))
+
+  (when macOS-p
+    (add-to-list 'default-frame-alist '(fullscreen . fullboth))
+    (setq ns-use-native-fullscreen t)))
 
 (use-package orderless
   :init
@@ -5423,7 +5443,10 @@ set so that it clears the whole REPL buffer, not just the output."
 (use-package doric-themes
   :defer t)
 
-(use-package tron-legacy-theme :defer t)
+(use-package tron-legacy-theme
+  :defer t
+  :custom-face
+  (org-block ((t (:foreground "#BBCCDD" :backgrdoun "#000000")))))
 
 (use-package auto-dark
   :when (not (or chromeOS-p android-p terminal-p))
