@@ -5499,6 +5499,11 @@ set so that it clears the whole REPL buffer, not just the output."
           ("UNSURE"  . "#cc9393")
           ("WORKAROUND"    . "#d0bf8f"))))
 
+(use-package bloomberg-emacs            ; STONKS!
+  :straight (bloomberg-emacs :host github :repo "iopanio/bloomberg-emacs")
+  :defer t) 
+
+
 ;; line numbers ====================================
 ;; =================================================
 
