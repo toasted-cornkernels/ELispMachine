@@ -1,6 +1,7 @@
 *
 
 !.gitignore
+!.project.el
 !README.org
 !LICENSE
 !init.el

@@ -4653,6 +4653,22 @@ set so that it clears the whole REPL buffer, not just the output."
 (use-package dirvish
   :after dired)
 
+;; Project config ===================================
+;; ==================================================
+
+(use-package project
+  :straight nil
+  :config
+  ;;; Stolen from https://michael.stapelberg.ch/posts/2021-04-02-emacs-project-override/
+  ;; Returns the parent directory containing a .project.el file, if any,
+  ;; to override the standard project.el detection logic when needed.
+  (defun elispm/project-override (dir)
+    (let ((override (locate-dominating-file dir ".project.el")))
+      (if override
+          (cons 'vc override)
+        nil)))
+  (add-hook 'project-find-functions #'elispm/project-override))
+
 ;; xwidget config ===================================
 ;; ==================================================
 
