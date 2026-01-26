@@ -336,7 +336,7 @@
                                                   colorful-add-oklab-oklch-colors
                                                   colorful-add-color-names)
                                                  (latex-mode . colorful-add-latex-colors)))
-  (global-colorful-mode t)
+  (global-colorful-mode)
   (add-to-list 'global-colorful-modes 'helpful-mode))
 
 ;; evil-mode config =================================
@@ -1337,7 +1337,7 @@
 (use-package ox-pandoc
   :defer t
   :config
-  (setq org-pandoc-options-for-gfm '((wrap . none) (toc . n))))
+  (setq org-pandoc-options-for-gfm '((wrap . none) (toc . false))))
 
 ;; Esup config ======================================
 ;; ==================================================
@@ -1494,7 +1494,8 @@
 ;; ==================================================
 
 (use-package emacs-codeql
-  :mode ("\\.qll?\\'" . ql-tree-sitter-mode)
+  :mode (("\\.qll?\\'" . ql-tree-sitter-mode)
+         ("\\.dil\\'" . ql-tree-sitter-mode))
   :hook (ql-tree-sitter-mode . (lambda ()
                                  (setq indent-tabs-mode nil)))
   :straight
@@ -1583,7 +1584,10 @@
   (local-leader
     :keymaps '(eglot-mode-map)
     "a"      (which-key-prefix "LSP")
-    "aa"     'eglot-code-actions)
+    "aa"     'eglot-code-actions
+    "as"     'consult-eglot-symbols
+    "at"     'eglot-show-type-hierarchy
+    "ac"     'eglot-show-call-hierarchy)
 
   (normal-mode-major-mode
     :keymaps '(eglot-mode-map)
@@ -1605,7 +1609,11 @@
   :config (eglot-x-setup))
 
 (use-package consult-eglot
-  :after eglot)
+  :after eglot
+  :general-config
+  (local-leader
+    :keymaps '(eglot-mode-map)
+    "as"     'consult-eglot-symbols))
 
 ;; Shell config =====================================
 ;; ==================================================
@@ -1627,7 +1635,15 @@
 (use-package cc-mode
   :defer t
   :config
-  (unbind-key "C-d" 'c++-mode-map))
+  (unbind-key "C-d" 'c-mode-map)
+  (unbind-key "C-d" 'c++-mode-map)
+  :general-config
+  (local-leader
+    :major-modes '(c-mode c++-mode t)
+    :keymaps     '(c-mode-map c++-mode-map)
+    "g"          (which-key-prefix "goto")
+    "ga"         'ff-find-other-file
+    "gA"         'ff-find-other-file-other-window))
 
 (use-package cmake-mode
   :mode (("CMakeLists.txt" . cmake-mode)))
@@ -2019,6 +2035,12 @@
 
 (use-package imenu-list
   :after imenu)
+
+;; Dump-jump ========================================
+;; ==================================================
+
+(use-package dumb-jump
+  :defer t)
 
 ;; Lisp config ======================================
 ;; ==================================================
@@ -4441,7 +4463,11 @@ set so that it clears the whole REPL buffer, not just the output."
   (add-to-list 'exec-path "/nix/var/nix/profiles/default/bin")
   (add-to-list 'exec-path (expand-file-name "~/.nix-profile/bin"))
   (add-to-list 'exec-path (expand-file-name "~/.cargo/bin"))
-  (add-to-list 'exec-path (concat "/etc/profiles/per-user/" (user-login-name) "/bin")))
+  (add-to-list 'exec-path (concat "/etc/profiles/per-user/" (user-login-name) "/bin"))
+
+  (when macOS-p
+    (add-to-list 'default-frame-alist '(fullscreen . fullboth))
+    (setq ns-use-native-fullscreen t)))
 
 (use-package orderless
   :init
@@ -5433,7 +5459,10 @@ set so that it clears the whole REPL buffer, not just the output."
 (use-package doric-themes
   :defer t)
 
-(use-package tron-legacy-theme :defer t)
+(use-package tron-legacy-theme
+  :defer t
+  :custom-face
+  (org-block ((t (:foreground "#BBCCDD" :backgrdoun "#000000")))))
 
 (use-package auto-dark
   :when (not (or chromeOS-p android-p terminal-p))
@@ -6021,7 +6050,17 @@ removal."
   "lmc"  'c++-mode
   "lmr"  'rustic-mode
   "lmo"  'org-mode
-  "lmm"  'gfm-mode)
+  "lmm"  'gfm-mode
+
+  "ld"   (which-key-prefix :dumb-jump)
+  "ldj"  'dumb-jump-go
+  "ldd"  'dumb-jump-go
+  "ldo"  'dumb-jump-go-other-window
+  "lde"  'dumb-jump-go-prefer-external
+  "ldO"  'dumb-jump-go-prefer-external-other-window
+  "ldp"  'dumb-jump-go-prompt
+  "ldl"  'dumb-jump-quick-look
+  "ldb"  'dumb-jump-back)
 
 (global-leader
   "y"   (which-key-prefix :yank))
@@ -6239,7 +6278,7 @@ removal."
   "p!"   'projectile-run-shell-command-in-root
   "p%"   'projectile-replace-regexp
   "p&"   'projectile-run-async-shell-command-in-root
-  "p$"   'projectile-run-vterm
+  "p$"   'projectile-run-vterm-other-window
   "p/"   'projectile-ripgrep
   "pB"   'projectile-ibuffer
   "pd"   'projectile-dired
@@ -6251,13 +6290,13 @@ removal."
   "pd"   'projectile-remove-known-project
   "pe"   'projectile-edit-dir-locals
   "pf"   'projectile-find-file
-  "pg"   'projectile-ripgrep
+  "pg"   'projectile-vc
   "pk"   'projectile-kill-buffers
   "pp"   'projectile-switch-project
   "pR"   'projectile-replace-regexp
   "pr"   'projectile-run-project
-  "ps"   'projectile-save-known-projects
-  "pv"   'projectile-vc)
+  "ps"   'projectile-save-project-buffers
+  "pv"   'projectile-run-vterm)
 
 (defun insert-lambda ()
   "Insert λ."
