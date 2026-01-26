@@ -5503,7 +5503,6 @@ set so that it clears the whole REPL buffer, not just the output."
   :straight (bloomberg-emacs :host github :repo "iopanio/bloomberg-emacs")
   :defer t) 
 
-
 ;; line numbers ====================================
 ;; =================================================
 
@@ -6336,6 +6335,7 @@ removal."
   "th"     'tab-previous
   "tn"     'tab-next
   "tl"     'tab-next
+  "tL"     'tab-list
   "tr"     'tab-rename
   "t TAB"  'tab-recent
   "td"     'tab-close
