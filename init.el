@@ -1995,13 +1995,6 @@
 
 (use-package guix :defer t)
 
-;; Notify config ====================================
-;; ==================================================
-
-(use-package notify
-  :straight (notify :type git :host github
-                    :repo "tkhoa2711/notify.el"))
-
 ;; REPL config ======================================
 ;; ==================================================
 
@@ -4879,6 +4872,44 @@ set so that it clears the whole REPL buffer, not just the output."
   ;;       ("Y" magit-blame-copy-hash)
   ;;       ("B" magit-blame :exit t)
   ;;       ("Q" nil :exit t))
+  :general
+  (global-leader
+   "g"   (which-key-prefix :git)
+   "gb"  'magit-blame
+
+   "gf"  (which-key-prefix :file)
+   "gff" 'magit-find-file
+   "gfl" 'magit-log-buffer-file
+   "gfd" 'magit-diff-dwim
+   "gfm" 'magit-file-dispatch
+   "gfi" 'gitignore-templates-new-file
+
+   "gi"  'magit-init
+   "gl"  'magit-list-repositories
+   "gm"  'magit-dispatch
+   "gs"  'magit-status
+   "gu"  'magit-unstage-file
+   "gs"  'magit
+   "ga"  'magit-file-stage
+   "gc"  'magit-commit-create
+   "gc"  'magit-clone
+   "gp"  'magit-push
+   "gd"  'magit-diff-dwim
+
+   "gl"  (which-key-prefix :links)
+   "glc" 'git-link-commit
+   "glc" 'git-link-commit-copy-url-only
+   "gll" 'git-link
+   "gll" 'git-link-copy-url-only
+   "glp" 'git-permalink
+   "glp" 'git-permalink-copy-url-only
+
+   "gm"  'git-messenger:popup-message
+
+   "gh"  (which-key-prefix :smeargle)
+   "ght" 'smeargle
+   "ghc" 'smeargle-clear
+   "ghh" 'smeargle-commits) 
   :config
   (require 'git-rebase)
   (add-hook 'magit-mode-hook
@@ -4946,6 +4977,14 @@ set so that it clears the whole REPL buffer, not just the output."
     "a"          'with-editor-cancel
     "c"          'with-editor-finish
     "k"          'with-editor-cancel))
+
+(use-package magit-ediff
+  :straight (:type built-in)
+  :after magit)
+
+(use-package magit-git
+  :straight (:type built-in)
+  :after    magit)
 
 (use-package magit-lfs
   :after magit)
@@ -5498,10 +5537,6 @@ set so that it clears the whole REPL buffer, not just the output."
           ("FIXME"   . "#cc9393")
           ("UNSURE"  . "#cc9393")
           ("WORKAROUND"    . "#d0bf8f"))))
-
-(use-package bloomberg-emacs            ; STONKS!
-  :straight (bloomberg-emacs :host github :repo "iopanio/bloomberg-emacs")
-  :defer t) 
 
 ;; line numbers ====================================
 ;; =================================================
@@ -6070,44 +6105,6 @@ removal."
   "y"   (which-key-prefix :yank))
 
 (global-leader
-  "g"   (which-key-prefix :git)
-  "gb"  'magit-blame
-
-  "gf"  (which-key-prefix :file)
-  "gfF" 'magit-find-file
-  "gfl" 'magit-log-buffer-file
-  "gfd" 'magit-diff-dwim
-  "gfm" 'magit-file-dispatch
-  "gfi" 'gitignore-templates-new-file
-
-  "gi"  'magit-init
-  "gL"  'magit-list-repositories
-  "gm"  'magit-dispatch
-  "gs"  'magit-status
-  "gU"  'magit-unstage-file
-  "gs"  'magit
-  "ga"  'magit-file-stage
-  "gc"  'magit-commit-create
-  "gC"  'magit-clone
-  "gp"  'magit-push
-  "gd"  'magit-diff-dwim
-
-  "gl"  (which-key-prefix :links)
-  "glc" 'git-link-commit
-  "glC" 'git-link-commit-copy-url-only
-  "gll" 'git-link
-  "glL" 'git-link-copy-url-only
-  "glp" 'git-permalink
-  "glP" 'git-permalink-copy-url-only
-
-  "gM"  'git-messenger:popup-message
-
-  "gH"  (which-key-prefix :smeargle)
-  "gHt" 'smeargle
-  "gHc" 'smeargle-clear
-  "gHh" 'smeargle-commits)
-
-(global-leader
   "a"    (which-key-prefix :utilities)
   "ai"   'display-current-time
   "ab"   'battery
@@ -6250,10 +6247,10 @@ removal."
   "q"    (which-key-prefix :quit)
   "qq"   'kill-emacs
   "qf"   'delete-frame
-  "qN"   (defun start-emacs-q ()
+  "qN"   (defun emacs-instance-new ()
            (interactive)
            (start-process "Emacs" nil
-                          (executable-find "emacs") "-q")))
+                          (executable-find "emacs"))))
 
 (global-leader
   "h"    (which-key-prefix :help)
@@ -6832,6 +6829,8 @@ removal."
   (setq eradio-player   '("mpv" "--no-video" "--no-terminal" "--really-quiet")
         eradio-channels '(("WFUV 90.7"     . "https://onair.wfuv.org/onair-aacplus")
                           ("WNYC 93.9 FM"  . "https://fm939.wnyc.org/wnycfm.aac")
+                          ("WBBR 1130 AM"  . "http://14123.live.streamtheworld.com/WBBRAMAAC_SC")
+                          ("Bloomberg TV"  . "https://www.bloomberg.com/media-manifest/streams/phoenix-us.m3u8")
                           ("MBC FM4U"      . "http://serpent0.duckdns.org:8088/mbcfm.pls")
                           ("MBC 표준FM"    . "http://serpent0.duckdns.org:8088/mbcsfm.pls")
                           ("KBS 쿨FM"      . "http://serpent0.duckdns.org:8088/kbs2fm.pls")
