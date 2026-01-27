@@ -4842,6 +4842,8 @@ set so that it clears the whole REPL buffer, not just the output."
   :init
   (setq magit-completing-read-function 'magit-builtin-completing-read
         magit-revision-show-gravatars  '("^Author:     " . "^Commit:     "))
+  (when macOS-p
+    (setq magit-process-connection-type nil))
   ;; TODO
   ;; (spacemacs|define-transient-state git-blame
   ;;       :title "Git Blame Transient State"
