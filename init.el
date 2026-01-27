@@ -4842,8 +4842,6 @@ set so that it clears the whole REPL buffer, not just the output."
   :init
   (setq magit-completing-read-function 'magit-builtin-completing-read
         magit-revision-show-gravatars  '("^Author:     " . "^Commit:     "))
-  (when macOS-p
-    (setq magit-process-connection-type nil))
   ;; TODO
   ;; (spacemacs|define-transient-state git-blame
   ;;       :title "Git Blame Transient State"
@@ -4876,48 +4874,50 @@ set so that it clears the whole REPL buffer, not just the output."
   ;;       ("Q" nil :exit t))
   :general
   (global-leader
-   "g"   (which-key-prefix :git)
-   "gb"  'magit-blame
+    "g"   (which-key-prefix :git)
+    "gb"  'magit-blame
 
-   "gf"  (which-key-prefix :file)
-   "gff" 'magit-find-file
-   "gfl" 'magit-log-buffer-file
-   "gfd" 'magit-diff-dwim
-   "gfm" 'magit-file-dispatch
-   "gfi" 'gitignore-templates-new-file
+    "gf"  (which-key-prefix :file)
+    "gff" 'magit-find-file
+    "gfl" 'magit-log-buffer-file
+    "gfd" 'magit-diff-dwim
+    "gfm" 'magit-file-dispatch
+    "gfi" 'gitignore-templates-new-file
 
-   "gi"  'magit-init
-   "gl"  'magit-list-repositories
-   "gm"  'magit-dispatch
-   "gs"  'magit-status
-   "gu"  'magit-unstage-file
-   "gs"  'magit
-   "ga"  'magit-file-stage
-   "gc"  'magit-commit-create
-   "gc"  'magit-clone
-   "gp"  'magit-push
-   "gd"  'magit-diff-dwim
+    "gi"  'magit-init
+    "gl"  'magit-list-repositories
+    "gm"  'magit-dispatch
+    "gs"  'magit-status
+    "gu"  'magit-unstage-file
+    "gs"  'magit
+    "ga"  'magit-file-stage
+    "gc"  'magit-commit-create
+    "gC"  'magit-clone
+    "gp"  'magit-push
+    "gd"  'magit-diff-dwim
 
-   "gl"  (which-key-prefix :links)
-   "glc" 'git-link-commit
-   "glc" 'git-link-commit-copy-url-only
-   "gll" 'git-link
-   "gll" 'git-link-copy-url-only
-   "glp" 'git-permalink
-   "glp" 'git-permalink-copy-url-only
+    "gl"  (which-key-prefix :links)
+    "glc" 'git-link-commit
+    "glc" 'git-link-commit-copy-url-only
+    "gll" 'git-link
+    "gll" 'git-link-copy-url-only
+    "glp" 'git-permalink
+    "glp" 'git-permalink-copy-url-only
 
-   "gm"  'git-messenger:popup-message
+    "gm"  'git-messenger:popup-message
 
-   "gh"  (which-key-prefix :smeargle)
-   "ght" 'smeargle
-   "ghc" 'smeargle-clear
-   "ghh" 'smeargle-commits) 
+    "gh"  (which-key-prefix :smeargle)
+    "ght" 'smeargle
+    "ghc" 'smeargle-clear
+    "ghh" 'smeargle-commits) 
   :config
   (require 'git-rebase)
   (add-hook 'magit-mode-hook
             (lambda ()
               (evil-define-key 'normal
-                magit-mode-map (kbd "SPC") nil))))
+                magit-mode-map (kbd "SPC") nil)))
+  (when macOS-p
+    (setq magit-process-connection-type nil)))
 
 (use-package magit-section
   :defer t
