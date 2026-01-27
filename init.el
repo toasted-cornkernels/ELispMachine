@@ -6141,6 +6141,7 @@ removal."
   "aoj"  (which-key-prefix :journal)
   "aojf" 'org-journal-open-current-journal-file
   "aojj" 'org-journal-new-entry
+  "aojd" 'org-journal-new-date-entry
   "aojs" 'org-journal-search-forever
   "aojt" 'org-journal-new-scheduled-entry
   "aojv" 'org-journal-schedule-view
