@@ -6146,11 +6146,6 @@ removal."
   "aojv" 'org-journal-schedule-view
 
   "aor"   (which-key-prefix :org-roam)
-  "aord"  (which-key-prefix :org-roam-dailies)
-  "aordy" 'org-roam-dailies-goto-yesterday
-  "aordt" 'org-roam-dailies-goto-today
-  "aordT" 'org-roam-dailies-goto-tomorrow
-  "aordd" 'org-roam-dailies-goto-date
   "aorc"  'org-roam-capture
   "aorf"  'org-roam-node-find
   "aorg"  'org-roam-graph
@@ -6162,6 +6157,26 @@ removal."
   "aort"  (which-key-prefix :org-roam-tags)
   "aorta" 'org-roam-tag-add
   "aortr" 'org-roam-tag-remove
+
+  "aod"  (which-key-prefix :org-roam-dailies)
+  "aodc" 'org-roam-dailies-capture-today
+  "aody" 'org-roam-dailies-capture-yesterday
+  "aodt" 'org-roam-dailies-capture-tomorrow
+  
+  "aodg"  (which-key-prefix :goto)
+  "aodgh" 'org-roam-dailies-goto-yesterday
+  "aodgk" 'org-roam-dailies-goto-yesterday
+  "aodgy" 'org-roam-dailies-goto-yesterday
+  "aodg." 'org-roam-dailies-goto-today
+  "aodgt" 'org-roam-dailies-goto-tomorrow
+  "aodgj" 'org-roam-dailies-goto-tomorrow
+  "aodgl" 'org-roam-dailies-goto-tomorrow
+  "aodgd" 'org-roam-dailies-goto-date
+
+  "aodh"  'org-roam-dailies-goto-prev-note
+  "aodj"  'org-roam-dailies-goto-next-note
+  "aodk"  'org-roam-dailies-goto-prev-note
+  "aodl"  'org-roam-dailies-goto-next-note
 
   "aw"   (which-key-prefix :web)
   "aww"  (which-key-prefix :eww)
