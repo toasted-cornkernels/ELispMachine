@@ -7193,7 +7193,8 @@ Optional argument MSG First message shown in buffer."
                   "Layla"
                   "날아가줘, 멀리!"
                   "Love is our resistance"
-                  "Send our codes to the stars")))
+                  "Send our codes to the stars"
+                  "시들어 갈 뿐인 추억 위에 화관을 씌우자")))
     (message (nth (random 3) quotes))))
 
 (global-auto-revert-mode 1)    ; Refresh buffers with changed local files
