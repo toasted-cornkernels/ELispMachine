@@ -1584,8 +1584,10 @@
   (local-leader
     :keymaps '(eglot-mode-map)
     "a"      (which-key-prefix "LSP")
+    "ar"     'eglot-reconnect
     "aa"     'eglot-code-actions
-    "as"     'consult-eglot-symbols
+    "as"     'imenu
+    "aS"     'consult-eglot-symbols
     "at"     'eglot-show-type-hierarchy
     "ac"     'eglot-show-call-hierarchy)
 
@@ -4892,7 +4894,7 @@ set so that it clears the whole REPL buffer, not just the output."
    "gs"  'magit
    "ga"  'magit-file-stage
    "gc"  'magit-commit-create
-   "gc"  'magit-clone
+   "gC"  'magit-clone
    "gp"  'magit-push
    "gd"  'magit-diff-dwim
 
@@ -5501,7 +5503,7 @@ set so that it clears the whole REPL buffer, not just the output."
 (use-package tron-legacy-theme
   :defer t
   :custom-face
-  (org-block ((t (:foreground "#BBCCDD" :backgrdoun "#000000")))))
+  (org-block ((t (:foreground "#BBCCDD" :background "#000000")))))
 
 (use-package auto-dark
   :when (not (or chromeOS-p android-p terminal-p))
@@ -5808,6 +5810,7 @@ set so that it clears the whole REPL buffer, not just the output."
   "Spp" 'straight-pull-package
   "SpP" 'straight-pull-all
   "Spb" 'straight-rebuild-package
+  "Spc" 'straight-remove-unused-repos
   "SpB" 'straight-rebuild-all
   "Spv" 'straight-visit-package
   "SpV" 'straight-visit-package-website
@@ -6377,7 +6380,8 @@ removal."
 
 (global-leader
   "T"    (which-key-prefix :toggle)
-  "TD"   'toggle-debug-on-error)
+  "TD"   'toggle-debug-on-error
+  "Tl"   'display-line-numbers-mode)
 
 (global-leader
   "s-o"  'reveal-in-osx-finder
