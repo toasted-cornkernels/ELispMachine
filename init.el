@@ -1695,7 +1695,7 @@
     ;; 'cmake-integration-transient
     ;; 'cmake-integration-view-project-documentation
     ;; 'cmake-integration-view-project-documentation-in-eww
-    )
+    ))
 
   ;; Python config ====================================
   ;; ==================================================
@@ -1703,8 +1703,7 @@
   (use-package python
     :straight (:type built-in)
     :config
-  ;;; stolen from Spacemacs!
-
+    ;;; stolen from Spacemacs!
     (defun elispm/python-start-or-switch-repl ()
       "Start and/or switch to the REPL."
       (interactive)
@@ -1843,6 +1842,9 @@
         (python-shell-switch-to-shell)
         (evil-insert-state)))
 
+    (when (executable-find "ipython")
+      (setq python-shell-interpreter "ipython"))
+
     :general-config
     (local-leader
       :major-modes '(python-mode t)
@@ -1903,7 +1905,7 @@
       "dsd"        'sphinx-doc
                    
       "dp"         'pydoc-at-point-no-jedi
-      "dP"         'pydoc)))
+      "dP"         'pydoc))
 
 (use-package cython-mode
   :mode "\\.pyx\\'")
