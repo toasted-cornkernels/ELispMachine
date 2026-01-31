@@ -1695,7 +1695,7 @@
     ;; 'cmake-integration-transient
     ;; 'cmake-integration-view-project-documentation
     ;; 'cmake-integration-view-project-documentation-in-eww
-    )
+    ))
 
   ;; Python config ====================================
   ;; ==================================================
@@ -1703,8 +1703,7 @@
   (use-package python
     :straight (:type built-in)
     :config
-  ;;; stolen from Spacemacs!
-
+    ;;; stolen from Spacemacs!
     (defun elispm/python-start-or-switch-repl ()
       "Start and/or switch to the REPL."
       (interactive)
@@ -1843,67 +1842,70 @@
         (python-shell-switch-to-shell)
         (evil-insert-state)))
 
+    (when (executable-find "ipython")
+      (setq python-shell-interpreter "ipython"))
+
     :general-config
     (local-leader
       :major-modes '(python-mode t)
       :keymaps     '(python-mode-map)
-      "'"   'elispm/python-start-or-switch-repl
-
-      "s"   (which-key-prefix "REPL")
-      "sB"  'elispm/python-shell-send-buffer-switch
-      "sb"  'elispm/python-shell-send-buffer
-      "sE"  'elispm/python-shell-send-statement-switch
-      "se"  'elispm/python-shell-send-statement
-      "sF"  'elispm/python-shell-send-defun-switch
-      "sf"  'elispm/python-shell-send-defun
-      "si"  'elispm/python-start-or-switch-repl
-      "sK"  'elispm/python-shell-send-block-switch
-      "sk"  'elispm/python-shell-send-block
-      "sn"  'elispm/python-shell-restart
-      "sN"  'elispm/python-shell-restart-switch
-      "sR"  'elispm/python-shell-send-region-switch
-      "sr"  'elispm/python-shell-send-region
-      "sl"  'elispm/python-shell-send-line
-      "ss"  'elispm/python-shell-send-with-output
-
-      "r"   (which-key-prefix "refactor")
-      "rI"  'py-isort-buffer
-
-      "v"   (which-key-prefix "virtualenv")
-      "vi"  (which-key-prefix "pipenv")
-      "via" 'pipenv-activate
-      "vid" 'pipenv-deactivate
-      "vii" 'pipenv-install
-      "vio" 'pipenv-open
-      "vis" 'pipenv-shell
-      "viu" 'pipenv-uninstall
-
-      "vp"  (which-key-prefix "poetry")
-      "vpd" 'poetry-venv-deactivate
-      "vpw" 'poetry-venv-workon
-      "vpt" 'poetry-venv-toggle
-
-      "vP"  (which-key-prefix "pyenv")
-      "vu"  'pyenv-mode-unset
-      "vs"  'pyenv-mode-set
-
-      "t"   (which-key-prefix "testing")
-      "tt"  (which-key-prefix "pytest")
-      "tt"  'python-pytest
-      "tff" 'python-pytest-file-dwim
-      "tfF" 'python-pytest-file
-      "tfa" 'python-pytest-files
-      "td"  'python-pytest-function-dwim
-      "tD"  'python-pytest-function
-      "tx"  'python-pytest-last-failed
-      "tr"  'python-pytest-repeat
-
-      "d"   (which-key-prefix "generate docs")
-      "dse" 'sphinx-doc-mode
-      "dsd" 'sphinx-doc
-
-      "dp"  'pydoc-at-point-no-jedi
-      "dP"  'pydoc)))
+      "'"          'elispm/python-start-or-switch-repl
+                   
+      "s"          (which-key-prefix "REPL")
+      "sB"         'elispm/python-shell-send-buffer-switch
+      "sb"         'elispm/python-shell-send-buffer
+      "sE"         'elispm/python-shell-send-statement-switch
+      "se"         'elispm/python-shell-send-statement
+      "sF"         'elispm/python-shell-send-defun-switch
+      "sf"         'elispm/python-shell-send-defun
+      "si"         'elispm/python-start-or-switch-repl
+      "sK"         'elispm/python-shell-send-block-switch
+      "sk"         'elispm/python-shell-send-block
+      "sn"         'elispm/python-shell-restart
+      "sN"         'elispm/python-shell-restart-switch
+      "sR"         'elispm/python-shell-send-region-switch
+      "sr"         'elispm/python-shell-send-region
+      "sl"         'elispm/python-shell-send-line
+      "ss"         'elispm/python-shell-send-with-output
+                   
+      "r"          (which-key-prefix "refactor")
+      "rI"         'py-isort-buffer
+                   
+      "v"          (which-key-prefix "virtualenv")
+      "vi"         (which-key-prefix "pipenv")
+      "via"        'pipenv-activate
+      "vid"        'pipenv-deactivate
+      "vii"        'pipenv-install
+      "vio"        'pipenv-open
+      "vis"        'pipenv-shell
+      "viu"        'pipenv-uninstall
+                   
+      "vp"         (which-key-prefix "poetry")
+      "vpd"        'poetry-venv-deactivate
+      "vpw"        'poetry-venv-workon
+      "vpt"        'poetry-venv-toggle
+                   
+      "vP"         (which-key-prefix "pyenv")
+      "vu"         'pyenv-mode-unset
+      "vs"         'pyenv-mode-set
+                   
+      "t"          (which-key-prefix "testing")
+      "tt"         (which-key-prefix "pytest")
+      "tt"         'python-pytest
+      "tff"        'python-pytest-file-dwim
+      "tfF"        'python-pytest-file
+      "tfa"        'python-pytest-files
+      "td"         'python-pytest-function-dwim
+      "tD"         'python-pytest-function
+      "tx"         'python-pytest-last-failed
+      "tr"         'python-pytest-repeat
+                   
+      "d"          (which-key-prefix "generate docs")
+      "dse"        'sphinx-doc-mode
+      "dsd"        'sphinx-doc
+                   
+      "dp"         'pydoc-at-point-no-jedi
+      "dP"         'pydoc))
 
 (use-package cython-mode
   :mode "\\.pyx\\'")
