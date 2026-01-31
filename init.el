@@ -1652,215 +1652,258 @@
 
 (use-package cmake-integration
   :straight (cmake-integration :type git :host github
-                               :repo "darcamo/cmake-integration"))
-
-;; Python config ====================================
-;; ==================================================
-
-(use-package python
-  :straight (:type built-in)
-  :config
-  ;;; stolen from Spacemacs!
-
-  (defun elispm/python-start-or-switch-repl ()
-    "Start and/or switch to the REPL."
-    (interactive)
-    (if-let* ((shell-process (or (python-shell-get-process)
-                                 (call-interactively #'run-python))))
-        (progn
-          (pop-to-buffer (process-buffer shell-process))
-          (evil-insert-state))
-      (error "Failed to start python shell properly")))
-
-  (defun elispm/python-shell-send-block (&optional arg)
-    "Send the block under cursor to shell. If optional argument ARG is non-nil
-(interactively, the prefix argument), send the block body with its header."
-    (interactive "P")
-    (if (fboundp 'python-shell-send-block)
-        (let ((python-mode-hook nil))
-          (call-interactively #'python-shell-send-block))
-      (let ((python-mode-hook nil)
-            (beg (save-excursion
-                   (when (python-nav-beginning-of-block)
-                     (if arg
-                         (beginning-of-line)
-                       (python-nav-end-of-statement)
-                       (beginning-of-line 2)))
-                   (point-marker)))
-            (end (save-excursion (python-nav-end-of-block)))
-            (python-indent-guess-indent-offset-verbose nil))
-        (if (and beg end)
-            (python-shell-send-region beg end nil msg t)
-          (user-error "Can't get code block from current position.")))))
-
-  (defun elispm/python-shell-send-block-switch (&optional arg)
-    "Send block to shell and switch to it in insert mode."
-    (interactive "P")
-    (call-interactively #'elispm/python-shell-send-block)
-    (python-shell-switch-to-shell)
-    (evil-insert-state))
-
-  (defun elispm/python-shell-send-buffer-switch ()
-    "Send buffer content to shell and switch to it in insert mode."
-    (interactive)
-    (let ((python-mode-hook nil))
-      (python-shell-send-buffer)
-      (python-shell-switch-to-shell)
-      (evil-insert-state)))
-
-  (defun elispm/python-shell-send-buffer ()
-    "Send buffer content to shell and switch to it in insert mode."
-    (interactive)
-    (let ((python-mode-hook nil))
-      (python-shell-send-buffer)))
-
-  (defun elispm/python-shell-send-defun-switch ()
-    "Send function content to shell and switch to it in insert mode."
-    (interactive)
-    (let ((python-mode-hook nil))
-      (python-shell-send-defun nil)
-      (python-shell-switch-to-shell)
-      (evil-insert-state)))
-
-  (defun elispm/python-shell-send-defun ()
-    "Send function content to shell and switch to it in insert mode."
-    (interactive)
-    (let ((python-mode-hook nil))
-      (python-shell-send-defun nil)))
-
-  (defun elispm/python-shell-send-region-switch (start end)
-    "Send region content to shell and switch to it in insert mode."
-    (interactive "r")
-    (let ((python-mode-hook nil))
-      (python-shell-send-region start end)
-      (python-shell-switch-to-shell)
-      (evil-insert-state)))
-
-  (defun elispm/python-shell-send-region (start end)
-    "Send region content to shell and switch to it in insert mode."
-    (interactive "r")
-    (let ((python-mode-hook nil))
-      (python-shell-send-region start end)))
-
-  (defun elispm/python-shell-send-line ()
-    "Send the current line to shell"
-    (interactive)
-    (let ((python-mode-hook nil)
-          (start (point-at-bol))
-          (end (point-at-eol)))
-      (python-shell-send-region start end)))
-
-  (defun elispm/python-shell-send-statement ()
-    "Send the statement under cursor to shell."
-    (interactive)
-    (let ((python-mode-hook nil))
-      (call-interactively #'python-shell-send-statement)))
-
-  (defun elispm/python-shell-send-statement-switch ()
-    "Send statement to shell and switch to it in insert mode."
-    (interactive)
-    (call-interactively #'elispm/python-shell-send-statement)
-    (python-shell-switch-to-shell)
-    (evil-insert-state))
-
-  (defun elispm/python-shell-send-with-output(start end)
-    "Send region content to shell and show output in comint buffer.
-  If region is not active then send line."
-    (interactive "r")
-    (let ((python-mode-hook nil)
-          (process-buffer (python-shell-get-process))
-          (line-start (point-at-bol))
-          (line-end (point-at-eol)))
-      (if (region-active-p)
-          (comint-send-region process-buffer start end)
-        (comint-send-region process-buffer line-start line-end))
-      (comint-simple-send process-buffer "\r")))
-
-  (defun elispm/python-start-or-switch-repl ()
-    "Start and/or switch to the REPL."
-    (interactive)
-    (if-let* ((shell-process (or (python-shell-get-process)
-                                 (call-interactively #'run-python))))
-        (progn
-          (pop-to-buffer (process-buffer shell-process))
-          (evil-insert-state))
-      (error "Failed to start python shell properly")))
-
-  (defun elispm/python-shell-restart ()
-    "Restart python shell."
-    (interactive)
-    (let ((python-mode-hook nil))
-      (python-shell-restart)))
-
-  (defun elispm/python-shell-restart-switch ()
-    "Restart python shell and switch to it in insert mode."
-    (interactive)
-    (let ((python-mode-hook nil))
-      (python-shell-restart)
-      (python-shell-switch-to-shell)
-      (evil-insert-state)))
-
+                               :repo "darcamo/cmake-integration")
   :general-config
   (local-leader
-    :major-modes '(python-mode t)
-    :keymaps     '(python-mode-map)
-    "'"          'elispm/python-start-or-switch-repl
-                 
-    "s"          (which-key-prefix "REPL")
-    "sB"         'elispm/python-shell-send-buffer-switch
-    "sb"         'elispm/python-shell-send-buffer
-    "sE"         'elispm/python-shell-send-statement-switch
-    "se"         'elispm/python-shell-send-statement
-    "sF"         'elispm/python-shell-send-defun-switch
-    "sf"         'elispm/python-shell-send-defun
-    "si"         'elispm/python-start-or-switch-repl
-    "sK"         'elispm/python-shell-send-block-switch
-    "sk"         'elispm/python-shell-send-block
-    "sn"         'elispm/python-shell-restart
-    "sN"         'elispm/python-shell-restart-switch
-    "sR"         'elispm/python-shell-send-region-switch
-    "sr"         'elispm/python-shell-send-region
-    "sl"         'elispm/python-shell-send-line
-    "ss"         'elispm/python-shell-send-with-output
-                 
-    "r"          (which-key-prefix "refactor")
-    "rI"         'py-isort-buffer
-                 
-    "v"          (which-key-prefix "virtualenv")
-    "vi"         (which-key-prefix "pipenv")
-    "via"        'pipenv-activate
-    "vid"        'pipenv-deactivate
-    "vii"        'pipenv-install
-    "vio"        'pipenv-open
-    "vis"        'pipenv-shell
-    "viu"        'pipenv-uninstall
-                 
-    "vp"         (which-key-prefix "poetry")
-    "vpd"        'poetry-venv-deactivate
-    "vpw"        'poetry-venv-workon
-    "vpt"        'poetry-venv-toggle
-                 
-    "vP"         (which-key-prefix "pyenv")
-    "vu"         'pyenv-mode-unset
-    "vs"         'pyenv-mode-set
-                 
-    "t"          (which-key-prefix "testing")
-    "tt"         (which-key-prefix "pytest")
-    "tt"         'python-pytest
-    "tff"        'python-pytest-file-dwim
-    "tfF"        'python-pytest-file
-    "tfa"        'python-pytest-files
-    "td"         'python-pytest-function-dwim
-    "tD"         'python-pytest-function
-    "tx"         'python-pytest-last-failed
-    "tr"         'python-pytest-repeat
-                 
-    "d"          (which-key-prefix "generate docs")
-    "dse"        'sphinx-doc-mode
-    "dsd"        'sphinx-doc
-                 
-    "dp"         'pydoc-at-point-no-jedi
-    "dP"         'pydoc))
+    :major-modes '(c-mode c++-mode t)
+    :keymaps     '(c-mode-map c++-mode-map)
+    ;; 'cmake-integration-browse-conan-center
+    ;; 'cmake-integration-cmake-configure-with-preset
+    ;; 'cmake-integration-cmake-reconfigure
+    ;; 'cmake-integration-conan-add-remote
+    ;; 'cmake-integration-conan-do-addition
+    ;; 'cmake-integration-conan-list-packages-in-local-cache
+    ;; 'cmake-integration-conan-manage-remotes
+    ;; 'cmake-integration-conan-search
+    ;; 'cmake-integration-debug-last-target
+    ;; 'cmake-integration-delete-build-folder
+    ;; 'cmake-integration-generate-project-documentation
+    ;; 'cmake-integration-get-target-executable-full-path
+    ;; 'cmake-integration-open-dired-in-build-folder
+    ;; 'cmake-integration-open-dired-in-target-folder
+    ;; 'cmake-integration-open-eshell-in-target-folder
+    ;; 'cmake-integration-open-shell-in-build-folder
+    ;; 'cmake-integration-print-ctest-labels
+    ;; 'cmake-integration-refresh-target-type-cache
+    ;; 'cmake-integration-run-cmake-install
+    ;; 'cmake-integration-run-cpack
+    ;; 'cmake-integration-run-ctest
+    ;; 'cmake-integration-run-last-target
+    ;; 'cmake-integration-run-last-target-with-arguments
+    ;; 'cmake-integration-save-and-compile
+    ;; 'cmake-integration-save-and-compile-last-target
+    ;; 'cmake-integration-search-in-conan-center
+    ;; 'cmake-integration-select-build-preset
+    ;; 'cmake-integration-select-conan-profile
+    ;; 'cmake-integration-select-configure-preset
+    ;; 'cmake-integration-select-ctest-labels-to-exclude
+    ;; 'cmake-integration-select-ctest-labels-to-include
+    ;; 'cmake-integration-select-current-target
+    ;; 'cmake-integration-select-package-preset
+    ;; 'cmake-integration-select-test-preset
+    ;; 'cmake-integration-set-install-prefix
+    ;; 'cmake-integration-transient
+    ;; 'cmake-integration-view-project-documentation
+    ;; 'cmake-integration-view-project-documentation-in-eww
+    )
+
+  ;; Python config ====================================
+  ;; ==================================================
+
+  (use-package python
+    :straight (:type built-in)
+    :config
+  ;;; stolen from Spacemacs!
+
+    (defun elispm/python-start-or-switch-repl ()
+      "Start and/or switch to the REPL."
+      (interactive)
+      (if-let* ((shell-process (or (python-shell-get-process)
+                                   (call-interactively #'run-python))))
+          (progn
+            (pop-to-buffer (process-buffer shell-process))
+            (evil-insert-state))
+        (error "Failed to start python shell properly")))
+
+    (defun elispm/python-shell-send-block (&optional arg)
+      "Send the block under cursor to shell. If optional argument ARG is non-nil
+(interactively, the prefix argument), send the block body with its header."
+      (interactive "P")
+      (if (fboundp 'python-shell-send-block)
+          (let ((python-mode-hook nil))
+            (call-interactively #'python-shell-send-block))
+        (let ((python-mode-hook nil)
+              (beg (save-excursion
+                     (when (python-nav-beginning-of-block)
+                       (if arg
+                           (beginning-of-line)
+                         (python-nav-end-of-statement)
+                         (beginning-of-line 2)))
+                     (point-marker)))
+              (end (save-excursion (python-nav-end-of-block)))
+              (python-indent-guess-indent-offset-verbose nil))
+          (if (and beg end)
+              (python-shell-send-region beg end nil msg t)
+            (user-error "Can't get code block from current position.")))))
+
+    (defun elispm/python-shell-send-block-switch (&optional arg)
+      "Send block to shell and switch to it in insert mode."
+      (interactive "P")
+      (call-interactively #'elispm/python-shell-send-block)
+      (python-shell-switch-to-shell)
+      (evil-insert-state))
+
+    (defun elispm/python-shell-send-buffer-switch ()
+      "Send buffer content to shell and switch to it in insert mode."
+      (interactive)
+      (let ((python-mode-hook nil))
+        (python-shell-send-buffer)
+        (python-shell-switch-to-shell)
+        (evil-insert-state)))
+
+    (defun elispm/python-shell-send-buffer ()
+      "Send buffer content to shell and switch to it in insert mode."
+      (interactive)
+      (let ((python-mode-hook nil))
+        (python-shell-send-buffer)))
+
+    (defun elispm/python-shell-send-defun-switch ()
+      "Send function content to shell and switch to it in insert mode."
+      (interactive)
+      (let ((python-mode-hook nil))
+        (python-shell-send-defun nil)
+        (python-shell-switch-to-shell)
+        (evil-insert-state)))
+
+    (defun elispm/python-shell-send-defun ()
+      "Send function content to shell and switch to it in insert mode."
+      (interactive)
+      (let ((python-mode-hook nil))
+        (python-shell-send-defun nil)))
+
+    (defun elispm/python-shell-send-region-switch (start end)
+      "Send region content to shell and switch to it in insert mode."
+      (interactive "r")
+      (let ((python-mode-hook nil))
+        (python-shell-send-region start end)
+        (python-shell-switch-to-shell)
+        (evil-insert-state)))
+
+    (defun elispm/python-shell-send-region (start end)
+      "Send region content to shell and switch to it in insert mode."
+      (interactive "r")
+      (let ((python-mode-hook nil))
+        (python-shell-send-region start end)))
+
+    (defun elispm/python-shell-send-line ()
+      "Send the current line to shell"
+      (interactive)
+      (let ((python-mode-hook nil)
+            (start (point-at-bol))
+            (end (point-at-eol)))
+        (python-shell-send-region start end)))
+
+    (defun elispm/python-shell-send-statement ()
+      "Send the statement under cursor to shell."
+      (interactive)
+      (let ((python-mode-hook nil))
+        (call-interactively #'python-shell-send-statement)))
+
+    (defun elispm/python-shell-send-statement-switch ()
+      "Send statement to shell and switch to it in insert mode."
+      (interactive)
+      (call-interactively #'elispm/python-shell-send-statement)
+      (python-shell-switch-to-shell)
+      (evil-insert-state))
+
+    (defun elispm/python-shell-send-with-output(start end)
+      "Send region content to shell and show output in comint buffer.
+  If region is not active then send line."
+      (interactive "r")
+      (let ((python-mode-hook nil)
+            (process-buffer (python-shell-get-process))
+            (line-start (point-at-bol))
+            (line-end (point-at-eol)))
+        (if (region-active-p)
+            (comint-send-region process-buffer start end)
+          (comint-send-region process-buffer line-start line-end))
+        (comint-simple-send process-buffer "\r")))
+
+    (defun elispm/python-start-or-switch-repl ()
+      "Start and/or switch to the REPL."
+      (interactive)
+      (if-let* ((shell-process (or (python-shell-get-process)
+                                   (call-interactively #'run-python))))
+          (progn
+            (pop-to-buffer (process-buffer shell-process))
+            (evil-insert-state))
+        (error "Failed to start python shell properly")))
+
+    (defun elispm/python-shell-restart ()
+      "Restart python shell."
+      (interactive)
+      (let ((python-mode-hook nil))
+        (python-shell-restart)))
+
+    (defun elispm/python-shell-restart-switch ()
+      "Restart python shell and switch to it in insert mode."
+      (interactive)
+      (let ((python-mode-hook nil))
+        (python-shell-restart)
+        (python-shell-switch-to-shell)
+        (evil-insert-state)))
+
+    :general-config
+    (local-leader
+      :major-modes '(python-mode t)
+      :keymaps     '(python-mode-map)
+      "'"          'elispm/python-start-or-switch-repl
+                   
+      "s"          (which-key-prefix "REPL")
+      "sB"         'elispm/python-shell-send-buffer-switch
+      "sb"         'elispm/python-shell-send-buffer
+      "sE"         'elispm/python-shell-send-statement-switch
+      "se"         'elispm/python-shell-send-statement
+      "sF"         'elispm/python-shell-send-defun-switch
+      "sf"         'elispm/python-shell-send-defun
+      "si"         'elispm/python-start-or-switch-repl
+      "sK"         'elispm/python-shell-send-block-switch
+      "sk"         'elispm/python-shell-send-block
+      "sn"         'elispm/python-shell-restart
+      "sN"         'elispm/python-shell-restart-switch
+      "sR"         'elispm/python-shell-send-region-switch
+      "sr"         'elispm/python-shell-send-region
+      "sl"         'elispm/python-shell-send-line
+      "ss"         'elispm/python-shell-send-with-output
+                   
+      "r"          (which-key-prefix "refactor")
+      "rI"         'py-isort-buffer
+                   
+      "v"          (which-key-prefix "virtualenv")
+      "vi"         (which-key-prefix "pipenv")
+      "via"        'pipenv-activate
+      "vid"        'pipenv-deactivate
+      "vii"        'pipenv-install
+      "vio"        'pipenv-open
+      "vis"        'pipenv-shell
+      "viu"        'pipenv-uninstall
+                   
+      "vp"         (which-key-prefix "poetry")
+      "vpd"        'poetry-venv-deactivate
+      "vpw"        'poetry-venv-workon
+      "vpt"        'poetry-venv-toggle
+                   
+      "vP"         (which-key-prefix "pyenv")
+      "vu"         'pyenv-mode-unset
+      "vs"         'pyenv-mode-set
+                   
+      "t"          (which-key-prefix "testing")
+      "tt"         (which-key-prefix "pytest")
+      "tt"         'python-pytest
+      "tff"        'python-pytest-file-dwim
+      "tfF"        'python-pytest-file
+      "tfa"        'python-pytest-files
+      "td"         'python-pytest-function-dwim
+      "tD"         'python-pytest-function
+      "tx"         'python-pytest-last-failed
+      "tr"         'python-pytest-repeat
+                   
+      "d"          (which-key-prefix "generate docs")
+      "dse"        'sphinx-doc-mode
+      "dsd"        'sphinx-doc
+                   
+      "dp"         'pydoc-at-point-no-jedi
+      "dP"         'pydoc)))
 
 (use-package cython-mode
   :mode "\\.pyx\\'")
