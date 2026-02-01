@@ -4946,6 +4946,7 @@ set so that it clears the whole REPL buffer, not just the output."
     "gC"  'magit-clone
     "gp"  'magit-push
     "gd"  'magit-diff-dwim
+    "gP"  'magit-pull
 
     "gl"  (which-key-prefix :links)
     "glc" 'git-link-commit
@@ -6141,6 +6142,7 @@ removal."
   "l"    (which-key-prefix :lang-tools)
   "lm"   (which-key-prefix :major-modes)
   "lmc"  'c++-mode
+  "lmC"  'c-mode
   "lmr"  'rustic-mode
   "lmo"  'org-mode
   "lmm"  'gfm-mode
