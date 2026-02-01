@@ -1664,10 +1664,6 @@
 
   (use-package python
     :straight (:type built-in)
-    :hook (python-mode . (lambda ()
-                           (setq-local python-shell-interpreter
-                                       (or (executable-find "ipython")
-                                           (executable-find "python")))))
     :config
     ;;; stolen from Spacemacs!
     (defun elispm/python-start-or-switch-repl ()
@@ -1810,7 +1806,13 @@
 
     (when (executable-find "ipython")
       (setq python-shell-interpreter "ipython"))
-
+    :config
+    (advice-add 'elispm/python-start-or-switch-repl
+                :before
+                (lambda ()
+                  (setq-local python-shell-interpreter
+                              (or (executable-find "ipython")
+                                  (executable-find "python")))))
     :general-config
     (local-leader
       :major-modes '(python-mode t)
