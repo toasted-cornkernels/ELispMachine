@@ -1657,45 +1657,7 @@
   (local-leader
     :major-modes '(c-mode c++-mode t)
     :keymaps     '(c-mode-map c++-mode-map)
-    ;; 'cmake-integration-browse-conan-center
-    ;; 'cmake-integration-cmake-configure-with-preset
-    ;; 'cmake-integration-cmake-reconfigure
-    ;; 'cmake-integration-conan-add-remote
-    ;; 'cmake-integration-conan-do-addition
-    ;; 'cmake-integration-conan-list-packages-in-local-cache
-    ;; 'cmake-integration-conan-manage-remotes
-    ;; 'cmake-integration-conan-search
-    ;; 'cmake-integration-debug-last-target
-    ;; 'cmake-integration-delete-build-folder
-    ;; 'cmake-integration-generate-project-documentation
-    ;; 'cmake-integration-get-target-executable-full-path
-    ;; 'cmake-integration-open-dired-in-build-folder
-    ;; 'cmake-integration-open-dired-in-target-folder
-    ;; 'cmake-integration-open-eshell-in-target-folder
-    ;; 'cmake-integration-open-shell-in-build-folder
-    ;; 'cmake-integration-print-ctest-labels
-    ;; 'cmake-integration-refresh-target-type-cache
-    ;; 'cmake-integration-run-cmake-install
-    ;; 'cmake-integration-run-cpack
-    ;; 'cmake-integration-run-ctest
-    ;; 'cmake-integration-run-last-target
-    ;; 'cmake-integration-run-last-target-with-arguments
-    ;; 'cmake-integration-save-and-compile
-    ;; 'cmake-integration-save-and-compile-last-target
-    ;; 'cmake-integration-search-in-conan-center
-    ;; 'cmake-integration-select-build-preset
-    ;; 'cmake-integration-select-conan-profile
-    ;; 'cmake-integration-select-configure-preset
-    ;; 'cmake-integration-select-ctest-labels-to-exclude
-    ;; 'cmake-integration-select-ctest-labels-to-include
-    ;; 'cmake-integration-select-current-target
-    ;; 'cmake-integration-select-package-preset
-    ;; 'cmake-integration-select-test-preset
-    ;; 'cmake-integration-set-install-prefix
-    ;; 'cmake-integration-transient
-    ;; 'cmake-integration-view-project-documentation
-    ;; 'cmake-integration-view-project-documentation-in-eww
-    ))
+    "'"          'cmake-integration-transient))
 
   ;; Python config ====================================
   ;; ==================================================
@@ -6404,7 +6366,11 @@ removal."
   "th"     'tab-previous
   "tn"     'tab-next
   "tl"     'tab-next
-  "tL"     'tab-list
+  "tP"     'tab-move-previous
+  "tH"     'tab-move-previous
+  "tN"     'tab-next
+  "tL"     'tab-next
+  "tt"     'tab-list
   "tr"     'tab-rename
   "t TAB"  'tab-recent
   "td"     'tab-close
@@ -6416,7 +6382,7 @@ removal."
   "tm"     'tab-move-to
   "ty"     'tab-duplicate
   "tP"     'project-other-tab-command
-  "tt"     'other-tab-prefix
+  "to"     'other-tab-prefix
   "tg"     'tab-group
   "tG"     'tab-close-group
   "tu"     'tab-undo
