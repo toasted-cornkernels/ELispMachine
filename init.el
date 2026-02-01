@@ -1804,8 +1804,6 @@
         (python-shell-switch-to-shell)
         (evil-insert-state)))
 
-    (when (executable-find "ipython")
-      (setq python-shell-interpreter "ipython"))
     :config
     (advice-add 'elispm/python-start-or-switch-repl
                 :before
