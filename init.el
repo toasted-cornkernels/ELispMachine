@@ -1702,6 +1702,10 @@
 
   (use-package python
     :straight (:type built-in)
+    :hook (python-mode . (lambda ()
+                           (setq-local python-shell-interpreter
+                                       (or (executable-find "ipython")
+                                           (executable-find "python")))))
     :config
     ;;; stolen from Spacemacs!
     (defun elispm/python-start-or-switch-repl ()
