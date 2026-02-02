@@ -6027,6 +6027,7 @@ removal."
   "fi"  'insert-file
   "fl"  'locate
   "fE"  'elispm/sudo-edit
+  "fx"  'file-notify-rm-all-watches
 
   ;; TODO: rename-current-buffer-file
 
