@@ -1657,45 +1657,7 @@
   (local-leader
     :major-modes '(c-mode c++-mode t)
     :keymaps     '(c-mode-map c++-mode-map)
-    ;; 'cmake-integration-browse-conan-center
-    ;; 'cmake-integration-cmake-configure-with-preset
-    ;; 'cmake-integration-cmake-reconfigure
-    ;; 'cmake-integration-conan-add-remote
-    ;; 'cmake-integration-conan-do-addition
-    ;; 'cmake-integration-conan-list-packages-in-local-cache
-    ;; 'cmake-integration-conan-manage-remotes
-    ;; 'cmake-integration-conan-search
-    ;; 'cmake-integration-debug-last-target
-    ;; 'cmake-integration-delete-build-folder
-    ;; 'cmake-integration-generate-project-documentation
-    ;; 'cmake-integration-get-target-executable-full-path
-    ;; 'cmake-integration-open-dired-in-build-folder
-    ;; 'cmake-integration-open-dired-in-target-folder
-    ;; 'cmake-integration-open-eshell-in-target-folder
-    ;; 'cmake-integration-open-shell-in-build-folder
-    ;; 'cmake-integration-print-ctest-labels
-    ;; 'cmake-integration-refresh-target-type-cache
-    ;; 'cmake-integration-run-cmake-install
-    ;; 'cmake-integration-run-cpack
-    ;; 'cmake-integration-run-ctest
-    ;; 'cmake-integration-run-last-target
-    ;; 'cmake-integration-run-last-target-with-arguments
-    ;; 'cmake-integration-save-and-compile
-    ;; 'cmake-integration-save-and-compile-last-target
-    ;; 'cmake-integration-search-in-conan-center
-    ;; 'cmake-integration-select-build-preset
-    ;; 'cmake-integration-select-conan-profile
-    ;; 'cmake-integration-select-configure-preset
-    ;; 'cmake-integration-select-ctest-labels-to-exclude
-    ;; 'cmake-integration-select-ctest-labels-to-include
-    ;; 'cmake-integration-select-current-target
-    ;; 'cmake-integration-select-package-preset
-    ;; 'cmake-integration-select-test-preset
-    ;; 'cmake-integration-set-install-prefix
-    ;; 'cmake-integration-transient
-    ;; 'cmake-integration-view-project-documentation
-    ;; 'cmake-integration-view-project-documentation-in-eww
-    )
+    "'"          'cmake-integration-transient))
 
   ;; Python config ====================================
   ;; ==================================================
@@ -1703,8 +1665,7 @@
   (use-package python
     :straight (:type built-in)
     :config
-  ;;; stolen from Spacemacs!
-
+    ;;; stolen from Spacemacs!
     (defun elispm/python-start-or-switch-repl ()
       "Start and/or switch to the REPL."
       (interactive)
@@ -1843,67 +1804,74 @@
         (python-shell-switch-to-shell)
         (evil-insert-state)))
 
+    :config
+    (advice-add 'elispm/python-start-or-switch-repl
+                :before
+                (lambda ()
+                  (setq-local python-shell-interpreter
+                              (or (executable-find "ipython")
+                                  (executable-find "python")))))
     :general-config
     (local-leader
       :major-modes '(python-mode t)
       :keymaps     '(python-mode-map)
-      "'"   'elispm/python-start-or-switch-repl
-
-      "s"   (which-key-prefix "REPL")
-      "sB"  'elispm/python-shell-send-buffer-switch
-      "sb"  'elispm/python-shell-send-buffer
-      "sE"  'elispm/python-shell-send-statement-switch
-      "se"  'elispm/python-shell-send-statement
-      "sF"  'elispm/python-shell-send-defun-switch
-      "sf"  'elispm/python-shell-send-defun
-      "si"  'elispm/python-start-or-switch-repl
-      "sK"  'elispm/python-shell-send-block-switch
-      "sk"  'elispm/python-shell-send-block
-      "sn"  'elispm/python-shell-restart
-      "sN"  'elispm/python-shell-restart-switch
-      "sR"  'elispm/python-shell-send-region-switch
-      "sr"  'elispm/python-shell-send-region
-      "sl"  'elispm/python-shell-send-line
-      "ss"  'elispm/python-shell-send-with-output
-
-      "r"   (which-key-prefix "refactor")
-      "rI"  'py-isort-buffer
-
-      "v"   (which-key-prefix "virtualenv")
-      "vi"  (which-key-prefix "pipenv")
-      "via" 'pipenv-activate
-      "vid" 'pipenv-deactivate
-      "vii" 'pipenv-install
-      "vio" 'pipenv-open
-      "vis" 'pipenv-shell
-      "viu" 'pipenv-uninstall
-
-      "vp"  (which-key-prefix "poetry")
-      "vpd" 'poetry-venv-deactivate
-      "vpw" 'poetry-venv-workon
-      "vpt" 'poetry-venv-toggle
-
-      "vP"  (which-key-prefix "pyenv")
-      "vu"  'pyenv-mode-unset
-      "vs"  'pyenv-mode-set
-
-      "t"   (which-key-prefix "testing")
-      "tt"  (which-key-prefix "pytest")
-      "tt"  'python-pytest
-      "tff" 'python-pytest-file-dwim
-      "tfF" 'python-pytest-file
-      "tfa" 'python-pytest-files
-      "td"  'python-pytest-function-dwim
-      "tD"  'python-pytest-function
-      "tx"  'python-pytest-last-failed
-      "tr"  'python-pytest-repeat
-
-      "d"   (which-key-prefix "generate docs")
-      "dse" 'sphinx-doc-mode
-      "dsd" 'sphinx-doc
-
-      "dp"  'pydoc-at-point-no-jedi
-      "dP"  'pydoc)))
+      "'"          'elispm/python-start-or-switch-repl
+                   
+      "s"          (which-key-prefix "REPL")
+      "sB"         'elispm/python-shell-send-buffer-switch
+      "sb"         'elispm/python-shell-send-buffer
+      "sE"         'elispm/python-shell-send-statement-switch
+      "se"         'elispm/python-shell-send-statement
+      "sF"         'elispm/python-shell-send-defun-switch
+      "sf"         'elispm/python-shell-send-defun
+      "si"         'elispm/python-start-or-switch-repl
+      "sK"         'elispm/python-shell-send-block-switch
+      "sk"         'elispm/python-shell-send-block
+      "sn"         'elispm/python-shell-restart
+      "sN"         'elispm/python-shell-restart-switch
+      "sR"         'elispm/python-shell-send-region-switch
+      "sr"         'elispm/python-shell-send-region
+      "sl"         'elispm/python-shell-send-line
+      "ss"         'elispm/python-shell-send-with-output
+                   
+      "r"          (which-key-prefix "refactor")
+      "rI"         'py-isort-buffer
+                   
+      "v"          (which-key-prefix "virtualenv")
+      "vi"         (which-key-prefix "pipenv")
+      "via"        'pipenv-activate
+      "vid"        'pipenv-deactivate
+      "vii"        'pipenv-install
+      "vio"        'pipenv-open
+      "vis"        'pipenv-shell
+      "viu"        'pipenv-uninstall
+                   
+      "vp"         (which-key-prefix "poetry")
+      "vpd"        'poetry-venv-deactivate
+      "vpw"        'poetry-venv-workon
+      "vpt"        'poetry-venv-toggle
+                   
+      "vP"         (which-key-prefix "pyenv")
+      "vu"         'pyenv-mode-unset
+      "vs"         'pyenv-mode-set
+                   
+      "t"          (which-key-prefix "testing")
+      "tt"         (which-key-prefix "pytest")
+      "tt"         'python-pytest
+      "tff"        'python-pytest-file-dwim
+      "tfF"        'python-pytest-file
+      "tfa"        'python-pytest-files
+      "td"         'python-pytest-function-dwim
+      "tD"         'python-pytest-function
+      "tx"         'python-pytest-last-failed
+      "tr"         'python-pytest-repeat
+                   
+      "d"          (which-key-prefix "generate docs")
+      "dse"        'sphinx-doc-mode
+      "dsd"        'sphinx-doc
+                   
+      "dp"         'pydoc-at-point-no-jedi
+      "dP"         'pydoc))
 
 (use-package cython-mode
   :mode "\\.pyx\\'")
@@ -4944,6 +4912,7 @@ set so that it clears the whole REPL buffer, not just the output."
     "gC"  'magit-clone
     "gp"  'magit-push
     "gd"  'magit-diff-dwim
+    "gP"  'magit-pull
 
     "gl"  (which-key-prefix :links)
     "glc" 'git-link-commit
@@ -6139,6 +6108,7 @@ removal."
   "l"    (which-key-prefix :lang-tools)
   "lm"   (which-key-prefix :major-modes)
   "lmc"  'c++-mode
+  "lmC"  'c-mode
   "lmr"  'rustic-mode
   "lmo"  'org-mode
   "lmm"  'gfm-mode
@@ -6400,7 +6370,11 @@ removal."
   "th"     'tab-previous
   "tn"     'tab-next
   "tl"     'tab-next
-  "tL"     'tab-list
+  "tP"     'tab-move-previous
+  "tH"     'tab-move-previous
+  "tN"     'tab-next
+  "tL"     'tab-next
+  "tt"     'tab-list
   "tr"     'tab-rename
   "t TAB"  'tab-recent
   "td"     'tab-close
@@ -6412,7 +6386,7 @@ removal."
   "tm"     'tab-move-to
   "ty"     'tab-duplicate
   "tP"     'project-other-tab-command
-  "tt"     'other-tab-prefix
+  "to"     'other-tab-prefix
   "tg"     'tab-group
   "tG"     'tab-close-group
   "tu"     'tab-undo
@@ -7037,7 +7011,7 @@ removal."
   (emms-all)
   (emms-default-players)
   (setq emms-player-mpv-parameters '("--really-quiet" "--no-audio-display" "--no-video")
-        emms-source-file-default-directory (cond (macOS-p "~/Music/MyMusic/")
+        emms-source-file-default-directory (cond (macOS-p "~/Music/Music/")
                                                  (chromeOS-p "/mnt/chromeos/removable/SD Card/Music/")
                                                  (t "~/"))
         emms-playlist-buffer-name "*Music*"
