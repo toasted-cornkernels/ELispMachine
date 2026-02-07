@@ -5860,7 +5860,7 @@ set so that it clears the whole REPL buffer, not just the output."
   "w'" 'evil-window-split
 
   ";"  'evil-window-vsplit
-  ":"  'consult-complex-command
+  ":"  'eval-expression
   "'"  'evil-window-split
 
   "1"  'winum-select-window-1
