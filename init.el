@@ -1805,7 +1805,7 @@
                   (setq-local python-shell-interpreter
                               (or (executable-find "ipython")
                                   (executable-find "python"))
-                              python-shell-interpreter-args "--simple-prompt")))
+                              python-shell-interpreter-args "-i")))
     :general-config
     (local-leader
       :major-modes '(python-mode t)
