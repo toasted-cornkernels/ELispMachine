@@ -1804,7 +1804,8 @@
                 (lambda ()
                   (setq-local python-shell-interpreter
                               (or (executable-find "ipython")
-                                  (executable-find "python")))))
+                                  (executable-find "python"))
+                              python-shell-interpreter-args "--simple-prompt")))
     :general-config
     (local-leader
       :major-modes '(python-mode t)
