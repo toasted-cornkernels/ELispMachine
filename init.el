@@ -2091,7 +2091,11 @@
 
   (sp-pair "{" nil :post-handlers '((indent-between-pair "RET")))
   (sp-pair "[" nil :post-handlers '((indent-between-pair "RET")))
-  (sp-pair "(" nil :post-handlers '((indent-between-pair "RET"))))
+  (sp-pair "(" nil :post-handlers '((indent-between-pair "RET")))
+
+  (sp-local-pair '(c-mode) "{" nil :post-handlers nil)
+  (sp-local-pair '(c-mode) "[" nil :post-handlers nil)
+  (sp-local-pair '(c-mode) "(" nil :post-handlers nil))
 
 (use-package evil-cleverparens
   :init
@@ -6017,6 +6021,7 @@ removal."
   "fi"  'insert-file
   "fl"  'locate
   "fE"  'elispm/sudo-edit
+  "fx"  'file-notify-rm-all-watches
 
   ;; TODO: rename-current-buffer-file
 
