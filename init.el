@@ -1116,9 +1116,11 @@
     (make-local-variable variable)
     (set variable (read-string (concat prompt ": ") nil oc-capture-prmt-history)))
 
-  (setq org-roam-directory (if android-p "~/storage/shared/OrgRoam/" "~/OrgRoam/")
+  (setq ;; Default Org-Roam directory. Multiple org-roam directories are registered separately using `.dir-locals.el`.
+        org-roam-directory (if android-p "~/storage/shared/OrgRoam/" "~/OrgRoam/")
         org-roam-node-display-template (concat "${title:*} " (propertize "${tags:10}" 'face 'org-tag))
         org-roam-completion-everywhere t
+        org-roam-dailies-directory "Dailies/"
         org-roam-capture-templates
         `(("d" "Default" plain
            (file ,(concat user-emacs-directory "/CaptureTemplates/OrgRoam/DefaultTemplate.org"))
@@ -1151,14 +1153,6 @@
           ("F" "New Japanese Flashback" plain
            (file ,(concat user-emacs-directory "/CaptureTemplates/OrgRoam/NewJapaneseFlashbackTemplate.org"))
            :if-new (file+head "Languages/Japanese/Flashbacks/${slug}.org" "#+TITLE: ${title}\n#+DATE:%U\n")
-           :unnarrowed t)
-          ("r" "New Rust Notes" plain
-           (file ,(concat user-emacs-directory "/CaptureTemplates/OrgRoam/NewRustNotesTemplate.org"))
-           :if-new (file+head "ProgrammingLanguages/Cpp/${slug}.org" "#+TITLE: ${title}\n#+DATE:%U\n")
-           :unnarrowed t)
-          ("p" "New C++ Notes" plain
-           (file ,(concat user-emacs-directory "/CaptureTemplates/OrgRoam/NewCppNotesTemplate.org"))
-           :if-new (file+head "ProgrammingLanguages/Rust/${slug}.org" "#+TITLE: ${title}\n#+DATE:%U\n")
            :unnarrowed t)))
   (org-roam-db-autosync-mode))
 
@@ -1831,7 +1825,8 @@
                 (lambda ()
                   (setq-local python-shell-interpreter
                               (or (executable-find "ipython")
-                                  (executable-find "python")))))
+                                  (executable-find "python"))
+                              python-shell-interpreter-args "-i")))
     :general-config
     (local-leader
       :major-modes '(python-mode t)
@@ -5887,7 +5882,7 @@ set so that it clears the whole REPL buffer, not just the output."
   "w'" 'evil-window-split
 
   ";"  'evil-window-vsplit
-  ":"  'consult-complex-command
+  ":"  'eval-expression
   "'"  'evil-window-split
 
   "1"  'winum-select-window-1

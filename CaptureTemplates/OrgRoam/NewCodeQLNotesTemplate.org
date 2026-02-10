@@ -1,0 +1,17 @@
+* Piece of CodeQL
+
+${title}
+
+* Code example
+
+#+begin_src ql-tree-sitter
+  %?
+#+end_src
+
+* In the wild
+
+
+
+* References
+
+- 
