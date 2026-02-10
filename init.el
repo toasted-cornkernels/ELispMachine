@@ -6385,6 +6385,7 @@ removal."
   "xil"   'insert-lambda
   "xie"   'emojify-insert-emoji
   "xiE"   'emoji-insert
+  "xix"   'insert-char
   "x TAB" 'indent-rigidly
 
   "xc"    'count-words
