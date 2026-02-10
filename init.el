@@ -1622,6 +1622,24 @@
         gptel-backend (gptel-make-gh-copilot "Copilot")
         gptel-default-mode 'org-mode)
   :general-config
+  (agnostic-key
+    :major-modes '(gptel-mode t)
+    :keymaps     '(gptel-mode-map)
+    "C-c C-c"    'gptel-send
+    "C-c C-q"    'gptel-abort)
+  (local-leader
+    :major-modes '(gptel-mode t)
+    :keymaps     '(gptel-mode-map)
+    ","          'gptel-send
+    "q"          'gptel-abort
+    "m"          'gptel-menu
+    ;;; Capitalized to avoid clash with org-mode-map
+    "A"          'gptel-add
+    "F"          'gptel-add-file
+    "O"          'gptel-org-set-topic
+    "P"          'gptel-org-set-properties
+    ;; "R"          'gptel-rewrite
+    )
   (normal-mode-major-mode
     :major-modes '(gptel-context-buffer-mode t)
     :keymaps     '(gptel-context-buffer-mode-map)
