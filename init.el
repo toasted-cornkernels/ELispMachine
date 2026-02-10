@@ -1617,6 +1617,27 @@
     :keymaps '(eglot-mode-map)
     "as"     'consult-eglot-symbols))
 
+;; GPTel config =====================================
+;; ==================================================
+
+(use-package gptel
+  :defer t
+  :config
+  (evil-collection-gptel-setup)
+  (setq gptel-model 'claude-opus-4.5
+        gptel-backend (gptel-make-gh-copilot "Copilot")
+        gptel-default-mode 'org-mode)
+  :general-config
+  (normal-mode-major-mode
+    :major-modes '(gptel-context-buffer-mode t)
+    :keymaps     '(gptel-context-buffer-mode-map)
+    "C-c C-c"    'gptel-context-confirm
+    "C-c C-k"    'gptel-context-quit
+    "RET"        'gptel-context-visit
+    "n"          'gptel-context-next
+    "p"          'gptel-context-previous
+    "d"          'gptel-context-flag-deletion))
+
 ;; Shell config =====================================
 ;; ==================================================
 
@@ -6112,17 +6133,19 @@ removal."
   "lmC"  'c-mode
   "lmr"  'rustic-mode
   "lmo"  'org-mode
-  "lmm"  'gfm-mode
+  "lmm"  'gfm-mode)
 
-  "ld"   (which-key-prefix :dumb-jump)
-  "ldj"  'dumb-jump-go
-  "ldd"  'dumb-jump-go
-  "ldo"  'dumb-jump-go-other-window
-  "lde"  'dumb-jump-go-prefer-external
-  "ldO"  'dumb-jump-go-prefer-external-other-window
-  "ldp"  'dumb-jump-go-prompt
-  "ldl"  'dumb-jump-quick-look
-  "ldb"  'dumb-jump-back)
+(global-leader
+  "L"    (which-key-prefix :LLMs)
+  "LL"   'gptel
+  "Ls"   'gptel-send
+  "Lq"   'gptel-abort
+  "Lm"   'gptel-menu
+  "Lc"   'gptel-add
+  "Lf"   'gptel-add-file
+  "Lo"   'gptel-org-set-topic
+  "Lp"   'gptel-org-set-properties
+  "Lr"   'gptel-rewrite)
 
 (global-leader
   "y"   (which-key-prefix :yank))
