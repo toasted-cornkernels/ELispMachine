@@ -1618,7 +1618,7 @@
   :defer t
   :config
   (evil-collection-gptel-setup)
-  (setq gptel-model 'claude-opus-4.6
+  (setq gptel-model 'claude-opus-4.5
         gptel-backend (gptel-make-gh-copilot "Copilot")
         gptel-default-mode 'org-mode)
   :general-config
