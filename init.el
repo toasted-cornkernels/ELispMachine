@@ -4572,6 +4572,13 @@ set so that it clears the whole REPL buffer, not just the output."
   (autoload 'projectile-project-root "projectile")
   (setq consult-project-function (lambda (_) (projectile-project-root))))
 
+(use-package consult-dir
+  :ensure t
+  :bind (("C-x C-d" . consult-dir)
+         :map minibuffer-local-completion-map
+         ("C-x C-d" . consult-dir)
+         ("C-x C-j" . consult-dir-jump-file)))
+
 ;; Company config ===================================
 ;; ==================================================
 
@@ -6925,8 +6932,9 @@ removal."
 (use-package elfeed
   :defer t
   :hook (elfeed-show-mode . (lambda ()
-                              (setq fill-column 120) ; is it needed?
-                              (setq elfeed-show-entry-switch #'my-show-elfeed)))
+                              ;; (setq fill-column 120) ; is it needed?
+                              ;; (setq elfeed-show-entry-switch #'my-show-elfeed)
+                              (elfeed-show-refresh)))
   :init
   (defun my-show-elfeed (buffer)
     (with-current-buffer buffer
