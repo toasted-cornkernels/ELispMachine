@@ -1616,6 +1616,7 @@
 
 (use-package gptel
   :defer t
+  :hook (gptel-mode . gptel-highlight-mode)
   :config
   (evil-collection-gptel-setup)
   (setq gptel-model 'claude-opus-4.5
