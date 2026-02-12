@@ -6331,6 +6331,7 @@ removal."
   "hdv"  'helpful-variable
   "hdm"  'describe-mode
   "hdp"  'describe-package
+  "hdx"  'describe-char
   "hdM"  'describe-keymap
   "hdc"  'helpful-command)
 
