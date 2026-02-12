@@ -1499,8 +1499,8 @@
                 :branch "main"
                 :files (:defaults "bin")
                 :fork (:host github
-                       :repo "jeongsoolee09/emacs-codeql"
-                       :branch "unlocalize-database"))
+                             :repo "jeongsoolee09/emacs-codeql"
+                             :branch "unlocalize-database"))
   :init
   (setq codeql-transient-binding "C-c q"
         codeql-configure-eglot-lsp t)
@@ -1538,8 +1538,31 @@
 
   :config
   (setq codeql-search-paths '("./"))
-  ;; below defalias is not working...
-  (defalias 'codeql-mode 'ql-tree-sitter-mode))
+  (defalias 'codeql-mode 'ql-tree-sitter-mode) ; this defalias is not working...
+  (defun elispm/clear-codeql-variables ()
+    (interactive)
+    (setq codeql--path-problem-max-paths 10)
+
+    ;; local connection state
+    (setq codeql--query-server nil)
+
+    ;; local database state
+    (setq codeql--active-database nil)
+    (setq codeql--active-database-language nil)
+    (setq codeql--database-dataset-folder nil)
+    (setq codeql--database-source-location-prefix nil)
+    (setq codeql--database-source-archive-zip nil)
+    (setq codeql--database-source-archive-root nil)
+    (setq codeql--library-path nil)
+    (setq codeql--dbscheme nil)
+
+    ;; local query id state
+    (setq codeql--query-server-client-id 0)
+    (setq codeql--query-server-progress-id 0)
+    (setq codeql--query-server-evaluate-id 0)
+
+    ;; local query history
+    (setq codeql--completed-query-history nil)))
 
 (use-package souffle-mode
   :straight (souffle-mode :host github
@@ -6931,10 +6954,9 @@ removal."
 
 (use-package elfeed
   :defer t
-  :hook (elfeed-show-mode . (lambda ()
-                              ;; (setq fill-column 120) ; is it needed?
-                              ;; (setq elfeed-show-entry-switch #'my-show-elfeed)
-                              (elfeed-show-refresh)))
+  ;; :hook (elfeed-show-mode . (lambda ()
+  ;;                             (setq fill-column 120) ; is it needed?
+  ;;                             (setq elfeed-show-entry-switch #'my-show-elfeed)))
   :init
   (defun my-show-elfeed (buffer)
     (with-current-buffer buffer
@@ -7031,7 +7053,9 @@ removal."
     "b"  'elfeed-search-browse-url
     "y"  'elfeed-search-yank
     "U"  'elfeed-search-tag-all-unread
-    "u"  'elfeed-search-untag-all-unread))
+    "u"  'elfeed-search-untag-all-unread)
+  ;; (advice-add 'elfeed-search-show-entry :after #'elfeed-show-refresh)
+  )
 
 (use-package elfeed-goodies
   :commands elfeed-goodies/setup)
