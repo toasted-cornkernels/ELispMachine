@@ -1637,7 +1637,8 @@
   (evil-collection-gptel-setup)
   (setq gptel-model 'claude-opus-4.5
         gptel-backend (gptel-make-gh-copilot "Copilot")
-        gptel-default-mode 'org-mode)
+        gptel-default-mode 'org-mode
+        gptel-highlight-methods '(face margin))
   :general-config
   (local-leader
     :major-modes '(gptel-mode t)
