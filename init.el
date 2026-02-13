@@ -857,13 +857,6 @@
   (setq evil-org-use-additional-insert t
         evil-org-key-theme '(textobjects navigation additional todo)))
 
-(use-package org-modern
-  :hook (org-mode . global-org-modern-mode)
-  :when GUI-p
-  :config
-  (setq org-modern-table nil
-        org-modern-timestamp nil))
-
 (use-package org-keys
   :straight nil
   :defer    t
@@ -1068,7 +1061,7 @@
     "k"          'org-edit-src-abort
     "'"          'org-edit-src-exit)
   :config
-  (setq org-src-window-setup 'split-window-below
+  (setq org-src-window-setup 'current-window
         org-src-fontify-natively t
         org-src-tab-acts-natively t)
   (setq-default org-src-preserve-indentation nil
