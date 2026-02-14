@@ -857,13 +857,6 @@
   (setq evil-org-use-additional-insert t
         evil-org-key-theme '(textobjects navigation additional todo)))
 
-(use-package org-modern
-  :hook (org-mode . global-org-modern-mode)
-  :when GUI-p
-  :config
-  (setq org-modern-table nil
-        org-modern-timestamp nil))
-
 (use-package org-keys
   :straight nil
   :defer    t
@@ -1068,7 +1061,7 @@
     "k"          'org-edit-src-abort
     "'"          'org-edit-src-exit)
   :config
-  (setq org-src-window-setup 'split-window-below
+  (setq org-src-window-setup 'current-window
         org-src-fontify-natively t
         org-src-tab-acts-natively t)
   (setq-default org-src-preserve-indentation nil
@@ -1499,8 +1492,8 @@
                 :branch "main"
                 :files (:defaults "bin")
                 :fork (:host github
-                       :repo "jeongsoolee09/emacs-codeql"
-                       :branch "unlocalize-database"))
+                             :repo "jeongsoolee09/emacs-codeql"
+                             :branch "unlocalize-database"))
   :init
   (setq codeql-transient-binding "C-c q"
         codeql-configure-eglot-lsp t)
@@ -1538,8 +1531,31 @@
 
   :config
   (setq codeql-search-paths '("./"))
-  ;; below defalias is not working...
-  (defalias 'codeql-mode 'ql-tree-sitter-mode))
+  (defalias 'codeql-mode 'ql-tree-sitter-mode) ; this defalias is not working...
+  (defun elispm/clear-codeql-variables ()
+    (interactive)
+    (setq codeql--path-problem-max-paths 10)
+
+    ;; local connection state
+    (setq codeql--query-server nil)
+
+    ;; local database state
+    (setq codeql--active-database nil)
+    (setq codeql--active-database-language nil)
+    (setq codeql--database-dataset-folder nil)
+    (setq codeql--database-source-location-prefix nil)
+    (setq codeql--database-source-archive-zip nil)
+    (setq codeql--database-source-archive-root nil)
+    (setq codeql--library-path nil)
+    (setq codeql--dbscheme nil)
+
+    ;; local query id state
+    (setq codeql--query-server-client-id 0)
+    (setq codeql--query-server-progress-id 0)
+    (setq codeql--query-server-evaluate-id 0)
+
+    ;; local query history
+    (setq codeql--completed-query-history nil)))
 
 (use-package souffle-mode
   :straight (souffle-mode :host github
@@ -1610,6 +1626,41 @@
   (local-leader
     :keymaps '(eglot-mode-map)
     "as"     'consult-eglot-symbols))
+
+;; GPTel config =====================================
+;; ==================================================
+
+(use-package gptel
+  :defer t
+  :hook (gptel-mode . gptel-highlight-mode)
+  :config
+  (evil-collection-gptel-setup)
+  (setq gptel-model 'claude-opus-4.5
+        gptel-backend (gptel-make-gh-copilot "Copilot")
+        gptel-default-mode 'org-mode
+        gptel-highlight-methods '(face margin))
+  :general-config
+  (local-leader
+    :major-modes '(gptel-mode t)
+    :keymaps     '(gptel-mode-map)
+    "g"          (which-key-prefix "gptel")
+    "gs"         'gptel-send
+    "gq"         'gptel-abort
+    "gg"         'gptel-menu
+    "ga"         'gptel-add
+    "gf"         'gptel-add-file
+    "gt"         'gptel-org-set-topic
+    "gp"         'gptel-org-set-properties
+    "gr"         'gptel-rewrite)
+  (normal-mode-major-mode
+    :major-modes '(gptel-context-buffer-mode t)
+    :keymaps     '(gptel-context-buffer-mode-map)
+    "C-c C-c"    'gptel-context-confirm
+    "C-c C-k"    'gptel-context-quit
+    "RET"        'gptel-context-visit
+    "n"          'gptel-context-next
+    "p"          'gptel-context-previous
+    "d"          'gptel-context-flag-deletion))
 
 ;; Shell config =====================================
 ;; ==================================================
@@ -1811,7 +1862,7 @@
       :major-modes '(python-mode t)
       :keymaps     '(python-mode-map)
       "'"          'elispm/python-start-or-switch-repl
-                   
+
       "s"          (which-key-prefix "REPL")
       "sB"         'elispm/python-shell-send-buffer-switch
       "sb"         'elispm/python-shell-send-buffer
@@ -1828,10 +1879,10 @@
       "sr"         'elispm/python-shell-send-region
       "sl"         'elispm/python-shell-send-line
       "ss"         'elispm/python-shell-send-with-output
-                   
+
       "r"          (which-key-prefix "refactor")
       "rI"         'py-isort-buffer
-                   
+
       "v"          (which-key-prefix "virtualenv")
       "vi"         (which-key-prefix "pipenv")
       "via"        'pipenv-activate
@@ -1840,16 +1891,16 @@
       "vio"        'pipenv-open
       "vis"        'pipenv-shell
       "viu"        'pipenv-uninstall
-                   
+
       "vp"         (which-key-prefix "poetry")
       "vpd"        'poetry-venv-deactivate
       "vpw"        'poetry-venv-workon
       "vpt"        'poetry-venv-toggle
-                   
+
       "vP"         (which-key-prefix "pyenv")
       "vu"         'pyenv-mode-unset
       "vs"         'pyenv-mode-set
-                   
+
       "t"          (which-key-prefix "testing")
       "tt"         (which-key-prefix "pytest")
       "tt"         'python-pytest
@@ -1860,11 +1911,11 @@
       "tD"         'python-pytest-function
       "tx"         'python-pytest-last-failed
       "tr"         'python-pytest-repeat
-                   
+
       "d"          (which-key-prefix "generate docs")
       "dse"        'sphinx-doc-mode
       "dsd"        'sphinx-doc
-                   
+
       "dp"         'pydoc-at-point-no-jedi
       "dP"         'pydoc))
 
@@ -3633,12 +3684,12 @@ set so that it clears the whole REPL buffer, not just the output."
     "`"          'tuareg-run-ocaml
     "k"          'tuareg-kill-ocaml
     "="          'ocamlformat
-                 
+
     "E"          (which-key-prefix :errors)
     "Ec"         'merlin-error-check
     "En"         'merlin-error-next
     "EN"         'merlin-error-prev
-                 
+
     "g"          (which-key-prefix :goto)
     "ga"         'tuareg-find-alternate-file
     "gb"         'merlin-pop-stack
@@ -3651,23 +3702,23 @@ set so that it clears the whole REPL buffer, not just the output."
     "gN"         'tuareg-interactive-next-error-repl
     "g["         'ocaml-open-module
     "g]"         'ocaml-close-module
-                 
+
     "h"          (which-key-prefix :help)
     "hh"         'merlin-document
     "ht"         'merlin-type-enclosing
     "hT"         'merlin-type-expr
-                 
+
     "r"          (which-key-prefix :refactor)
     "rd"         'merlin-destruct
     "re"         'merlin-iedit-occurrences
-                 
+
     "c"          (which-key-prefix :compile/check)
     "cc"         'compile
-                 
+
     "t"          (which-key-prefix :test)
     "tP"         'dune-promote
     "tp"         'dune-runtest-and-promote
-                 
+
     "s"          (which-key-prefix :send)
     "sb"         'utop-eval-buffer
     "sB"         'utop-eval-buffer-and-go
@@ -3676,12 +3727,12 @@ set so that it clears the whole REPL buffer, not just the output."
     "sP"         'utop-eval-phrase-and-go
     "sr"         'utop-eval-region
     "sR"         'utop-eval-region-and-go
-                 
+
     "e"          (which-key-prefix :eval)
     "eb"         'tuareg-eval-buffer
     "ep"         'tuareg-eval-phrase
     "er"         'tuareg-eval-region
-                 
+
     "i"          (which-key-prefix :insert)
     "ib"         'tuareg-insert-begin-form
     "ic"         'tuareg-insert-class-form
@@ -3750,13 +3801,13 @@ set so that it clears the whole REPL buffer, not just the output."
     "o"          'rustic-cargo-outdated
     "p"          'rustic-popup
     "!"          'rustic-run-shell-command
-                 
+
     "b"          (which-key-prefix "babel")
     "bc"         'rustic-babel-clippy
     "bf"         'rustic-babel-format-block
     "bh"         'rustic-babel-header-insert-crates
     "bm"         'rustic-babel-visit-project
-                 
+
     "C"          (which-key-prefix "cargo")
     "C!"         'rustic-cargo-init
     "CC"         'rustic-cargo-clean
@@ -3775,39 +3826,39 @@ set so that it clears the whole REPL buffer, not just the output."
     "Cs"         'rustic-doc-search
     "Cu"         'rustic-cargo-update
     "Cv"         'rustic-cargo-check
-                 
+
     "i"          (which-key-prefix "install")
     "ii"         'rustic-cargo-install
     "iI"         'rustic-cargo-install-rerun
-                 
+
     "l"          (which-key-prefix "clippy")
     "lL"         'rustic-cargo-clippy-rerun
     "ll"         'rustic-cargo-clippy
     "lr"         'rustic-cargo-clippy-run
     "lf"         'rustic-cargo-clippy-fix
-                 
+
     "c"          (which-key-prefix "compile")
     "cc"         'rustic-compile
     "cC"         'rustic-recompile
     "ci"         'rustic-compile-send-input
-                 
+
     "d"          (which-key-prefix "docs")
     "ds"         'rustic-doc-search
     "dd"         'rustic-doc-dumb-search
     "dS"         'rustic-doc-setup
     "dc"         'rustic-doc-convert-current-package
-                 
+
     "e"          (which-key-prefix "macroexpand")
     "ee"         'rustic-cargo-expand
     "ec"         'rustic-cargo-expand-command
-                 
+
     "r"          (which-key-prefix "run")
     "rr"         'rustic-cargo-run
     "rR"         'rustic-cargo-run-rerun
     "ri"         'rustic-cargo-comint-run
     "rI"         'rustic-cargo-comint-run-rerun
     "rp"         'rustic-cargo-plain-run
-                 
+
     "t"          (which-key-prefix "tests")
     "tr"         'rustic-cargo-test
     "ta"         'rustic-cargo-test-run
@@ -3815,23 +3866,23 @@ set so that it clears the whole REPL buffer, not just the output."
     "tR"         'rustic-cargo-test-rerun
     "t."         'rustic-cargo-test-rerun-current
     "tt"         'rustic-cargo-test-dwim
-                 
+
     "p"          (which-key-prefix "playground")
     "pp"         'rustic-playground
     "pb"         'rustic-playground-buffer
-                 
+
     "e"          (which-key-prefix "edit")
     "ed"         'rustic-docstring-dwim
     "et"         'rustic-open-dependency-file
     "ef"         'rustic-beginning-of-defun
-                 
+
     "F"          (which-key-prefix "fix")
     "FF"         'rustic-rustfix
-                 
+
     "S"          (which-key-prefix "spellcheck")
     "SS"         'rustic-cargo-spellcheck
     "SR"         'rustic-cargo-spellcheck-rerun
-                 
+
     "f"          (which-key-prefix "format")
     "fB"         'rustic-babel-format-block
     "f="         'rustic-format-file
@@ -4538,6 +4589,13 @@ set so that it clears the whole REPL buffer, not just the output."
   (autoload 'projectile-project-root "projectile")
   (setq consult-project-function (lambda (_) (projectile-project-root))))
 
+(use-package consult-dir
+  :ensure t
+  :bind (("C-x C-d" . consult-dir)
+         :map minibuffer-local-completion-map
+         ("C-x C-d" . consult-dir)
+         ("C-x C-j" . consult-dir-jump-file)))
+
 ;; Company config ===================================
 ;; ==================================================
 
@@ -4922,7 +4980,7 @@ set so that it clears the whole REPL buffer, not just the output."
     "gh"  (which-key-prefix :smeargle)
     "ght" 'smeargle
     "ghc" 'smeargle-clear
-    "ghh" 'smeargle-commits) 
+    "ghh" 'smeargle-commits)
   :config
   (require 'git-rebase)
   (add-hook 'magit-mode-hook
@@ -6107,17 +6165,19 @@ removal."
   "lmC"  'c-mode
   "lmr"  'rustic-mode
   "lmo"  'org-mode
-  "lmm"  'gfm-mode
+  "lmm"  'gfm-mode)
 
-  "ld"   (which-key-prefix :dumb-jump)
-  "ldj"  'dumb-jump-go
-  "ldd"  'dumb-jump-go
-  "ldo"  'dumb-jump-go-other-window
-  "lde"  'dumb-jump-go-prefer-external
-  "ldO"  'dumb-jump-go-prefer-external-other-window
-  "ldp"  'dumb-jump-go-prompt
-  "ldl"  'dumb-jump-quick-look
-  "ldb"  'dumb-jump-back)
+(global-leader
+  "L"    (which-key-prefix :LLMs)
+  "LL"   'gptel
+  "Ls"   'gptel-send
+  "Lq"   'gptel-abort
+  "Lm"   'gptel-menu
+  "Lc"   'gptel-add
+  "Lf"   'gptel-add-file
+  "Lo"   'gptel-org-set-topic
+  "Lp"   'gptel-org-set-properties
+  "Lr"   'gptel-rewrite)
 
 (global-leader
   "y"   (which-key-prefix :yank))
@@ -6178,7 +6238,7 @@ removal."
   "aodc" 'org-roam-dailies-capture-today
   "aody" 'org-roam-dailies-capture-yesterday
   "aodt" 'org-roam-dailies-capture-tomorrow
-  
+
   "aodg"  (which-key-prefix :goto)
   "aodgh" 'org-roam-dailies-goto-yesterday
   "aodgk" 'org-roam-dailies-goto-yesterday
@@ -6295,6 +6355,7 @@ removal."
   "hdv"  'helpful-variable
   "hdm"  'describe-mode
   "hdp"  'describe-package
+  "hdx"  'describe-char
   "hdM"  'describe-keymap
   "hdc"  'helpful-command)
 
@@ -6344,6 +6405,7 @@ removal."
   "xil"   'insert-lambda
   "xie"   'emojify-insert-emoji
   "xiE"   'emoji-insert
+  "xix"   'insert-char
   "x TAB" 'indent-rigidly
 
   "xc"    'count-words
@@ -6886,9 +6948,9 @@ removal."
 
 (use-package elfeed
   :defer t
-  :hook (elfeed-show-mode . (lambda ()
-                              (setq fill-column 120) ; is it needed?
-                              (setq elfeed-show-entry-switch #'my-show-elfeed)))
+  ;; :hook (elfeed-show-mode . (lambda ()
+  ;;                             (setq fill-column 120) ; is it needed?
+  ;;                             (setq elfeed-show-entry-switch #'my-show-elfeed)))
   :init
   (defun my-show-elfeed (buffer)
     (with-current-buffer buffer
@@ -6985,7 +7047,9 @@ removal."
     "b"  'elfeed-search-browse-url
     "y"  'elfeed-search-yank
     "U"  'elfeed-search-tag-all-unread
-    "u"  'elfeed-search-untag-all-unread))
+    "u"  'elfeed-search-untag-all-unread)
+  ;; (advice-add 'elfeed-search-show-entry :after #'elfeed-show-refresh)
+  )
 
 (use-package elfeed-goodies
   :commands elfeed-goodies/setup)
