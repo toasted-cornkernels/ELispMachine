@@ -1,6 +1,6 @@
 * Piece of C++
 
-${title}
+** ${title}
 
 * Code examples
 :PROPERTIES:
