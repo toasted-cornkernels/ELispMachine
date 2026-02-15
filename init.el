@@ -1715,7 +1715,8 @@
       "Start and/or switch to the REPL."
       (interactive)
       (if-let* ((shell-process (or (python-shell-get-process)
-                                   (call-interactively #'run-python))))
+                                   (let ((current-prefix-arg '(4)))
+                                     (call-interactively #'run-python)))))
           (progn
             (pop-to-buffer (process-buffer shell-process))
             (evil-insert-state))
@@ -1856,7 +1857,7 @@
                   (setq-local python-shell-interpreter
                               (or (executable-find "ipython")
                                   (executable-find "python"))
-                              python-shell-interpreter-args "-i")))
+                              python-shell-interpreter-args "--simple-prompt")))
     :general-config
     (local-leader
       :major-modes '(python-mode t)
@@ -1960,6 +1961,20 @@
     "gF"         'code-cells-forward-cell
     "sc"         'code-cells-eval
     "sa"         'code-cells-eval-above))
+
+(use-package flymake-ruff
+  :defer t
+  :hook (python-mode . flymake-ruff-load))
+
+(use-package ruff-format
+  :after python
+  :general-config
+  (local-leader
+    :major-modes '(python-mode t)
+    :keymaps     '(python-mode-map)
+    "="          (which-key-prefix "format")
+    "=="         'ruff-format-buffer
+    "=r"         'ruff-format-region))
 
 ;; Perl config ======================================
 ;; ==================================================
