@@ -1646,7 +1646,8 @@
     "g"          (which-key-prefix "gptel")
     "gs"         'gptel-send
     "gq"         'gptel-abort
-    "gg"         'gptel-menu
+    "gg"         'gptel-mode
+    "gm"         'gptel-menu
     "ga"         'gptel-add
     "gf"         'gptel-add-file
     "gt"         'gptel-org-set-topic
