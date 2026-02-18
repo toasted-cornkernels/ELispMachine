@@ -2099,7 +2099,13 @@
 ;; ==================================================
 
 (use-package imenu
-  :straight nil)
+  :straight nil
+  :defer t
+  :general-config
+  (global-leader
+    "i"      (which-key-prefix "imenu")
+    "ii"     'imenu
+    "il"     'imenu-list))
 
 (use-package imenu-list
   :after imenu)
@@ -4648,8 +4654,10 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; ==================================================
 
 (use-package embark
-  ;; TODO: add some keybindings
-  :defer t)
+  :defer t
+  :general-config
+  (global-leader
+    "."      'embark-act))
 
 (use-package embark-consult
   :after embark)
@@ -6683,6 +6691,9 @@ removal."
         w3m-session-load-crashed-sessions 'never
         w3m-search-word-at-point nil))
 
+(use-package inherit-org
+  :defer t)
+
 ;; eww config =======================================
 ;; ==================================================
 
@@ -6709,6 +6720,9 @@ removal."
   (:map eww-mode-map
         ("<mouse-4>" . eww-back-url)
         ("<mouse-5>" . eww-forward-url)))
+
+(use-package shrface
+  :defer t)
 
 ;; PDF tools ========================================
 ;; ==================================================
