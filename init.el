@@ -926,7 +926,8 @@
   :defer t)
 
 (use-package valign
-  :hook ((markdown-mode . valign-mode)))
+  :hook ((markdown-mode . valign-mode)
+         (org-mode      . valign-mode)))
 
 (use-package org-appear
   :defer t
@@ -1649,7 +1650,7 @@
     "gg"         'gptel-mode
     "gm"         'gptel-menu
     "ga"         'gptel-add
-    "gf"         'gptel-add-file
+    "g."         'gptel-add-file
     "gt"         'gptel-org-set-topic
     "gp"         'gptel-org-set-properties
     "gr"         'gptel-rewrite)
@@ -6692,7 +6693,9 @@ removal."
         w3m-search-word-at-point nil))
 
 (use-package inherit-org
-  :defer t)
+  :straight (inherit-org :type git
+                         :host github
+                         :repo "chenyanming/inherit-org"))
 
 ;; eww config =======================================
 ;; ==================================================
