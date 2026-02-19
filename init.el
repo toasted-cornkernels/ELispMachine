@@ -1640,7 +1640,7 @@
   (setq gptel-model 'claude-opus-4.5
         gptel-backend (gptel-make-gh-copilot "Copilot")
         gptel-default-mode 'org-mode
-        gptel-highlight-methods '(face margin))
+        gptel-highlight-methods '(face))
   :general-config
   (local-leader
     :major-modes '(gptel-mode t)
@@ -5242,7 +5242,6 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; ==================================================
 
 (use-package git-gutter
-  ;; :defer t
   :general-config
   (local-leader
     :predicate 'git-gutter-mode
@@ -5267,33 +5266,6 @@ set so that it clears the whole REPL buffer, not just the output."
         git-gutter:hide-gutter t ; Hide gutter when there are no changes
         git-gutter:disabled-modes '(pdf-view-mode doc-view-mode image-mode))
   (global-git-gutter-mode))
-
-(use-package git-gutter-fringe
-  :when GUI-p
-  :defer t
-  :init
-  (setq git-gutter-fr:side 'left-fringe)
-  :config
-  (fringe-helper-define 'git-gutter-fr:added nil
-                        "..X...."
-                        "..X...."
-                        "XXXXX.."
-                        "..X...."
-                        "..X....")
-
-  (fringe-helper-define 'git-gutter-fr:deleted nil
-                        "......."
-                        "......."
-                        "XXXXX.."
-                        "......."
-                        ".......")
-
-  (fringe-helper-define 'git-gutter-fr:modified nil
-                        "..X...."
-                        ".XXX..."
-                        "XX.XX.."
-                        ".XXX..."
-                        "..X...."))
 
 ;; format-all =======================================
 ;; ==================================================
