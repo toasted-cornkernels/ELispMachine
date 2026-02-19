@@ -1494,7 +1494,8 @@
                 :files (:defaults "bin")
                 :fork (:host github
                              :repo "jeongsoolee09/emacs-codeql"
-                             :branch "unlocalize-database"))
+                             ;; :branch "unlocalize-database"
+                             :branch "main"))
   :init
   (setq codeql-transient-binding "C-c q"
         codeql-configure-eglot-lsp t)
@@ -6195,11 +6196,12 @@ removal."
 (global-leader
   "L"    (which-key-prefix :LLMs)
   "LL"   'gptel
+  "Ll"   'gptel-mode
   "Ls"   'gptel-send
   "Lq"   'gptel-abort
   "Lm"   'gptel-menu
-  "Lc"   'gptel-add
-  "Lf"   'gptel-add-file
+  "La"   'gptel-add
+  "L."   'gptel-add-file
   "Lo"   'gptel-org-set-topic
   "Lp"   'gptel-org-set-properties
   "Lr"   'gptel-rewrite)
