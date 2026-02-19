@@ -5242,7 +5242,7 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; ==================================================
 
 (use-package git-gutter
-  :defer t
+  ;; :defer t
   :general-config
   (local-leader
     :predicate 'git-gutter-mode
