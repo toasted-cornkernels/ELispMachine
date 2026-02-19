@@ -6489,7 +6489,8 @@ removal."
 (global-leader
   "T"    (which-key-prefix :toggle)
   "TD"   'toggle-debug-on-error
-  "Tl"   'display-line-numbers-mode)
+  "Tl"   'display-line-numbers-mode
+  "Tm"   'hide-mode-line-mode)
 
 (global-leader
   "s-o"  'reveal-in-osx-finder
