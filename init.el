@@ -6463,7 +6463,9 @@ removal."
   "T"    (which-key-prefix :toggle)
   "TD"   'toggle-debug-on-error
   "Tl"   'display-line-numbers-mode
-  "Tm"   'hide-mode-line-mode)
+  "Tm"   'hide-mode-line-mode
+  "Tf"   'toggle-frame-fullscreen
+  "TF" 'mac-toggle-frame-fullscreen)
 
 (global-leader
   "s-o"  'reveal-in-osx-finder
