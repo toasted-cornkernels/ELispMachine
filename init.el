@@ -348,7 +348,8 @@
         evil-disable-insert-state-bindings t
         evil-want-C-u-scroll t
         evil-want-integration t
-        evil-undo-system 'undo-tree
+        evil-undo-system 'undo-fu
+        evil-want-fine-undo t
         evil-mode-line-format nil)
   :config
   (evil-mode 1)
@@ -4690,13 +4691,12 @@ set so that it clears the whole REPL buffer, not just the output."
   ;; (elispm/global-rainbow-delimiters-mode 1)
   )
 
-;; undo-tree config =================================
+;; Undo config ======================================
 ;; ==================================================
 
-(use-package undo-tree
-  :config
-  (global-undo-tree-mode)
-  (setq undo-tree-auto-save-history nil))
+(use-package vundo :defer t)
+
+(use-package undo-fu :defer t)
 
 ;; winum configs ===================================
 ;; =================================================
@@ -6406,6 +6406,7 @@ removal."
   "xiE"   'emoji-insert
   "xix"   'insert-char
   "x TAB" 'indent-rigidly
+  "xu"    'vundo
 
   "xc"    'count-words
 
