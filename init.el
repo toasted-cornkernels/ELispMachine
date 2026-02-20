@@ -1700,6 +1700,7 @@
   :mode (("CMakeLists.txt" . cmake-mode)))
 
 (use-package cmake-integration
+  :defer t
   :straight (cmake-integration :type git :host github
                                :repo "darcamo/cmake-integration")
   :general-config
@@ -6673,6 +6674,7 @@ removal."
         w3m-search-word-at-point nil))
 
 (use-package inherit-org
+  :defer t
   :straight (inherit-org :type git
                          :host github
                          :repo "chenyanming/inherit-org"))
