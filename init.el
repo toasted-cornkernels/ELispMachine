@@ -6465,7 +6465,7 @@ removal."
   "Tl"   'display-line-numbers-mode
   "Tm"   'hide-mode-line-mode
   "Tf"   'toggle-frame-fullscreen
-  "TF" 'mac-toggle-frame-fullscreen)
+  "TF"   'mac-toggle-frame-fullscreen)
 
 (global-leader
   "s-o"  'reveal-in-osx-finder
