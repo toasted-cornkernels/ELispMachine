@@ -6464,7 +6464,9 @@ removal."
   "TD"   'toggle-debug-on-error
   "Tl"   'display-line-numbers-mode
   "Tm"   'hide-mode-line-mode
-  "Tf"   'toggle-frame-fullscreen
+  "Tf"   (defun mac-non-native-toggle-frame-fullscreen ()
+           (interactive)
+           (call-interactively #'toggle-frame-fullscreen))
   "TF"   'mac-toggle-frame-fullscreen)
 
 (global-leader
