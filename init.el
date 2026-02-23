@@ -18,14 +18,6 @@
 
 (fset 'yes-or-no-p 'y-or-n-p)
 
-(defun elispm/advice-man (f man-args)
-  "Work-around a argument parsing bug fixed in 30.1:
-   https://debbugs.gnu.org/cgi/bugreport.cgi?bug=66390"
-  (if (called-interactively-p 'interactive)
-      (funcall f man-args)
-    (message "*WARNING* man called non-interactively with args: %s" man-args)))
-(advice-add 'man :around #'elispm/advice-man)
-
 ;; Straight =========================================
 ;; ==================================================
 
@@ -1478,6 +1470,11 @@
   (rg-enable-default-bindings))
 (use-package ag :defer t)
 (use-package wgrep :defer t)
+(use-package grep
+  :straight (:type built-in)
+  :defer t
+  :config
+  (setq grep-command "grep --color=auto -nH --null -R -e"))
 
 ;; CodeQL config ====================================
 ;; ==================================================
@@ -2109,7 +2106,9 @@
   (global-leader
     "i"      (which-key-prefix "imenu")
     "ii"     'imenu
-    "il"     'imenu-list))
+    "il"     'imenu-list)
+  :config
+  (setq imenu-list-position 'left))
 
 (use-package imenu-list
   :after imenu)
