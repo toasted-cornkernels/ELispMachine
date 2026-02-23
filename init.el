@@ -6168,8 +6168,8 @@ removal."
 
 (global-leader
   "L"    (which-key-prefix :LLMs)
-  "LL"   'gptel
-  "Ll"   'gptel-mode
+  "Ll"   'gptel
+  "LL"   'gptel-mode
   "Ls"   'gptel-send
   "Lq"   'gptel-abort
   "Lm"   'gptel-menu
