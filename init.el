@@ -4159,8 +4159,9 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; ==================================================
 
 (use-package markdown-mode
-  :hook ((gfm-mode markdown-mode) . (lambda ()
-                                      (setq indent-tabs-mode nil)))
+  :hook (((gfm-mode markdown-mode) . (lambda ()
+                                        (setq indent-tabs-mode nil)))
+         ((gfm-mode markdown-mode) . outline-minor-mode))
   :mode
   (("\\.md\\'"  . gfm-mode)
    ("\\.mkd\\'" . markdown-mode)
@@ -5267,6 +5268,12 @@ set so that it clears the whole REPL buffer, not just the output."
         git-gutter:hide-gutter t ; Hide gutter when there are no changes
         git-gutter:disabled-modes '(pdf-view-mode doc-view-mode image-mode))
   (global-git-gutter-mode))
+
+;; consult-gh config ================================
+;; ==================================================
+
+(use-package consult-gh
+  :defer t)
 
 ;; format-all =======================================
 ;; ==================================================
