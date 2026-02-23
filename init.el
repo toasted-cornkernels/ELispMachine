@@ -6400,7 +6400,8 @@ removal."
   "pR"   'projectile-replace-regexp
   "pr"   'projectile-run-project
   "ps"   'projectile-save-project-buffers
-  "pv"   'projectile-run-vterm)
+  "pv"   'projectile-run-vterm
+  "pV"   'projectile-run-vterm-other-window)
 
 (defun insert-lambda ()
   "Insert λ."
