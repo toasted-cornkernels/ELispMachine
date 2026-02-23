@@ -6171,7 +6171,8 @@ removal."
   "lmC"  'c-mode
   "lmr"  'rustic-mode
   "lmo"  'org-mode
-  "lmm"  'gfm-mode)
+  "lmm"  'gfm-mode
+  "lme"  'emacs-lisp-mode)
 
 (global-leader
   "L"    (which-key-prefix :LLMs)
