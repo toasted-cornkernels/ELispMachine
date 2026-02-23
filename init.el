@@ -4631,8 +4631,8 @@ set so that it clears the whole REPL buffer, not just the output."
   :commands (company-mode)
   :config
   ;; (global-company-mode)
-  (setq company-idle-delay 0.2
-        company-echo-delay 0.2
+  (setq company-idle-delay 0.05
+        company-echo-delay 0.05
         company-tooltip-idle-delay 0
         company-async-redisplay-delay 0
         company-dabbrev-downcase nil)
@@ -6332,7 +6332,8 @@ removal."
   "A"    (which-key-prefix :admin)
   "Ai"   'emacs-init-time
   "Au"   'emacs-uptime
-  "Ap"   'proced)
+  "Ap"   'proced
+  "AP"   'prodigy)
 
 (global-leader
   "Cc"   'org-capture)
@@ -7190,6 +7191,12 @@ removal."
   (add-to-list
    'proced-format-alist
    '(custom user pid ppid sess tree pcpu pmem rss start time state (args comm))))
+
+;; Prodigy config ===================================
+;; ==================================================
+
+(use-package prodigy
+  :defer t)
 
 ;; Fun! =============================================
 ;; ==================================================
