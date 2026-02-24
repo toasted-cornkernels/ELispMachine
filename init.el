@@ -6390,6 +6390,7 @@ removal."
 
   "ar"   (which-key-prefix :reader)
   "are"  'elfeed
+  "arx"  'xkcd
 
   "am"   (which-key-prefix :emms)
   "amee" 'emms
@@ -7272,6 +7273,11 @@ removal."
   :config
   (setq streamlink-player "mpv"
         streamlink-opts "--player-args '--no-video'"))
+
+;; XKCD config ======================================
+;; ==================================================
+
+(use-package xkcd :defer t)
 
 ;; TRAMP config =====================================
 ;; ==================================================
