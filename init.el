@@ -1828,16 +1828,6 @@
           (comint-send-region process-buffer line-start line-end))
         (comint-simple-send process-buffer "\r")))
 
-    (defun elispm/python-start-or-switch-repl ()
-      "Start and/or switch to the REPL."
-      (interactive)
-      (if-let* ((shell-process (or (python-shell-get-process)
-                                   (call-interactively #'run-python))))
-          (progn
-            (pop-to-buffer (process-buffer shell-process))
-            (evil-insert-state))
-        (error "Failed to start python shell properly")))
-
     (defun elispm/python-shell-restart ()
       "Restart python shell."
       (interactive)
