@@ -1462,19 +1462,29 @@
 ;; Search Functionalities ===========================
 ;; ==================================================
 
-(use-package ripgrep :defer t)
-(use-package deadgrep :defer t)
 (use-package rg
   :defer t
   :config
   (rg-enable-default-bindings))
-(use-package ag :defer t)
-(use-package wgrep :defer t)
+
+(use-package ag
+  :defer t)
+
 (use-package grep
   :straight (:type built-in)
   :defer t
   :config
   (setq grep-command "grep --color=auto -nH --null -R -e"))
+
+;; Occur / Wgrep ====================================
+;; ==================================================
+
+(use-package wgrep
+  :defer t)
+
+(use-package occur
+  :straight (:type built-in)
+  :defer t)
 
 ;; CodeQL config ====================================
 ;; ==================================================
@@ -6423,6 +6433,7 @@ removal."
 
 (global-leader
   "H"    (which-key-prefix :help)
+  "HH"   'help
   "Hd"   (which-key-prefix :describe)
   "Hdb"  'describe-bindings
   "Hdf"  'describe-function
