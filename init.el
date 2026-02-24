@@ -5284,6 +5284,15 @@ set so that it clears the whole REPL buffer, not just the output."
 ;;     "k"          'forge-post-cancel
 ;;     "a"          'forge-post-cancel))
 
+(use-package git-link
+  :defer t
+  :general-config
+  (global-leader
+    "l"   (which-key-prefix :link)
+    "lg"  'git-link
+    "lc"  'git-link-commit
+    "lh"  'git-link-homepage))
+
 ;; vc config ========================================
 ;; ==================================================
 
@@ -5361,11 +5370,11 @@ set so that it clears the whole REPL buffer, not just the output."
   (consult-gh-embark-mode +1))
 
 
-;; Install `consult-gh-forge' for forge actions
-(use-package consult-gh-forge
- :config
- (consult-gh-forge-mode +1)
- (setq consult-gh-forge-timeout-seconds 20))
+;; ;; Install `consult-gh-forge' for forge actions
+;; (use-package consult-gh-forge
+;;  :config
+;;  (consult-gh-forge-mode +1)
+;;  (setq consult-gh-forge-timeout-seconds 20))
 
 ;; format-all =======================================
 ;; ==================================================
