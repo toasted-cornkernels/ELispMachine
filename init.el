@@ -5136,7 +5136,7 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (use-package gitignore-templates
   :defer t
-  :general-config
+  :general
   (local-leader
     :major-modes '(gitignore-mode t)
     :keymaps     '(gitignore-mode-map)
@@ -5229,18 +5229,18 @@ set so that it clears the whole REPL buffer, not just the output."
   :general-config
   (local-leader
     :predicate 'git-gutter-mode
-    "G"  (which-key-prefix :git-gutter)
-    "Gn" 'git-gutter:next-hunk
-    "Gp" 'git-gutter:previous-hunk
-    "G$" 'git-gutter:end-of-hunk
-    "Ge" 'git-gutter:end-of-hunk
-    "Gr" 'git-gutter:revert-hunk
-    "Gs" 'git-gutter:stage-hunk
-    "Ga" 'git-gutter:stage-hunk
-    "Gm" 'git-gutter:mark-hunk
-    "Gp" 'git-gutter:popup-hunk
-    "Gc" 'git-gutter:clear
-    "GG" 'git-gutter:toggle)
+    "G"        (which-key-prefix :git-gutter)
+    "Gn"       'git-gutter:next-hunk
+    "Gp"       'git-gutter:previous-hunk
+    "G$"       'git-gutter:end-of-hunk
+    "Ge"       'git-gutter:end-of-hunk
+    "Gr"       'git-gutter:revert-hunk
+    "Gs"       'git-gutter:stage-hunk
+    "Ga"       'git-gutter:stage-hunk
+    "Gm"       'git-gutter:mark-hunk
+    "Gp"       'git-gutter:popup-hunk
+    "Gc"       'git-gutter:clear
+    "GG"       'git-gutter:toggle)
 
   :config
   (setq git-gutter:modified-sign " "
@@ -5251,12 +5251,17 @@ set so that it clears the whole REPL buffer, not just the output."
         git-gutter:disabled-modes '(pdf-view-mode doc-view-mode image-mode))
   (global-git-gutter-mode))
 
+;; Smerge Config ====================================
+;; ==================================================
+
+(use-package smerge                     ; TODO
+  :defer t)
+
 ;; consult-gh config ================================
 ;; ==================================================
 
 (use-package consult-gh
-  :defer t
-  )
+  :defer t)
 
 ;; format-all =======================================
 ;; ==================================================
@@ -5436,6 +5441,31 @@ set so that it clears the whole REPL buffer, not just the output."
     (cl-letf (((symbol-function 'y-or-n-p) (cl-constantly t))) ; (lambda (prompt) t)
       (apply orig-fun args)))
   (advice-add 'ediff-quit :around #'disable-y-or-n-p))
+
+(use-package diff
+  :defer t
+  :general-config
+  (local-leader
+    :major-modes '(diff-mode t)
+    :keymaps     '(diff-mode-map)
+    "a"          'diff-apply-hunk
+    "d"          'diff-hunk-kill
+    "D"          'diff-file-kill
+    "e"          'diff-ediff-patch
+    "g"          'diff-goto-source
+    "j"          'diff-hunk-next
+    "J"          'diff-file-next
+    "k"          'diff-hunk-prev
+    "K"          'diff-file-prev
+    "r"          'spacemacs/diff-mode-revert-hunk
+    "s"          'diff-split-hunk
+    "u"          'diff-undo
+    "q"          'quit-window
+
+    "f"          (which-key-prefix "format")
+    "fc"         'diff-unified->context
+    "fr"         'diff-reverse-direction
+    "fu"         'diff-context->unified))
 
 ;; Ibuffer ==========================================
 ;; ==================================================
