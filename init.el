@@ -539,7 +539,7 @@
 ;; Manage-minor-mode ================================
 ;; ==================================================
 
-(use-package manage-minor-mode)
+(use-package manage-minor-mode :defer t)
 
 ;; Emoji config =====================================
 ;; ==================================================
@@ -6595,7 +6595,8 @@ removal."
   "Tf"   (defun mac-non-native-toggle-frame-fullscreen ()
            (interactive)
            (call-interactively #'toggle-frame-fullscreen))
-  "TF"   'mac-toggle-frame-fullscreen)
+  "TF"   'mac-toggle-frame-fullscreen
+  "TM"   'manage-minor-mode)
 
 (global-leader
   "s-o"  'reveal-in-osx-finder
