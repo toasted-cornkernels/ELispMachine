@@ -6470,6 +6470,30 @@ removal."
   "pv"   'projectile-run-vterm
   "pV"   'projectile-run-vterm-other-window)
 
+(global-leader
+  "P"    (which-key-prefix "project")
+  "P!"   'project-shell-command
+  "P&"   'project-async-shell-command
+  "P%"   'project-query-replace-regexp
+  "Pa"   'project-remember-project
+  "PA"   'project-remember-project-under
+  "Pb"   'project-switch-to-buffer
+  "Pc"   'project-compile
+  "PC"   'project-recompile
+  "Pd"   'project-forget-project
+  "PD"   'project-forget-zombie-projects
+  "Pu"   'project-any-command
+  "PD"   'project-dired
+  "Pe"   'project-customize-dirlocals
+  "Pf"   'project-find-file
+  "PF"   'project-or-external-find-file
+  "Pg"   'project-find-regexp
+  "PG"   'project-or-external-find-regexp
+  "Pk"   'project-kill-buffers
+  "Pp"   'project-switch-project
+  "Ps"   'project-save-some-buffers
+  "Pv"   'project-vs-dir)
+
 (defun insert-lambda ()
   "Insert λ."
   (interactive)
