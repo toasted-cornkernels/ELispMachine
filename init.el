@@ -6420,27 +6420,31 @@ removal."
                           (executable-find "emacs"))))
 
 (global-leader
-  "h"    (which-key-prefix :help)
-  "hd"   (which-key-prefix :describe)
-  "hdb"  'describe-bindings
-  "hdf"  'helpful-callable
-  "hdk"  'describe-key
-  "hdv"  'helpful-variable
-  "hdm"  'describe-mode
-  "hdp"  'describe-package
-  "hdx"  'describe-char
-  "hdM"  'describe-keymap
-  "hdc"  'helpful-command)
+  "H"    (which-key-prefix :help)
+  "Hd"   (which-key-prefix :describe)
+  "Hdb"  'describe-bindings
+  "Hdf"  'describe-function
+  "Hdk"  'describe-key
+  "Hdv"  'describe-variable
+  "Hdm"  'describe-mode
+  "Hdp"  'describe-package
+  "Hdx"  'describe-char
+  "HdM"  'describe-keymap
+  "HdC"  'describe-command)
 
 (global-leader
-  "H"    (which-key-prefix :helpful)
-  "Hc"   'helpful-callable
-  "Hf"   'helpful-function
-  "Hm"   'helpful-macro
-  "Hc"   'helpful-command
-  "Hk"   'helpful-key
-  "Hv"   'helpful-variable
-  "Hp"   'helpful-at-point)
+  "h"     (which-key-prefix :helpful)
+  "hk"    'helpful-kill-buffers
+  "hd"    (which-key-prefix :describe)
+  "hdf"   'helpful-callable
+  "hdf"   'helpful-function
+  "hds"   'helpful-symbol
+  "hdm"   'helpful-macro
+  "hdC"   'helpful-command
+  "hdk"   'helpful-key
+  "hdv"   'helpful-variable
+  "hdp"   'helpful-at-point
+  "hu"    'helpful-update)
 
 (global-leader
   "p"    (which-key-prefix "projectile")
