@@ -5048,12 +5048,12 @@ set so that it clears the whole REPL buffer, not just the output."
     "gP"  'magit-pull
 
     "gl"  (which-key-prefix :links)
-    "glc" 'git-link-commit
     "glc" 'git-link-commit-copy-url-only
-    "gll" 'git-link
+    "glC" 'git-link-commit
     "gll" 'git-link-copy-url-only
-    "glp" 'git-permalink
+    "glL" 'git-link
     "glp" 'git-permalink-copy-url-only
+    "glP" 'git-permalink
 
     "gm"  'git-messenger:popup-message
 
@@ -5283,15 +5283,6 @@ set so that it clears the whole REPL buffer, not just the output."
 ;;     "c"          'forge-post-submit
 ;;     "k"          'forge-post-cancel
 ;;     "a"          'forge-post-cancel))
-
-(use-package git-link
-  :defer t
-  :general-config
-  (global-leader
-    "l"   (which-key-prefix :link)
-    "lg"  'git-link
-    "lc"  'git-link-commit
-    "lh"  'git-link-homepage))
 
 ;; Git-gutter config ===============================
 ;; ==================================================
