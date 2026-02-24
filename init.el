@@ -6211,7 +6211,7 @@ removal."
   "fed" 'visit-init-dot-el
   "feR" 'eval-init-dot-el
 
-  "o" 'find-file)
+  "o"   'find-file)
 
 (global-leader
   "b"  (which-key-prefix :buffer)
