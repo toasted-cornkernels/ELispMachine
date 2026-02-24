@@ -4689,9 +4689,10 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (use-package embark
   :defer t
-  :general-config
+  :general
   (global-leader
-    "."      'embark-act))
+    "e"      (which-key-prefix :embark)
+    "ee"     'embark-act))
 
 (use-package embark-consult
   :after embark)
@@ -5302,6 +5303,7 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; ==================================================
 
 (use-package smerge                     ; TODO
+  :straight (:type built-in)
   :defer t)
 
 ;; consult-gh config ================================
@@ -6035,19 +6037,15 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (global-leader
   "j"   (which-key-prefix :jump)
-  "jl"  'avy-goto-line
-  "jL"  'consult-line
-  "jb"  'consult-line-multi
+  "jl"  'consult-line
+  "jL"  'consult-line-multi
   "jc"  'avy-goto-char
   "jC"  'avy-goto-char-2
   "jw"  'avy-goto-whitespace-end
   "ju"  'goto-last-change
   "jU"  'goto-last-change-reverse
-  "jn"  'sp-newline
-  "jf"  'find-function
   "ju"  'elipsm/avy-goto-url
-  "jU"  'elipsm/avy-open-url
-  "jv"  'find-variable)
+  "jU"  'elipsm/avy-open-url)
 
 ;; Stolen from Spacemacs
 (defun elispm/sudo-edit (&optional arg)
