@@ -4692,7 +4692,8 @@ set so that it clears the whole REPL buffer, not just the output."
   :general
   (global-leader
     "e"      (which-key-prefix :embark)
-    "ee"     'embark-act))
+    "ee"     'embark-act
+    "eb"     'embark-bindings))
 
 (use-package embark-consult
   :after embark)
@@ -6210,6 +6211,7 @@ removal."
   "bp" 'previous-buffer
   "br" 'rename-buffer
   "bn" 'next-buffer
+  "b-" 'bury-buffer
   "bh" (lambda ()
          (interactive)
          (kill-buffer (get-buffer "*Help*")))
