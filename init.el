@@ -4333,12 +4333,6 @@ set so that it clears the whole REPL buffer, not just the output."
     ;; pandoc--local-settings
     (if (not (bound-and-true-p pandoc-mode)) (pandoc-mode))
     (pandoc-main-hydra/body))
-
-  :general-config
-  (global-leader
-    "P"  (which-key-prefix "pandoc")
-    "P/" 'run-pandoc)
-
   :config
   (setq pandoc-data-dir (concat user-emacs-directory "pandoc/")))
 
@@ -4571,8 +4565,8 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; ==================================================
 
 (use-package consult
-  :bind (;; C-c bindings in `mode-specific-map'
-         ("C-c M-x" . consult-mode-command)
+  ;; C-c bindings in `mode-specific-map'
+  :bind (("C-c M-x" . consult-mode-command)
          ("C-c h" . consult-history)
          ("C-c k" . consult-kmacro)
          ("C-c m" . consult-man)
@@ -5453,30 +5447,30 @@ set so that it clears the whole REPL buffer, not just the output."
   (local-leader
     :major-modes '(image-mode t)
     :keymaps     '(image-mode-map)
-    "h" 'image-backward-hscroll
-    "j" 'image-next-line
-    "k" 'image-previous-line
-    "l" 'image-forward-hscroll
+    "h"          'image-backward-hscroll
+    "j"          'image-next-line
+    "k"          'image-previous-line
+    "l"          'image-forward-hscroll
 
-    "a" (which-key-prefix "animate")
-    "aa" 'image-toggle-animation
-    "a+" 'image-increase-speed
-    "a-" 'image-decrease-speed
-    "ar" 'image-reset-speed
+    "a"          (which-key-prefix "animate")
+    "aa"         'image-toggle-animation
+    "a+"         'image-increase-speed
+    "a-"         'image-decrease-speed
+    "ar"         'image-reset-speed
 
-    "t" (which-key-prefix "transform/resize")
-    "t+" 'image-increase-size
-    "t-" 'image-decrease-size
-    "tf" 'image-mode-fit-frame
-    "tr" 'image-transform-reset
-    "th" 'image-transform-fit-to-height
-    "tw" 'image-transform-fit-to-width
-    "ts" 'image-transform-set-scale
-    "tr" 'image-transform-rotation
+    "t"          (which-key-prefix "transform/resize")
+    "t+"         'image-increase-size
+    "t-"         'image-decrease-size
+    "tf"         'image-mode-fit-frame
+    "tr"         'image-transform-reset
+    "th"         'image-transform-fit-to-height
+    "tw"         'image-transform-fit-to-width
+    "ts"         'image-transform-set-scale
+    "tr"         'image-transform-rotation
 
-    "g" (which-key-prefix "goto file")
-    "gn" 'image-next-file
-    "gN" 'image-previous-file))
+    "g"          (which-key-prefix "goto file")
+    "gn"         'image-next-file
+    "gN"         'image-previous-file))
 
 ;; Ediff ============================================
 ;; ==================================================
@@ -6036,21 +6030,21 @@ set so that it clears the whole REPL buffer, not just the output."
   "Use avy to select an URL in the buffer and open it."
   (interactive)
   (save-excursion
-    (spacemacs/avy-goto-url)
+    (elispm/avy-goto-url)
     (browse-url-at-point)))
 
 (global-leader
   "j"   (which-key-prefix :jump)
   "jl"  'avy-goto-line
   "jL"  'consult-line
+  "jb"  'consult-line-multi
   "jc"  'avy-goto-char
   "jC"  'avy-goto-char-2
   "jw"  'avy-goto-whitespace-end
-  "jh"  'goto-last-change
-  "jH"  'goto-last-change-reverse
+  "ju"  'goto-last-change
+  "jU"  'goto-last-change-reverse
   "jn"  'sp-newline
   "jf"  'find-function
-  "jo"  'open-newline
   "ju"  'elipsm/avy-goto-url
   "jU"  'elipsm/avy-open-url
   "jv"  'find-variable)
@@ -6504,6 +6498,12 @@ removal."
   "xwtr"  'powerthesaurus-lookup-related-dwim
   "xwtd"  'powerthesaurus-lookup-definitions-dwim
   "xwte"  'powerthesaurus-lookup-sentences-dwim)
+
+(global-leader
+  "y"      (which-key-prefix :yank)
+  "yy"     'consult-yank-pop
+  "yr"     'consult-yank-replace
+  "yi"     'consult-yank-from-kill-ring)
 
 (defmacro elispm/switch-to-tab-by-index (index)
   (let ((function-name (intern (concat "switch-tab-" (number-to-string index)))))
