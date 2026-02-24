@@ -6050,8 +6050,8 @@ set so that it clears the whole REPL buffer, not just the output."
   "j"   (which-key-prefix :jump)
   "jl"  'consult-line
   "jL"  'consult-line-multi
-  "jc"  'avy-goto-char
-  "jC"  'avy-goto-char-2
+  "jc"  'avy-goto-char-timer
+  "jC"  'avy-goto-char
   "jw"  'avy-goto-whitespace-end
   "ju"  'goto-last-change
   "jU"  'goto-last-change-reverse
