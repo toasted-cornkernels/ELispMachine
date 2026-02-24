@@ -6052,6 +6052,7 @@ set so that it clears the whole REPL buffer, not just the output."
   "jL"  'consult-line-multi
   "jc"  'avy-goto-char-timer
   "jC"  'avy-goto-char
+  "js"  'avy-isearch
   "jw"  'avy-goto-whitespace-end
   "ju"  'goto-last-change
   "jU"  'goto-last-change-reverse
