@@ -4354,21 +4354,13 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (use-package wiktionary-bro
   :defer t
+  :commands (wiktionary-bro)
   :straight (wiktionary-bro
              :type git :host github :repo "agzam/wiktionary-bro.el"))
 
-(use-package define-word
-  :defer t)
+(use-package define-word :defer t)
 
-(use-package powerthesaurus
-  :defer t
-  :general-config
-  (global-leader
-    "xwtt" 'powerthesaurus-lookup-synonyms-dwim
-    "xwta" 'powerthesaurus-lookup-antonyms-dwim
-    "xwtr" 'powerthesaurus-lookup-related-dwim
-    "xwtd" 'powerthesaurus-lookup-definitions-dwim
-    "xwts" 'powerthesaurus-lookup-sentences-dwim))
+(use-package powerthesaurus :defer t)
 
 ;; CSharp config ====================================
 ;; ==================================================
@@ -5262,7 +5254,8 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; ==================================================
 
 (use-package consult-gh
-  :defer t)
+  :defer t
+  )
 
 ;; format-all =======================================
 ;; ==================================================
@@ -6414,7 +6407,13 @@ removal."
   "xwd"   'osx-dictionary-search-pointer
   "xwD"   'define-word-at-point
 
-  "xwt"   (which-key-prefix :thesaurus))
+  "xwt"   (which-key-prefix :thesaurus)
+  "xwtt"  'powerthesaurus-lookup-dwim
+  "xwts"  'powerthesaurus-lookup-synonyms-dwim
+  "xwta"  'powerthesaurus-lookup-antonyms-dwim
+  "xwtr"  'powerthesaurus-lookup-related-dwim
+  "xwtd"  'powerthesaurus-lookup-definitions-dwim
+  "xwte"  'powerthesaurus-lookup-sentences-dwim)
 
 (defmacro elispm/switch-to-tab-by-index (index)
   (let ((function-name (intern (concat "switch-tab-" (number-to-string index)))))
