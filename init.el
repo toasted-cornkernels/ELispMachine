@@ -5293,14 +5293,6 @@ set so that it clears the whole REPL buffer, not just the output."
     "lc"  'git-link-commit
     "lh"  'git-link-homepage))
 
-;; vc config ========================================
-;; ==================================================
-
-(use-package vc-git
-  :straight nil
-  :config
-  (setq vc-follow-symlinks t))
-
 ;; Git-gutter config ===============================
 ;; ==================================================
 
