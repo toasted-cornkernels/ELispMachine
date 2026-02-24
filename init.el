@@ -6215,6 +6215,7 @@ removal."
 
 (global-leader
   "b"  (which-key-prefix :buffer)
+  "bc" 'clone-indirect-buffer-other-window
   "bd" 'kill-current-buffer
   "bb" 'consult-buffer
   "bB" 'ibuffer
