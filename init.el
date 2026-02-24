@@ -4295,11 +4295,12 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (use-package gh-md
   :defer t
-  :general-config
+  :general
   (local-leader
     :major-modes '(markdown-mode gfm-mode t)
     :keymaps     '(markdown-mode-map gfm-mode-map)
-    "cr" 'gh-md-render-buffer))
+    "cg"         'gh-md-render-buffer
+    "cG"         'gh-md-export-buffer))
 
 (use-package markdown-toc
   :defer t
@@ -4315,12 +4316,12 @@ set so that it clears the whole REPL buffer, not just the output."
   (local-leader
     :major-modes '(markdown-mode gfm-mode t)
     :keymaps     '(markdown-mode-map gfm-mode-map)
-    "cP"         'vmd-mode))
+    "cv"         'vmd-mode))
 
 ;; Pandoc config ====================================
 ;; ==================================================
 
-(use-package pandoc-mode
+(use-package pandoc-mode                ; TODO
   :defer t
   :commands run-pandoc
   :hook (pandoc-mode . pandoc-load-default-settings)
