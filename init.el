@@ -4769,17 +4769,17 @@ set so that it clears the whole REPL buffer, not just the output."
     :keymaps     '(corfu-map)
     "C-n"        'corfu-next
     "C-p"        'corfu-previous
-    "M-d"        'corfu-show-documentation
+    "M-d"        'corfu-info-documentation
     "C-g"        'corfu-quit
     "RET"        nil
     "<escape>"   nil
-    "M-l"        'corfu-show-location)
+    "M-l"        'corfu-info-location)
 
   (agnostic-key
     :major-modes '(corfu-popupinfo-mode t)
     :keymaps     '(corfu-popupinfo-map)
-    "C-M-p"      'corfu-popupinfo-scroll-down
-    "C-M-n"      'corfu-popupinfo-scroll-up))
+    "M-p"        'corfu-popupinfo-scroll-down
+    "M-n"        'corfu-popupinfo-scroll-up))
 
 ;; Add extensions
 (use-package cape
