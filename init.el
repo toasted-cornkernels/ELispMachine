@@ -5825,8 +5825,7 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (use-package eshell
   :straight (:type built-in)
-  :defer t
-  :hook (eshell-mode . (lambda () (company-mode -1))))
+  :defer t)
 
 ;; EAT config =======================================
 ;; ==================================================
@@ -7395,7 +7394,6 @@ removal."
       mouse-yank-at-point t)
 
 (evil-define-key 'insert 'global-map (kbd "C-h") 'backward-delete-char)
-(evil-define-key 'insert 'company-mode-map (kbd "C-h") 'backward-delete-char)
 
 ;; Tetris config ====================================
 ;; ==================================================
