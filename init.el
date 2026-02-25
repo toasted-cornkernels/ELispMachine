@@ -500,7 +500,19 @@
   (bind-key "C-g" 'evil-lisp-state/quit))
 
 (use-package evil-mc
-  :defer t)                             ; TODO
+  :defer t
+  :hook ((prog-mode . turn-on-evil-mc-mode)
+         (text-mode . turn-on-evil-mc-mode))
+  :config
+  (add-hook 'magit-mode-hook 'turn-off-evil-mc-mode)
+  (setq-default evil-mc-one-cursor-show-mode-line-text nil)
+  (when macOS-p
+    (setq evil-mc-enable-bar-cursor nil))
+  :general
+  (agnostic-key
+    :keymap '(evil-mc-key-map)
+    "C-M-j" 'evil-mc-make-cursor-move-next-line
+    "C-M-k" 'evil-mc-make-cursor-move-prev-line))
 
 ;; GPG config =======================================
 ;; ==================================================
