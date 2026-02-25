@@ -104,7 +104,6 @@
   ;; works everywhere irrelevant of evil state
   (general-create-definer agnostic-key
     :keymaps 'override
-    :states  '(insert emacs normal hybrid motion visual operator)
     :prefix  ""
     "" '(:ignore t))
 
@@ -4765,19 +4764,22 @@ set so that it clears the whole REPL buffer, not just the output."
   (corfu-popupinfo-mode)
 
   :general
-  (insert-mode-major-mode
-    :keymaps   '(corfu-map)
-    "C-n"      'corfu-next
-    "C-p"      'corfu-previous
-    "<escape>" 'corfu-quit
-    "M-d"      'corfu-show-documentation
-    "C-g"      'corfu-quit
-    "M-l"      'corfu-show-location)
+  (agnostic-key
+    :major-modes '(corfu-map-mode t)
+    :keymaps     '(corfu-map)
+    "C-n"        'corfu-next
+    "C-p"        'corfu-previous
+    "M-d"        'corfu-show-documentation
+    "C-g"        'corfu-quit
+    "RET"        nil
+    "<escape>"   nil
+    "M-l"        'corfu-show-location)
 
-  :config
-  (unbind-key "RET" corfu-map))
-
-;; (use-package corfu-popupinfo)
+  (agnostic-key
+    :major-modes '(corfu-popupinfo-mode t)
+    :keymaps     '(corfu-popupinfo-map)
+    "C-M-p"      'corfu-popupinfo-scroll-down
+    "C-M-n"      'corfu-popupinfo-scroll-up))
 
 ;; Add extensions
 (use-package cape
