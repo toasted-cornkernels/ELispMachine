@@ -509,7 +509,7 @@
     (setq evil-mc-enable-bar-cursor nil))
   :general
   (agnostic-key
-    :keymap '(evil-mc-key-map)
+    :keymaps '(evil-mc-key-map)
     "C-M-j" 'evil-mc-make-cursor-move-next-line
     "C-M-k" 'evil-mc-make-cursor-move-prev-line))
 
@@ -4547,6 +4547,9 @@ set so that it clears the whole REPL buffer, not just the output."
   ;; commands are hidden, since they are not used via M-x. This setting is
   ;; useful beyond Corfu.
   (read-extended-command-predicate #'command-completion-default-include-p)
+
+  ;; Hmmm: https://kristofferbalintona.me/posts/202202270056/
+  (completion-cycle-threshold nil)
   ;; ===============================================
   :init
   (defun crm-indicator (args)
@@ -4748,31 +4751,33 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; ==================================================
 
 (use-package corfu
-  ;; Optional customizations
-  ;; :custom
-  ;; (corfu-cycle t)                ;; Enable cycling for `corfu-next/previous'
-  ;; (corfu-quit-at-boundary nil)   ;; Never quit at completion boundary
-  ;; (corfu-quit-no-match nil)      ;; Never quit, even if there is no match
-  ;; (corfu-preview-current nil)    ;; Disable current candidate preview
-  ;; (corfu-preselect 'prompt)      ;; Preselect the prompt
-  ;; (corfu-on-exact-match 'insert) ;; Configure handling of exact matches
-
-  ;; Enable Corfu only for certain modes. See also `global-corfu-modes'.
-  ;; :hook ((prog-mode . corfu-mode)
-  ;;        (shell-mode . corfu-mode)
-  ;;        (eshell-mode . corfu-mode))
+  :custom
+  (corfu-cycle t)
+  (corfu-auto t)
+  (corfu-min-width 40)
+  (corfu-auto-prefix 2)
+  (corfu-auto-delay 0.05)
 
   :init
-
-  ;; Recommended: Enable Corfu globally.  Recommended since many modes provide
-  ;; Capfs and Dabbrev can be used globally (M-/).  See also the customization
-  ;; variable `global-corfu-modes' to exclude certain modes.
   (global-corfu-mode)
+  (corfu-echo-mode)
+  (corfu-history-mode)
+  (corfu-popupinfo-mode)
 
-  ;; Enable optional extension modes:
-  ;; (corfu-history-mode)
-  ;; (corfu-popupinfo-mode)
-  )
+  :general
+  (insert-mode-major-mode
+    :keymaps   '(corfu-map)
+    "C-n"      'corfu-next
+    "C-p"      'corfu-previous
+    "<escape>" 'corfu-quit
+    "M-d"      'corfu-show-documentation
+    "C-g"      'corfu-quit
+    "M-l"      'corfu-show-location)
+
+  :config
+  (unbind-key "RET" corfu-map))
+
+;; (use-package corfu-popupinfo)
 
 ;; Add extensions
 (use-package cape
