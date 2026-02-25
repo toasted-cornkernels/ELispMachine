@@ -4717,23 +4717,6 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; Company config ===================================
 ;; ==================================================
 
-;; (use-package company
-;;   :hook ((prog-mode . global-company-mode)
-;;          (org-mode  . global-company-mode))
-;;   :commands (company-mode)
-;;   :config
-;;   ;; (global-company-mode)
-;;   (setq company-idle-delay 0.05
-;;         company-echo-delay 0.05
-;;         company-tooltip-idle-delay 0
-;;         company-async-redisplay-delay 0
-;;         company-dabbrev-downcase nil)
-;;   (define-key company-active-map (kbd "<return>") nil)
-;;   (define-key company-active-map (kbd "RET") nil)
-;;   (define-key company-active-map (kbd "C-h") nil)
-;;   (define-key company-active-map (kbd "<tab>") #'company-complete-selection)
-;;   (define-key company-active-map (kbd "TAB") #'company-complete-selection))
-
 ;; (use-package company-lua
 ;;   :after (company lua-mode))
 
