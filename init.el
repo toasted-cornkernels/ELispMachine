@@ -4755,7 +4755,7 @@ set so that it clears the whole REPL buffer, not just the output."
     :keymaps     '(corfu-map)
     "C-n"        'corfu-next
     "C-p"        'corfu-previous
-    "M-d"      'corfu-info-documentation
+    "M-d"        'corfu-info-documentation
     "C-g"        'corfu-quit
     "RET"        nil
     "<escape>"   nil
