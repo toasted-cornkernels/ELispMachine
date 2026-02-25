@@ -507,10 +507,13 @@
   (when macOS-p
     (setq evil-mc-enable-bar-cursor nil))
   :general
-  (agnostic-key
-    :keymaps '(evil-mc-key-map)
-    "C-M-j" 'evil-mc-make-cursor-move-next-line
-    "C-M-k" 'evil-mc-make-cursor-move-prev-line))
+  (normal-mode-major-mode
+    :major-modes '(evil-mc-mode t)
+    :keymaps     '(evil-mc-key-map)
+    "C-M-q"      'evil-mc-undo-all-cursors
+    "C-M-j"      'evil-mc-make-cursor-move-next-line
+    "C-M-u"      'evil-mc-undo-last-added-cursor
+    "C-M-k"      'evil-mc-make-cursor-move-prev-line))
 
 ;; GPG config =======================================
 ;; ==================================================
