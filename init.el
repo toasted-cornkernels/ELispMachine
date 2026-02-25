@@ -1693,7 +1693,7 @@
    (lua-mode     . eglot-ensure))
 
   :init
-  (setq eglot-stay-out-of '(company))
+  (setq eglot-stay-out-of '(company))   ; I use corfu instead
 
   :general-config
   (local-leader
