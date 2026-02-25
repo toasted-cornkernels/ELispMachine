@@ -1646,7 +1646,7 @@
                    (format
                     (defaultConfig
                      indent_style "space"
-                     indent_size "2"))))))
+                     indent_size "2")))))
 
 (use-package eglot-x
   :straight (eglot-x :type git
