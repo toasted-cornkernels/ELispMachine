@@ -1622,6 +1622,9 @@
    (go-mode      . eglot-ensure)
    (lua-mode     . eglot-ensure))
 
+  :init
+  (setq eglot-stay-out-of '(company))
+
   :general-config
   (local-leader
     :keymaps '(eglot-mode-map)
@@ -1631,7 +1634,7 @@
     "as"     'imenu
     "aS"     'consult-eglot-symbols
     "at"     'eglot-show-type-hierarchy
-    "ac"     'eglot-show-call-hierarchy)
+    "ac"     'eglot-show-call-hierarchy))
 
   (normal-mode-major-mode
     :keymaps '(eglot-mode-map)
@@ -4741,7 +4744,7 @@ set so that it clears the whole REPL buffer, not just the output."
   (corfu-auto t)
   (corfu-min-width 40)
   (corfu-auto-prefix 2)
-  (corfu-auto-delay 0.05)
+  (corfu-auto-delay 0.25)
 
   :init
   (global-corfu-mode)
