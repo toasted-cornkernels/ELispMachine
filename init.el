@@ -4764,8 +4764,8 @@ set so that it clears the whole REPL buffer, not just the output."
   (agnostic-key
     :major-modes '(corfu-popupinfo-mode t)
     :keymaps     '(corfu-popupinfo-map)
-    "C-M-p"      'corfu-popupinfo-scroll-down
-    "C-M-n"      'corfu-popupinfo-scroll-up))
+    "M-p"        'corfu-popupinfo-scroll-down
+    "M-n"        'corfu-popupinfo-scroll-up))
 
 (use-package cape
   ;; Bind prefix keymap providing all Cape commands under a mnemonic key.
