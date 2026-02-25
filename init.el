@@ -1457,8 +1457,8 @@
 ;; ==================================================
 
 (use-package quickrun
-  :after prog-mode
-  :general-config
+  :defer t
+  :general
   (local-leader
     :major-modes '(prog-mode t)
     :keymaps     '(prog-mode-map)
@@ -5369,6 +5369,7 @@ set so that it clears the whole REPL buffer, not just the output."
   (consult-gh-enable-default-keybindings))
 
 (use-package consult-gh-embark
+  :after embark
   :config
   (consult-gh-embark-mode +1))
 
