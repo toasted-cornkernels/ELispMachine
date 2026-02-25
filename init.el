@@ -504,7 +504,6 @@
   :hook ((prog-mode . turn-on-evil-mc-mode)
          (text-mode . turn-on-evil-mc-mode))
   :config
-  (add-hook 'magit-mode-hook 'turn-off-evil-mc-mode)
   (setq-default evil-mc-one-cursor-show-mode-line-text nil)
   (when macOS-p
     (setq evil-mc-enable-bar-cursor nil))
@@ -5008,6 +5007,7 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (use-package magit
   :defer t
+  :hook (magit-mode . turn-off-evil-mc-mode)
   :custom
   (magit-bury-buffer-function #'magit-restore-window-configuration)
 
