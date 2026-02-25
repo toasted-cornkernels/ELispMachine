@@ -331,6 +331,13 @@
   (global-colorful-mode)
   (add-to-list 'global-colorful-modes 'helpful-mode))
 
+(use-package symbol-overlay             ; TODO
+  :defer t
+  :general-config
+  (global-leader
+    "C"   (which-key-prefix "colors")
+    "C."  'symbol-overlay-put))
+
 ;; evil-mode config =================================
 ;; ==================================================
 
@@ -492,6 +499,8 @@
   (setq evil-lisp-state-cursor '(hbar . 2))
   (bind-key "C-g" 'evil-lisp-state/quit))
 
+(use-package evil-mc
+  :defer t)                             ; TODO
 
 ;; GPG config =======================================
 ;; ==================================================
@@ -1666,6 +1675,7 @@
   (normal-mode-major-mode
     :major-modes '(gptel-context-buffer-mode t)
     :keymaps     '(gptel-context-buffer-mode-map)
+    "RET"        nil
     "C-c C-c"    'gptel-context-confirm
     "C-c C-k"    'gptel-context-quit
     "RET"        'gptel-context-visit
@@ -6459,9 +6469,6 @@ removal."
   "AP"   'prodigy)
 
 (global-leader
-  "Cc"   'org-capture)
-
-(global-leader
   "q"    (which-key-prefix :quit)
   "qq"   'kill-emacs
   "qf"   'delete-frame
@@ -6785,52 +6792,52 @@ removal."
   (local-leader
     :major-modes '(w3m-mode t)
     :keymaps     '(w3m-mode-map)
-    "p" 'w3m-player-movie
-    "y" 'w3m-copy-link
-    "f" 'w3m-find-file
-    "o" 'w3m-open-url
-    "O" 'w3m-open-url-new-session
-    "t" 'w3m-view-this-url-new-session
-    "T" 'w3m-create-empty-session
-    "s" 'w3m-search
-    "S" 'w3m-search-new-session
-    "l" 'w3m-next-buffer
-    "h" 'w3m-previous-buffer
-    "x" 'w3m-delete-buffer
-    "d" 'w3m-save-buffer-to-file
-    "D" 'w3m-save-buffer
-    "e" 'w3m-bookmark-edit
-    "a" 'w3m-bookmark-add-current-url
-    "m" 'w3m-view-url-with-external-browser
-    "b" 'w3m-bookmark-view
-    "c" 'w3m-copy-current-url)
+    "p"          'w3m-player-movie
+    "y"          'w3m-copy-link
+    "f"          'w3m-find-file
+    "o"          'w3m-open-url
+    "O"          'w3m-open-url-new-session
+    "t"          'w3m-view-this-url-new-session
+    "T"          'w3m-create-empty-session
+    "s"          'w3m-search
+    "S"          'w3m-search-new-session
+    "l"          'w3m-next-buffer
+    "h"          'w3m-previous-buffer
+    "x"          'w3m-delete-buffer
+    "d"          'w3m-save-buffer-to-file
+    "D"          'w3m-save-buffer
+    "e"          'w3m-bookmark-edit
+    "a"          'w3m-bookmark-add-current-url
+    "m"          'w3m-view-url-with-external-browser
+    "b"          'w3m-bookmark-view
+    "c"          'w3m-copy-current-url)
 
   (normal-mode-major-mode
     :major-modes '(w3m-mode t)
     :keymaps     '(w3m-mode-map)
-    "SPC" nil
-    "o"   'ace-link-w3m
-    "C-f" 'evil-scroll-page-down
-    "C-b" 'evil-scroll-page-up
-    "wp"  'w3m-player-movie
-    "wy"  'w3m-copy-link
-    "wf"  'w3m-find-file
-    "wo"  'w3m-open-url
-    "wO"  'w3m-open-url-new-session
-    "wt"  'w3m-view-this-url-new-session
-    "wT"  'w3m-create-empty-session
-    "ws"  'w3m-search
-    "wS"  'w3m-search-new-session
-    "wl"  'w3m-next-buffer
-    "wh"  'w3m-previous-buffer
-    "wx"  'w3m-delete-buffer
-    "wd"  'w3m-save-buffer-to-file
-    "wD"  'w3m-save-buffer
-    "we"  'w3m-bookmark-edit
-    "wa"  'w3m-bookmark-add-current-url
-    "wm"  'w3m-view-url-with-external-browser
-    "wb"  'w3m-bookmark-view
-    "wc"  'w3m-copy-current-url)
+    "SPC"        nil
+    "o"          'ace-link-w3m
+    "C-f"        'evil-scroll-page-down
+    "C-b"        'evil-scroll-page-up
+    "wp"         'w3m-player-movie
+    "wy"         'w3m-copy-link
+    "wf"         'w3m-find-file
+    "wo"         'w3m-open-url
+    "wO"         'w3m-open-url-new-session
+    "wt"         'w3m-view-this-url-new-session
+    "wT"         'w3m-create-empty-session
+    "ws"         'w3m-search
+    "wS"         'w3m-search-new-session
+    "wl"         'w3m-next-buffer
+    "wh"         'w3m-previous-buffer
+    "wx"         'w3m-delete-buffer
+    "wd"         'w3m-save-buffer-to-file
+    "wD"         'w3m-save-buffer
+    "we"         'w3m-bookmark-edit
+    "wa"         'w3m-bookmark-add-current-url
+    "wm"         'w3m-view-url-with-external-browser
+    "wb"         'w3m-bookmark-view
+    "wc"         'w3m-copy-current-url)
 
   :config
   (if GUI-p
