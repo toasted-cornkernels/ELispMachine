@@ -1672,6 +1672,30 @@
   :defer t
   :config (codespaces-setup))
 
+;; eldoc-mode config ================================
+;; ==================================================
+
+(use-package eldoc
+  :straight (:type built-in)
+  :hook ((emacs-lisp-mode
+          lisp-interaction-mode
+          ielm-mode
+          eval-expression-minibuffer-setup)
+         . turn-on-eldoc-mode)
+  :config
+  (setq eldoc-echo-area-use-multiline-p 3))
+
+(use-package eldoc-box
+  :when GUI-p
+  :after eldoc
+  :custom-face
+  ;; (eldoc-box-border ((t (:inherit posframe-border :background unspecified))))
+  (eldoc-box-body ((t (:inherit tooltip))))
+  :config
+  (setq eldoc-box-lighter nil
+        eldoc-box-only-multi-line t
+        eldoc-box-clear-with-C-g t))
+
 ;; Eglot config =====================================
 ;; ==================================================
 
@@ -5442,30 +5466,6 @@ set so that it clears the whole REPL buffer, not just the output."
   :general-config
   (agnostic-key
     "C-M-=" 'format-all-buffer))
-
-;; eldoc-mode config ================================
-;; ==================================================
-
-(use-package eldoc
-  :straight (:type built-in)
-  :hook ((emacs-lisp-mode
-          lisp-interaction-mode
-          ielm-mode
-          eval-expression-minibuffer-setup)
-         . turn-on-eldoc-mode)
-  :config
-  (setq eldoc-echo-area-use-multiline-p 3))
-
-(use-package eldoc-box
-  :when GUI-p
-  :after eldoc
-  :custom-face
-  ;; (eldoc-box-border ((t (:inherit posframe-border :background unspecified))))
-  (eldoc-box-body ((t (:inherit tooltip))))
-  :config
-  (setq eldoc-box-lighter nil
-        eldoc-box-only-multi-line t
-        eldoc-box-clear-with-C-g t))
 
 ;; Newcomment =======================================
 ;; ==================================================
