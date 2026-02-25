@@ -515,6 +515,76 @@
     "C-M-u"      'evil-mc-undo-last-added-cursor
     "C-M-k"      'evil-mc-make-cursor-move-prev-line))
 
+;; Corfu config =====================================
+;; ==================================================
+
+(use-package corfu
+  :custom
+  (corfu-cycle t)
+  (corfu-auto t)
+  (corfu-min-width 40)
+  (corfu-auto-prefix 2)
+  (corfu-auto-delay 0.25)
+
+  :init
+  (global-corfu-mode)
+  (corfu-echo-mode)
+  (corfu-history-mode)
+  (corfu-popupinfo-mode)
+
+  :general
+  (agnostic-key
+    :major-modes '(corfu-map-mode t)
+    :keymaps     '(corfu-map)
+    "C-n"        'corfu-next
+    "C-p"        'corfu-previous
+    "M-d"        'corfu-info-documentation
+    "C-g"        'corfu-quit
+    "RET"        nil
+    "<escape>"   nil
+    "M-l"        'corfu-info-location)
+
+  (agnostic-key
+    :major-modes '(corfu-popupinfo-mode t)
+    :keymaps     '(corfu-popupinfo-map)
+    "M-p"        'corfu-popupinfo-scroll-down
+    "M-n"        'corfu-popupinfo-scroll-up))
+
+(use-package cape
+  ;; Bind prefix keymap providing all Cape commands under a mnemonic key.
+  ;; Press C-c p ? to for help.
+  :bind ("C-c p" . cape-prefix-map) ;; Alternative key: M-<tab>, M-p, M-+
+  ;; Alternatively bind Cape commands individually.
+  ;; :bind (("C-c p d" . cape-dabbrev)
+  ;;        ("C-c p h" . cape-history)
+  ;;        ("C-c p f" . cape-file)
+  ;;        ...)
+  :init
+  ;; Add to the global default value of `completion-at-point-functions' which is
+  ;; used by `completion-at-point'.  The order of the functions matters, the
+  ;; first function returning a result wins.  Note that the list of buffer-local
+  ;; completion functions takes precedence over the global list.
+  (add-hook 'completion-at-point-functions #'cape-dabbrev)
+  (add-hook 'completion-at-point-functions #'cape-file)
+  (add-hook 'completion-at-point-functions #'cape-elisp-block)
+  ;; (add-hook 'completion-at-point-functions #'cape-history)
+  ;; ...
+  )
+
+;; Embark config ====================================
+;; ==================================================
+
+(use-package embark
+  :defer t
+  :general
+  (global-leader
+    "e"      (which-key-prefix :embark)
+    "ee"     'embark-act
+    "eb"     'embark-bindings))
+
+(use-package embark-consult
+  :after embark)
+
 ;; GPG config =======================================
 ;; ==================================================
 
@@ -4720,9 +4790,6 @@ set so that it clears the whole REPL buffer, not just the output."
          ("C-x C-d" . consult-dir)
          ("C-x C-j" . consult-dir-jump-file)))
 
-;; Company config ===================================
-;; ==================================================
-
 ;; (use-package company-lua
 ;;   :after (company lua-mode))
 
@@ -4734,76 +4801,6 @@ set so that it clears the whole REPL buffer, not just the output."
 
 ;; (use-package company-emojify
 ;;   :after (company emojify))
-
-;; Corfu config =====================================
-;; ==================================================
-
-(use-package corfu
-  :custom
-  (corfu-cycle t)
-  (corfu-auto t)
-  (corfu-min-width 40)
-  (corfu-auto-prefix 2)
-  (corfu-auto-delay 0.25)
-
-  :init
-  (global-corfu-mode)
-  (corfu-echo-mode)
-  (corfu-history-mode)
-  (corfu-popupinfo-mode)
-
-  :general
-  (agnostic-key
-    :major-modes '(corfu-map-mode t)
-    :keymaps     '(corfu-map)
-    "C-n"        'corfu-next
-    "C-p"        'corfu-previous
-    "M-d"        'corfu-info-documentation
-    "C-g"        'corfu-quit
-    "RET"        nil
-    "<escape>"   nil
-    "M-l"        'corfu-info-location)
-
-  (agnostic-key
-    :major-modes '(corfu-popupinfo-mode t)
-    :keymaps     '(corfu-popupinfo-map)
-    "M-p"        'corfu-popupinfo-scroll-down
-    "M-n"        'corfu-popupinfo-scroll-up))
-
-(use-package cape
-  ;; Bind prefix keymap providing all Cape commands under a mnemonic key.
-  ;; Press C-c p ? to for help.
-  :bind ("C-c p" . cape-prefix-map) ;; Alternative key: M-<tab>, M-p, M-+
-  ;; Alternatively bind Cape commands individually.
-  ;; :bind (("C-c p d" . cape-dabbrev)
-  ;;        ("C-c p h" . cape-history)
-  ;;        ("C-c p f" . cape-file)
-  ;;        ...)
-  :init
-  ;; Add to the global default value of `completion-at-point-functions' which is
-  ;; used by `completion-at-point'.  The order of the functions matters, the
-  ;; first function returning a result wins.  Note that the list of buffer-local
-  ;; completion functions takes precedence over the global list.
-  (add-hook 'completion-at-point-functions #'cape-dabbrev)
-  (add-hook 'completion-at-point-functions #'cape-file)
-  (add-hook 'completion-at-point-functions #'cape-elisp-block)
-  ;; (add-hook 'completion-at-point-functions #'cape-history)
-  ;; ...
-  )
-
-;; Embark config ====================================
-;; ==================================================
-
-(use-package embark
-  :defer t
-  :general
-  (global-leader
-    "e"      (which-key-prefix :embark)
-    "ee"     'embark-act
-    "eb"     'embark-bindings))
-
-(use-package embark-consult
-  :after embark)
 
 ;; iedit config =====================================
 ;; ==================================================
