@@ -4764,7 +4764,6 @@ set so that it clears the whole REPL buffer, not just the output."
     "M-p"        'corfu-popupinfo-scroll-down
     "M-n"        'corfu-popupinfo-scroll-up))
 
-;; Add extensions
 (use-package cape
   ;; Bind prefix keymap providing all Cape commands under a mnemonic key.
   ;; Press C-c p ? to for help.
@@ -4784,7 +4783,7 @@ set so that it clears the whole REPL buffer, not just the output."
   (add-hook 'completion-at-point-functions #'cape-elisp-block)
   ;; (add-hook 'completion-at-point-functions #'cape-history)
   ;; ...
-)
+  )
 
 ;; Embark config ====================================
 ;; ==================================================
