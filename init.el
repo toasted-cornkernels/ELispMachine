@@ -519,6 +519,7 @@
 ;; ==================================================
 
 (use-package corfu
+  :when GUI-p
   :custom
   (corfu-cycle t)
   (corfu-auto t)
@@ -549,6 +550,13 @@
     :keymaps     '(corfu-popupinfo-map)
     "M-p"        'corfu-popupinfo-scroll-down
     "M-n"        'corfu-popupinfo-scroll-up))
+
+(use-package corfu-terminal
+  :straight (corfu-terminal
+             :type git
+             :host codeberg
+             :repo "akib/emacs-corfu-terminal")
+  :when terminal-p)
 
 (use-package cape
   ;; Bind prefix keymap providing all Cape commands under a mnemonic key.
