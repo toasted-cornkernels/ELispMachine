@@ -5778,6 +5778,13 @@ set so that it clears the whole REPL buffer, not just the output."
         auto-dark-allow-powershell nil)
   (auto-dark-mode t))
 
+(use-package writeroom-mode
+  :defer t
+  :hook ((writeroom-mode . (lambda () (git-gutter-mode -1)))))
+
+(use-package visual-fill-column
+  :defer t)
+
 ;; hl-todo config ==================================
 ;; =================================================
 
