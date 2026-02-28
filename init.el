@@ -6714,7 +6714,8 @@ removal."
            (interactive)
            (call-interactively #'toggle-frame-fullscreen))
   "TF"   'mac-toggle-frame-fullscreen
-  "TM"   'manage-minor-mode)
+  "TM"   'manage-minor-mode
+  "Tc"   'global-writeroom-mode)
 
 (global-leader
   "s-o"  'reveal-in-osx-finder
