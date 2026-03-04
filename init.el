@@ -2318,10 +2318,10 @@
 (use-package flash
   :commands (flash-jump flash-treesitter)
   :bind ("s-j" . flash-jump)
-  :init
-  (with-eval-after-load 'evil
-    (require 'flash-evil)
-    (flash-evil-setup t))
+  ;; :init
+  ;; (with-eval-after-load 'evil
+  ;;   (require 'flash-evil)
+  ;;   (flash-evil-setup t))
   :config
   (require 'flash-isearch)
   (flash-isearch-mode 1))
@@ -5988,7 +5988,7 @@ set so that it clears the whole REPL buffer, not just the output."
   "s-f"   'ace-window
   "s-RET" 'toggle-frame-maximized
   "s-m"   'w3m-search
-  "s-b"   'switch-to-buffer
+  "s-b"   'consult-buffer
   "s-e"   'eww
   "s-x"   'xwidget-new-window
   "s-;"   'evil-window-vsplit
