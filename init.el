@@ -1680,30 +1680,6 @@
   :defer t
   :config (codespaces-setup))
 
-;; eldoc-mode config ================================
-;; ==================================================
-
-(use-package eldoc
-  :straight (:type built-in)
-  :hook ((emacs-lisp-mode
-          lisp-interaction-mode
-          ielm-mode
-          eval-expression-minibuffer-setup)
-         . turn-on-eldoc-mode)
-  :config
-  (setq eldoc-echo-area-use-multiline-p 3))
-
-(use-package eldoc-box
-  :when GUI-p
-  :after eldoc
-  :custom-face
-  ;; (eldoc-box-border ((t (:inherit posframe-border :background unspecified))))
-  (eldoc-box-body ((t (:inherit tooltip))))
-  :config
-  (setq eldoc-box-lighter nil
-        eldoc-box-only-multi-line t
-        eldoc-box-clear-with-C-g t))
-
 ;; Eglot config =====================================
 ;; ==================================================
 
@@ -1738,10 +1714,6 @@
     "at"     'eglot-show-type-hierarchy
     "ac"     'eglot-show-call-hierarchy))
 
-  (normal-mode-major-mode
-    :keymaps '(eglot-mode-map)
-    "K"      'eldoc-box-help-at-point)
-
   :config
   (setq-default eglot-workspace-configuration
                 '((lua_ls
@@ -1763,6 +1735,37 @@
   (local-leader
     :keymaps '(eglot-mode-map)
     "as"     'consult-eglot-symbols))
+
+(use-package dape
+  :defer t)
+
+;; eldoc-mode config ================================
+;; ==================================================
+
+(use-package eldoc
+  :straight (:type built-in)
+  :hook ((emacs-lisp-mode
+          lisp-interaction-mode
+          ielm-mode
+          eval-expression-minibuffer-setup)
+         . turn-on-eldoc-mode)
+  :config
+  (setq eldoc-echo-area-use-multiline-p 3))
+
+(use-package eldoc-box
+  :when GUI-p
+  :after eldoc
+  :custom-face
+  ;; (eldoc-box-border ((t (:inherit posframe-border :background unspecified))))
+  (eldoc-box-body ((t (:inherit tooltip))))
+  :config
+  (setq eldoc-box-lighter nil
+        eldoc-box-only-multi-line t
+        eldoc-box-clear-with-C-g t)
+  :general-config
+  (normal-mode-major-mode
+    :keymaps '(eglot-mode-map)
+    "K"      'eldoc-box-help-at-point))
 
 ;; GPTel config =====================================
 ;; ==================================================
