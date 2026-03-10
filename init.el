@@ -697,15 +697,15 @@
     "*"          'org-ctrl-c-star
     ","          'org-ctrl-c-ctrl-c
     "-"          'org-ctrl-c-minus
-    "A"          'org-attach
-    "M-RET"      'org-meta-return
-    "RET"        'org-ctrl-c-ret
     "TAB"        'org-ctrl-c-tab
+    "RET"        'org-ctrl-c-ret
+    "M-RET"      'org-meta-return
     "["          'org-toggle-radio-button-no-check
     "]"          'org-toggle-radio-button-no-check
-    "a"          'org-agenda
     "{"          'org-agenda-file-to-front
     "}"          'org-remove-file
+    "a"          'org-agenda
+    "A"          'org-attach
 
     "c"          (which-key-prefix :clock)
     "ce"         'org-evaluate-time-range
