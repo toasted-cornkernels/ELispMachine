@@ -4303,7 +4303,8 @@ set so that it clears the whole REPL buffer, not just the output."
 (use-package markdown-mode
   :hook (((gfm-mode markdown-mode) . (lambda ()
                                         (setq indent-tabs-mode nil)))
-         ((gfm-mode markdown-mode) . outline-minor-mode))
+         ((gfm-mode markdown-mode) . outline-minor-mode)
+         ((gfm-mode markdown-mode) . orgtbl-mode))
   :mode
   (("\\.md\\'"  . gfm-mode)
    ("\\.mkd\\'" . markdown-mode)
@@ -4374,19 +4375,59 @@ set so that it clears the whole REPL buffer, not just the output."
     "l"          (which-key-prefix "lists")
     "li"         'markdown-insert-list-item
 
-    "t"          (which-key-prefix "table")
-    "ta"         'markdown-table-align
-    "tp"         'markdown-table-move-row-up
-    "tn"         'markdown-table-move-row-down
-    "tf"         'markdown-table-move-column-right
-    "tb"         'markdown-table-move-column-left
-    "tr"         'markdown-table-insert-row
-    "tR"         'markdown-table-delete-row
-    "tc"         'markdown-table-insert-column
-    "tC"         'markdown-table-delete-column
-    "ts"         'markdown-table-sort-lines
-    "td"         'markdown-table-convert-region
-    "tt"         'markdown-table-transpose
+    "T"          (which-key-prefix "table")
+    "Ta"         'markdown-table-align
+    "Tp"         'markdown-table-move-row-up
+    "Tn"         'markdown-table-move-row-down
+    "Tf"         'markdown-table-move-column-right
+    "Tb"         'markdown-table-move-column-left
+    "Tk"         'markdown-table-move-row-up
+    "Tj"         'markdown-table-move-row-down
+    "Tl"         'markdown-table-move-column-right
+    "Th"         'markdown-table-move-column-left
+    "Tr"         'markdown-table-insert-row
+    "TR"         'markdown-table-delete-row
+    "Tc"         'markdown-table-insert-column
+    "TC"         'markdown-table-delete-column
+    "Ts"         'markdown-table-sort-lines
+    "Td"         'markdown-table-convert-region
+    "Tt"         'markdown-table-transpose
+
+    "t"          (which-key-prefix :orgtbl)
+    "tE"         'org-table-export
+    "tH"         'org-table-move-column-left
+    "tI"         'org-table-import
+    "tJ"         'org-table-move-row-down
+    "tK"         'org-table-move-row-up
+    "tL"         'org-table-move-column-right
+    "tN"         'org-table-create-with-table.el
+    "tR"         'org-table-recalculate-buffer-tables
+    "ta"         'org-table-align
+    "tb"         'org-table-blank-field
+    "tc"         'org-table-convert
+    "te"         'org-table-eval-formula
+    "tf"         'org-table-field-info
+    "th"         'org-table-previous-field
+    "tj"         'org-table-next-row
+    "tl"         'org-table-next-field
+    "tn"         'org-table-create
+    "tr"         'org-table-recalculate
+    "ts"         'org-table-sort-lines
+    "tw"         'org-table-wrap-region
+
+    "td"         (which-key-prefix :delete)
+    "tdc"        'org-table-delete-column
+    "tdr"        'org-table-kill-row
+
+    "ti"         (which-key-prefix :insert)
+    "tiH"        'org-table-hline-and-move
+    "tic"        'org-table-insert-column
+    "tih"        'org-table-insert-hline
+    "tir"        'org-table-insert-row
+
+    "tt"         (which-key-prefix :toggle)
+    "ttf"        'org-table-toggle-formula-debugger
+    "tto"        'org-table-toggle-coordinate-overlays
 
     "T"          (which-key-prefix "toggle")
     "Ti"         'markdown-toggle-inline-images
