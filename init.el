@@ -700,6 +700,7 @@
     "A"          'org-attach
     "M-RET"      'org-meta-return
     "RET"        'org-ctrl-c-ret
+    "TAB"        'org-ctrl-c-tab
     "["          'org-toggle-radio-button-no-check
     "]"          'org-toggle-radio-button-no-check
     "a"          'org-agenda
