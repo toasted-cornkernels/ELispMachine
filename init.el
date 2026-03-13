@@ -1788,6 +1788,7 @@
     :major-modes '(gptel-mode t)
     :keymaps     '(gptel-mode-map)
     "g"          (which-key-prefix "gptel")
+    "RET"        nil
     "gs"         'gptel-send
     "gq"         'gptel-abort
     "gg"         'gptel-mode
@@ -1800,7 +1801,6 @@
   (normal-mode-major-mode
     :major-modes '(gptel-context-buffer-mode t)
     :keymaps     '(gptel-context-buffer-mode-map)
-    "RET"        nil
     "C-c C-c"    'gptel-context-confirm
     "C-c C-k"    'gptel-context-quit
     "RET"        'gptel-context-visit
