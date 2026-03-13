@@ -1779,7 +1779,10 @@
   (setq gptel-model 'claude-opus-4.5
         gptel-backend (gptel-make-gh-copilot "Copilot")
         gptel-default-mode 'org-mode
-        gptel-highlight-methods '(face))
+        gptel-highlight-methods '(face)
+        gptel-prompt-prefix-alist '((markdown-mode . "# ")
+                                    (org-mode . "* ")
+                                    (text-mode . "# ")))
   :general-config
   (local-leader
     :major-modes '(gptel-mode t)
