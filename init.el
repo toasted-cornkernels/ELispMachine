@@ -1642,7 +1642,6 @@
 
   :config
   (setq codeql-search-paths '("./"))
-  (defalias 'codeql-mode 'ql-tree-sitter-mode) ; this defalias is not working...
   (defun elispm/clear-codeql-variables ()
     (interactive)
     (setq codeql--path-problem-max-paths 10)
@@ -1791,8 +1790,7 @@
     "RET"        nil
     "gs"         'gptel-send
     "gq"         'gptel-abort
-    "gg"         'gptel-mode
-    "gm"         'gptel-menu
+    "gg"         'gptel-menu
     "ga"         'gptel-add
     "g."         'gptel-add-file
     "gt"         'gptel-org-set-topic
