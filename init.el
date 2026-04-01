@@ -2299,13 +2299,14 @@
     (forward-line -1)
     (indent-according-to-mode))
 
-  (sp-pair "{" nil :post-handlers '((indent-between-pair "RET")))
-  (sp-pair "[" nil :post-handlers '((indent-between-pair "RET")))
-  (sp-pair "(" nil :post-handlers '((indent-between-pair "RET")))
+  ;; (sp-pair "{" nil :post-handlers '((indent-between-pair "RET")))
+  ;; (sp-pair "[" nil :post-handlers '((indent-between-pair "RET")))
+  ;; (sp-pair "(" nil :post-handlers '((indent-between-pair "RET")))
 
-  (sp-local-pair '(c-mode) "{" nil :post-handlers nil)
-  (sp-local-pair '(c-mode) "[" nil :post-handlers nil)
-  (sp-local-pair '(c-mode) "(" nil :post-handlers nil))
+  ;; (sp-local-pair '(c-mode) "{" nil :post-handlers nil)
+  ;; (sp-local-pair '(c-mode) "[" nil :post-handlers nil)
+  ;; (sp-local-pair '(c-mode) "(" nil :post-handlers nil)
+)
 
 (use-package evil-cleverparens
   :init
@@ -7597,7 +7598,8 @@ Optional argument MSG First message shown in buffer."
                   "날아가줘, 멀리!"
                   "Love is our resistance"
                   "Send our codes to the stars"
-                  "시들어 갈 뿐인 추억 위에 화관을 씌우자")))
+                  "시들어 갈 뿐인 추억 위에 화관을 씌우자"
+                  "가여워 심장을 잃은 채로 살아서 환상을 보고 있어")))
     (message (nth (random 3) quotes))))
 
 (global-auto-revert-mode 1)    ; Refresh buffers with changed local files
