@@ -6762,7 +6762,8 @@ removal."
            (interactive)
            (call-interactively #'toggle-frame-fullscreen))
   "TF"   'mac-toggle-frame-fullscreen
-  "TM"   'manage-minor-mode)
+  "TM"   'manage-minor-mode
+  "Tp"   'spacious-padding-mode)
 
 (global-leader
   "s-o"  'reveal-in-osx-finder
