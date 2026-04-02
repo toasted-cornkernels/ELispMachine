@@ -1840,7 +1840,7 @@
   :mode (("CMakeLists.txt" . cmake-mode)))
 
 (use-package cmake-integration
-  :defer t
+  :after cc-mode
   :straight (cmake-integration :type git :host github
                                :repo "darcamo/cmake-integration")
   :general-config
