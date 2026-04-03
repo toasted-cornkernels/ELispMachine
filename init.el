@@ -4864,10 +4864,8 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (use-package consult-dir
   :ensure t
-  :bind (("C-x C-d" . consult-dir)
-         :map minibuffer-local-completion-map
-         ("C-x C-d" . consult-dir)
-         ("C-x C-j" . consult-dir-jump-file)))
+  :config
+  (setq consult-dir-project-list-function #'consult-dir-projectile-dirs))
 
 ;; (use-package company-lua
 ;;   :after (company lua-mode))
