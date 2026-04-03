@@ -6350,15 +6350,16 @@ removal."
   "fbs"	 'bookmark-set
   "fbw"	 'bookmark-write
 
-  "fd"  (which-key-prefix :delete)
-  "fdc" 'elispm/delete-current-buffer-file
-  "fdd" 'elispm/delete-file
+  "fD"  (which-key-prefix :delete)
+  "fDD" 'elispm/delete-current-buffer-file
+  "fDd" 'elispm/delete-file
 
   "fp"  'consult-project-buffer
   "ff"  'find-file
   "fa"  'write-file
   "fs"  'save-buffer
   "fS"  'evil-write-all
+  "fd"  'consult-dir
 
   "fg"  (which-key-prefix :find/grep)
   "fgd" 'consult-fd
