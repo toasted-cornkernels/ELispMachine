@@ -4867,18 +4867,6 @@ set so that it clears the whole REPL buffer, not just the output."
   :config
   (setq consult-dir-project-list-function #'consult-dir-projectile-dirs))
 
-;; (use-package company-lua
-;;   :after (company lua-mode))
-
-;; (use-package company-web
-;;   :after (company web-mode))
-
-;; (use-package company-auctex
-;;   :after (company tex))
-
-;; (use-package company-emojify
-;;   :after (company emojify))
-
 ;; iedit config =====================================
 ;; ==================================================
 
