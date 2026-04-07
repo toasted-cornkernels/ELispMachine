@@ -5473,7 +5473,7 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; ==================================================
 
 (use-package consult-gh
-  :after consult
+  :defer t
   :custom
   (consult-gh-show-preview t)
   (consult-gh-preview-key "C-o")
