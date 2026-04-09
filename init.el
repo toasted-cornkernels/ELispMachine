@@ -7227,7 +7227,7 @@ removal."
 (use-package eradio
   :defer t
   :config
-  (setq eradio-player   '("mpv" "--no-video" "--no-terminal" "--really-quiet")
+  (setq eradio-player   '("vlc" "--intf" "dummy")
         eradio-channels '(("WFUV 90.7"     . "https://onair.wfuv.org/onair-aacplus")
                           ("WNYC 93.9 FM"  . "https://fm939.wnyc.org/wnycfm.aac")
                           ("WBBR 1130 AM"  . "http://14123.live.streamtheworld.com/WBBRAMAAC_SC")
