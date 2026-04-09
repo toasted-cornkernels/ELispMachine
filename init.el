@@ -5824,6 +5824,7 @@ set so that it clears the whole REPL buffer, not just the output."
 (use-package writeroom-mode
   :custom
   (writeroom-mode-line t)
+  (writeroom-fringes-outside-margins nil)
   :defer t)                             ; TODO
 
 (use-package olivetti
