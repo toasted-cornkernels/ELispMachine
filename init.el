@@ -6761,7 +6761,10 @@ removal."
            (call-interactively #'toggle-frame-fullscreen))
   "TF"   'mac-toggle-frame-fullscreen
   "TM"   'manage-minor-mode
-  "Tp"   'spacious-padding-mode)
+  "Tp"   'spacious-padding-mode
+  "Tw"   'writeroom-mode
+  "To"   (which-key-prefix :olivetti)
+  "Too"  'olivetti-mode)
 
 (global-leader
   "s-o"  'reveal-in-osx-finder
