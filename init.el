@@ -4984,8 +4984,8 @@ set so that it clears the whole REPL buffer, not just the output."
   (defun elispm/project-override (dir)
     (let ((override (locate-dominating-file dir ".project.el")))
       (if override
-          (cons 'vc override)
-        nil)))
+          (cons 'vc override))
+        nil))
   (add-hook 'project-find-functions #'elispm/project-override))
 
 ;; xwidget config ===================================
