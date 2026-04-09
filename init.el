@@ -7419,7 +7419,26 @@ removal."
 ;; XKCD config ======================================
 ;; ==================================================
 
-(use-package xkcd :defer t)
+(use-package xkcd
+  :defer t
+  :general-config
+  (normal-mode-major-mode
+    :major-modes '(xkcd-mode t)
+    :keymaps     '(xkcd-mode-map)
+    "j"          'xkcd-next
+    "k"          'xkcd-prev
+    "h"          'xkcd-prev
+    "l"          'xkcd-next
+    "q"          'xkcd-kill-buffer
+    "r"          'xkcd-rand
+    "e"          'xkcd-open-explanation-browser
+    "w"          'xkcd-open-browser
+    "o"          'xkcd-open-browser
+    "b"          'xkcd-open-browser
+    "a"          'xkcd-alt-text
+    "t"          'xkcd-alt-text
+    "l"          'xkcd-get-latest
+    "L"          'xkcd-get-latest-cached))
 
 ;; TRAMP config =====================================
 ;; ==================================================
