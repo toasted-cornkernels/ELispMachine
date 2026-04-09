@@ -2246,6 +2246,10 @@
 (use-package imenu-list
   :after imenu)
 
+(use-package breadcrumb
+  :defer t
+  :hook (prog-mode . breadcrumb-mode))
+
 ;; Dump-jump ========================================
 ;; ==================================================
 
