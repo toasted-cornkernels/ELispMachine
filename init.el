@@ -4743,7 +4743,9 @@ set so that it clears the whole REPL buffer, not just the output."
 
   (when macOS-p
     (add-to-list 'default-frame-alist '(fullscreen . fullboth))
-    (setq ns-use-native-fullscreen t)))
+    (setq ns-use-native-fullscreen t))
+
+  (setq-default window-combination-resize t))
 
 (use-package orderless
   :init
