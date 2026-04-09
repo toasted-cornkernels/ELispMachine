@@ -5822,6 +5822,8 @@ set so that it clears the whole REPL buffer, not just the output."
   (auto-dark-mode t))
 
 (use-package writeroom-mode
+  :custom
+  (writeroom-mode-line t)
   :defer t)                             ; TODO
 
 (use-package olivetti
