@@ -7205,6 +7205,7 @@ removal."
 
 (use-package hnreader
   :defer t
+  :hook (hnreader . (lambda () (setq-local line-spacing 0.5)))
   :general
   (global-leader
     "awh"  (which-key-prefix "hackernews")
@@ -7231,13 +7232,11 @@ removal."
                           ("WNYC 93.9 FM"  . "https://fm939.wnyc.org/wnycfm.aac")
                           ("WBBR 1130 AM"  . "http://14123.live.streamtheworld.com/WBBRAMAAC_SC")
                           ("Bloomberg TV"  . "https://www.bloomberg.com/media-manifest/streams/phoenix-us.m3u8")
-                          ("MBC FM4U"      . "http://serpent0.duckdns.org:8088/mbcfm.pls")
-                          ("MBC 표준FM"    . "http://serpent0.duckdns.org:8088/mbcsfm.pls")
-                          ("KBS 쿨FM"      . "http://serpent0.duckdns.org:8088/kbs2fm.pls")
-                          ("KBS 해피FM"    . "http://serpent0.duckdns.org:8088/kbs2radio.pls")
-                          ("KBS 클래식 FM" . "http://serpent0.duckdns.org:8088/kbsfm.pls")
-                          ("SBS 파워FM"    . "http://serpent0.duckdns.org:8088/sbsfm.pls")
-                          ("SBS 러브FM"    . "http://serpent0.duckdns.org:8088/sbs2fm.pls")
+                          ("MBC FM4U"      . "https://radio.bsod.kr/stream/?stn=mbc&ch=fm4u")
+                          ("MBC mini 올댓뮤직" . "https://radio.bsod.kr/stream/?stn=mbc&ch=chm")
+                          ("MBC 표준FM"    . "https://radio.bsod.kr/stream/?stn=mbc&ch=sfm")
+                          ("SBS 파워FM"    . "https://radio.bsod.kr/stream/?stn=sbs&ch=powerfm")
+                          ("SBS 러브FM"    . "https://radio.bsod.kr/stream/?stn=sbs&ch=lovefm")
                           ("TBS 교통방송"  . "http://tbs.hscdn.com/tbsradio/fm/playlist.m3u8")
                           ("TBS eFM"       . "http://tbs.hscdn.com/tbsradio/efm/playlist.m3u8")
                           ("CBS 음악방송"  . "http://aac.cbs.co.kr/cbs939/cbs939.stream/playlist.m3u8"))))
