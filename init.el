@@ -5474,6 +5474,8 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (use-package consult-gh
   :defer t
+  :commands (consult-gh
+             consult-gh-transient)
   :custom
   (consult-gh-show-preview t)
   (consult-gh-preview-key "C-o")
@@ -6412,8 +6414,8 @@ removal."
   "Ls"   'gptel-send
   "Lq"   'gptel-abort
   "Lm"   'gptel-menu
-  "La"   'gptel-add
-  "L."   'gptel-add-file
+  "L."   'gptel-add
+  "La"   'gptel-add-file
   "Lo"   'gptel-org-set-topic
   "Lp"   'gptel-org-set-properties
   "Lr"   'gptel-rewrite)
