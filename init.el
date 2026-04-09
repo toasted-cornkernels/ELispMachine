@@ -4982,13 +4982,17 @@ set so that it clears the whole REPL buffer, not just the output."
 (use-package project
   :straight nil
   :config
-  ;;; Stolen from https://michael.stapelberg.ch/posts/2021-04-02-emacs-project-override/
-  ;; Returns the parent directory containing a .project.el file, if any,
-  ;; to override the standard project.el detection logic when needed.
+  ;; Stolen from
+  ;; https://michael.stapelberg.ch/posts/2021-04-02-emacs-project-override/
+  ;; Returns the parent directory containing a .project.el file, if
+  ;; any, to override the standard project.el detection logic when
+  ;; needed.
   (defun elispm/project-override (dir)
     (let ((override (locate-dominating-file dir ".project.el")))
       (if override
-          (cons 'vc override))
+          (cons 'vc override))          ; TODO why the hell does it
+                                        ; stop working when it's
+                                        ; refactored with `when`???
         nil))
   (add-hook 'project-find-functions #'elispm/project-override))
 
