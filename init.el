@@ -5821,6 +5821,12 @@ set so that it clears the whole REPL buffer, not just the output."
         auto-dark-allow-powershell nil)
   (auto-dark-mode t))
 
+(use-package writeroom-mode
+  :defer t)
+
+(use-package olivetti
+  :defer t)
+
 ;; hl-todo config ==================================
 ;; =================================================
 
