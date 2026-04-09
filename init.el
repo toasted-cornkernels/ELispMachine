@@ -2239,7 +2239,8 @@
   (global-leader
     "i"      (which-key-prefix "imenu")
     "ii"     'imenu
-    "il"     'imenu-list)
+    "il"     'imenu-list
+    "ib"     'breadcrumb-jump)
   :config
   (setq imenu-list-position 'left))
 
