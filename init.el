@@ -6722,8 +6722,8 @@ removal."
   "tl"     'tab-next
   "tP"     'tab-move-previous
   "tH"     'tab-move-previous
-  "tN"     'tab-next
-  "tL"     'tab-next
+  "tN"     'tab-move
+  "tL"     'tab-move
   "tt"     'tab-list
   "tr"     'tab-rename
   "t TAB"  'tab-recent
