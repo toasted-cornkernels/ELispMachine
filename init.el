@@ -6224,6 +6224,7 @@ set so that it clears the whole REPL buffer, not just the output."
   "j"   (which-key-prefix :jump)
   "jl"  'consult-line
   "jL"  'consult-line-multi
+  "jj"  'avy-goto-char-timer
   "jc"  'avy-goto-char-timer
   "jC"  'avy-goto-char
   "js"  'avy-isearch
