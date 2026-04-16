@@ -5276,7 +5276,7 @@ its settings."
   (defun elispm/magit-copy-patch-kill-ring ()
     "Copy patch format of current diff into kill ring.
 
-Uses `magit-patch-save' internally, so inherit it's settings."
+Uses `magit-patch-save' internally, so inherit its settings."
     (interactive)
     (elispm/magit-write-patch '(lambda () (kill-region (point-min) (point-max))))))
 
