@@ -5449,7 +5449,7 @@ Uses `magit-patch-save' internally, so inherit its settings."
   :defer t)
 
 (use-package orgit-forge
-  :after forge
+  :after (magit forge)
   :defer t)
 
 (use-package smeargle
@@ -5490,6 +5490,22 @@ Uses `magit-patch-save' internally, so inherit its settings."
     "c"          'forge-post-submit
     "k"          'forge-post-cancel
     "a"          'forge-post-cancel))
+
+(use-package gh-notify
+  :after (magit forge)
+  :general-config
+  (normal-mode-major-mode               ; TODO: complete this
+    :major-modes '(gh-notify-mode t)
+    :keymaps     '(gh-notify-mode-map)
+    "RET"        'gh-notify-visit-notification
+    "m"          'gh-notify-mark-notification
+    "*"          'gh-notify-mark-all-notifications
+    "u"          'gh-notify-unmark-notification
+    "U"          'gh-notify-unmark-all-notifications
+    "d"          'gh-notify-marked-notifications-set-done
+    "t"          'gh-notify-marked-notifications-set-unread
+    "p"          'gh-notify-marked-notifications-set-pending
+    "q"          'bury-buffer))
 
 ;; Git-gutter config ===============================
 ;; ==================================================
