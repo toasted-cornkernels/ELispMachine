@@ -7073,14 +7073,14 @@ removal."
     "gg"  'pdf-view-first-page
     "G"   'pdf-view-last-page
     "gt"  'pdf-view-goto-page
-    "gl"  'pdf-view-goto-label
+    "gL"  'pdf-view-goto-label
     "u"   'pdf-view-scroll-down-or-previous-page
     "d"   'pdf-view-scroll-up-or-next-page
     "C-u" 'pdf-view-scroll-down-or-previous-page
     "C-d" 'pdf-view-scroll-up-or-next-page
     "``"  'pdf-history-backward
-    "["   'pdf-history-backward
-    "]"   'pdf-history-forward
+    "gh"  'pdf-history-backward
+    "gl"  'pdf-history-forward
     "'"   'pdf-view-jump-to-register
 
     "/"   'isearch-forward
