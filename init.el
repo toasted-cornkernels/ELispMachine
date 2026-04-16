@@ -5411,10 +5411,6 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (use-package forge
   :after magit
-  :init
-  (setq forge-database-file "forge-database.sqlite"
- forge-add-default-bindings nil)
-
   :general-config
   (local-leader
     :major-modes '(forge-topic-mode t)
