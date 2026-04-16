@@ -5214,8 +5214,6 @@ set so that it clears the whole REPL buffer, not just the output."
     "glp" 'git-permalink-copy-url-only
     "glP" 'git-permalink
 
-    "gm"  'git-messenger:popup-message
-
     "gh"  (which-key-prefix :smeargle)
     "ght" 'smeargle
     "ghc" 'smeargle-clear
@@ -5411,37 +5409,37 @@ set so that it clears the whole REPL buffer, not just the output."
                   (cons nil (cdr nd)))
             which-key-replacement-alist))))
 
-;; (use-package forge
-;;   :after magit
-;;   :init
-;;   (setq forge-database-file "forge-database.sqlite"
-;;  forge-add-default-bindings nil)
+(use-package forge
+  :after magit
+  :init
+  (setq forge-database-file "forge-database.sqlite"
+ forge-add-default-bindings nil)
 
-;;   :general-config
-;;   (local-leader
-;;     :major-modes '(forge-topic-mode t)
-;;     :keymaps     '(forge-topic-mode-map)
-;;     "a"          'forge-edit-topic-assignees
-;;     "c"          'forge-create-post
-;;     "C"          'forge-checkout-pullreq
-;;     "b"          'forge-browse-topic
-;;     "d"          'forge-delete-comment
-;;     "e"          'forge-edit-post
-;;     "m"          'forge-edit-topic-marks
-;;     "M"          'forge-create-mark
-;;     "n"          'forge-edit-topic-note
-;;     "r"          'forge-edit-topic-review-requests
-;;     "s"          'forge-edit-topic-state
-;;     "t"          'forge-edit-topic-title
-;;     "u"          'forge-copy-url-at-point-as-kill)
+  :general-config
+  (local-leader
+    :major-modes '(forge-topic-mode t)
+    :keymaps     '(forge-topic-mode-map)
+    "a"          'forge-edit-topic-assignees
+    "c"          'forge-create-post
+    "C"          'forge-checkout-pullreq
+    "b"          'forge-browse-topic
+    "d"          'forge-delete-comment
+    "e"          'forge-edit-post
+    "m"          'forge-edit-topic-marks
+    "M"          'forge-create-mark
+    "n"          'forge-edit-topic-note
+    "r"          'forge-edit-topic-review-requests
+    "s"          'forge-edit-topic-state
+    "t"          'forge-edit-topic-title
+    "u"          'forge-copy-url-at-point-as-kill)
 
-;;   (local-leader
-;;     :major-modes '(forge-post-mode t)
-;;     :keymaps     '(forge-post-mode-map)
-;;     ","          'forge-post-submit
-;;     "c"          'forge-post-submit
-;;     "k"          'forge-post-cancel
-;;     "a"          'forge-post-cancel))
+  (local-leader
+    :major-modes '(forge-post-mode t)
+    :keymaps     '(forge-post-mode-map)
+    ","          'forge-post-submit
+    "c"          'forge-post-submit
+    "k"          'forge-post-cancel
+    "a"          'forge-post-cancel))
 
 ;; Git-gutter config ===============================
 ;; ==================================================
