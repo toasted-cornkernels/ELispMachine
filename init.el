@@ -5227,7 +5227,7 @@ set so that it clears the whole REPL buffer, not just the output."
   (when macOS-p
     (setq magit-process-connection-type nil))
   
-  ;; Taken from https://github.com/magit/magit/issues/4462#issuecomment-893481200
+  ;; Adapted from https://github.com/magit/magit/issues/4462#issuecomment-893481200
 
   (transient-insert-suffix
     'magit-patch "r" '("b" "Save diff as patch to buffer" elispm/magit-write-patch-to-buffer))
