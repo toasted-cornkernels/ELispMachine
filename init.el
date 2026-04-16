@@ -5394,9 +5394,9 @@ set so that it clears the whole REPL buffer, not just the output."
 (use-package orgit
   :defer t)
 
-;; (use-package orgit-forge
-;;   :after forge
-;;   :defer t)
+(use-package orgit-forge
+  :after forge
+  :defer t)
 
 (use-package smeargle
   :defer t
