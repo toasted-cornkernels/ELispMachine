@@ -1832,6 +1832,7 @@
   (local-leader
     :major-modes '(c-mode c++-mode t)
     :keymaps     '(c-mode-map c++-mode-map)
+    "'"          'cmake-integration-transient
     "g"          (which-key-prefix "goto")
     "ga"         'ff-find-other-file
     "gA"         'ff-find-other-file-other-window))
@@ -1842,12 +1843,10 @@
 (use-package cmake-integration
   :after cc-mode
   :straight (cmake-integration :type git :host github
-                               :repo "darcamo/cmake-integration")
-  :general-config
-  (local-leader
-    :major-modes '(c-mode c++-mode t)
-    :keymaps     '(c-mode-map c++-mode-map)
-    "'"          'cmake-integration-transient))
+                               :repo "darcamo/cmake-integration"))
+
+(use-package bazel
+  :defer t)
 
   ;; Python config ====================================
   ;; ==================================================
