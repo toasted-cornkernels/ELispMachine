@@ -934,8 +934,8 @@
                               ol-mac-link)
                             (when macOS-p
                               '(ol-mac-iCal
-                                ol-mac-link))))
-
+                                ol-mac-link)))
+        org-fontify-quote-and-verse-blocks t)
   (dolist (fn '(org-insert-drawer
                 org-insert-heading
                 org-insert-item
