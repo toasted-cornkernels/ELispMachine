@@ -5225,7 +5225,60 @@ set so that it clears the whole REPL buffer, not just the output."
               (evil-define-key 'normal
                 magit-mode-map (kbd "SPC") nil)))
   (when macOS-p
-    (setq magit-process-connection-type nil)))
+    (setq magit-process-connection-type nil))
+  
+  ;; Taken from https://github.com/magit/magit/issues/4462#issuecomment-893481200
+
+  (transient-insert-suffix
+    'magit-patch "r" '("b" "Save diff as patch to buffer" elispm/magit-write-patch-to-buffer))
+  (transient-insert-suffix
+    'magit-patch "r" '("w" "Copy diff as patch to kill-ring" elispm/magit-copy-patch-kill-ring))
+
+  (defun elispm/magit-write-patch (write-function &optional arg)
+    "Write patch of current diff to a temp buffer, then run
+WRITE-FUNCTION. This is useful as a backend abstraction for
+`elispm/magit-write-patch-to-buffer' and
+`elispm/magit-copy-patch-kill-ring'."
+    (interactive)
+    (require 'magit-mode)
+    (require 'magit-diff)
+    (unless (derived-mode-p 'magit-diff-mode)
+      (user-error "Only diff buffers can be saved as patches"))
+    (let ((rev     magit-buffer-diff-range-oids)
+          (typearg magit-buffer-typearg)
+          (args    magit-buffer-diff-args)
+          (files   magit-buffer-diff-files))
+      (cond ((eq magit-patch-save-arguments 'buffer)
+             (when arg
+               (setq args nil)))
+            ((eq (car-safe magit-patch-save-arguments) 'exclude)
+             (unless arg
+               (setq args (-difference args (cdr magit-patch-save-arguments)))))
+            ((not arg)
+             (setq args magit-patch-save-arguments)))
+      (with-temp-buffer
+        (magit-git-insert "diff" rev "-p" typearg args "--" files)
+        (funcall write-function)))
+    (magit-refresh))
+
+  (defun elispm/magit-write-patch-to-buffer (buffer)
+    "Write patch format of current diff into chosen buffer. Finishes with
+chosen buffer displayed. Uses `magit-patch-save' internally, so inherits
+its settings."
+    (interactive (list (completing-read (format-prompt "Dump/append patch to buffer" "*patch*")
+                                        #'internal-complete-buffer
+                                        nil nil nil nil "*patch*")))
+    (elispm/magit-write-patch '(lambda ()
+                                 (append-to-buffer buffer (point-min) (point-max))
+			                           (pop-to-buffer buffer)
+                                 (diff-mode))))
+
+  (defun elispm/magit-copy-patch-kill-ring ()
+    "Copy patch format of current diff into kill ring.
+
+Uses `magit-patch-save' internally, so inherit it's settings."
+    (interactive)
+    (elispm/magit-write-patch '(lambda () (kill-region (point-min) (point-max))))))
 
 (use-package magit-section
   :defer t
