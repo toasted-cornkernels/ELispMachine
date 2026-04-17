@@ -7668,7 +7668,7 @@ Optional argument MSG First message shown in buffer."
                   "Send our codes to the stars"
                   "시들어 갈 뿐인 추억 위에 화관을 씌우자"
                   "가여워 심장을 잃은 채로 살아서 환상을 보고 있어")))
-    (message (nth (random 3) quotes))))
+    (message (nth (random (length quotes)) quotes))))
 
 (global-auto-revert-mode 1)    ; Refresh buffers with changed local files
 
