@@ -1570,7 +1570,13 @@
   (rg-enable-default-bindings))
 
 (use-package ag
-  :defer t)
+  :defer t
+  :general-config
+  (normal-mode-major-mode
+    :major-modes '(ag-mode t)
+    :keymaps     '(ag-mode-map)
+    "C-j"        'next-error
+    "C-k"        'previous-error))
 
 (use-package grep
   :straight (:type built-in)
