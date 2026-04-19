@@ -1844,6 +1844,11 @@
     "ga"         'ff-find-other-file
     "gA"         'ff-find-other-file-other-window))
 
+(use-package simpc-mode
+  :straight (simpc-mode :type git :host github
+                        :repo "rexim/simpc-mode")
+  :defer t)
+
 (use-package cmake-mode
   :mode (("CMakeLists.txt" . cmake-mode)))
 
