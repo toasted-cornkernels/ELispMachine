@@ -519,6 +519,7 @@
 ;; ==================================================
 
 (use-package corfu
+  :when GUI-p
   :custom
   (corfu-cycle t)
   (corfu-auto t)
@@ -549,6 +550,13 @@
     :keymaps     '(corfu-popupinfo-map)
     "M-p"        'corfu-popupinfo-scroll-down
     "M-n"        'corfu-popupinfo-scroll-up))
+
+(use-package corfu-terminal
+  :straight (corfu-terminal
+             :type git
+             :host codeberg
+             :repo "akib/emacs-corfu-terminal")
+  :when terminal-p)
 
 (use-package cape
   ;; Bind prefix keymap providing all Cape commands under a mnemonic key.
@@ -689,14 +697,15 @@
     "*"          'org-ctrl-c-star
     ","          'org-ctrl-c-ctrl-c
     "-"          'org-ctrl-c-minus
-    "A"          'org-attach
-    "M-RET"      'org-meta-return
+    "TAB"        'org-ctrl-c-tab
     "RET"        'org-ctrl-c-ret
+    "M-RET"      'org-meta-return
     "["          'org-toggle-radio-button-no-check
     "]"          'org-toggle-radio-button-no-check
-    "a"          'org-agenda
     "{"          'org-agenda-file-to-front
     "}"          'org-remove-file
+    "a"          'org-agenda
+    "A"          'org-attach
 
     "c"          (which-key-prefix :clock)
     "ce"         'org-evaluate-time-range
@@ -925,8 +934,8 @@
                               ol-mac-link)
                             (when macOS-p
                               '(ol-mac-iCal
-                                ol-mac-link))))
-
+                                ol-mac-link)))
+        org-fontify-quote-and-verse-blocks t)
   (dolist (fn '(org-insert-drawer
                 org-insert-heading
                 org-insert-item
@@ -1149,7 +1158,8 @@
   :config
   (setq org-src-window-setup 'current-window
         org-src-fontify-natively t
-        org-src-tab-acts-natively t)
+        org-src-tab-acts-natively t
+        org-edit-src-content-indentation 0)
   (setq-default org-src-preserve-indentation nil
                 org-edit-src-content-indentation 2))
 
@@ -1560,7 +1570,13 @@
   (rg-enable-default-bindings))
 
 (use-package ag
-  :defer t)
+  :defer t
+  :general-config
+  (normal-mode-major-mode
+    :major-modes '(ag-mode t)
+    :keymaps     '(ag-mode-map)
+    "C-j"        'next-error
+    "C-k"        'previous-error))
 
 (use-package grep
   :straight (:type built-in)
@@ -1633,7 +1649,6 @@
 
   :config
   (setq codeql-search-paths '("./"))
-  (defalias 'codeql-mode 'ql-tree-sitter-mode) ; this defalias is not working...
   (defun elispm/clear-codeql-variables ()
     (interactive)
     (setq codeql--path-problem-max-paths 10)
@@ -1672,30 +1687,6 @@
   :defer t
   :config (codespaces-setup))
 
-;; eldoc-mode config ================================
-;; ==================================================
-
-(use-package eldoc
-  :straight (:type built-in)
-  :hook ((emacs-lisp-mode
-          lisp-interaction-mode
-          ielm-mode
-          eval-expression-minibuffer-setup)
-         . turn-on-eldoc-mode)
-  :config
-  (setq eldoc-echo-area-use-multiline-p 3))
-
-(use-package eldoc-box
-  :when GUI-p
-  :after eldoc
-  :custom-face
-  ;; (eldoc-box-border ((t (:inherit posframe-border :background unspecified))))
-  (eldoc-box-body ((t (:inherit tooltip))))
-  :config
-  (setq eldoc-box-lighter nil
-        eldoc-box-only-multi-line t
-        eldoc-box-clear-with-C-g t))
-
 ;; Eglot config =====================================
 ;; ==================================================
 
@@ -1730,10 +1721,6 @@
     "at"     'eglot-show-type-hierarchy
     "ac"     'eglot-show-call-hierarchy))
 
-  (normal-mode-major-mode
-    :keymaps '(eglot-mode-map)
-    "K"      'eldoc-box-help-at-point)
-
   :config
   (setq-default eglot-workspace-configuration
                 '((lua_ls
@@ -1756,6 +1743,37 @@
     :keymaps '(eglot-mode-map)
     "as"     'consult-eglot-symbols))
 
+(use-package dape
+  :defer t)
+
+;; eldoc-mode config ================================
+;; ==================================================
+
+(use-package eldoc
+  :straight (:type built-in)
+  :hook ((emacs-lisp-mode
+          lisp-interaction-mode
+          ielm-mode
+          eval-expression-minibuffer-setup)
+         . turn-on-eldoc-mode)
+  :config
+  (setq eldoc-echo-area-use-multiline-p 3))
+
+(use-package eldoc-box
+  :when GUI-p
+  :after eldoc
+  :custom-face
+  ;; (eldoc-box-border ((t (:inherit posframe-border :background unspecified))))
+  (eldoc-box-body ((t (:inherit tooltip))))
+  :config
+  (setq eldoc-box-lighter nil
+        eldoc-box-only-multi-line t
+        eldoc-box-clear-with-C-g t)
+  :general-config
+  (normal-mode-major-mode
+    :keymaps '(eglot-mode-map)
+    "K"      'eldoc-box-help-at-point))
+
 ;; GPTel config =====================================
 ;; ==================================================
 
@@ -1767,16 +1785,19 @@
   (setq gptel-model 'claude-opus-4.5
         gptel-backend (gptel-make-gh-copilot "Copilot")
         gptel-default-mode 'org-mode
-        gptel-highlight-methods '(face))
+        gptel-highlight-methods '(face)
+        gptel-prompt-prefix-alist '((markdown-mode . "# ")
+                                    (org-mode . "* ")
+                                    (text-mode . "# ")))
   :general-config
   (local-leader
     :major-modes '(gptel-mode t)
     :keymaps     '(gptel-mode-map)
     "g"          (which-key-prefix "gptel")
+    "RET"        nil
     "gs"         'gptel-send
     "gq"         'gptel-abort
-    "gg"         'gptel-mode
-    "gm"         'gptel-menu
+    "gg"         'gptel-menu
     "ga"         'gptel-add
     "g."         'gptel-add-file
     "gt"         'gptel-org-set-topic
@@ -1785,7 +1806,6 @@
   (normal-mode-major-mode
     :major-modes '(gptel-context-buffer-mode t)
     :keymaps     '(gptel-context-buffer-mode-map)
-    "RET"        nil
     "C-c C-c"    'gptel-context-confirm
     "C-c C-k"    'gptel-context-quit
     "RET"        'gptel-context-visit
@@ -1819,22 +1839,26 @@
   (local-leader
     :major-modes '(c-mode c++-mode t)
     :keymaps     '(c-mode-map c++-mode-map)
+    "'"          'cmake-integration-transient
     "g"          (which-key-prefix "goto")
     "ga"         'ff-find-other-file
     "gA"         'ff-find-other-file-other-window))
+
+(use-package simpc-mode
+  :straight (simpc-mode :type git :host github
+                        :repo "rexim/simpc-mode")
+  :defer t)
 
 (use-package cmake-mode
   :mode (("CMakeLists.txt" . cmake-mode)))
 
 (use-package cmake-integration
-  :defer t
+  :after cc-mode
   :straight (cmake-integration :type git :host github
-                               :repo "darcamo/cmake-integration")
-  :general-config
-  (local-leader
-    :major-modes '(c-mode c++-mode t)
-    :keymaps     '(c-mode-map c++-mode-map)
-    "'"          'cmake-integration-transient))
+                               :repo "darcamo/cmake-integration"))
+
+(use-package bazel
+  :defer t)
 
   ;; Python config ====================================
   ;; ==================================================
@@ -2226,12 +2250,17 @@
   (global-leader
     "i"      (which-key-prefix "imenu")
     "ii"     'imenu
-    "il"     'imenu-list)
+    "il"     'imenu-list
+    "ib"     'breadcrumb-jump)
   :config
   (setq imenu-list-position 'left))
 
 (use-package imenu-list
   :after imenu)
+
+(use-package breadcrumb
+  :defer t
+  :hook (prog-mode . breadcrumb-mode))
 
 ;; Dump-jump ========================================
 ;; ==================================================
@@ -2286,13 +2315,14 @@
     (forward-line -1)
     (indent-according-to-mode))
 
-  (sp-pair "{" nil :post-handlers '((indent-between-pair "RET")))
-  (sp-pair "[" nil :post-handlers '((indent-between-pair "RET")))
-  (sp-pair "(" nil :post-handlers '((indent-between-pair "RET")))
+  ;; (sp-pair "{" nil :post-handlers '((indent-between-pair "RET")))
+  ;; (sp-pair "[" nil :post-handlers '((indent-between-pair "RET")))
+  ;; (sp-pair "(" nil :post-handlers '((indent-between-pair "RET")))
 
-  (sp-local-pair '(c-mode) "{" nil :post-handlers nil)
-  (sp-local-pair '(c-mode) "[" nil :post-handlers nil)
-  (sp-local-pair '(c-mode) "(" nil :post-handlers nil))
+  ;; (sp-local-pair '(c-mode) "{" nil :post-handlers nil)
+  ;; (sp-local-pair '(c-mode) "[" nil :post-handlers nil)
+  ;; (sp-local-pair '(c-mode) "(" nil :post-handlers nil)
+)
 
 (use-package evil-cleverparens
   :init
@@ -2307,10 +2337,10 @@
 (use-package flash
   :commands (flash-jump flash-treesitter)
   :bind ("s-j" . flash-jump)
-  :init
-  (with-eval-after-load 'evil
-    (require 'flash-evil)
-    (flash-evil-setup t))
+  ;; :init
+  ;; (with-eval-after-load 'evil
+  ;;   (require 'flash-evil)
+  ;;   (flash-evil-setup t))
   :config
   (require 'flash-isearch)
   (flash-isearch-mode 1))
@@ -4291,7 +4321,8 @@ set so that it clears the whole REPL buffer, not just the output."
 (use-package markdown-mode
   :hook (((gfm-mode markdown-mode) . (lambda ()
                                         (setq indent-tabs-mode nil)))
-         ((gfm-mode markdown-mode) . outline-minor-mode))
+         ((gfm-mode markdown-mode) . outline-minor-mode)
+         ((gfm-mode markdown-mode) . orgtbl-mode))
   :mode
   (("\\.md\\'"  . gfm-mode)
    ("\\.mkd\\'" . markdown-mode)
@@ -4362,19 +4393,59 @@ set so that it clears the whole REPL buffer, not just the output."
     "l"          (which-key-prefix "lists")
     "li"         'markdown-insert-list-item
 
-    "t"          (which-key-prefix "table")
-    "ta"         'markdown-table-align
-    "tp"         'markdown-table-move-row-up
-    "tn"         'markdown-table-move-row-down
-    "tf"         'markdown-table-move-column-right
-    "tb"         'markdown-table-move-column-left
-    "tr"         'markdown-table-insert-row
-    "tR"         'markdown-table-delete-row
-    "tc"         'markdown-table-insert-column
-    "tC"         'markdown-table-delete-column
-    "ts"         'markdown-table-sort-lines
-    "td"         'markdown-table-convert-region
-    "tt"         'markdown-table-transpose
+    "T"          (which-key-prefix "table")
+    "Ta"         'markdown-table-align
+    "Tp"         'markdown-table-move-row-up
+    "Tn"         'markdown-table-move-row-down
+    "Tf"         'markdown-table-move-column-right
+    "Tb"         'markdown-table-move-column-left
+    "Tk"         'markdown-table-move-row-up
+    "Tj"         'markdown-table-move-row-down
+    "Tl"         'markdown-table-move-column-right
+    "Th"         'markdown-table-move-column-left
+    "Tr"         'markdown-table-insert-row
+    "TR"         'markdown-table-delete-row
+    "Tc"         'markdown-table-insert-column
+    "TC"         'markdown-table-delete-column
+    "Ts"         'markdown-table-sort-lines
+    "Td"         'markdown-table-convert-region
+    "Tt"         'markdown-table-transpose
+
+    "t"          (which-key-prefix :orgtbl)
+    "tE"         'org-table-export
+    "tH"         'org-table-move-column-left
+    "tI"         'org-table-import
+    "tJ"         'org-table-move-row-down
+    "tK"         'org-table-move-row-up
+    "tL"         'org-table-move-column-right
+    "tN"         'org-table-create-with-table.el
+    "tR"         'org-table-recalculate-buffer-tables
+    "ta"         'org-table-align
+    "tb"         'org-table-blank-field
+    "tc"         'org-table-convert
+    "te"         'org-table-eval-formula
+    "tf"         'org-table-field-info
+    "th"         'org-table-previous-field
+    "tj"         'org-table-next-row
+    "tl"         'org-table-next-field
+    "tn"         'org-table-create
+    "tr"         'org-table-recalculate
+    "ts"         'org-table-sort-lines
+    "tw"         'org-table-wrap-region
+
+    "td"         (which-key-prefix :delete)
+    "tdc"        'org-table-delete-column
+    "tdr"        'org-table-kill-row
+
+    "ti"         (which-key-prefix :insert)
+    "tiH"        'org-table-hline-and-move
+    "tic"        'org-table-insert-column
+    "tih"        'org-table-insert-hline
+    "tir"        'org-table-insert-row
+
+    "tt"         (which-key-prefix :toggle)
+    "ttf"        'org-table-toggle-formula-debugger
+    "tto"        'org-table-toggle-coordinate-overlays
 
     "T"          (which-key-prefix "toggle")
     "Ti"         'markdown-toggle-inline-images
@@ -4688,7 +4759,9 @@ set so that it clears the whole REPL buffer, not just the output."
 
   (when macOS-p
     (add-to-list 'default-frame-alist '(fullscreen . fullboth))
-    (setq ns-use-native-fullscreen t)))
+    (setq ns-use-native-fullscreen t))
+
+  (setq-default window-combination-resize t))
 
 (use-package orderless
   :init
@@ -4809,22 +4882,8 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (use-package consult-dir
   :ensure t
-  :bind (("C-x C-d" . consult-dir)
-         :map minibuffer-local-completion-map
-         ("C-x C-d" . consult-dir)
-         ("C-x C-j" . consult-dir-jump-file)))
-
-;; (use-package company-lua
-;;   :after (company lua-mode))
-
-;; (use-package company-web
-;;   :after (company web-mode))
-
-;; (use-package company-auctex
-;;   :after (company tex))
-
-;; (use-package company-emojify
-;;   :after (company emojify))
+  :config
+  (setq consult-dir-project-list-function #'consult-dir-projectile-dirs))
 
 ;; iedit config =====================================
 ;; ==================================================
@@ -4935,14 +4994,18 @@ set so that it clears the whole REPL buffer, not just the output."
 (use-package project
   :straight nil
   :config
-  ;;; Stolen from https://michael.stapelberg.ch/posts/2021-04-02-emacs-project-override/
-  ;; Returns the parent directory containing a .project.el file, if any,
-  ;; to override the standard project.el detection logic when needed.
+  ;; Stolen from
+  ;; https://michael.stapelberg.ch/posts/2021-04-02-emacs-project-override/
+  ;; Returns the parent directory containing a .project.el file, if
+  ;; any, to override the standard project.el detection logic when
+  ;; needed.
   (defun elispm/project-override (dir)
     (let ((override (locate-dominating-file dir ".project.el")))
       (if override
-          (cons 'vc override)
-        nil)))
+          (cons 'vc override))          ; TODO why the hell does it
+                                        ; stop working when it's
+                                        ; refactored with `when`???
+        nil))
   (add-hook 'project-find-functions #'elispm/project-override))
 
 ;; xwidget config ===================================
@@ -5163,8 +5226,6 @@ set so that it clears the whole REPL buffer, not just the output."
     "glp" 'git-permalink-copy-url-only
     "glP" 'git-permalink
 
-    "gm"  'git-messenger:popup-message
-
     "gh"  (which-key-prefix :smeargle)
     "ght" 'smeargle
     "ghc" 'smeargle-clear
@@ -5176,7 +5237,60 @@ set so that it clears the whole REPL buffer, not just the output."
               (evil-define-key 'normal
                 magit-mode-map (kbd "SPC") nil)))
   (when macOS-p
-    (setq magit-process-connection-type nil)))
+    (setq magit-process-connection-type nil))
+  
+  ;; Adapted from https://github.com/magit/magit/issues/4462#issuecomment-893481200
+
+  (transient-insert-suffix
+    'magit-patch "r" '("b" "Save diff as patch to buffer" elispm/magit-write-patch-to-buffer))
+  (transient-insert-suffix
+    'magit-patch "r" '("w" "Copy diff as patch to kill-ring" elispm/magit-copy-patch-kill-ring))
+
+  (defun elispm/magit-write-patch (write-function &optional arg)
+    "Write patch of current diff to a temp buffer, then run
+WRITE-FUNCTION. This is useful as a backend abstraction for
+`elispm/magit-write-patch-to-buffer' and
+`elispm/magit-copy-patch-kill-ring'."
+    (interactive)
+    (require 'magit-mode)
+    (require 'magit-diff)
+    (unless (derived-mode-p 'magit-diff-mode)
+      (user-error "Only diff buffers can be saved as patches"))
+    (let ((rev     magit-buffer-diff-range-oids)
+          (typearg magit-buffer-typearg)
+          (args    magit-buffer-diff-args)
+          (files   magit-buffer-diff-files))
+      (cond ((eq magit-patch-save-arguments 'buffer)
+             (when arg
+               (setq args nil)))
+            ((eq (car-safe magit-patch-save-arguments) 'exclude)
+             (unless arg
+               (setq args (-difference args (cdr magit-patch-save-arguments)))))
+            ((not arg)
+             (setq args magit-patch-save-arguments)))
+      (with-temp-buffer
+        (magit-git-insert "diff" rev "-p" typearg args "--" files)
+        (funcall write-function)))
+    (magit-refresh))
+
+  (defun elispm/magit-write-patch-to-buffer (buffer)
+    "Write patch format of current diff into chosen buffer. Finishes with
+chosen buffer displayed. Uses `magit-patch-save' internally, so inherits
+its settings."
+    (interactive (list (completing-read (format-prompt "Dump/append patch to buffer" "*patch*")
+                                        #'internal-complete-buffer
+                                        nil nil nil nil "*patch*")))
+    (elispm/magit-write-patch '(lambda ()
+                                 (append-to-buffer buffer (point-min) (point-max))
+			                           (pop-to-buffer buffer)
+                                 (diff-mode))))
+
+  (defun elispm/magit-copy-patch-kill-ring ()
+    "Copy patch format of current diff into kill ring.
+
+Uses `magit-patch-save' internally, so inherit its settings."
+    (interactive)
+    (elispm/magit-write-patch '(lambda () (kill-region (point-min) (point-max))))))
 
 (use-package magit-section
   :defer t
@@ -5345,9 +5459,9 @@ set so that it clears the whole REPL buffer, not just the output."
 (use-package orgit
   :defer t)
 
-;; (use-package orgit-forge
-;;   :after forge
-;;   :defer t)
+(use-package orgit-forge
+  :after (magit forge)
+  :defer t)
 
 (use-package smeargle
   :defer t
@@ -5360,37 +5474,49 @@ set so that it clears the whole REPL buffer, not just the output."
                   (cons nil (cdr nd)))
             which-key-replacement-alist))))
 
-;; (use-package forge
-;;   :after magit
-;;   :init
-;;   (setq forge-database-file "forge-database.sqlite"
-;;  forge-add-default-bindings nil)
+(use-package forge
+  :after magit
+  :general-config
+  (local-leader
+    :major-modes '(forge-topic-mode t)
+    :keymaps     '(forge-topic-mode-map)
+    "a"          'forge-edit-topic-assignees
+    "c"          'forge-create-post
+    "C"          'forge-checkout-pullreq
+    "b"          'forge-browse-topic
+    "d"          'forge-delete-comment
+    "e"          'forge-edit-post
+    "m"          'forge-edit-topic-marks
+    "M"          'forge-create-mark
+    "n"          'forge-edit-topic-note
+    "r"          'forge-edit-topic-review-requests
+    "s"          'forge-edit-topic-state
+    "t"          'forge-edit-topic-title
+    "u"          'forge-copy-url-at-point-as-kill)
 
-;;   :general-config
-;;   (local-leader
-;;     :major-modes '(forge-topic-mode t)
-;;     :keymaps     '(forge-topic-mode-map)
-;;     "a"          'forge-edit-topic-assignees
-;;     "c"          'forge-create-post
-;;     "C"          'forge-checkout-pullreq
-;;     "b"          'forge-browse-topic
-;;     "d"          'forge-delete-comment
-;;     "e"          'forge-edit-post
-;;     "m"          'forge-edit-topic-marks
-;;     "M"          'forge-create-mark
-;;     "n"          'forge-edit-topic-note
-;;     "r"          'forge-edit-topic-review-requests
-;;     "s"          'forge-edit-topic-state
-;;     "t"          'forge-edit-topic-title
-;;     "u"          'forge-copy-url-at-point-as-kill)
+  (local-leader
+    :major-modes '(forge-post-mode t)
+    :keymaps     '(forge-post-mode-map)
+    ","          'forge-post-submit
+    "c"          'forge-post-submit
+    "k"          'forge-post-cancel
+    "a"          'forge-post-cancel))
 
-;;   (local-leader
-;;     :major-modes '(forge-post-mode t)
-;;     :keymaps     '(forge-post-mode-map)
-;;     ","          'forge-post-submit
-;;     "c"          'forge-post-submit
-;;     "k"          'forge-post-cancel
-;;     "a"          'forge-post-cancel))
+(use-package gh-notify
+  :after (magit forge)
+  :general-config
+  (normal-mode-major-mode               ; TODO: complete this
+    :major-modes '(gh-notify-mode t)
+    :keymaps     '(gh-notify-mode-map)
+    "RET"        'gh-notify-visit-notification
+    "m"          'gh-notify-mark-notification
+    "*"          'gh-notify-mark-all-notifications
+    "u"          'gh-notify-unmark-notification
+    "U"          'gh-notify-unmark-all-notifications
+    "d"          'gh-notify-marked-notifications-set-done
+    "t"          'gh-notify-marked-notifications-set-unread
+    "p"          'gh-notify-marked-notifications-set-pending
+    "q"          'bury-buffer))
 
 ;; Git-gutter config ===============================
 ;; ==================================================
@@ -5427,37 +5553,6 @@ set so that it clears the whole REPL buffer, not just the output."
 (use-package smerge                     ; TODO
   :straight (:type built-in)
   :defer t)
-
-;; consult-gh config ================================
-;; ==================================================
-
-(use-package consult-gh
-  :after consult
-  :custom
-  (consult-gh-show-preview t)
-  (consult-gh-preview-key "C-o")
-  (consult-gh-repo-action #'consult-gh--repo-browse-files-action)
-  (consult-gh-large-file-warning-threshold 2500000)
-  (consult-gh-confirm-name-before-fork nil)
-  (consult-gh-confirm-before-clone t)
-  (consult-gh-notifications-show-unread-only nil)
-  (consult-gh-default-interactive-command #'consult-gh-transient)
-  (consult-gh-prioritize-local-folder nil)
-  (consult-gh-group-dashboard-by :reason)
-  ;;;; Optional
-  (consult-gh-repo-preview-major-mode nil) ; show readmes in their original format
-  (consult-gh-preview-major-mode 'org-mode) ; use 'org-mode for editing comments, commit messages, ...
-  :config
-  ;; Remember visited orgs and repos across sessions
-  (add-to-list 'savehist-additional-variables 'consult-gh--known-orgs-list)
-  (add-to-list 'savehist-additional-variables 'consult-gh--known-repos-list)
-  ;; Enable default keybindings (e.g. for commenting on issues, prs, ...)
-  (consult-gh-enable-default-keybindings))
-
-(use-package consult-gh-embark
-  :after embark
-  :config
-  (consult-gh-embark-mode +1))
 
 ;; format-all =======================================
 ;; ==================================================
@@ -5779,11 +5874,13 @@ set so that it clears the whole REPL buffer, not just the output."
   (auto-dark-mode t))
 
 (use-package writeroom-mode
-  :defer t
-  :hook ((writeroom-mode . (lambda () (git-gutter-mode -1)))))
+  :custom
+  (writeroom-mode-line t)
+  (writeroom-fringes-outside-margins nil)
+  :defer t)                             ; TODO
 
-(use-package visual-fill-column
-  :defer t)
+(use-package olivetti
+  :defer t)                             ; TODO
 
 ;; hl-todo config ==================================
 ;; =================================================
@@ -5984,7 +6081,7 @@ set so that it clears the whole REPL buffer, not just the output."
   "s-f"   'ace-window
   "s-RET" 'toggle-frame-maximized
   "s-m"   'w3m-search
-  "s-b"   'switch-to-buffer
+  "s-b"   'consult-buffer
   "s-e"   'eww
   "s-x"   'xwidget-new-window
   "s-;"   'evil-window-vsplit
@@ -6168,6 +6265,7 @@ set so that it clears the whole REPL buffer, not just the output."
   "j"   (which-key-prefix :jump)
   "jl"  'consult-line
   "jL"  'consult-line-multi
+  "jj"  'avy-goto-char-timer
   "jc"  'avy-goto-char-timer
   "jC"  'avy-goto-char
   "js"  'avy-isearch
@@ -6302,15 +6400,16 @@ removal."
   "fbs"	 'bookmark-set
   "fbw"	 'bookmark-write
 
-  "fd"  (which-key-prefix :delete)
-  "fdc" 'elispm/delete-current-buffer-file
-  "fdd" 'elispm/delete-file
+  "fD"  (which-key-prefix :delete)
+  "fDD" 'elispm/delete-current-buffer-file
+  "fDd" 'elispm/delete-file
 
   "fp"  'consult-project-buffer
   "ff"  'find-file
   "fa"  'write-file
   "fs"  'save-buffer
   "fS"  'evil-write-all
+  "fd"  'consult-dir
 
   "fg"  (which-key-prefix :find/grep)
   "fgd" 'consult-fd
@@ -6377,8 +6476,8 @@ removal."
   "Ls"   'gptel-send
   "Lq"   'gptel-abort
   "Lm"   'gptel-menu
-  "La"   'gptel-add
-  "L."   'gptel-add-file
+  "L."   'gptel-add
+  "La"   'gptel-add-file
   "Lo"   'gptel-org-set-topic
   "Lp"   'gptel-org-set-properties
   "Lr"   'gptel-rewrite)
@@ -6676,8 +6775,8 @@ removal."
   "tl"     'tab-next
   "tP"     'tab-move-previous
   "tH"     'tab-move-previous
-  "tN"     'tab-next
-  "tL"     'tab-next
+  "tN"     'tab-move
+  "tL"     'tab-move
   "tt"     'tab-list
   "tr"     'tab-rename
   "t TAB"  'tab-recent
@@ -6715,7 +6814,10 @@ removal."
            (call-interactively #'toggle-frame-fullscreen))
   "TF"   'mac-toggle-frame-fullscreen
   "TM"   'manage-minor-mode
-  "Tc"   'global-writeroom-mode)
+  "Tp"   'spacious-padding-mode
+  "Tw"   'writeroom-mode
+  "To"   (which-key-prefix :olivetti)
+  "Too"  'olivetti-mode)
 
 (global-leader
   "s-o"  'reveal-in-osx-finder
@@ -7013,14 +7115,14 @@ removal."
     "gg"  'pdf-view-first-page
     "G"   'pdf-view-last-page
     "gt"  'pdf-view-goto-page
-    "gl"  'pdf-view-goto-label
+    "gL"  'pdf-view-goto-label
     "u"   'pdf-view-scroll-down-or-previous-page
     "d"   'pdf-view-scroll-up-or-next-page
     "C-u" 'pdf-view-scroll-down-or-previous-page
     "C-d" 'pdf-view-scroll-up-or-next-page
     "``"  'pdf-history-backward
-    "["   'pdf-history-backward
-    "]"   'pdf-history-forward
+    "gh"  'pdf-history-backward
+    "gl"  'pdf-history-forward
     "'"   'pdf-view-jump-to-register
 
     "/"   'isearch-forward
@@ -7168,6 +7270,7 @@ removal."
 
 (use-package hnreader
   :defer t
+  :hook (hnreader . (lambda () (setq-local line-spacing 0.5)))
   :general
   (global-leader
     "awh"  (which-key-prefix "hackernews")
@@ -7189,18 +7292,16 @@ removal."
 (use-package eradio
   :defer t
   :config
-  (setq eradio-player   '("mpv" "--no-video" "--no-terminal" "--really-quiet")
+  (setq eradio-player   '("vlc" "--intf" "dummy")
         eradio-channels '(("WFUV 90.7"     . "https://onair.wfuv.org/onair-aacplus")
                           ("WNYC 93.9 FM"  . "https://fm939.wnyc.org/wnycfm.aac")
                           ("WBBR 1130 AM"  . "http://14123.live.streamtheworld.com/WBBRAMAAC_SC")
                           ("Bloomberg TV"  . "https://www.bloomberg.com/media-manifest/streams/phoenix-us.m3u8")
-                          ("MBC FM4U"      . "http://serpent0.duckdns.org:8088/mbcfm.pls")
-                          ("MBC 표준FM"    . "http://serpent0.duckdns.org:8088/mbcsfm.pls")
-                          ("KBS 쿨FM"      . "http://serpent0.duckdns.org:8088/kbs2fm.pls")
-                          ("KBS 해피FM"    . "http://serpent0.duckdns.org:8088/kbs2radio.pls")
-                          ("KBS 클래식 FM" . "http://serpent0.duckdns.org:8088/kbsfm.pls")
-                          ("SBS 파워FM"    . "http://serpent0.duckdns.org:8088/sbsfm.pls")
-                          ("SBS 러브FM"    . "http://serpent0.duckdns.org:8088/sbs2fm.pls")
+                          ("MBC FM4U"      . "https://radio.bsod.kr/stream/?stn=mbc&ch=fm4u")
+                          ("MBC mini 올댓뮤직" . "https://radio.bsod.kr/stream/?stn=mbc&ch=chm")
+                          ("MBC 표준FM"    . "https://radio.bsod.kr/stream/?stn=mbc&ch=sfm")
+                          ("SBS 파워FM"    . "https://radio.bsod.kr/stream/?stn=sbs&ch=powerfm")
+                          ("SBS 러브FM"    . "https://radio.bsod.kr/stream/?stn=sbs&ch=lovefm")
                           ("TBS 교통방송"  . "http://tbs.hscdn.com/tbsradio/fm/playlist.m3u8")
                           ("TBS eFM"       . "http://tbs.hscdn.com/tbsradio/efm/playlist.m3u8")
                           ("CBS 음악방송"  . "http://aac.cbs.co.kr/cbs939/cbs939.stream/playlist.m3u8"))))
@@ -7382,7 +7483,26 @@ removal."
 ;; XKCD config ======================================
 ;; ==================================================
 
-(use-package xkcd :defer t)
+(use-package xkcd
+  :defer t
+  :general-config
+  (normal-mode-major-mode
+    :major-modes '(xkcd-mode t)
+    :keymaps     '(xkcd-mode-map)
+    "j"          'xkcd-next
+    "k"          'xkcd-prev
+    "h"          'xkcd-prev
+    "l"          'xkcd-next
+    "q"          'xkcd-kill-buffer
+    "r"          'xkcd-rand
+    "e"          'xkcd-open-explanation-browser
+    "w"          'xkcd-open-browser
+    "o"          'xkcd-open-browser
+    "b"          'xkcd-open-browser
+    "a"          'xkcd-alt-text
+    "t"          'xkcd-alt-text
+    "l"          'xkcd-get-latest
+    "L"          'xkcd-get-latest-cached))
 
 ;; TRAMP config =====================================
 ;; ==================================================
@@ -7551,8 +7671,9 @@ Optional argument MSG First message shown in buffer."
                   "날아가줘, 멀리!"
                   "Love is our resistance"
                   "Send our codes to the stars"
-                  "시들어 갈 뿐인 추억 위에 화관을 씌우자")))
-    (message (nth (random 3) quotes))))
+                  "시들어 갈 뿐인 추억 위에 화관을 씌우자"
+                  "가여워 심장을 잃은 채로 살아서 환상을 보고 있어")))
+    (message (nth (random (length quotes)) quotes))))
 
 (global-auto-revert-mode 1)    ; Refresh buffers with changed local files
 
