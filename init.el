@@ -1844,6 +1844,11 @@
     "ga"         'ff-find-other-file
     "gA"         'ff-find-other-file-other-window))
 
+(use-package simpc-mode
+  :straight (simpc-mode :type git :host github
+                        :repo "rexim/simpc-mode")
+  :defer t)
+
 (use-package cmake-mode
   :mode (("CMakeLists.txt" . cmake-mode)))
 
@@ -2116,6 +2121,11 @@
     "="          (which-key-prefix "format")
     "=="         'ruff-format-buffer
     "=r"         'ruff-format-region))
+
+(use-package comint-mime
+  :after python
+  :hook ((inferior-python-mode . comint-mime-setup)
+         (shell-mode . comint-mime-setup)))
 
 ;; Perl config ======================================
 ;; ==================================================
