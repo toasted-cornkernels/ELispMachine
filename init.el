@@ -2122,6 +2122,11 @@
     "=="         'ruff-format-buffer
     "=r"         'ruff-format-region))
 
+(use-package comint-mime
+  :after python
+  :hook ((inferior-python-mode . comint-mime-setup)
+         (shell-mode . comint-mime-setup)))
+
 ;; Perl config ======================================
 ;; ==================================================
 
