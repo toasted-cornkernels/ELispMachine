@@ -5511,7 +5511,7 @@ Uses `magit-patch-save' internally, so inherit its settings."
     "d"          'gh-notify-marked-notifications-set-done
     "t"          'gh-notify-marked-notifications-set-unread
     "p"          'gh-notify-marked-notifications-set-pending
-    "q"          'bury-buffer))
+    "q"          'magit-bury-buffer-function))
 
 ;; Git-gutter config ===============================
 ;; ==================================================
@@ -6803,6 +6803,7 @@ removal."
   "T"    (which-key-prefix :toggle)
   "TD"   'toggle-debug-on-error
   "Tl"   'display-line-numbers-mode
+  "TL"   'global-display-line-numbers-mode
   "Tm"   'hide-mode-line-mode
   "Tf"   (defun mac-non-native-toggle-frame-fullscreen ()
            (interactive)
