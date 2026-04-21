@@ -755,6 +755,11 @@
 
     "iD"         (which-key-prefix :download)
 
+    "j"          (which-key-prefix :goto)
+    "jj"         'consult-org-heading
+    "jJ"         'org-goto
+    "ja"         'consult-org-agenda
+
     "m"          (which-key-prefix :more)
 
     "p"          'org-priority
