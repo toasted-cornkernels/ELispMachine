@@ -1597,6 +1597,16 @@
   :straight (:type built-in)
   :defer t)
 
+;; Isearch ==========================================
+;; ==================================================
+
+(use-package isearch
+  :straight (:type built-in)
+  :config
+  (setopt isearch-lazy-count t)
+  (setopt lazy-count-prefix-format "(%s/%s) ")
+  (setopt lazy-count-suffix-format " [%s/%s]"))
+
 ;; CodeQL config ====================================
 ;; ==================================================
 
@@ -4700,6 +4710,11 @@ set so that it clears the whole REPL buffer, not just the output."
                                         extended-command-history
                                         kill-ring)
         savehist-autosave-interval 60)
+  (add-hook 'savehist-save-hook
+          (lambda ()
+            (setq kill-ring
+                  (mapcar #'substring-no-properties
+                          (cl-remove-if-not #'stringp kill-ring)))))
   (savehist-mode t))
 
 (use-package emacs
@@ -4765,7 +4780,40 @@ set so that it clears the whole REPL buffer, not just the output."
     (add-to-list 'default-frame-alist '(fullscreen . fullboth))
     (setq ns-use-native-fullscreen t))
 
-  (setq-default window-combination-resize t))
+  (setq-default window-combination-resize t)
+
+  ;; Disable right-to-left redisplay
+  (setq-default bidi-display-reordering 'left-to-right
+                bidi-paragraph-direction 'left-to-right)
+  (setq bidi-inhibit-bpa t)
+  
+  ;; Disable syntax highlighting during typing
+  (setq redisplay-skip-fontification-on-input t)
+  
+  ;; Increase the buffer size coming in from external programs
+  (setq read-process-output-max (* 4 1024 1024))
+
+  ;; Don't render cursors in non-focused windows
+  (setq-default cursor-in-non-selected-windows nil)
+  (setq highlight-nonselected-windows nil))
+
+(use-package simple
+  :straight (:type built-in)
+  :config
+  (setq
+   ;; Save the existing clipboard content before overwriting
+   save-interprogram-paste-before-kill t
+   ;; De-duplicate the kill ring
+   kill-do-not-save-duplicates t
+   ;; Let mark popping be repeatable
+   set-mark-command-repeat-pop t)
+  (add-hook 'after-save-hook
+            #'executable-make-buffer-file-executable-if-script-p))
+
+(use-package ffap
+  :straight (:type built-in)
+  :config
+  (setq ffap-machine-p-known 'reject))
 
 (use-package orderless
   :config
@@ -4797,7 +4845,7 @@ set so that it clears the whole REPL buffer, not just the output."
   :bind (("M-A" . marginalia-cycle)
          :map minibuffer-local-map
          ("M-A" . marginalia-cycle))
-  :config
+  :init
   (marginalia-mode))
 
 ;; Consult config ===================================
@@ -5580,7 +5628,10 @@ Uses `magit-patch-save' internally, so inherit its settings."
   :straight nil
   :config
   (setq-default save-place t)
-  (setq save-place-file (concat user-emacs-directory "places")))
+  (setq save-place-file (concat user-emacs-directory "places"))
+  (advice-add 'save-place-find-file-hook :after
+              (lambda (&rest _)
+                (when buffer-file-name (ignore-errors (recenter))))))
 
 ;; winner-mode configs ==============================
 ;; ==================================================
@@ -5620,8 +5671,13 @@ Uses `magit-patch-save' internally, so inherit its settings."
         ;; don't screw special buffers
         uniquify-ignore-buffers-re "^\\*"))
 
-;; Helpful ==========================================
+;; Helpful & Help ===================================
 ;; ==================================================
+
+(use-package help
+  :straight (:type built-in)
+  :config
+  (setq help-window-select t))
 
 (use-package helpful
   :defer t)
