@@ -2710,11 +2710,6 @@ Requires smartparens because all movement is done using `sp-forward-symbol'."
   :hook
   (emacs-lisp-mode . aggressive-indent-mode))
 
-(use-package highlight-defined
-  :commands highlight-defined-mode
-  :hook
-  (emacs-lisp-mode . highlight-defined-mode))
-
 ;; Clojure config ===================================
 ;; ==================================================
 
