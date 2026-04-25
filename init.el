@@ -7293,61 +7293,6 @@ removal."
     "gv"         'nov-view-source
     "gV"         'nov-view-content-source))
 
-;; reddigg config ===================================
-;; ==================================================
-
-(use-package reddigg
-  :general
-  (global-leader
-    "awr"  (which-key-prefix "reddit")
-    "awrm" 'reddigg-view-main
-    "awrr" 'reddigg-view-frontpage
-    "awrs" 'reddigg-view-sub)
-  :config
-  (setq reddigg-subs '(Common_Lisp
-                       GUIX
-                       HHKB
-                       ProgrammerHumor
-                       Python
-                       Racket
-                       clojure
-                       commandline
-                       elm
-                       emacs
-                       fsharp
-                       haskell
-                       lisp
-                       neovim
-                       nix
-                       nixos
-                       ocaml
-                       orgmode
-                       purescript
-                       ruby
-                       scala
-                       spacemacs
-                       vim)
-        org-confirm-elisp-link-function nil))
-
-;; hnreader config ==================================
-;; ==================================================
-
-(use-package hnreader
-  :general
-  (global-leader
-    "awh"  (which-key-prefix "hackernews")
-    "awhn" 'hnreader-news
-    "awhp" 'hnreader-past
-    "awhN" 'hnreader-newest
-    "awha" 'hnreader-ask
-    "awhs" 'hnreader-show
-    "awhj" 'hnreader-jobs
-    "awhb" 'hnreader-best
-    "awhh" 'hnreader-best
-    "awhm" 'hnreader-more)
-  :config
-  (setq org-confirm-elisp-link-function nil))
-
 ;; eradio config ====================================
 ;; ==================================================
 
