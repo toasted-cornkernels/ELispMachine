@@ -2705,6 +2705,16 @@ Requires smartparens because all movement is done using `sp-forward-symbol'."
 
     "ew"         'emr-el-eval-and-replace))
 
+(use-package aggressive-indent
+  :commands aggressive-indent-mode
+  :hook
+  (emacs-lisp-mode . aggressive-indent-mode))
+
+(use-package highlight-defined
+  :commands highlight-defined-mode
+  :hook
+  (emacs-lisp-mode . highlight-defined-mode))
+
 ;; Clojure config ===================================
 ;; ==================================================
 
@@ -4245,7 +4255,7 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; ==================================================
 
 (use-package vimrc-mode
-  :defer t)
+  :mode ("\\.vim\\(rc\\)?\\'" . vimrc-mode))
 
 ;; RestClient =======================================
 ;; ==================================================
@@ -7705,7 +7715,9 @@ Optional argument MSG First message shown in buffer."
   :init
   (setq inhibit-splash-screen t
         inhibit-startup-echo-area-message ""
-        inhibit-startup-message t))
+        inhibit-startup-message t
+        site-run-file nil
+        inhibit-default-init t))
 
 (setq-default indent-tabs-mode nil	; Noooooooo please!
               standard-indent 2
