@@ -5481,7 +5481,24 @@ Uses `magit-patch-save' internally, so inherit its settings."
 ;;            ("q" nil :exit t)))
 
 (use-package git-modes
-  :defer t)
+  :commands (gitattributes-mode
+             gitconfig-mode
+             gitignore-mode)
+  :mode (("/\\.gitignore\\'" . gitignore-mode)
+         ("/info/exclude\\'" . gitignore-mode)
+         ("/git/ignore\\'" . gitignore-mode)
+         ("/.gitignore_global\\'" . gitignore-mode)  ; jc-dotfiles
+
+         ("/\\.gitconfig\\'" . gitconfig-mode)
+         ("/\\.git/config\\'" . gitconfig-mode)
+         ("/modules/.*/config\\'" . gitconfig-mode)
+         ("/git/config\\'" . gitconfig-mode)
+         ("/\\.gitmodules\\'" . gitconfig-mode)
+         ("/etc/gitconfig\\'" . gitconfig-mode)
+
+         ("/\\.gitattributes\\'" . gitattributes-mode)
+         ("/info/attributes\\'" . gitattributes-mode)
+         ("/git/attributes\\'" . gitattributes-mode)))
 
 (use-package gitignore-templates
   :defer t
