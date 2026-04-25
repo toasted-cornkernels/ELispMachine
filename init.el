@@ -64,8 +64,8 @@
 ;; Profiling ========================================
 ;; ==================================================
 
-;; (setq use-package-verbose t
-;;       use-package-compute-statistics t)
+(setq use-package-verbose t
+      use-package-compute-statistics t)
 
 ;; General.el config ================================
 ;; ==================================================
@@ -138,6 +138,7 @@
         kept-new-versions 6
         kept-old-versions 2
         version-control t)
+  (remove-hook 'find-file-hooks 'vc-find-file-hook)
   (when macOS-p
     (setq insert-directory-program "gls"))
   (auto-save-visited-mode 1))
@@ -494,23 +495,6 @@
   (setq evil-lisp-state-cursor '(hbar . 2))
   (bind-key "C-g" 'evil-lisp-state/quit))
 
-(use-package evil-mc
-  :defer t
-  :hook ((prog-mode . turn-on-evil-mc-mode)
-         (text-mode . turn-on-evil-mc-mode))
-  :config
-  (setq-default evil-mc-one-cursor-show-mode-line-text nil)
-  (when macOS-p
-    (setq evil-mc-enable-bar-cursor nil))
-  :general
-  (normal-mode-major-mode
-    :major-modes '(evil-mc-mode t)
-    :keymaps     '(evil-mc-key-map)
-    "C-M-q"      'evil-mc-undo-all-cursors
-    "C-M-j"      'evil-mc-make-cursor-move-next-line
-    "C-M-u"      'evil-mc-undo-last-added-cursor
-    "C-M-k"      'evil-mc-make-cursor-move-prev-line))
-
 ;; Corfu config =====================================
 ;; ==================================================
 
@@ -627,7 +611,7 @@
 (global-set-key (kbd "C-d C-j") 'set-input-method-to-japanese)
 
 (use-package ddskk
-  :ensure t
+  :defer t
   :config
   (setq skk-tut-file (concat (elispm/straight-get-repo-dir "ddskk") "/etc/SKK.tut")
         skk-large-jisyo "~/LambdaMachine/ExternalConfigs/SKKJisho/SKK-JISYO.L"))
@@ -2235,6 +2219,7 @@
 
 (use-package comint
   :straight nil
+  :defer t
   :general-config
   (normal-mode-major-mode
     :major-modes '(comint-mode t)
@@ -2259,9 +2244,8 @@
 ;; ==================================================
 
 (use-package imenu
-  :straight nil
-  :defer t
-  :general-config
+  :straight nil  
+  :general
   (global-leader
     "i"      (which-key-prefix "imenu")
     "ii"     'imenu
@@ -2271,7 +2255,7 @@
   (setq imenu-list-position 'left))
 
 (use-package imenu-list
-  :after imenu)
+  :defer t)
 
 (use-package breadcrumb
   :defer t
@@ -4574,6 +4558,7 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (use-package ispell
   :straight nil
+  :defer t
   :config
   (setq ispell-program-name "aspell"))
 
@@ -4986,7 +4971,7 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; =================================================
 
 (setq initial-scratch-message ""
-      initial-major-mode 'emacs-lisp-mode)
+      initial-major-mode 'fundamental-mode)
 
 ;; LaTeX config =====================================
 ;; ==================================================
@@ -5214,7 +5199,6 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (use-package magit
   :defer t
-  :hook (magit-mode . turn-off-evil-mc-mode)
   :custom
   (magit-bury-buffer-function #'magit-restore-window-configuration)
   ;; TODO
@@ -5631,6 +5615,7 @@ Uses `magit-patch-save' internally, so inherit its settings."
 ;; ==================================================
 
 (use-package format-all
+  :defer t
   :general-config
   (agnostic-key
     "C-M-=" 'format-all-buffer))
@@ -5709,6 +5694,7 @@ Uses `magit-patch-save' internally, so inherit its settings."
 
 (use-package recentf
   :straight (:type built-in)
+  :defer t
   :config
   (setq recentf-keep '(file-remote-p file-readable-p)
         recentf-save-file (concat user-emacs-directory ".recentf")
@@ -5821,6 +5807,7 @@ Uses `magit-patch-save' internally, so inherit its settings."
 
 (use-package ibuffer
   :straight nil
+  :defer t
   :config
   (add-hook 'ibuffer-mode-hook #'ibuffer-set-filter-groups-by-mode))
 
@@ -5838,6 +5825,7 @@ Uses `magit-patch-save' internally, so inherit its settings."
 (use-package ultra-scroll
   :straight (ultra-scroll :host github
                           :repo "jdtsmith/ultra-scroll")
+  :when GUI-p
   :config
   (setq scroll-conservatively 101
         scroll-margin 0)
@@ -5993,6 +5981,7 @@ Uses `magit-patch-save' internally, so inherit its settings."
 
 (use-package display-line-numbers
   :straight nil
+  :defer t
   :config
   (let ((hooks '(doc-view-mode-hook
                  pdf-view-mode-hook
@@ -7311,11 +7300,7 @@ removal."
 ;; ==================================================
 
 (use-package reddigg
-  :defer t
-  :commands (reddigg-view-main
-             reddigg-view-frontpage
-             reddigg-view-sub)
-  :general-config
+  :general
   (global-leader
     "awr"  (which-key-prefix "reddit")
     "awrm" 'reddigg-view-main
@@ -7351,17 +7336,7 @@ removal."
 ;; ==================================================
 
 (use-package hnreader
-  :defer t
-  :commands (hnreader-news
-             hnreader-past
-             hnreader-newe
-             hnreader-ask
-             hnreader-show
-             hnreader-jobs
-             hnreader-best
-             hnreader-best
-             hnreader-more)
-  :general-config
+  :general
   (global-leader
     "awh"  (which-key-prefix "hackernews")
     "awhn" 'hnreader-news
