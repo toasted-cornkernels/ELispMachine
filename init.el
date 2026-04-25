@@ -5038,6 +5038,7 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (use-package project
   :straight nil
+  :defer t
   :config
   ;; Stolen from
   ;; https://michael.stapelberg.ch/posts/2021-04-02-emacs-project-override/
@@ -5050,7 +5051,7 @@ set so that it clears the whole REPL buffer, not just the output."
           (cons 'vc override))          ; TODO why the hell does it
                                         ; stop working when it's
                                         ; refactored with `when`???
-        nil))
+      nil))
   (add-hook 'project-find-functions #'elispm/project-override))
 
 ;; xwidget config ===================================
@@ -6078,6 +6079,7 @@ Uses `magit-patch-save' internally, so inherit its settings."
 
 (use-package time
   :straight (:type built-in)
+  :defer t
   :config
   (let ((cities '(("America/New_York"    "New York")
                   ("America/Los_Angeles" "Los Angeles")
