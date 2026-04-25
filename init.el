@@ -7,10 +7,6 @@
 ;; Initial Setups ===================================
 ;; ==================================================
 
-(setq gc-cons-threshold (* 511 1024 1024)
-      gc-cons-percentage 0.5)
-(run-with-idle-timer 5 t #'garbage-collect)
-
 (setq warning-minimum-level     :emergency
       warning-minimum-log-level :warning)
 (setq ad-redefinition-action 'accept)
@@ -7738,6 +7734,11 @@ Optional argument MSG First message shown in buffer."
 
 ;; config end =======================================
 ;; ==================================================
+
+(when (= gc-cons-threshold most-positive-fixnum)
+  (message "Restoring GC settings.")
+  (setq gc-cons-threshold elispm/gc-cons-threshold
+        gc-cons-percentage elispm/gc-cons-percentage))
 
 (message "config loaded!")
 
