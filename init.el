@@ -755,6 +755,11 @@
 
     "iD"         (which-key-prefix :download)
 
+    "j"          (which-key-prefix :goto)
+    "jj"         'consult-org-heading
+    "jJ"         'org-goto
+    "ja"         'consult-org-agenda
+
     "m"          (which-key-prefix :more)
 
     "p"          'org-priority
@@ -1159,9 +1164,7 @@
   (setq org-src-window-setup 'current-window
         org-src-fontify-natively t
         org-src-tab-acts-natively t
-        org-edit-src-content-indentation 0)
-  (setq-default org-src-preserve-indentation nil
-                org-edit-src-content-indentation 2))
+        org-edit-src-content-indentation 0))
 
 (use-package org-habit
   :straight (:type built-in)
@@ -5516,7 +5519,7 @@ Uses `magit-patch-save' internally, so inherit its settings."
     "d"          'gh-notify-marked-notifications-set-done
     "t"          'gh-notify-marked-notifications-set-unread
     "p"          'gh-notify-marked-notifications-set-pending
-    "q"          'bury-buffer))
+    "q"          'magit-bury-buffer-function))
 
 ;; Git-gutter config ===============================
 ;; ==================================================
@@ -6806,6 +6809,7 @@ removal."
   "T"    (which-key-prefix :toggle)
   "TD"   'toggle-debug-on-error
   "Tl"   'display-line-numbers-mode
+  "TL"   'global-display-line-numbers-mode
   "Tm"   'hide-mode-line-mode
   "Tf"   (defun mac-non-native-toggle-frame-fullscreen ()
            (interactive)
