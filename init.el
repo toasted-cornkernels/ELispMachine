@@ -1678,7 +1678,9 @@
 (use-package codespaces
   :ensure-system-package gh
   :defer t
-  :config (codespaces-setup))
+  :config
+  (setq vc-handled-backends '(Git))
+  (codespaces-setup))
 
 ;; Eglot config =====================================
 ;; ==================================================
@@ -5192,11 +5194,6 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; Magit config =====================================
 ;; ==================================================
 
-(use-package vc
-  :straight nil
-  :config
-  (setq vc-handled-backends '(Git)))
-
 (use-package magit
   :defer t
   :custom
@@ -7575,7 +7572,8 @@ removal."
   :defer t
   :config
   (setq tramp-copy-size-limit 10000000
-        tramp-inline-compress-start-size 10000000))
+        tramp-inline-compress-start-size 10000000
+        vc-handled-backends '(Git)))
 
 ;; killing ==========================================
 ;; ==================================================
