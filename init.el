@@ -2711,6 +2711,9 @@ Requires smartparens because all movement is done using `sp-forward-symbol'."
   :hook
   (emacs-lisp-mode . aggressive-indent-mode))
 
+(use-package let-completion
+  :hook (emacs-lisp-mode . let-completion-mode))
+
 ;; Clojure config ===================================
 ;; ==================================================
 
