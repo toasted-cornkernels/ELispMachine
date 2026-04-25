@@ -6079,7 +6079,7 @@ Uses `magit-patch-save' internally, so inherit its settings."
 
 (use-package time
   :straight (:type built-in)
-  :defer t
+  ;; :defer t
   :config
   (let ((cities '(("America/New_York"    "New York")
                   ("America/Los_Angeles" "Los Angeles")
