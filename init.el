@@ -646,7 +646,7 @@
 
 (use-package emojify
   :defer t
-  :init
+  :config
   (setq emojify-emoji-styles '(unicode github)))
 
 ;; Align ============================================
@@ -944,7 +944,7 @@
 
 (use-package evil-org
   :after (evil org)
-  :init
+  :config
   (add-hook 'org-mode-hook (lambda ()
                              (evil-org-mode)
                              (evil-normalize-keymaps)))
@@ -1068,7 +1068,7 @@
 (use-package ob
   :straight (:type built-in)
   :defer t
-  :init
+  :config
   (add-hook 'org-babel-after-execute-hook
             (lambda ()
               (when org-inline-image-overlays
@@ -1491,13 +1491,13 @@
 
 (use-package osx-trash
   :when (and macOS-p (not (boundp 'mac-system-move-file-to-trash-use-finder)))
-  :init (osx-trash-setup))
+  :config (osx-trash-setup))
 
 (use-package osx-clipboard
   :when macOS-p
   :commands
   (osx-clipboard-paste-function osx-clipboard-cut-function)
-  :init
+  :config
   (setq interprogram-cut-function (lambda (text &rest ignore)
                                     (if (display-graphic-p)
                                         (gui-select-text text)
@@ -1612,7 +1612,7 @@
                              :repo "jeongsoolee09/emacs-codeql"
                              ;; :branch "unlocalize-database"
                              :branch "main"))
-  :init
+  :config
   (setq codeql-transient-binding "C-c q"
         codeql-configure-eglot-lsp t)
   :general-config
@@ -1707,7 +1707,7 @@
    (go-mode      . eglot-ensure)
    (lua-mode     . eglot-ensure))
 
-  :init
+  :config
   (setq eglot-stay-out-of '(company))   ; I use corfu instead
 
   :general-config
@@ -2281,7 +2281,7 @@
 
 (use-package paren
   :straight nil
-  :init
+  :config
   (setq show-paren-delay 0)
   :config
   (show-paren-mode 1))
@@ -2330,8 +2330,8 @@
 )
 
 (use-package evil-cleverparens
-  :init
-  (setq evil-cleverparens-use-additional-bindings nil)
+  ;; :init
+  ;; (setq evil-cleverparens-use-additional-bindings nil)
   :config
   (setq evil-cleverparens-use-additional-bindings t)
   (unless window-system
@@ -2369,7 +2369,7 @@
 
 (use-package slime
   :commands slime-mode
-  :init
+  :config
   (setq slime-contribs '(slime-asdf
                          slime-fancy
                          slime-indentation
@@ -2378,8 +2378,6 @@
         inferior-lisp-program "sbcl")
   (setq slime-complete-symbol*-fancy t
         slime-complete-symbol-function 'slime-fuzzy-complete-symbol)
-
-  :config
   (slime-setup)
   (defun cl-eval-current-symbol-sp ()
     "Call `eval-last-sexp' on the symbol around point.
@@ -2630,7 +2628,7 @@ Requires smartparens because all movement is done using `sp-forward-symbol'."
 
 (use-package elisp-demos
   :defer t
-  :init
+  :config
   (advice-add 'helpful-update :after #'elisp-demos-advice-helpful-update)
   :commands (elisp-demos-add-demo elisp-demos-find-demo))
 
@@ -2758,7 +2756,7 @@ Requires smartparens because all movement is done using `sp-forward-symbol'."
 
 (use-package cider
   :after clojure-mode
-  :init
+  :config
   (setq cider-stacktrace-default-filters '(tooling dup)
         cider-repl-pop-to-buffer-on-connect nil
         cider-prompt-save-file-on-load nil
@@ -3550,7 +3548,7 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (use-package dante
   :defer t
-  :init
+  :config
   (defun dante-insert-type ()
     (interactive)
     (dante-type-at :insert))
@@ -3570,7 +3568,7 @@ set so that it clears the whole REPL buffer, not just the output."
 (use-package haskell-mode
   :defer t
   :mode "\\.(hs|lhs|cabal)\\'"
-  :init
+  :config
   (setq haskell-notify-p t
         haskell-interactive-popup-errors nil
         haskell-process-suggest-remove-import-lines t
@@ -3780,7 +3778,7 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (use-package sweeprolog
   :defer t
-  :init
+  :config
   (setq sweeprolog--directory "~/.emacs.d/straight/repos/sweeprolog"))
 
 ;; Nix config =======================================
@@ -3861,7 +3859,7 @@ set so that it clears the whole REPL buffer, not just the output."
   :mode (("\\.ml[ily]?$" . tuareg-mode)
          ("\\.topml$" . tuareg-mode)
          (".ocamlinit" . tuareg-mode))
-  :init
+  :config
   (defun merlin-locate-other-window ()
     (interactive)
     (let ((merlin-locate-in-new-window 'always))
@@ -4110,7 +4108,7 @@ set so that it clears the whole REPL buffer, not just the output."
   :hook (go-mode . (lambda ()
                      (setq indent-tabs-mode 1)))
   :defer t
-  :init
+  :config
   (defun go-run-tests (args)
     (interactive)
     (compilation-start
@@ -4246,7 +4244,7 @@ set so that it clears the whole REPL buffer, not just the output."
 (use-package restclient
   :mode  (("\\.http\\'" . restclient-mode))
   :defer t
-  :init
+  :config
   (defun restclient-http-send-current-raw-stay-in-window ()
     (interactive)
     (restclient-http-send-current t t))
@@ -4529,7 +4527,7 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (use-package vmd-mode
   :defer t
-  :init
+  :config
   (local-leader
     :major-modes '(markdown-mode gfm-mode t)
     :keymaps     '(markdown-mode-map gfm-mode-map)
@@ -4542,7 +4540,7 @@ set so that it clears the whole REPL buffer, not just the output."
   :defer t
   :commands run-pandoc
   :hook (pandoc-mode . pandoc-load-default-settings)
-  :init
+  :config
   (defun run-pandoc ()
     "Start pandoc for the buffer and open the menu"
     (interactive)
@@ -4678,18 +4676,17 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; ==================================================
 
 (use-package vertico
-  :init
+  :config
   (setq vertico-scroll-margin 0
         vertico-count 20
         vertico-resize t
         vertico-cycle t)
-  :config
   (vertico-mode)
   (define-key vertico-map (kbd "C-l") #'vertico-directory-up))
 
 (use-package savehist
   :straight nil
-  :init
+  :config
   (setq savehist-file (concat user-emacs-directory "savehist")
         enable-recursive-minibuffers t
         history-length 1000
@@ -4700,7 +4697,6 @@ set so that it clears the whole REPL buffer, not just the output."
                                         extended-command-history
                                         kill-ring)
         savehist-autosave-interval 60)
-  :config
   (savehist-mode t))
 
 (use-package emacs
@@ -4769,7 +4765,7 @@ set so that it clears the whole REPL buffer, not just the output."
   (setq-default window-combination-resize t))
 
 (use-package orderless
-  :init
+  :config
   (setq
    ;; orderless-style-dispatchers '(first-initialism flex-if-twiddle
    ;;               without-if-bang)
@@ -4798,7 +4794,7 @@ set so that it clears the whole REPL buffer, not just the output."
   :bind (("M-A" . marginalia-cycle)
          :map minibuffer-local-map
          ("M-A" . marginalia-cycle))
-  :init
+  :config
   (marginalia-mode))
 
 ;; Consult config ===================================
@@ -4927,8 +4923,9 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; =================================================
 
 (use-package winum
-  :init (setq winum-auto-setup-mode-line t)
-  :config (winum-mode))
+  :config
+  (setq winum-auto-setup-mode-line t)
+  (winum-mode))
 
 ;; scratch buffer configs ==========================
 ;; =================================================
@@ -5126,11 +5123,11 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (use-package kotlin-mode
   :mode "\\.kt\\'"
-  :init
+  :config
   (defun run-kotlin ()
     (interactive)
     (comint-run "kotlin" '()))
-  :config
+  :general-config
   (local-leader
     :major-modes '(kotlin-mode t)
     :keymaps     '(kotlin-mode-map)
@@ -5164,10 +5161,6 @@ set so that it clears the whole REPL buffer, not just the output."
   :hook (magit-mode . turn-off-evil-mc-mode)
   :custom
   (magit-bury-buffer-function #'magit-restore-window-configuration)
-
-  :init
-  (setq magit-completing-read-function 'magit-builtin-completing-read
-        magit-revision-show-gravatars  '("^Author:     " . "^Commit:     "))
   ;; TODO
   ;; (spacemacs|define-transient-state git-blame
   ;;       :title "Git Blame Transient State"
@@ -5236,6 +5229,8 @@ set so that it clears the whole REPL buffer, not just the output."
     "ghc" 'smeargle-clear
     "ghh" 'smeargle-commits)
   :config
+  (setq magit-completing-read-function 'magit-builtin-completing-read
+        magit-revision-show-gravatars  '("^Author:     " . "^Commit:     "))
   (require 'git-rebase)
   (add-hook 'magit-mode-hook
             (lambda ()
@@ -5288,14 +5283,14 @@ its settings."
     (elispm/magit-write-patch '(lambda ()
                                  (append-to-buffer buffer (point-min) (point-max))
 			                           (pop-to-buffer buffer)
-                                 (diff-mode))))
+                                 (diff-mode)))))
 
-  (defun elispm/magit-copy-patch-kill-ring ()
-    "Copy patch format of current diff into kill ring.
+(defun elispm/magit-copy-patch-kill-ring ()
+  "Copy patch format of current diff into kill ring.
 
 Uses `magit-patch-save' internally, so inherit its settings."
-    (interactive)
-    (elispm/magit-write-patch '(lambda () (kill-region (point-min) (point-max))))))
+  (interactive)
+  (elispm/magit-write-patch '(lambda () (kill-region (point-min) (point-max)))))
 
 (use-package magit-section
   :defer t
@@ -5444,7 +5439,7 @@ Uses `magit-patch-save' internally, so inherit its settings."
 
 (use-package magit-gitflow
   :hook (magit-mode . magit-gitflow-mode)
-  :init
+  :config
   (setq magit-gitflow-popup-key "%")
 
   :general-config
@@ -5470,7 +5465,7 @@ Uses `magit-patch-save' internally, so inherit its settings."
 
 (use-package smeargle
   :defer t
-  :init
+  :config
   (let ((descr '(("smeargle"         . "highlight by last update time")
                  ("smeargle-commits" . "highlight by age of changes")
                  ("smeargle-clear"   . "clear"))))
@@ -5633,13 +5628,12 @@ Uses `magit-patch-save' internally, so inherit its settings."
 
 (use-package recentf
   :straight (:type built-in)
-  :init
+  :config
   (setq recentf-keep '(file-remote-p file-readable-p)
         recentf-save-file (concat user-emacs-directory ".recentf")
         recentf-max-saved-items 1000
         recentf-max-menu-items 40
         recentf-auto-cleanup 'never)
-  :config
   (setq recentf-auto-save-timer (run-with-idle-timer 600 t 'recentf-save-list))
   (recentf-mode 1)
   (add-to-list 'recentf-exclude (recentf-expand-file-name package-user-dir))
@@ -5666,7 +5660,7 @@ Uses `magit-patch-save' internally, so inherit its settings."
 (use-package image-mode
   :straight nil
   :defer t
-  :init
+  :config
   (setq image-animate-loop t)
   :general-config
   (local-leader
@@ -5703,7 +5697,7 @@ Uses `magit-patch-save' internally, so inherit its settings."
 (use-package ediff
   ;; TODO make sure that ediff-cleanup-mess runs after a session
   :defer t
-  :init
+  :config
   (setq-default ediff-window-setup-function 'ediff-setup-windows-plain
                 ediff-split-window-function 'split-window-horizontally
                 ediff-merge-split-window-function 'split-window-horizontally)
@@ -5763,10 +5757,9 @@ Uses `magit-patch-save' internally, so inherit its settings."
 (use-package ultra-scroll
   :straight (ultra-scroll :host github
                           :repo "jdtsmith/ultra-scroll")
-  :init
+  :config
   (setq scroll-conservatively 101
         scroll-margin 0)
-  :config
   (ultra-scroll-mode 1))
 
 (use-package spacious-padding
@@ -5871,7 +5864,7 @@ Uses `magit-patch-save' internally, so inherit its settings."
 
 (use-package auto-dark
   :when (not (or chromeOS-p android-p terminal-p))
-  :init
+  :config
   (setq custom-safe-themes t)
   (setq auto-dark-themes '((modus-vivendi) (modus-operandi))
         auto-dark-allow-osascript t
@@ -6866,7 +6859,7 @@ removal."
 
 (use-package ace-link
   :after (eww w3m)
-  :init
+  :config
   (define-key Info-mode-map   "o" 'ace-link-info)
   (define-key help-mode-map   "o" 'ace-link-help)
   ;; (define-key woman-mode-map  "o" 'link-hint-open-link)
@@ -6877,7 +6870,7 @@ removal."
 
 (use-package ace-window
   :defer t
-  :init
+  :config
   (setq aw-keys '(?q ?w ?e ?r ?t ?y ?u ?i ?o ?p)
         aw-background nil))
 
@@ -6889,7 +6882,7 @@ removal."
 
 (use-package w3m
   :defer t
-  :init
+  :config
   (defun xwidget-webkit-open-w3m-current-url ()
     (interactive)
     (require 'xwidget)
@@ -7039,15 +7032,15 @@ removal."
 (use-package eww
   :straight (:type built-in)
   :defer t
-  :init
-  (defun eww-open-w3m-current-url ()
+  :config
+    (defun eww-open-w3m-current-url ()
     (interactive)
     (w3m-browse-url (eww-copy-page-url)))
   (defun eww-search-namu-wiki ()
     (interactive)
     (let ((url (read-from-minibuffer "URL: " "https://namu.wiki/w/")))
       (eww-browse-url url)))
-  :config
+
   (evil-define-key 'normal eww-mode-map (kbd "c") 'eww-copy-page-url)
   (setq eww-search-prefix "https://www.duckduckgo.com/search?q=")
   (setq browse-url-browser-function (lambda (url session)
@@ -7206,9 +7199,7 @@ removal."
 
 (use-package pdf-view-restore
   :after pdf-tools
-  :defer t
-  :init
-  (add-hook 'pdf-view-mode-hook 'pdf-view-restore-mode))
+  :hook (pdf-view-mode . pdf-view-restore-mode))
 
 ;; Epub config ======================================
 ;; ==================================================
@@ -7319,33 +7310,6 @@ removal."
   ;; :hook (elfeed-show-mode . (lambda ()
   ;;                             (setq fill-column 120) ; is it needed?
   ;;                             (setq elfeed-show-entry-switch #'my-show-elfeed)))
-  :init
-  (defun my-show-elfeed (buffer)
-    (with-current-buffer buffer
-      (setq buffer-read-only nil)
-      (goto-char (point-min))
-      (re-search-forward "\n\n")
-      (fill-individual-paragraphs (point) (point-max))
-      (setq buffer-read-only t))
-    (switch-to-buffer buffer))
-
-  (defun elfeed-player ()
-    "Play the podcast at elfeed podcast entry."
-    (interactive)
-    (let ((enclosure-link (elfeed-entry-enclosures (elfeed-search-selected :single)))
-          (entry-link     (elfeed-entry-link       (elfeed-search-selected :single))))
-      (if enclosure-link
-          (emms-play-url (caar enclosure-link))
-        (emms-play-url entry-link))
-      (elfeed-search-untag-all-unread)))
-
-  (defun elfeed-youtube-player ()
-    "Play YouTube videos at elfeed podcast entry."
-    (interactive)
-    (let ((entry-link (elfeed-entry-link (elfeed-search-selected :single))))
-      (async-shell-command (concat "mpv " "'" entry-link "'") nil nil)
-      (elfeed-search-untag-all-unread)))
-
   :general-config
   (normal-mode-major-mode
     :major-modes '(elfeed-search-mode t)
@@ -7409,6 +7373,32 @@ removal."
     "b"          'elfeed-show-visit)
 
   :config
+  (defun my-show-elfeed (buffer)
+    (with-current-buffer buffer
+      (setq buffer-read-only nil)
+      (goto-char (point-min))
+      (re-search-forward "\n\n")
+      (fill-individual-paragraphs (point) (point-max))
+      (setq buffer-read-only t))
+    (switch-to-buffer buffer))
+
+  (defun elfeed-player ()
+    "Play the podcast at elfeed podcast entry."
+    (interactive)
+    (let ((enclosure-link (elfeed-entry-enclosures (elfeed-search-selected :single)))
+          (entry-link     (elfeed-entry-link       (elfeed-search-selected :single))))
+      (if enclosure-link
+          (emms-play-url (caar enclosure-link))
+        (emms-play-url entry-link))
+      (elfeed-search-untag-all-unread)))
+
+  (defun elfeed-youtube-player ()
+    "Play YouTube videos at elfeed podcast entry."
+    (interactive)
+    (let ((entry-link (elfeed-entry-link (elfeed-search-selected :single))))
+      (async-shell-command (concat "mpv " "'" entry-link "'") nil nil)
+      (elfeed-search-untag-all-unread)))
+
   (evil-define-key 'visual elfeed-search-mode-map
     "+"  'elfeed-search-tag-all
     "-"  'elfeed-search-untag-all
@@ -7427,14 +7417,14 @@ removal."
 
 (use-package emms
   :defer t
-  :init
+  :config
   (defun emms-mode-line-only-filename ()
     "Format the currently playing song."
     (->> (emms-playlist-current-selected-track)
          (assoc 'info-title)
          (cdr)
          (concat "🎵 ")))
-  :config
+
   (require 'emms-setup)
   (emms-all)
   (emms-default-players)
@@ -7448,16 +7438,15 @@ removal."
 (use-package emms-mode-line
   :after    emms
   :straight nil
-  :init
+  :config
   (emms-mode-line-enable)
   (emms-mode-line 1)
-  :config
   (setq emms-mode-line-mode-line-function #'emms-mode-line-only-filename))
 
 (use-package emms-playing-time
   :after    emms
   :straight nil
-  :init
+  :config
   (emms-playing-time nil))
 
 ;; Ready-player config ==============================
@@ -7657,7 +7646,6 @@ Optional argument MSG First message shown in buffer."
 
 (use-package startup
   :straight (:type built-in)
-  :demand t
   :init
   (setq inhibit-splash-screen t
         inhibit-startup-echo-area-message ""
