@@ -7687,9 +7687,8 @@ Optional argument MSG First message shown in buffer."
 (global-auto-revert-mode 1)    ; Refresh buffers with changed local files
 
 (use-package restart-emacs
-  :command (restart-emacs)
   :defer t
-  :general-config
+  :general
   (global-leader
     "qr" 'restart-emacs))
 
