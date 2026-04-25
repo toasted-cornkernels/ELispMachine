@@ -4786,10 +4786,10 @@ set so that it clears the whole REPL buffer, not just the output."
   (setq-default bidi-display-reordering 'left-to-right
                 bidi-paragraph-direction 'left-to-right)
   (setq bidi-inhibit-bpa t)
-  
+
   ;; Disable syntax highlighting during typing
   (setq redisplay-skip-fontification-on-input t)
-  
+
   ;; Increase the buffer size coming in from external programs
   (setq read-process-output-max (* 4 1024 1024))
 
@@ -5291,7 +5291,7 @@ set so that it clears the whole REPL buffer, not just the output."
                 magit-mode-map (kbd "SPC") nil)))
   (when macOS-p
     (setq magit-process-connection-type nil))
-  
+
   ;; Adapted from https://github.com/magit/magit/issues/4462#issuecomment-893481200
 
   (transient-insert-suffix
@@ -7349,7 +7349,7 @@ removal."
 
 (use-package hnreader
   :defer t
-  :commands (hnreader-news            
+  :commands (hnreader-news
              hnreader-past
              hnreader-newe
              hnreader-ask
