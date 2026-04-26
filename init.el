@@ -5931,7 +5931,6 @@ Uses `magit-patch-save' internally, so inherit its settings."
 
 (use-package auto-dark
   :when (not (or chromeOS-p android-p terminal-p))
-  :defer t
   :config
   (setq custom-safe-themes t)
   (setq auto-dark-themes '((modus-vivendi) (modus-operandi))
