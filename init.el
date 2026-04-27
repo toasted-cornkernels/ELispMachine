@@ -5607,6 +5607,7 @@ Uses `magit-patch-save' internally, so inherit its settings."
 
 (use-package format-all
   :defer t
+  :commands (format-all-buffer)
   :general-config
   (agnostic-key
     "C-M-=" 'format-all-buffer))
@@ -5858,7 +5859,8 @@ Uses `magit-patch-save' internally, so inherit its settings."
 (use-package tab-bar
   :straight nil
   :config
-  (setq tab-bar-position t) ; place the tab-bar below the tool bar
+  (setq tab-bar-position t  ; place the tab-bar below the tool bar
+        tab-bar-auto-width nil)
 
   (defun disable-tab-bar-if-unnecessary (_)
     "Hide the tab bar if there is only one tab left."
@@ -5924,7 +5926,6 @@ Uses `magit-patch-save' internally, so inherit its settings."
 
 (use-package auto-dark
   :when (not (or chromeOS-p android-p terminal-p))
-  :defer t
   :config
   (setq custom-safe-themes t)
   (setq auto-dark-themes '((modus-vivendi) (modus-operandi))
