@@ -891,12 +891,12 @@
         org-startup-with-inline-images t
         org-startup-latex-with-latex-preview t
         org-format-latex-options '(:foreground default
-                                   :background "Transparent"
-                                   :scale 1.5
-                                   :html-foreground "Black"
-                                   :html-background "Transparent"
-                                   :html-scale 1.0
-                                   :matchers ("begin" "$1" "$" "$$" "\\(" "\\["))
+                                               :background "Transparent"
+                                               :scale 1.5
+                                               :html-foreground "Black"
+                                               :html-background "Transparent"
+                                               :html-scale 1.0
+                                               :matchers ("begin" "$1" "$" "$$" "\\(" "\\["))
         org-image-actual-width nil
         org-imenu-depth 8
         org-link-descriptive t
@@ -907,19 +907,12 @@
         org-export-backends '(ascii html icalendar latex odt markdown)
         org-modules (append '(org-crypt
                               org-habit
-                              org-bookmark
-                              org-eshell
                               ol-eww
                               ol-w3m
                               ol-doi
                               ol-bibtex
                               ol-info
-                              ol-man
-                              ol-mac-iCal
-                              ol-mac-link)
-                            (when macOS-p
-                              '(ol-mac-iCal
-                                ol-mac-link)))
+                              ol-man))
         org-fontify-quote-and-verse-blocks t)
   (dolist (fn '(org-insert-drawer
                 org-insert-heading
