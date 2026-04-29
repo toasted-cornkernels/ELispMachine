@@ -4796,7 +4796,9 @@ set so that it clears the whole REPL buffer, not just the output."
    ;; De-duplicate the kill ring
    kill-do-not-save-duplicates t
    ;; Let mark popping be repeatable
-   set-mark-command-repeat-pop t)
+   set-mark-command-repeat-pop t
+   ;; I KNOW
+   suggest-key-bindings t)
   (add-hook 'after-save-hook
             #'executable-make-buffer-file-executable-if-script-p))
 
