@@ -4791,7 +4791,7 @@ set so that it clears the whole REPL buffer, not just the output."
    ;; Let mark popping be repeatable
    set-mark-command-repeat-pop t
    ;; I KNOW
-   suggest-key-bindings t)
+   suggest-key-bindings nil)
   (add-hook 'after-save-hook
             #'executable-make-buffer-file-executable-if-script-p))
 
