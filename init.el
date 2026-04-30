@@ -1134,7 +1134,7 @@
     "k"          'org-edit-src-abort
     "'"          'org-edit-src-exit)
   :config
-  (setq org-src-window-setup 'current-window
+  (setq org-src-window-setup 'split-window-below
         org-src-fontify-natively t
         org-src-tab-acts-natively t
         org-edit-src-content-indentation 0))
@@ -5274,11 +5274,7 @@ set so that it clears the whole REPL buffer, not just the output."
     (setq magit-process-connection-type nil))
 
   ;; Adapted from https://github.com/magit/magit/issues/4462#issuecomment-893481200
-
-  (transient-insert-suffix
-    'magit-patch "r" '("b" "Save diff as patch to buffer" elispm/magit-write-patch-to-buffer))
-  (transient-insert-suffix
-    'magit-patch "r" '("w" "Copy diff as patch to kill-ring" elispm/magit-copy-patch-kill-ring))
+  ;; TODO: Neither of these work (the original issue is old).
 
   (defun elispm/magit-write-patch (write-function &optional arg)
     "Write patch of current diff to a temp buffer, then run
@@ -5309,7 +5305,7 @@ WRITE-FUNCTION. This is useful as a backend abstraction for
 
   (defun elispm/magit-write-patch-to-buffer (buffer)
     "Write patch format of current diff into chosen buffer. Finishes with
-chosen buffer displayed. Uses `magit-patch-save' internally, so inherits
+chosen buffer displayed. Uses `magit-patch-save-arguments' internally, so inherits
 its settings."
     (interactive (list (completing-read (format-prompt "Dump/append patch to buffer" "*patch*")
                                         #'internal-complete-buffer
@@ -5317,14 +5313,19 @@ its settings."
     (elispm/magit-write-patch '(lambda ()
                                  (append-to-buffer buffer (point-min) (point-max))
 			                           (pop-to-buffer buffer)
-                                 (diff-mode)))))
+                                 (diff-mode))))
 
-(defun elispm/magit-copy-patch-kill-ring ()
-  "Copy patch format of current diff into kill ring.
+  (defun elispm/magit-copy-patch-kill-ring ()
+    "Copy patch format of current diff into kill ring.
 
-Uses `magit-patch-save' internally, so inherit its settings."
-  (interactive)
-  (elispm/magit-write-patch '(lambda () (kill-region (point-min) (point-max)))))
+Uses `magit-patch-save-arguments' internally, so inherit its settings."
+    (interactive)
+    (elispm/magit-write-patch '(lambda () (kill-region (point-min) (point-max)))))
+
+  (transient-insert-suffix
+    'magit-patch "r" '("b" "Save diff as patch to buffer" elispm/magit-write-patch-to-buffer))
+  (transient-insert-suffix
+    'magit-patch "r" '("w" "Copy diff as patch to kill-ring" elispm/magit-copy-patch-kill-ring)))
 
 (use-package magit-section
   :defer t
@@ -5944,6 +5945,27 @@ Uses `magit-patch-save' internally, so inherit its settings."
 
 (use-package olivetti
   :defer t)                             ; TODO
+
+;; Copied from https://karthinks.com/software/more-less-emacs/
+
+(defvar-local hide-cursor--original nil)
+
+(define-minor-mode hide-cursor-mode
+  "Hide or show the cursor.
+
+When the cursor is hidden `scroll-lock-mode' is enabled, so that
+the buffer works like a pager."
+  :global nil
+  :lighter "H"
+  (if hide-cursor-mode
+      (progn
+        (scroll-lock-mode 1)
+        (setq-local hide-cursor--original
+                    cursor-type)
+        (setq-local cursor-type nil))
+    (scroll-lock-mode -1)
+    (setq-local cursor-type (or hide-cursor--original
+                                t))))
 
 ;; hl-todo config ==================================
 ;; =================================================
@@ -7131,7 +7153,8 @@ removal."
   :defer t
   :if (not chromeOS-p)
   :mode (("\\.pdf\\'" . pdf-view-mode))
-  :hook (pdf-view-mode-hook . hide-mode-line-mode)
+  :hook ((pdf-view-mode-hook . hide-mode-line-mode)
+         (pdf-view-mode-hook . hide-cursor-mode))
   :general-config
   (local-leader
     :major-modes '(pdf-view-mode t)
