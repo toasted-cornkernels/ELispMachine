@@ -931,7 +931,7 @@
 
 (use-package org-keys
   :straight nil
-  :defer    t
+  :after org
   :config
   (setq org-return-follows-link t
         org-mouse-1-follows-link t)
