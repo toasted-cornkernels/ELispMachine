@@ -5613,8 +5613,7 @@ Uses `magit-patch-save-arguments' internally, so inherit its settings."
 
 (use-package format-all
   :defer t
-  :commands (format-all-buffer)
-  :general-config
+  :general
   (agnostic-key
     "C-M-=" 'format-all-buffer))
 
