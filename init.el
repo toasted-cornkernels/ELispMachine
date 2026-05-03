@@ -6162,7 +6162,7 @@ the buffer works like a pager."
   "s-="   'text-scale-increase
   "s--"   'text-scale-decrease
   "s-0"   'text-scale-adjust		; meh
-  "s-p"   'consult-recent-file
+  "s-p"   'consult-buffer
   "s-P"   'execute-extended-command
   "s-o"   'find-file
   "s-f"   'ace-window
