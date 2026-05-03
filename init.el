@@ -1453,7 +1453,7 @@
     "h"          'launchctl-help))
 
 (use-package osx-dictionary
-  :if macOS-p
+  :when macOS-p
   :commands
   (osx-dictionary-search-pointer
    osx-dictionary-search-input
