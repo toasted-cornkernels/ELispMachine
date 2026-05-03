@@ -6163,7 +6163,7 @@ the buffer works like a pager."
   "s-="   'text-scale-increase
   "s--"   'text-scale-decrease
   "s-0"   'text-scale-adjust		; meh
-  "s-p"   'consult-recent-file
+  "s-p"   'consult-buffer
   "s-P"   'execute-extended-command
   "s-o"   'find-file
   "s-f"   'ace-window
@@ -7124,7 +7124,7 @@ removal."
   :straight (:type built-in)
   :defer t
   :config
-    (defun eww-open-w3m-current-url ()
+  (defun eww-open-w3m-current-url ()
     (interactive)
     (w3m-browse-url (eww-copy-page-url)))
   (defun eww-search-namu-wiki ()
@@ -7139,6 +7139,7 @@ removal."
                                               (string-match ".*youtu.be.*" url))
                                           (xwidget-webkit-browse-url url session)
                                         (eww-browse-url url))))
+  (setq eww-browse-url-new-window-is-tab nil)
   :bind
   (:map eww-mode-map
         ("<mouse-4>" . eww-back-url)
