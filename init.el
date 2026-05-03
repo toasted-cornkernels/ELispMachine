@@ -1417,7 +1417,8 @@
         mac-option-modifier   'meta
         mac-command-modifier  'super)
   (setq mac-pass-command-to-system nil
-        mac-pass-control-to-system nil))
+        mac-pass-control-to-system nil)
+  (set-fontset-font t nil "SF Pro Display" nil 'append))
 
 (when-let ((gls (executable-find "gls")))
   (setq insert-directory-program gls))
