@@ -660,7 +660,8 @@
   :hook ((osx-dictionary-mode . mixed-pitch-mode)
          (org-mode . mixed-pitch-mode)
          (gfm-mode . mixed-pitch-mode)
-         (markdown-mode . mixed-pitch-mode)))
+         (markdown-mode . mixed-pitch-mode)
+         (ready-player-mode . mixed-pitch-mode)))
 
 ;; Org config =======================================
 ;; ==================================================
@@ -7488,7 +7489,8 @@ removal."
 (use-package ready-player
   :defer t
   :config
-  (setq ready-player-my-media-collection-location "~/Music/MyMusic"
+  (setq ready-player-my-media-collection-location "~/Music/Music"
+        ready-player-ask-for-project-sustainability nil
         ready-player-hide-modeline nil)
   (ready-player-mode))
 
