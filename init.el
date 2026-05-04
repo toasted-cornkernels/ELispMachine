@@ -5706,6 +5706,7 @@ Uses `magit-patch-save-arguments' internally, so inherit its settings."
   (add-to-list 'recentf-exclude "COMMIT_EDITMSG\\'")
   (add-to-list 'recentf-exclude "/tmp/.*")
   (add-to-list 'recentf-exclude "/.emacs.d/var/.*")
+  (add-to-list 'recentf-exclude "~/Music/Music/")
   (when custom-file
     (add-to-list 'recentf-exclude (recentf-expand-file-name custom-file))))
 
