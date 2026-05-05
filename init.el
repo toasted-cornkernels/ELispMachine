@@ -6508,8 +6508,7 @@ removal."
   "fgR" 'consult-grep
   "fgg" 'consult-git-grep
 
-  "fr"  'consult-recent-file
-  "fR"  'rename-visited-file
+  "fr"  'rename-visited-file
   "fj"  'dired-jump
   "fF"  'find-name-dired
   "fG"  'find-grep-dired
