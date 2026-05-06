@@ -6905,6 +6905,7 @@ removal."
   "TM"   'manage-minor-mode
   "Tp"   'spacious-padding-mode
   "Tw"   'writeroom-mode
+  "Tb"   'breadcrumb-mode
   "To"   (which-key-prefix :olivetti)
   "Too"  'olivetti-mode)
 
