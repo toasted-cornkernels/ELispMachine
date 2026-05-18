@@ -1058,7 +1058,7 @@
                                    dot shell awk restclient
                                    http C ruby
                                    lua fennel nix
-                                   hledger))
+                                   hledger python))
   (org-babel-do-load-languages
    'org-babel-load-languages
    (mapcar (lambda (language) `(,language . t)) org-babel-languages))
@@ -1822,6 +1822,10 @@
 
 (use-package cc-mode
   :defer t
+  :hook ((c-mode . (lambda ()
+                     (setq indent-tabs-mode 4)))
+         (c++-mode . (lambda ()
+                       (setq indent-tabs-mode 4))))
   :config
   (unbind-key "C-d" 'c-mode-map)
   (unbind-key "C-d" 'c++-mode-map)
