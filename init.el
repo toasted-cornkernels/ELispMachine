@@ -1183,43 +1183,43 @@
     (set variable (read-string (concat prompt ": ") nil oc-capture-prmt-history)))
 
   (setq ;; Default Org-Roam directory. Multiple org-roam directories are registered separately using `.dir-locals.el`.
-        org-roam-directory (if android-p "~/storage/shared/OrgRoam/" "~/OrgRoam/")
-        org-roam-node-display-template (concat "${title:*} " (propertize "${tags:10}" 'face 'org-tag))
-        org-roam-completion-everywhere t
-        org-roam-dailies-directory "Dailies/"
-        org-roam-capture-templates
-        `(("d" "Default" plain
-           (file ,(concat user-emacs-directory "/CaptureTemplates/OrgRoam/DefaultTemplate.org"))
-           :if-new (file+head "${slug}.org" "#+TITLE: ${title}\n#+DATE:%U\n")
-           :unnarrowed t)
-          ("e" "New English Expression" plain
-           (file ,(concat user-emacs-directory "/CaptureTemplates/OrgRoam/NewEnglishExpressionTemplate.org"))
-           :if-new (file+head "Languages/English/${slug}.org" "#+TITLE: ${title}\n#+DATE:%U\n")
-           :unnarrowed t)
-          ("q" "New English Memorable Quote" plain
-           (file ,(concat user-emacs-directory "/CaptureTemplates/OrgRoam/NewEnglishMemorableQuoteTemplate.org"))
-           :if-new (file+head "Languages/English/Quotes/${slug}.org" "#+TITLE: ${title}\n#+DATE:%U\n")
-           :unnarrowed t)
-          ("f" "New English Flashback" plain
-           (file ,(concat user-emacs-directory "/CaptureTemplates/OrgRoam/NewEnglishFlashbackTemplate.org"))
-           :if-new (file+head "Languages/English/Flashbacks/${slug}.org" "#+TITLE: ${title}\n#+DATE:%U\n")
-           :unnarrowed t)
-          ("j" "New Japanese Word" plain
-           (file ,(concat user-emacs-directory "/CaptureTemplates/OrgRoam/NewJapaneseWordTemplate.org"))
-           :if-new (file+head "Languages/Japanese/${slug}.org" "#+TITLE: ${title}\n#+DATE:%U\n")
-           :unnarrowed t)
-          ("J" "New Japanese Word Group" plain
-           (file ,(concat user-emacs-directory "/CaptureTemplates/OrgRoam/NewJapaneseWordGroupTemplate.org"))
-           :if-new (file+head "Languages/Japanese/${slug}.org" "#+TITLE: ${title}\n#+DATE:%U\n")
-           :unnarrowed t)
-          ("v" "New Japanese Lyrics" plain
-           (file ,(concat user-emacs-directory "/CaptureTemplates/OrgRoam/NewJapaneseLyricsTemplate.org"))
-           :if-new (file+head "Languages/Japanese/Lyrics/${slug}.org" "#+TITLE: ${title}\n#+DATE:%U\n")
-           :unnarrowed t)
-          ("F" "New Japanese Flashback" plain
-           (file ,(concat user-emacs-directory "/CaptureTemplates/OrgRoam/NewJapaneseFlashbackTemplate.org"))
-           :if-new (file+head "Languages/Japanese/Flashbacks/${slug}.org" "#+TITLE: ${title}\n#+DATE:%U\n")
-           :unnarrowed t)))
+   org-roam-directory (if android-p "~/storage/shared/OrgRoam/" "~/OrgRoam/")
+   org-roam-node-display-template (concat "${title:*} " (propertize "${tags:10}" 'face 'org-tag))
+   org-roam-completion-everywhere t
+   org-roam-dailies-directory "Dailies/"
+   org-roam-capture-templates
+   `(("d" "Default" plain
+      (file ,(concat user-emacs-directory "/CaptureTemplates/OrgRoam/DefaultTemplate.org"))
+      :if-new (file+head "${slug}.org" "#+TITLE: ${title}\n#+DATE:%U\n")
+      :unnarrowed t)
+     ("e" "New English Expression" plain
+      (file ,(concat user-emacs-directory "/CaptureTemplates/OrgRoam/NewEnglishExpressionTemplate.org"))
+      :if-new (file+head "Languages/English/${slug}.org" "#+TITLE: ${title}\n#+DATE:%U\n")
+      :unnarrowed t)
+     ("q" "New English Memorable Quote" plain
+      (file ,(concat user-emacs-directory "/CaptureTemplates/OrgRoam/NewEnglishMemorableQuoteTemplate.org"))
+      :if-new (file+head "Languages/English/Quotes/${slug}.org" "#+TITLE: ${title}\n#+DATE:%U\n")
+      :unnarrowed t)
+     ("f" "New English Flashback" plain
+      (file ,(concat user-emacs-directory "/CaptureTemplates/OrgRoam/NewEnglishFlashbackTemplate.org"))
+      :if-new (file+head "Languages/English/Flashbacks/${slug}.org" "#+TITLE: ${title}\n#+DATE:%U\n")
+      :unnarrowed t)
+     ("j" "New Japanese Word" plain
+      (file ,(concat user-emacs-directory "/CaptureTemplates/OrgRoam/NewJapaneseWordTemplate.org"))
+      :if-new (file+head "Languages/Japanese/${slug}.org" "#+TITLE: ${title}\n#+DATE:%U\n")
+      :unnarrowed t)
+     ("J" "New Japanese Word Group" plain
+      (file ,(concat user-emacs-directory "/CaptureTemplates/OrgRoam/NewJapaneseWordGroupTemplate.org"))
+      :if-new (file+head "Languages/Japanese/${slug}.org" "#+TITLE: ${title}\n#+DATE:%U\n")
+      :unnarrowed t)
+     ("v" "New Japanese Lyrics" plain
+      (file ,(concat user-emacs-directory "/CaptureTemplates/OrgRoam/NewJapaneseLyricsTemplate.org"))
+      :if-new (file+head "Languages/Japanese/Lyrics/${slug}.org" "#+TITLE: ${title}\n#+DATE:%U\n")
+      :unnarrowed t)
+     ("F" "New Japanese Flashback" plain
+      (file ,(concat user-emacs-directory "/CaptureTemplates/OrgRoam/NewJapaneseFlashbackTemplate.org"))
+      :if-new (file+head "Languages/Japanese/Flashbacks/${slug}.org" "#+TITLE: ${title}\n#+DATE:%U\n")
+      :unnarrowed t)))
   (org-roam-db-autosync-mode))
 
 (use-package org-roam-ui
@@ -1711,13 +1711,13 @@
     "at"     'eglot-show-type-hierarchy
     "ac"     'eglot-show-call-hierarchy))
 
-  :config
-  (setq-default eglot-workspace-configuration
-                '((lua_ls
-                   (format
-                    (defaultConfig
-                     indent_style "space"
-                     indent_size "2")))))
+:config
+(setq-default eglot-workspace-configuration
+              '((lua_ls
+                 (format
+                  (defaultConfig
+                   indent_style "space"
+                   indent_size "2")))))
 
 (use-package eglot-x
   :straight (eglot-x :type git
@@ -2322,7 +2322,7 @@
   ;; (sp-local-pair '(c-mode) "{" nil :post-handlers nil)
   ;; (sp-local-pair '(c-mode) "[" nil :post-handlers nil)
   ;; (sp-local-pair '(c-mode) "(" nil :post-handlers nil)
-)
+  )
 
 (use-package evil-cleverparens
   ;; :init
@@ -2601,14 +2601,14 @@ Requires smartparens because all movement is done using `sp-forward-symbol'."
           (find-variable-other-window symb)
         (find-function-at-point)))))
 
- (use-package ielm
-   :defer t
-   :config
-   (defun ielm-indent-line ()
-     (interactive)
-     (let ((current-point (point)))
-       (save-restriction
-         (narrow-to-region (search-backward-regexp "^ELISP>") (goto-char current-point))
+(use-package ielm
+  :defer t
+  :config
+  (defun ielm-indent-line ()
+    (interactive)
+    (let ((current-point (point)))
+      (save-restriction
+        (narrow-to-region (search-backward-regexp "^ELISP>") (goto-char current-point))
         (lisp-indent-line))))
 
   :general-config
@@ -3026,8 +3026,8 @@ set so that it clears the whole REPL buffer, not just the output."
 
     "s"   (which-key-prefix "send to repl")
     "sa"  (if (eq major-mode 'cider-repl-mode)
-             'cider-switch-to-last-clojure-buffer
-           'cider-switch-to-repl-buffer)
+              'cider-switch-to-last-clojure-buffer
+            'cider-switch-to-repl-buffer)
     "sb"  'cider-load-buffer
     "sB"  'cider-send-buffer-in-repl-and-focus
     "se"  'cider-send-last-sexp-to-repl
@@ -3187,7 +3187,7 @@ set so that it clears the whole REPL buffer, not just the output."
   (add-hook 'cider--debug-mode-hook 'cider-debug-setup)
   (setq cider-prompt-for-symbol t)
   (cl-defadvice cider-find-var (before add-evil-jump activate)
-    (evil-set-jump)))
+                (evil-set-jump)))
 
 (use-package cider-eval-sexp-fu
   :after cider)
@@ -4326,7 +4326,7 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (use-package markdown-mode
   :hook (((gfm-mode markdown-mode) . (lambda ()
-                                        (setq indent-tabs-mode nil)))
+                                       (setq indent-tabs-mode nil)))
          ((gfm-mode markdown-mode) . outline-minor-mode)
          ((gfm-mode markdown-mode) . orgtbl-mode))
   :mode
@@ -4700,10 +4700,10 @@ set so that it clears the whole REPL buffer, not just the output."
                                         kill-ring)
         savehist-autosave-interval 60)
   (add-hook 'savehist-save-hook
-          (lambda ()
-            (setq kill-ring
-                  (mapcar #'substring-no-properties
-                          (cl-remove-if-not #'stringp kill-ring)))))
+            (lambda ()
+              (setq kill-ring
+                    (mapcar #'substring-no-properties
+                            (cl-remove-if-not #'stringp kill-ring)))))
   (savehist-mode t))
 
 (use-package emacs
@@ -5616,7 +5616,7 @@ Uses `magit-patch-save-arguments' internally, so inherit its settings."
 ;; ==================================================
 
 (use-package format-all
-  :defer t
+  :commands (format-all-buffer)
   :general
   (agnostic-key
     "C-M-=" 'format-all-buffer))
@@ -5839,13 +5839,13 @@ Uses `magit-patch-save-arguments' internally, so inherit its settings."
   :when GUI-p
   :config
   (setq spacious-padding-widths
-      '(:internal-border-width 15
-        :header-line-width 4
-        :mode-line-width 6
-        :tab-width 4
-        :right-divider-width 30
-        :scroll-bar-width 8
-        :fringe-width 8))
+        '(:internal-border-width 15
+                                 :header-line-width 4
+                                 :mode-line-width 6
+                                 :tab-width 4
+                                 :right-divider-width 30
+                                 :scroll-bar-width 8
+                                 :fringe-width 8))
   (spacious-padding-mode 1))
 
 (use-package adaptive-wrap
@@ -6379,40 +6379,40 @@ the buffer works like a pager."
      (if (not (tramp-tramp-file-p fname))
          (concat "/sudo:root@localhost:" fname)
        (with-parsed-tramp-file-name fname parsed
-         (when (equal parsed-user "root")
-           (error "Already root!"))
-         (let* ((new-hop (tramp-make-tramp-file-name
-                          ;; Try to retrieve a tramp method suitable for
-                          ;; multi-hopping
-                          (cond ((tramp-get-method-parameter
-                                  parsed 'tramp-login-program))
-                                ((tramp-get-method-parameter
-                                  parsed 'tramp-copy-program))
-                                (t parsed-method))
-                          parsed-user
-                          parsed-domain
-                          parsed-host
-                          parsed-port
-                          nil
-                          parsed-hop))
-                (new-hop (substring new-hop 1 -1))
-                (new-hop (concat new-hop "|"))
-                (new-fname (tramp-make-tramp-file-name
-                            "sudo"
-                            parsed-user
-                            parsed-domain
-                            parsed-host
-                            parsed-port
-                            parsed-localname
-                            new-hop)))
-           new-fname))))))
+                                    (when (equal parsed-user "root")
+                                      (error "Already root!"))
+                                    (let* ((new-hop (tramp-make-tramp-file-name
+                                                     ;; Try to retrieve a tramp method suitable for
+                                                     ;; multi-hopping
+                                                     (cond ((tramp-get-method-parameter
+                                                             parsed 'tramp-login-program))
+                                                           ((tramp-get-method-parameter
+                                                             parsed 'tramp-copy-program))
+                                                           (t parsed-method))
+                                                     parsed-user
+                                                     parsed-domain
+                                                     parsed-host
+                                                     parsed-port
+                                                     nil
+                                                     parsed-hop))
+                                           (new-hop (substring new-hop 1 -1))
+                                           (new-hop (concat new-hop "|"))
+                                           (new-fname (tramp-make-tramp-file-name
+                                                       "sudo"
+                                                       parsed-user
+                                                       parsed-domain
+                                                       parsed-host
+                                                       parsed-port
+                                                       parsed-localname
+                                                       new-hop)))
+                                      new-fname))))))
 
 ;; Stolen from Doom
 (defun elispm/copy-this-file (new-path &optional force-p)
   "Copy current buffer's file to NEW-PATH then open NEW-PATH.
 
 If FORCE-P, overwrite the destination file if it exists, without confirmation."
- (interactive
+  (interactive
    (list (read-file-name "Copy file to: ")
          current-prefix-arg))
   (unless (and buffer-file-name (file-exists-p buffer-file-name))
