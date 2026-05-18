@@ -7295,6 +7295,10 @@ removal."
     (kbd "<M-down-mouse-1>") 'pdf-view-mouse-set-region-rectangle
     (kbd "<down-mouse-1>")  'pdf-view-mouse-set-region))
 
+(use-package image-roll
+  :straight
+  (:host github :repo "dalanicolai/image-roll.el"))
+
 (use-package pdf-view-restore
   :after pdf-tools
   :hook (pdf-view-mode . pdf-view-restore-mode))
