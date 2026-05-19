@@ -1803,6 +1803,12 @@
     "p"          'gptel-context-previous
     "d"          'gptel-context-flag-deletion))
 
+(use-package agent-shell
+  :defer t
+  :config
+  (setq agent-shell-github-command nil
+        agent-shell-github-acp-command '("copilot" "--acp" "--model" "claude-opus-4.7")))
+
 ;; Shell config =====================================
 ;; ==================================================
 
