@@ -5574,7 +5574,7 @@ Uses `magit-patch-save-arguments' internally, so inherit its settings."
     "d"          'gh-notify-marked-notifications-set-done
     "t"          'gh-notify-marked-notifications-set-unread
     "p"          'gh-notify-marked-notifications-set-pending
-    "q"          'magit-bury-buffer-function
+    "q"          'magit-bury-or-kill-buffer
     "gr"         'gh-notify-forge-refresh
     "y"          'gh-notify-copy-url))
 
