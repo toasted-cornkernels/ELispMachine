@@ -5563,7 +5563,7 @@ Uses `magit-patch-save-arguments' internally, so inherit its settings."
 (use-package gh-notify
   :after (magit forge)
   :general-config
-  (normal-mode-major-mode               ; TODO: complete this
+  (agnostic-key               ; TODO: complete this
     :major-modes '(gh-notify-mode t)
     :keymaps     '(gh-notify-mode-map)
     "RET"        'gh-notify-visit-notification
@@ -5574,7 +5574,9 @@ Uses `magit-patch-save-arguments' internally, so inherit its settings."
     "d"          'gh-notify-marked-notifications-set-done
     "t"          'gh-notify-marked-notifications-set-unread
     "p"          'gh-notify-marked-notifications-set-pending
-    "q"          'magit-bury-buffer-function))
+    "q"          'magit-bury-buffer-function
+    "gr"         'gh-notify-forge-refresh
+    "y"          'gh-notify-copy-url))
 
 ;; Git-gutter config ===============================
 ;; ==================================================
