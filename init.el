@@ -5029,10 +5029,6 @@ set so that it clears the whole REPL buffer, not just the output."
             (lambda ()
               (evil-define-key 'normal dired-mode-map (kbd "SPC") nil))))
 
-(use-package diff-hl
-  :after dired
-  :hook (dired-mode . diff-hl-dired-mode-unless-remote))
-
 (use-package diredfl
   :after dired
   :config
@@ -5584,34 +5580,36 @@ Uses `magit-patch-save-arguments' internally, so inherit its settings."
     "gr"         'gh-notify-forge-refresh
     "y"          'gh-notify-copy-url))
 
-;; Git-gutter config ===============================
+;; diff-hl config ===================================
 ;; ==================================================
 
-(use-package git-gutter
+(use-package diff-hl
+  :hook (dired-mode . diff-hl-dired-mode-unless-remote)
   :general-config
   (local-leader
-    :predicate 'git-gutter-mode
-    "G"        (which-key-prefix :git-gutter)
-    "Gn"       'git-gutter:next-hunk
-    "Gp"       'git-gutter:previous-hunk
-    "G$"       'git-gutter:end-of-hunk
-    "Ge"       'git-gutter:end-of-hunk
-    "Gr"       'git-gutter:revert-hunk
-    "Gs"       'git-gutter:stage-hunk
-    "Ga"       'git-gutter:stage-hunk
-    "Gm"       'git-gutter:mark-hunk
-    "Gp"       'git-gutter:popup-hunk
-    "Gc"       'git-gutter:clear
-    "GG"       'git-gutter:toggle)
+    :predicate 'diff-hl-mode
+    "G"   (which-key-prefix :diff-hl)
+    "Gj"  'diff-hl-next-hunk
+    "Gk"  'diff-hl-previous-hunk
+    "GJ"  'diff-hl-show-hunk-next
+    "GK"  'diff-hl-show-hunk-previous
 
+    "Gn"  'diff-hl-next-hunk
+    "Gp"  'diff-hl-previous-hunk
+    "GN"  'diff-hl-show-hunk-next
+    "GP"  'diff-hl-show-hunk-previous
+
+    "Ga"  'diff-hl-stage-current-hunk
+    "Gs"  'diff-hl-stage-current-hunk
+    "GS"  'diff-hl-stage-some
+    "Gr"  'diff-hl-revert-hunk
+    "Gm"  'diff-hl-mark-hunk
+    "G."  'diff-hl-show-hunk)
   :config
-  (setq git-gutter:modified-sign " "
-        git-gutter:added-sign "+"
-        git-gutter:deleted-sign "-"
-        git-gutter:diff-option "-w"
-        git-gutter:hide-gutter t ; Hide gutter when there are no changes
-        git-gutter:disabled-modes '(pdf-view-mode doc-view-mode image-mode))
-  (global-git-gutter-mode))
+  (setq diff-hl-show-staged-changes t
+        diff-hl-global-modes '(not pdf-view-mode doc-view-mode image-mode)
+        diff-hl-show-staged-changes t)
+  (global-diff-hl-mode))
 
 ;; Smerge Config ====================================
 ;; ==================================================
