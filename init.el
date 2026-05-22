@@ -147,21 +147,21 @@
 ;; ==================================================
 
 (use-package which-key
-  :config
-  (setq which-key-add-column-padding 1
-        which-key-echo-keystrokes 0.02
-        which-key-idle-delay 0.2
-        which-key-idle-secondary-delay 0.01
-        which-key-max-description-length 32
-        which-key-max-display-columns nil
-        which-key-min-display-lines 6
-        which-key-prevent-C-h-from-cycling t
-        which-key-sort-order 'which-key-prefix-then-key-order
-        which-key-sort-uppercase-first nil
-        which-key-special-keys nil
-        which-key-use-C-h-for-paging t
-        which-key-allow-evil-operators t)
-  (which-key-mode))
+  :hook (after-init . which-key-mode)
+  :custom
+  (which-key-add-column-padding 1)
+  (which-key-echo-keystrokes 0.02)
+  (which-key-idle-delay 0.2)
+  (which-key-idle-secondary-delay 0.01)
+  (which-key-max-description-length 32)
+  (which-key-max-display-columns nil)
+  (which-key-min-display-lines 6)
+  (which-key-prevent-C-h-from-cycling t)
+  (which-key-sort-order 'which-key-prefix-then-key-order)
+  (which-key-sort-uppercase-first nil)
+  (which-key-special-keys nil)
+  (which-key-use-C-h-for-paging t)
+  (which-key-allow-evil-operators t))
 
 ;; Useful Elisp Libraries ===========================
 ;; ==================================================
@@ -5584,33 +5584,35 @@ Uses `magit-patch-save-arguments' internally, so inherit its settings."
 ;; ==================================================
 
 (use-package diff-hl
-  :hook ((dired-mode . diff-hl-dired-mode-unless-remote)
+  :hook ((after-init . global-diff-hl-mode)
+         (dired-mode . diff-hl-dired-mode-unless-remote)
+         (magit-pre-refresh . diff-hl-magit-pre-refresh)
          (magit-post-refresh . diff-hl-magit-post-refresh))
+
+  :custom
+  (diff-hl-show-staged-changes t)
+  (diff-hl-global-modes '(not pdf-view-mode doc-view-mode image-mode))
+
   :general-config
   (local-leader
     :predicate 'diff-hl-mode
-    "G"   (which-key-prefix :diff-hl)
-    "Gj"  'diff-hl-next-hunk
-    "Gk"  'diff-hl-previous-hunk
-    "GJ"  'diff-hl-show-hunk-next
-    "GK"  'diff-hl-show-hunk-previous
+    "v"   (which-key-prefix :diff-hl)
+    "vj"  'diff-hl-next-hunk
+    "vk"  'diff-hl-previous-hunk
+    "vJ"  'diff-hl-show-hunk-next
+    "vK"  'diff-hl-show-hunk-previous
 
-    "Gn"  'diff-hl-next-hunk
-    "Gp"  'diff-hl-previous-hunk
-    "GN"  'diff-hl-show-hunk-next
-    "GP"  'diff-hl-show-hunk-previous
+    "vn"  'diff-hl-next-hunk
+    "vp"  'diff-hl-previous-hunk
+    "vN"  'diff-hl-show-hunk-next
+    "vP"  'diff-hl-show-hunk-previous
 
-    "Ga"  'diff-hl-stage-current-hunk
-    "Gs"  'diff-hl-stage-current-hunk
-    "GS"  'diff-hl-stage-some
-    "Gr"  'diff-hl-revert-hunk
-    "Gm"  'diff-hl-mark-hunk
-    "G."  'diff-hl-show-hunk)
-  :config
-  (setq diff-hl-show-staged-changes t
-        diff-hl-global-modes '(not pdf-view-mode doc-view-mode image-mode)
-        diff-hl-show-staged-changes t)
-  (global-diff-hl-mode))
+    "va"  'diff-hl-stage-current-hunk
+    "vs"  'diff-hl-stage-current-hunk
+    "vS"  'diff-hl-stage-some
+    "vr"  'diff-hl-revert-hunk
+    "vm"  'diff-hl-mark-hunk
+    "v."  'diff-hl-show-hunk))
 
 ;; Smerge Config ====================================
 ;; ==================================================
