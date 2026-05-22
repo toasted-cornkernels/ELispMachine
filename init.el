@@ -5584,7 +5584,8 @@ Uses `magit-patch-save-arguments' internally, so inherit its settings."
 ;; ==================================================
 
 (use-package diff-hl
-  :hook (dired-mode . diff-hl-dired-mode-unless-remote)
+  :hook ((dired-mode . diff-hl-dired-mode-unless-remote)
+         (magit-post-refresh . diff-hl-magit-post-refresh))
   :general-config
   (local-leader
     :predicate 'diff-hl-mode
