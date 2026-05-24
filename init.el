@@ -7484,7 +7484,6 @@ removal."
       (async-shell-command (concat "mpv " "'" entry-link "'") nil nil)
       (elfeed-search-untag-all-unread)))
 
-  (evil-define-key 'visual elfeed-search-mode-map)
   ;; (advice-add 'elfeed-search-show-entry :after #'elfeed-show-refresh)
   )
 
