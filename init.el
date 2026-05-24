@@ -97,7 +97,7 @@
                      "-mode$" ""
                      (symbol-name major-mode))))))
 
-  ;; works everywhere irrelevant of evil state
+  ;; works in any evil state
   (general-create-definer agnostic-key
     :keymaps 'override
     :prefix  ""
@@ -119,10 +119,11 @@
 ;; ==================================================
 
 (use-package no-littering
+  :custom
+  (auto-save-file-name-transforms
+   `((".*" ,(no-littering-expand-var-file-name "auto-save/") t)))
+  (custom-file (no-littering-expand-etc-file-name "custom.el"))
   :config
-  (setq auto-save-file-name-transforms
-        `((".*" ,(no-littering-expand-var-file-name "auto-save/") t)))
-  (setq custom-file (no-littering-expand-etc-file-name "custom.el"))
   (when (fboundp 'startup-redirect-eln-cache)
     (defvar native-comp-eln-load-path nil)
     (startup-redirect-eln-cache
@@ -131,23 +132,26 @@
 
 (use-package files
   :straight (:type built-in)
+  :hook
+  (after-init . auto-save-visited-mode)
+  :custom
+  (backup-directory-alist `(("." . ,(concat user-emacs-directory "backups/"))))
+  (backup-by-copying t)
+  (delete-old-versions t)
+  (kept-new-versions 6)
+  (kept-old-versions 2)
+  (version-control t)
   :config
-  (setq backup-directory-alist `(("." . ,(concat user-emacs-directory "backups/")))
-        backup-by-copying t
-        delete-old-versions t
-        kept-new-versions 6
-        kept-old-versions 2
-        version-control t)
   (remove-hook 'find-file-hooks 'vc-find-file-hook)
   (when macOS-p
-    (setq insert-directory-program "gls"))
-  (auto-save-visited-mode 1))
+    (setq insert-directory-program "gls")))
 
 ;; Which-key configs ================================
 ;; ==================================================
 
 (use-package which-key
-  :hook (after-init . which-key-mode)
+  :hook
+  (after-init . which-key-mode)
   :custom
   (which-key-add-column-padding 1)
   (which-key-echo-keystrokes 0.02)
@@ -312,19 +316,21 @@
 
 (use-package colorful-mode
   :defer t
+  :hook (after-init . global-colorful-mode)
+  :custom
+  (colorful-use-prefix nil)
+  (colorful-only-strings 'only-prog)
+  (css-fontify-colors t)
+  (colorful-extra-color-keyword-functions
+   '(colorful-add-hex-colors
+     ((html-mode css-mode emacs-lisp-mode)
+      colorful-add-css-variables-colors
+      colorful-add-rgb-colors
+      colorful-add-hsl-colors
+      colorful-add-oklab-oklch-colors
+      colorful-add-color-names)
+     (latex-mode . colorful-add-latex-colors)))
   :config
-  (setq colorful-use-prefix nil
-        colorful-only-strings 'only-prog
-        css-fontify-colors t
-        colorful-extra-color-keyword-functions '(colorful-add-hex-colors
-                                                 ((html-mode css-mode emacs-lisp-mode)
-                                                  colorful-add-css-variables-colors
-                                                  colorful-add-rgb-colors
-                                                  colorful-add-hsl-colors
-                                                  colorful-add-oklab-oklch-colors
-                                                  colorful-add-color-names)
-                                                 (latex-mode . colorful-add-latex-colors)))
-  (global-colorful-mode)
   (add-to-list 'global-colorful-modes 'helpful-mode))
 
 (use-package symbol-overlay             ; TODO
