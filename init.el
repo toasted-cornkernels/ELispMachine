@@ -103,16 +103,22 @@
     :prefix  ""
     "" '(:ignore t))
 
-  ;; extends basic emacs mode for a major mode
+  ;; extends insert mode for a major mode
   (general-create-definer insert-mode-major-mode
     :keymaps 'override
     :states  '(insert)
     :prefix  "")
 
-  ;; extends evil mode for a major mode
+  ;; extends normal mode for a major mode
   (general-create-definer normal-mode-major-mode
     :keymaps 'override
     :states  '(normal)
+    :prefix  "")
+
+  ;; extends visual mode for a major mode
+  (general-create-definer visual-mode-major-mode
+    :keymaps 'override
+    :states  '(visual)
     :prefix  ""))
 
 ;; No Littering! ====================================
@@ -7441,6 +7447,16 @@ removal."
     "ZZ"         'elfeed-kill-buffer
     "b"          'elfeed-show-visit)
 
+  (visual-mode-major-mode
+    :major-modes '(elfeed-search-mode t)
+    :keymaps     '(elfeed-search-mode-map)
+    "+"  'elfeed-search-tag-all
+    "-"  'elfeed-search-untag-all
+    "b"  'elfeed-search-browse-url
+    "y"  'elfeed-search-yank
+    "U"  'elfeed-search-tag-all-unread
+    "u"  'elfeed-search-untag-all-unread)
+
   :config
   (defun my-show-elfeed (buffer)
     (with-current-buffer buffer
@@ -7468,13 +7484,7 @@ removal."
       (async-shell-command (concat "mpv " "'" entry-link "'") nil nil)
       (elfeed-search-untag-all-unread)))
 
-  (evil-define-key 'visual elfeed-search-mode-map
-    "+"  'elfeed-search-tag-all
-    "-"  'elfeed-search-untag-all
-    "b"  'elfeed-search-browse-url
-    "y"  'elfeed-search-yank
-    "U"  'elfeed-search-tag-all-unread
-    "u"  'elfeed-search-untag-all-unread)
+  (evil-define-key 'visual elfeed-search-mode-map)
   ;; (advice-add 'elfeed-search-show-entry :after #'elfeed-show-refresh)
   )
 
