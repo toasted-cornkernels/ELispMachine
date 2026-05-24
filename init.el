@@ -500,9 +500,9 @@
     "kDs" 'evil-lisp-state-sp-backward-kill-symbol
     "kDw" 'evil-lisp-state-sp-backward-kill-word
     "kDx" 'evil-lisp-state-sp-backward-kill-sexp)
-  :config
-  (setq evil-lisp-state-cursor '(hbar . 2))
-  (bind-key "C-g" 'evil-lisp-state/quit))
+  (agnostic-key
+    :keymaps     '(evil-lisp-state-map)
+    "C-g"        'evil-lisp-state/quit))
 
 ;; Corfu config =====================================
 ;; ==================================================
