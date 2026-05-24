@@ -1146,12 +1146,7 @@
     "a"          'org-edit-src-abort
     "c"          'org-edit-src-exit
     "k"          'org-edit-src-abort
-    "'"          'org-edit-src-exit)
-  :config
-  (setq org-src-window-setup 'split-window-below
-        org-src-fontify-natively t
-        org-src-tab-acts-natively t
-        org-edit-src-content-indentation 0))
+    "'"          'org-edit-src-exit))
 
 (use-package org-habit
   :straight (:type built-in)
@@ -1160,47 +1155,18 @@
 (use-package org-compat
   :straight nil
   :defer t
-  :config
-  (setq org-latex-create-formula-image-program 'dvisvgm))
+  :custom
+  (org-latex-create-formula-image-program 'dvisvgm))
 
 (use-package org-roam
   :defer t
-  :general-config
-  (local-leader
-    :major-modes '(org-mode t)
-    :keymaps     '(org-mode-map)
-    "r"          (which-key-prefix "org-roam")
-    "rc"         'org-roam-capture
-    "rf"         'org-roam-node-find
-    "rg"         'org-roam-graph
-    "ri"         'org-roam-node-insert
-    "rI"         'org-id-get-create
-    "rl"         'org-roam-buffer-toggle
-    "ra"         'org-roam-alias-add
-
-    "rd"         (which-key-prefix "org-roam-dailies")
-    "rdy"        'org-roam-dailies-goto-yesterday
-    "rdt"        'org-roam-dailies-goto-today
-    "rdT"        'org-roam-dailies-goto-tomorrow
-    "rdd"        'org-roam-dailies-goto-date
-
-    "rt"         (which-key-prefix "org-roam-tags")
-    "rta"        'org-roam-tag-add
-    "rtr"        'org-roam-tag-remove)
-  :config
-  (defvar oc-capture-prmt-history nil
-    "History of prompt answers for org capture.")
-  (defun oc/prmt (prompt variable)
-    "PROMPT for string, save it to VARIABLE and insert it."
-    (make-local-variable variable)
-    (set variable (read-string (concat prompt ": ") nil oc-capture-prmt-history)))
-
-  (setq ;; Default Org-Roam directory. Multiple org-roam directories are registered separately using `.dir-locals.el`.
-   org-roam-directory (if android-p "~/storage/shared/OrgRoam/" "~/OrgRoam/")
-   org-roam-node-display-template (concat "${title:*} " (propertize "${tags:10}" 'face 'org-tag))
-   org-roam-completion-everywhere t
-   org-roam-dailies-directory "Dailies/"
-   org-roam-capture-templates
+  :custom
+  ;; Default Org-Roam directory. Multiple org-roam directories are registered separately using `.dir-locals.el`.
+  (org-roam-directory (if android-p "~/storage/shared/OrgRoam/" "~/OrgRoam/"))
+  (org-roam-node-display-template (concat "${title:*} " (propertize "${tags:10}" 'face 'org-tag)))
+  (org-roam-completion-everywhere t)
+  (org-roam-dailies-directory "Dailies/")
+  (org-roam-capture-templates
    `(("d" "Default" plain
       (file ,(concat user-emacs-directory "/CaptureTemplates/OrgRoam/DefaultTemplate.org"))
       :if-new (file+head "${slug}.org" "#+TITLE: ${title}\n#+DATE:%U\n")
@@ -1233,20 +1199,49 @@
       (file ,(concat user-emacs-directory "/CaptureTemplates/OrgRoam/NewJapaneseFlashbackTemplate.org"))
       :if-new (file+head "Languages/Japanese/Flashbacks/${slug}.org" "#+TITLE: ${title}\n#+DATE:%U\n")
       :unnarrowed t)))
+  :general-config
+  (local-leader
+    :major-modes '(org-mode t)
+    :keymaps     '(org-mode-map)
+    "r"          (which-key-prefix "org-roam")
+    "rc"         'org-roam-capture
+    "rf"         'org-roam-node-find
+    "rg"         'org-roam-graph
+    "ri"         'org-roam-node-insert
+    "rI"         'org-id-get-create
+    "rl"         'org-roam-buffer-toggle
+    "ra"         'org-roam-alias-add
+
+    "rd"         (which-key-prefix "org-roam-dailies")
+    "rdy"        'org-roam-dailies-goto-yesterday
+    "rdt"        'org-roam-dailies-goto-today
+    "rdT"        'org-roam-dailies-goto-tomorrow
+    "rdd"        'org-roam-dailies-goto-date
+
+    "rt"         (which-key-prefix "org-roam-tags")
+    "rta"        'org-roam-tag-add
+    "rtr"        'org-roam-tag-remove)
+  :config
+  (defvar oc-capture-prmt-history nil
+    "History of prompt answers for org capture.")
+  (defun oc/prmt (prompt variable)
+    "PROMPT for string, save it to VARIABLE and insert it."
+    (make-local-variable variable)
+    (set variable (read-string (concat prompt ": ") nil oc-capture-prmt-history)))
   (org-roam-db-autosync-mode))
 
 (use-package org-roam-ui
-  :after org-roam
+  :after (org-roam)
+  :custom
+  (org-roam-ui-sync-theme t)
+  (org-roam-ui-follow t)
+  (org-roam-ui-update-on-save t)
+  (org-roam-ui-open-on-start t)
   :general-config
   (local-leader
     :major-modes (org-mode t)
     :keymaps     (org-mode-map)
-    "ru"         'org-roam-ui-mode)
-  :config
-  (setq org-roam-ui-sync-theme t
-        org-roam-ui-follow t
-        org-roam-ui-update-on-save t
-        org-roam-ui-open-on-start t))
+    "ru"         'org-roam-ui-mode))
 
 (use-package org-indent
   :straight nil
@@ -1255,41 +1250,29 @@
 (use-package org-clock
   :straight nil
   :after    org
-  :config
-  (setq
-   ;; Save the running clock and all clock history when exiting Emacs, load it on startup
-   org-clock-persist t
-   ;; Resume clocking task on clock-in if the clock is open
-   org-clock-in-resume t
-   ;; Do not prompt to resume an active clock, just resume it
-   org-clock-persist-query-resume nil
-   ;; Change tasks to WORKING when clocking in
-   org-clock-in-switch-to-state "WORKING"
-   ;; Change tasks to DONE when clocking out
-   ;; org-clock-out-switch-to-state "DONE"
-   ;; Save clock data and state changes and notes in the LOGBOOK drawer
-   org-clock-into-drawer t
-   ;; Don't remove clocks with 0:00 duration
-   org-clock-out-remove-zero-time-clocks nil
-   ;; Clock out when moving task to a done state
-   org-clock-out-when-done t
-   ;; Enable auto clock resolution for finding open clocks
-   org-clock-auto-clock-resolution 'when-no-clock-is-running
-   ;; Include current clocking task in clock reports
-   org-clock-report-include-clocking-task t
-   org-clock-idle-time nil
-   org-clock-persist-file (cache: "org-clock-save.el"))
-
-  (defun org-generate-time-table ()
-    "Spawn time table for the week."
-    (interactive)
-    (insert
-     "#+BEGIN: clocktable :maxlevel 6 :block thisweek :scope file :step day :stepskip0 t :fileskip0 t\n#+END:")
-    (org-ctrl-c-ctrl-c))
-
-  ;; Resume clocking task when emacs is restarted
-  (org-clock-persistence-insinuate)
-
+  :custom
+  ;; Save the running clock and all clock history when exiting Emacs, load it on startup
+  (org-clock-persist t)
+  ;; Resume clocking task on clock-in if the clock is open
+  (org-clock-in-resume t)
+  ;; Do not prompt to resume an active clock, just resume it
+  (org-clock-persist-query-resume nil)
+  ;; Change tasks to WORKING when clocking in
+  (org-clock-in-switch-to-state "WORKING")
+  ;; Change tasks to DONE when clocking out
+  ;; org-clock-out-switch-to-state "DONE"
+  ;; Save clock data and state changes and notes in the LOGBOOK drawer
+  (org-clock-into-drawer t)
+  ;; Don't remove clocks with 0:00 duration
+  (org-clock-out-remove-zero-time-clocks nil)
+  ;; Clock out when moving task to a done state
+  (org-clock-out-when-done t)
+  ;; Enable auto clock resolution for finding open clocks
+  (org-clock-auto-clock-resolution 'when-no-clock-is-running)
+  ;; Include current clocking task in clock reports
+  (org-clock-report-include-clocking-task t)
+  (org-clock-idle-time nil)
+  (org-clock-persist-file (cache: "org-clock-save.el"))
   :general-config
   (local-leader
     :major-modes '(org-mode t)
@@ -1304,12 +1287,22 @@
     "cr"         'org-clock-report
     "cR"         'org-resolve-clocks
     "ct"         'org-clock-modify-effort-estimate
-    "cT"         'org-generate-time-table))
+    "cT"         'org-generate-time-table)
+  :config
+  (defun org-generate-time-table ()
+    "Spawn time table for the week."
+    (interactive)
+    (insert
+     "#+BEGIN: clocktable :maxlevel 6 :block thisweek :scope file :step day :stepskip0 t :fileskip0 t\n#+END:")
+    (org-ctrl-c-ctrl-c))
+
+  ;; Resume clocking task when emacs is restarted
+  (org-clock-persistence-insinuate))
 
 (use-package org-pomodoro
   :after org
-  :config
-  (setq org-pomodoro-length 20)
+  :custom
+  (org-pomodoro-length 20)
   :general-config
   (local-leader
     :major-modes '(org-mode t)
