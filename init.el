@@ -392,48 +392,49 @@
   (unbind-key (kbd "M-SPC"))
   (defalias #'forward-evil-word #'forward-evil-symbol)
   ;; make evil-search-word look for symbol rather than word boundaries
-  (setq-default evil-symbol-word-search t)
+  (setq-default evil-symbol-word-search t))
 
-  (defun evil-toggle-input-method ()
-    "when toggle on input method, switch to evil-insert-state if possible.
+(defun evil-toggle-input-method ()
+  "when toggle on input method, switch to evil-insert-state if possible.
   when toggle off input method, switch to evil-normal-state if current state is evil-insert-state"
-    (interactive)
-    (if (not current-input-method)
-        (if (not (string= evil-state "insert"))
-            (evil-insert-state))
-      (if (string= evil-state "insert")
-          (evil-normal-state)))
-    (toggle-input-method)))
+  (interactive)
+  (if (not current-input-method)
+      (if (not (string= evil-state "insert"))
+          (evil-insert-state))
+    (if (string= evil-state "insert")
+        (evil-normal-state)))
+  (toggle-input-method))
 
 (use-package evil-collection
   :after (evil)
+  :custom
+  (evil-collection-calendar-want-org-bindings t)
   :config
-  (setq evil-collection-mode-list (remove 'elfeed evil-collection-mode-list))
-  (setq evil-collection-calendar-want-org-bindings t)
-  (evil-collection-init))
+  (evil-collection-init)
+  (setq evil-collection-mode-list
+        (remove 'elfeed evil-collection-mode-list)))
 
 (use-package evil-surround
-  :after evil
-  :config (global-evil-surround-mode 1))
+  :after (evil)
+  :hook (after-init . global-evil-surround-mode))
 
 (use-package evil-anzu
-  :after evil
-  :config
-  (global-anzu-mode))
+  :after (evil)
+  :hook (after-init . global-anzu-mode))
 
 (use-package evil-commentary
-  :after evil
-  :config (evil-commentary-mode))
+  :after (evil)
+  :hook (after-init . evil-commentary-mode))
 
 (use-package evil-terminal-cursor-changer
   :when terminal-p
-  :config
-  (evil-terminal-cursor-changer-activate))
+  :hook (after-init . evil-terminal-cursor-changer-activate))
 
 (use-package evil-lisp-state
-  :after evil
-  :init
-  (setq evil-lisp-state-global t)
+  :after (evil)
+  :custom
+  (evil-lisp-state-global t)
+  (evil-lisp-state-cursor '(hbar . 2))
   :general-config
   (global-leader
     "k"   (which-key-prefix :lisp)
