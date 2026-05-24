@@ -931,20 +931,21 @@
 
 (use-package evil-org
   :after (evil org)
+  :custom
+  (evil-org-use-additional-insert t)
+  (evil-org-key-theme '(textobjects navigation additional todo))
   :config
   (add-hook 'org-mode-hook (lambda ()
                              (evil-org-mode)
-                             (evil-normalize-keymaps)))
-  (setq evil-org-use-additional-insert t
-        evil-org-key-theme '(textobjects navigation additional todo)))
+                             (evil-normalize-keymaps))))
 
 (use-package org-keys
   :straight nil
   :after org
+  :custom
+  (org-return-follows-link t)
+  (org-mouse-1-follows-link t)
   :config
-  (setq org-return-follows-link t
-        org-mouse-1-follows-link t)
-
   (defun calendar-one-day-forward ()
     (interactive)
     (org-eval-in-calendar '(calendar-forward-day 1)))
@@ -1055,18 +1056,18 @@
 (use-package ob
   :straight (:type built-in)
   :defer t
+  :custom
+  (org-babel-languages '(lisp clojure scheme
+                              dot shell awk restclient
+                              http C ruby
+                              lua fennel nix
+                              hledger python))
   :config
   (add-hook 'org-babel-after-execute-hook
             (lambda ()
               (when org-inline-image-overlays
                 (org-redisplay-inline-images))))
 
-  :config
-  (setq org-babel-languages '(lisp clojure scheme
-                                   dot shell awk restclient
-                                   http C ruby
-                                   lua fennel nix
-                                   hledger python))
   (org-babel-do-load-languages
    'org-babel-load-languages
    (mapcar (lambda (language) `(,language . t)) org-babel-languages))
@@ -1100,6 +1101,18 @@
 (use-package org-capture
   :straight nil
   :defer    t
+  :custom
+  (org-capture-templates
+   `(("t" "TODO" entry (file+headline ,(concat org-directory "/TODO.org") "Tasks")
+      "** TODO %?          :%^{Tag}:\n\nEntered on %U\n%i\n%a\n")
+     ("l" "TIL" entry (file+headline ,(concat org-directory "/TIL.org") "TIL")
+      "** %?          :%^{Tag}:\n\nEntered on %U\n%i\n%a\n")
+     ("c" "Clipboard" entry (file+headline ,(concat org-directory "/Clipboard.org") "Clipboard")
+      "** %?          :%^{Tag}:\n\nEntered on %U\n%i\n%a\n")
+     ("a" "Journal" entry (file+datetree,(concat org-directory "/Journal.org"))
+      "** %U\n\n%?\n%i\n")
+     ("n" "ShowerThoughts" entry (file+headline ,(concat org-directory "/ShowerThoughts.org") "ShowerThoughts")
+      "** %?          :%^{Tag}:\n\nEntered on %U\n%i\n%a\n")))
   :general-config
   (local-leader
     :major-modes '(org-capture-mode t)
@@ -1108,31 +1121,23 @@
     "a"          'org-capture-kill
     "c"          'org-capture-finalize
     "k"          'org-capture-kill
-    "r"          'org-capture-refile)
-
-  :config
-  (setq org-capture-templates
-        `(("t" "TODO" entry (file+headline ,(concat org-directory "/TODO.org") "Tasks")
-           "** TODO %?          :%^{Tag}:\n\nEntered on %U\n%i\n%a\n")
-          ("l" "TIL" entry (file+headline ,(concat org-directory "/TIL.org") "TIL")
-           "** %?          :%^{Tag}:\n\nEntered on %U\n%i\n%a\n")
-          ("c" "Clipboard" entry (file+headline ,(concat org-directory "/Clipboard.org") "Clipboard")
-           "** %?          :%^{Tag}:\n\nEntered on %U\n%i\n%a\n")
-          ("a" "Journal" entry (file+datetree,(concat org-directory "/Journal.org"))
-           "** %U\n\n%?\n%i\n")
-          ("n" "ShowerThoughts" entry (file+headline ,(concat org-directory "/ShowerThoughts.org") "ShowerThoughts")
-           "** %?          :%^{Tag}:\n\nEntered on %U\n%i\n%a\n"))))
+    "r"          'org-capture-refile))
 
 (use-package org-agenda
   :straight nil
   :defer    t
-  :config
-  (setq org-agenda-clockreport-parameter-plist
-        '(:link t :scope subtree :maxlevel 2 :step day :block thisweek :stepskip0 t :fileskip0 t)))
+  :custom
+  (org-agenda-clockreport-parameter-plist
+   '(:link t :scope subtree :maxlevel 2 :step day :block thisweek :stepskip0 t :fileskip0 t)))
 
 (use-package org-src
   :straight nil
   :defer    t
+  :custom
+  (org-src-window-setup 'split-window-below)
+  (org-src-fontify-natively t)
+  (org-src-tab-acts-natively t)
+  (org-edit-src-content-indentation 0)
   :general-config
   (local-leader
     :major-modes '(org-src-mode t)
