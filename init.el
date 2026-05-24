@@ -344,33 +344,35 @@
 ;; ==================================================
 
 (use-package evil
-  :init
-  (setq evil-want-keybinding nil
-        evil-disable-insert-state-bindings t
-        evil-want-C-u-scroll t
-        evil-want-integration t
-        evil-undo-system 'undo-fu
-        evil-want-fine-undo t
-        evil-mode-line-format nil)
+  ; :hook
+  ; (after-init . evil-mode)
+  :custom
+  (evil-want-keybinding nil)
+  (evil-disable-insert-state-bindings t)
+  (evil-want-C-u-scroll t)
+  (evil-want-integration t)
+  (evil-undo-system 'undo-fu)
+  (evil-want-fine-undo t)
+  (evil-mode-line-format nil)
+  (evil-motion-state-cursor 'box)
+  (evil-visual-state-cursor 'box)
+  (evil-normal-state-cursor 'box)
+  (evil-insert-state-cursor 'bar)
+  (evil-emacs-state-cursor  'bar)
+  (evil-insert-state-message nil)
+  (evil-motion-state-message nil)
+  (evil-normal-state-message nil)
+  (evil-operator-state-message nil)
+  (evil-replace-state-message nil)
+  (evil-visual-state-message nil)
+  (evil-emacs-state-message nil)
+  (evil-shift-width 2)  ; TODO Make this language-dependent
   :config
   (evil-mode 1)
   ;; set leader key in normal state
   (evil-set-leader 'normal (kbd "SPC"))
   ;; set local leader
   (evil-set-leader 'normal "," t)
-  (setq evil-motion-state-cursor 'box
-        evil-visual-state-cursor 'box
-        evil-normal-state-cursor 'box
-        evil-insert-state-cursor 'bar
-        evil-emacs-state-cursor  'bar)
-  (setq evil-insert-state-message nil
-        evil-motion-state-message nil
-        evil-normal-state-message nil
-        evil-operator-state-message nil
-        evil-replace-state-message nil
-        evil-visual-state-message nil
-        evil-emacs-state-message nil)
-  (setq evil-shift-width 2)  ; TODO Make this language-dependent
   (evil-ex-define-cmd "q" 'kill-current-buffer)
   (evil-ex-define-cmd "Q" 'kill-current-buffer)
   (evil-ex-define-cmd "W" 'save-buffer)
