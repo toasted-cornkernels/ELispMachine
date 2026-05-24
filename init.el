@@ -344,29 +344,6 @@
 ;; ==================================================
 
 (use-package evil
-  ; :hook
-  ; (after-init . evil-mode)
-  :custom
-  (evil-want-keybinding nil)
-  (evil-disable-insert-state-bindings t)
-  (evil-want-C-u-scroll t)
-  (evil-want-integration t)
-  (evil-undo-system 'undo-fu)
-  (evil-want-fine-undo t)
-  (evil-mode-line-format nil)
-  (evil-motion-state-cursor 'box)
-  (evil-visual-state-cursor 'box)
-  (evil-normal-state-cursor 'box)
-  (evil-insert-state-cursor 'bar)
-  (evil-emacs-state-cursor  'bar)
-  (evil-insert-state-message nil)
-  (evil-motion-state-message nil)
-  (evil-normal-state-message nil)
-  (evil-operator-state-message nil)
-  (evil-replace-state-message nil)
-  (evil-visual-state-message nil)
-  (evil-emacs-state-message nil)
-  (evil-shift-width 2)  ; TODO Make this language-dependent
   :config
   (evil-mode 1)
   ;; set leader key in normal state
@@ -379,8 +356,6 @@
   (evil-ex-define-cmd "Wq" 'evil-save-and-close)
   (evil-ex-define-cmd "WQ" 'evil-save-and-close)
   (evil-ex-define-cmd "E" 'evil-edit)
-  (setq evil-vsplit-window-right t
-        evil-split-window-below t)
 
   (evil-define-key* 'normal 'global
     (kbd "C-w C-h") 'evil-window-left
@@ -393,6 +368,38 @@
   (defalias #'forward-evil-word #'forward-evil-symbol)
   ;; make evil-search-word look for symbol rather than word boundaries
   (setq-default evil-symbol-word-search t))
+
+(use-package evil-vars
+  :straight nil
+  :after (evil)
+  :custom
+  (evil-want-keybinding nil)
+  (evil-disable-insert-state-bindings t)
+  (evil-want-C-u-scroll t)
+  (evil-want-integration t)
+  (evil-undo-system 'undo-fu)
+  (evil-want-fine-undo t)
+  (evil-mode-line-format nil)
+  (evil-shift-width 2)             ; TODO Make this language-dependent
+  (evil-vsplit-window-right t)
+  (evil-split-window-below t))
+
+(use-package evil-states
+  :straight nil
+  :after (evil)
+  :custom
+  (evil-motion-state-cursor 'box)
+  (evil-visual-state-cursor 'box)
+  (evil-normal-state-cursor 'box)
+  (evil-insert-state-cursor 'bar)
+  (evil-emacs-state-cursor  'bar)
+  (evil-insert-state-message nil)
+  (evil-motion-state-message nil)
+  (evil-normal-state-message nil)
+  (evil-operator-state-message nil)
+  (evil-replace-state-message nil)
+  (evil-visual-state-message nil)
+  (evil-emacs-state-message nil))
 
 (defun evil-toggle-input-method ()
   "when toggle on input method, switch to evil-insert-state if possible.
