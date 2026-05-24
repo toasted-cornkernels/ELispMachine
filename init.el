@@ -7485,7 +7485,9 @@ removal."
       (elfeed-search-untag-all-unread)))
 
   ;; (advice-add 'elfeed-search-show-entry :after #'elfeed-show-refresh)
-  )
+  (let ((opml-location "~/RSSFeed/feeds.opml"))
+    (when (file-exists-p opml-location)
+      (elfeed-load-opml opml-location))))
 
 (use-package elfeed-goodies
   :commands elfeed-goodies/setup)
