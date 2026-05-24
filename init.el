@@ -147,21 +147,21 @@
 ;; ==================================================
 
 (use-package which-key
-  :config
-  (setq which-key-add-column-padding 1
-        which-key-echo-keystrokes 0.02
-        which-key-idle-delay 0.2
-        which-key-idle-secondary-delay 0.01
-        which-key-max-description-length 32
-        which-key-max-display-columns nil
-        which-key-min-display-lines 6
-        which-key-prevent-C-h-from-cycling t
-        which-key-sort-order 'which-key-prefix-then-key-order
-        which-key-sort-uppercase-first nil
-        which-key-special-keys nil
-        which-key-use-C-h-for-paging t
-        which-key-allow-evil-operators t)
-  (which-key-mode))
+  :hook (after-init . which-key-mode)
+  :custom
+  (which-key-add-column-padding 1)
+  (which-key-echo-keystrokes 0.02)
+  (which-key-idle-delay 0.2)
+  (which-key-idle-secondary-delay 0.01)
+  (which-key-max-description-length 32)
+  (which-key-max-display-columns nil)
+  (which-key-min-display-lines 6)
+  (which-key-prevent-C-h-from-cycling t)
+  (which-key-sort-order 'which-key-prefix-then-key-order)
+  (which-key-sort-uppercase-first nil)
+  (which-key-special-keys nil)
+  (which-key-use-C-h-for-paging t)
+  (which-key-allow-evil-operators t))
 
 ;; Useful Elisp Libraries ===========================
 ;; ==================================================
@@ -1058,7 +1058,7 @@
                                    dot shell awk restclient
                                    http C ruby
                                    lua fennel nix
-                                   hledger))
+                                   hledger python))
   (org-babel-do-load-languages
    'org-babel-load-languages
    (mapcar (lambda (language) `(,language . t)) org-babel-languages))
@@ -1803,6 +1803,12 @@
     "p"          'gptel-context-previous
     "d"          'gptel-context-flag-deletion))
 
+(use-package agent-shell
+  :defer t
+  :config
+  (setq agent-shell-github-command nil
+        agent-shell-github-acp-command '("copilot" "--acp" "--model" "claude-opus-4.7")))
+
 ;; Shell config =====================================
 ;; ==================================================
 
@@ -1822,6 +1828,10 @@
 
 (use-package cc-mode
   :defer t
+  :hook ((c-mode . (lambda ()
+                     (setq indent-tabs-mode 4)))
+         (c++-mode . (lambda ()
+                       (setq indent-tabs-mode 4))))
   :config
   (unbind-key "C-d" 'c-mode-map)
   (unbind-key "C-d" 'c++-mode-map)
@@ -5019,10 +5029,6 @@ set so that it clears the whole REPL buffer, not just the output."
             (lambda ()
               (evil-define-key 'normal dired-mode-map (kbd "SPC") nil))))
 
-(use-package diff-hl
-  :after dired
-  :hook (dired-mode . diff-hl-dired-mode-unless-remote))
-
 (use-package diredfl
   :after dired
   :config
@@ -5559,7 +5565,7 @@ Uses `magit-patch-save-arguments' internally, so inherit its settings."
 (use-package gh-notify
   :after (magit forge)
   :general-config
-  (normal-mode-major-mode               ; TODO: complete this
+  (agnostic-key               ; TODO: complete this
     :major-modes '(gh-notify-mode t)
     :keymaps     '(gh-notify-mode-map)
     "RET"        'gh-notify-visit-notification
@@ -5570,36 +5576,43 @@ Uses `magit-patch-save-arguments' internally, so inherit its settings."
     "d"          'gh-notify-marked-notifications-set-done
     "t"          'gh-notify-marked-notifications-set-unread
     "p"          'gh-notify-marked-notifications-set-pending
-    "q"          'magit-bury-buffer-function))
+    "q"          'magit-bury-or-kill-buffer
+    "gr"         'gh-notify-forge-refresh
+    "y"          'gh-notify-copy-url))
 
-;; Git-gutter config ===============================
+;; diff-hl config ===================================
 ;; ==================================================
 
-(use-package git-gutter
+(use-package diff-hl
+  :hook ((after-init . global-diff-hl-mode)
+         (dired-mode . diff-hl-dired-mode-unless-remote)
+         (magit-pre-refresh . diff-hl-magit-pre-refresh)
+         (magit-post-refresh . diff-hl-magit-post-refresh))
+
+  :custom
+  (diff-hl-show-staged-changes t)
+  (diff-hl-global-modes '(not pdf-view-mode doc-view-mode image-mode))
+
   :general-config
   (local-leader
-    :predicate 'git-gutter-mode
-    "G"        (which-key-prefix :git-gutter)
-    "Gn"       'git-gutter:next-hunk
-    "Gp"       'git-gutter:previous-hunk
-    "G$"       'git-gutter:end-of-hunk
-    "Ge"       'git-gutter:end-of-hunk
-    "Gr"       'git-gutter:revert-hunk
-    "Gs"       'git-gutter:stage-hunk
-    "Ga"       'git-gutter:stage-hunk
-    "Gm"       'git-gutter:mark-hunk
-    "Gp"       'git-gutter:popup-hunk
-    "Gc"       'git-gutter:clear
-    "GG"       'git-gutter:toggle)
+    :predicate 'diff-hl-mode
+    "v"   (which-key-prefix :diff-hl)
+    "vj"  'diff-hl-next-hunk
+    "vk"  'diff-hl-previous-hunk
+    "vJ"  'diff-hl-show-hunk-next
+    "vK"  'diff-hl-show-hunk-previous
 
-  :config
-  (setq git-gutter:modified-sign " "
-        git-gutter:added-sign "+"
-        git-gutter:deleted-sign "-"
-        git-gutter:diff-option "-w"
-        git-gutter:hide-gutter t ; Hide gutter when there are no changes
-        git-gutter:disabled-modes '(pdf-view-mode doc-view-mode image-mode))
-  (global-git-gutter-mode))
+    "vn"  'diff-hl-next-hunk
+    "vp"  'diff-hl-previous-hunk
+    "vN"  'diff-hl-show-hunk-next
+    "vP"  'diff-hl-show-hunk-previous
+
+    "va"  'diff-hl-stage-current-hunk
+    "vs"  'diff-hl-stage-current-hunk
+    "vS"  'diff-hl-stage-some
+    "vr"  'diff-hl-revert-hunk
+    "vm"  'diff-hl-mark-hunk
+    "v."  'diff-hl-show-hunk))
 
 ;; Smerge Config ====================================
 ;; ==================================================
@@ -7290,6 +7303,10 @@ removal."
     (kbd "<C-down-mouse-1>") 'pdf-view-mouse-extend-region
     (kbd "<M-down-mouse-1>") 'pdf-view-mouse-set-region-rectangle
     (kbd "<down-mouse-1>")  'pdf-view-mouse-set-region))
+
+(use-package image-roll
+  :straight
+  (:host github :repo "dalanicolai/image-roll.el"))
 
 (use-package pdf-view-restore
   :after pdf-tools
