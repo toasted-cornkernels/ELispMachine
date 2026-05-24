@@ -97,7 +97,7 @@
                      "-mode$" ""
                      (symbol-name major-mode))))))
 
-  ;; works everywhere irrelevant of evil state
+  ;; works in any evil state
   (general-create-definer agnostic-key
     :keymaps 'override
     :prefix  ""
@@ -119,10 +119,11 @@
 ;; ==================================================
 
 (use-package no-littering
+  :custom
+  (auto-save-file-name-transforms
+   `((".*" ,(no-littering-expand-var-file-name "auto-save/") t)))
+  (custom-file (no-littering-expand-etc-file-name "custom.el"))
   :config
-  (setq auto-save-file-name-transforms
-        `((".*" ,(no-littering-expand-var-file-name "auto-save/") t)))
-  (setq custom-file (no-littering-expand-etc-file-name "custom.el"))
   (when (fboundp 'startup-redirect-eln-cache)
     (defvar native-comp-eln-load-path nil)
     (startup-redirect-eln-cache
@@ -131,23 +132,26 @@
 
 (use-package files
   :straight (:type built-in)
+  :hook
+  (after-init . auto-save-visited-mode)
+  :custom
+  (backup-directory-alist `(("." . ,(concat user-emacs-directory "backups/"))))
+  (backup-by-copying t)
+  (delete-old-versions t)
+  (kept-new-versions 6)
+  (kept-old-versions 2)
+  (version-control t)
   :config
-  (setq backup-directory-alist `(("." . ,(concat user-emacs-directory "backups/")))
-        backup-by-copying t
-        delete-old-versions t
-        kept-new-versions 6
-        kept-old-versions 2
-        version-control t)
   (remove-hook 'find-file-hooks 'vc-find-file-hook)
   (when macOS-p
-    (setq insert-directory-program "gls"))
-  (auto-save-visited-mode 1))
+    (setq insert-directory-program "gls")))
 
 ;; Which-key configs ================================
 ;; ==================================================
 
 (use-package which-key
-  :hook (after-init . which-key-mode)
+  :hook
+  (after-init . which-key-mode)
   :custom
   (which-key-add-column-padding 1)
   (which-key-echo-keystrokes 0.02)
@@ -312,19 +316,21 @@
 
 (use-package colorful-mode
   :defer t
+  :hook (after-init . global-colorful-mode)
+  :custom
+  (colorful-use-prefix nil)
+  (colorful-only-strings 'only-prog)
+  (css-fontify-colors t)
+  (colorful-extra-color-keyword-functions
+   '(colorful-add-hex-colors
+     ((html-mode css-mode emacs-lisp-mode)
+      colorful-add-css-variables-colors
+      colorful-add-rgb-colors
+      colorful-add-hsl-colors
+      colorful-add-oklab-oklch-colors
+      colorful-add-color-names)
+     (latex-mode . colorful-add-latex-colors)))
   :config
-  (setq colorful-use-prefix nil
-        colorful-only-strings 'only-prog
-        css-fontify-colors t
-        colorful-extra-color-keyword-functions '(colorful-add-hex-colors
-                                                 ((html-mode css-mode emacs-lisp-mode)
-                                                  colorful-add-css-variables-colors
-                                                  colorful-add-rgb-colors
-                                                  colorful-add-hsl-colors
-                                                  colorful-add-oklab-oklch-colors
-                                                  colorful-add-color-names)
-                                                 (latex-mode . colorful-add-latex-colors)))
-  (global-colorful-mode)
   (add-to-list 'global-colorful-modes 'helpful-mode))
 
 (use-package symbol-overlay             ; TODO
@@ -338,33 +344,35 @@
 ;; ==================================================
 
 (use-package evil
-  :init
-  (setq evil-want-keybinding nil
-        evil-disable-insert-state-bindings t
-        evil-want-C-u-scroll t
-        evil-want-integration t
-        evil-undo-system 'undo-fu
-        evil-want-fine-undo t
-        evil-mode-line-format nil)
+  ; :hook
+  ; (after-init . evil-mode)
+  :custom
+  (evil-want-keybinding nil)
+  (evil-disable-insert-state-bindings t)
+  (evil-want-C-u-scroll t)
+  (evil-want-integration t)
+  (evil-undo-system 'undo-fu)
+  (evil-want-fine-undo t)
+  (evil-mode-line-format nil)
+  (evil-motion-state-cursor 'box)
+  (evil-visual-state-cursor 'box)
+  (evil-normal-state-cursor 'box)
+  (evil-insert-state-cursor 'bar)
+  (evil-emacs-state-cursor  'bar)
+  (evil-insert-state-message nil)
+  (evil-motion-state-message nil)
+  (evil-normal-state-message nil)
+  (evil-operator-state-message nil)
+  (evil-replace-state-message nil)
+  (evil-visual-state-message nil)
+  (evil-emacs-state-message nil)
+  (evil-shift-width 2)  ; TODO Make this language-dependent
   :config
   (evil-mode 1)
   ;; set leader key in normal state
   (evil-set-leader 'normal (kbd "SPC"))
   ;; set local leader
   (evil-set-leader 'normal "," t)
-  (setq evil-motion-state-cursor 'box
-        evil-visual-state-cursor 'box
-        evil-normal-state-cursor 'box
-        evil-insert-state-cursor 'bar
-        evil-emacs-state-cursor  'bar)
-  (setq evil-insert-state-message nil
-        evil-motion-state-message nil
-        evil-normal-state-message nil
-        evil-operator-state-message nil
-        evil-replace-state-message nil
-        evil-visual-state-message nil
-        evil-emacs-state-message nil)
-  (setq evil-shift-width 2)  ; TODO Make this language-dependent
   (evil-ex-define-cmd "q" 'kill-current-buffer)
   (evil-ex-define-cmd "Q" 'kill-current-buffer)
   (evil-ex-define-cmd "W" 'save-buffer)
@@ -384,48 +392,49 @@
   (unbind-key (kbd "M-SPC"))
   (defalias #'forward-evil-word #'forward-evil-symbol)
   ;; make evil-search-word look for symbol rather than word boundaries
-  (setq-default evil-symbol-word-search t)
+  (setq-default evil-symbol-word-search t))
 
-  (defun evil-toggle-input-method ()
-    "when toggle on input method, switch to evil-insert-state if possible.
+(defun evil-toggle-input-method ()
+  "when toggle on input method, switch to evil-insert-state if possible.
   when toggle off input method, switch to evil-normal-state if current state is evil-insert-state"
-    (interactive)
-    (if (not current-input-method)
-        (if (not (string= evil-state "insert"))
-            (evil-insert-state))
-      (if (string= evil-state "insert")
-          (evil-normal-state)))
-    (toggle-input-method)))
+  (interactive)
+  (if (not current-input-method)
+      (if (not (string= evil-state "insert"))
+          (evil-insert-state))
+    (if (string= evil-state "insert")
+        (evil-normal-state)))
+  (toggle-input-method))
 
 (use-package evil-collection
   :after (evil)
+  :custom
+  (evil-collection-calendar-want-org-bindings t)
   :config
-  (setq evil-collection-mode-list (remove 'elfeed evil-collection-mode-list))
-  (setq evil-collection-calendar-want-org-bindings t)
-  (evil-collection-init))
+  (evil-collection-init)
+  (setq evil-collection-mode-list
+        (remove 'elfeed evil-collection-mode-list)))
 
 (use-package evil-surround
-  :after evil
-  :config (global-evil-surround-mode 1))
+  :after (evil)
+  :hook (after-init . global-evil-surround-mode))
 
 (use-package evil-anzu
-  :after evil
-  :config
-  (global-anzu-mode))
+  :after (evil)
+  :hook (after-init . global-anzu-mode))
 
 (use-package evil-commentary
-  :after evil
-  :config (evil-commentary-mode))
+  :after (evil)
+  :hook (after-init . evil-commentary-mode))
 
 (use-package evil-terminal-cursor-changer
   :when terminal-p
-  :config
-  (evil-terminal-cursor-changer-activate))
+  :hook (after-init . evil-terminal-cursor-changer-activate))
 
 (use-package evil-lisp-state
-  :after evil
-  :init
-  (setq evil-lisp-state-global t)
+  :after (evil)
+  :custom
+  (evil-lisp-state-global t)
+  (evil-lisp-state-cursor '(hbar . 2))
   :general-config
   (global-leader
     "k"   (which-key-prefix :lisp)
@@ -491,9 +500,9 @@
     "kDs" 'evil-lisp-state-sp-backward-kill-symbol
     "kDw" 'evil-lisp-state-sp-backward-kill-word
     "kDx" 'evil-lisp-state-sp-backward-kill-sexp)
-  :config
-  (setq evil-lisp-state-cursor '(hbar . 2))
-  (bind-key "C-g" 'evil-lisp-state/quit))
+  (agnostic-key
+    :keymaps     '(evil-lisp-state-map)
+    "C-g"        'evil-lisp-state/quit))
 
 ;; Corfu config =====================================
 ;; ==================================================
@@ -506,13 +515,11 @@
   (corfu-min-width 40)
   (corfu-auto-prefix 2)
   (corfu-auto-delay 0.25)
-
   :init
   (global-corfu-mode)
   (corfu-echo-mode)
   (corfu-history-mode)
   (corfu-popupinfo-mode)
-
   :general
   (agnostic-key
     :major-modes '(corfu-map-mode t)
@@ -612,9 +619,9 @@
 
 (use-package ddskk
   :defer t
-  :config
-  (setq skk-tut-file (concat (elispm/straight-get-repo-dir "ddskk") "/etc/SKK.tut")
-        skk-large-jisyo "~/LambdaMachine/ExternalConfigs/SKKJisho/SKK-JISYO.L"))
+  :custom
+  (skk-tut-file (concat (elispm/straight-get-repo-dir "ddskk") "/etc/SKK.tut"))
+  (skk-large-jisyo "~/LambdaMachine/ExternalConfigs/SKKJisho/SKK-JISYO.L"))
 
 ;; Manage-minor-mode ================================
 ;; ==================================================
@@ -626,8 +633,8 @@
 
 (use-package emojify
   :defer t
-  :config
-  (setq emojify-emoji-styles '(unicode github)))
+  :custom
+  (emojify-emoji-styles '(unicode github)))
 
 ;; Align ============================================
 ;; ==================================================
@@ -669,6 +676,46 @@
 (use-package org
   :straight (:type built-in)
   :defer t
+  :custom
+  (org-pretty-entities t)
+  (org-global-properties
+   '(("Effort_ALL" .
+      "0:15 0:30 0:45 1:00 2:00 3:00 4:00 5:00 6:00 0:00")))
+  ;;   1    2    3    4    5    6    7    8    9    0
+  ;; These are the hotkeys ^^
+  (org-time-stamp-rounding-minutes '(0 30))
+  (org-id-locations-file (cache: ".org-id-locations"))
+  (org-directory "~/Org")
+  (org-work-directory "~/Work/WorkNotes")
+  (org-default-notes-file (expand-file-name
+                           "notes.org" org-directory))
+  (org-log-done 'time)
+  (org-startup-with-inline-images t)
+  (org-startup-latex-with-latex-preview t)
+  (org-format-latex-options '(:foreground default
+                                          :background "Transparent"
+                                          :scale 1.5
+                                          :html-foreground "Black"
+                                          :html-background "Transparent"
+                                          :html-scale 1.0
+                                          :matchers ("begin" "$1" "$" "$$" "\\(" "\\[")))
+  (org-image-actual-width nil)
+  (org-imenu-depth 8)
+  (org-link-descriptive t)
+  (org-hide-emphasis-markers t)
+  (org-enforce-todo-dependencies t)
+  (org-todo-keywords '((sequence "TODO" "NEXT" "WORKING" "HOLD" "|"
+                                 "DONE" "ABORTED")))
+  (org-export-backends '(ascii html icalendar latex odt markdown))
+  (org-modules (append '(org-crypt
+                         org-habit
+                         ol-eww
+                         ol-w3m
+                         ol-doi
+                         ol-bibtex
+                         ol-info
+                         ol-man)))
+  (org-fontify-quote-and-verse-blocks t) 
   :general-config
   (local-leader
     :major-modes '(org-mode t)
@@ -875,46 +922,7 @@
        (org-insert-structure-template ,code)))
 
   (add-hook 'org-after-todo-statistics-hook #'cycle-todo-state)
-
-  (setq org-pretty-entities t
-        org-global-properties
-        '(("Effort_ALL" .
-           "0:15 0:30 0:45 1:00 2:00 3:00 4:00 5:00 6:00 0:00"))
-        ;;    1    2    3    4    5    6    7    8    9    0
-        ;; These are the hotkeys ^^
-        org-time-stamp-rounding-minutes '(0 30)
-        org-id-locations-file (cache: ".org-id-locations")
-        org-directory "~/Org"
-        org-work-directory "~/Work/WorkNotes"
-        org-default-notes-file (expand-file-name
-                                "notes.org" org-directory)
-        org-log-done 'time
-        org-startup-with-inline-images t
-        org-startup-latex-with-latex-preview t
-        org-format-latex-options '(:foreground default
-                                               :background "Transparent"
-                                               :scale 1.5
-                                               :html-foreground "Black"
-                                               :html-background "Transparent"
-                                               :html-scale 1.0
-                                               :matchers ("begin" "$1" "$" "$$" "\\(" "\\["))
-        org-image-actual-width nil
-        org-imenu-depth 8
-        org-link-descriptive t
-        org-hide-emphasis-markers t
-        org-enforce-todo-dependencies t
-        org-todo-keywords '((sequence "TODO" "NEXT" "WORKING" "HOLD" "|"
-                                      "DONE" "ABORTED"))
-        org-export-backends '(ascii html icalendar latex odt markdown)
-        org-modules (append '(org-crypt
-                              org-habit
-                              ol-eww
-                              ol-w3m
-                              ol-doi
-                              ol-bibtex
-                              ol-info
-                              ol-man))
-        org-fontify-quote-and-verse-blocks t)
+  
   (dolist (fn '(org-insert-drawer
                 org-insert-heading
                 org-insert-item
@@ -923,20 +931,21 @@
 
 (use-package evil-org
   :after (evil org)
+  :custom
+  (evil-org-use-additional-insert t)
+  (evil-org-key-theme '(textobjects navigation additional todo))
   :config
   (add-hook 'org-mode-hook (lambda ()
                              (evil-org-mode)
-                             (evil-normalize-keymaps)))
-  (setq evil-org-use-additional-insert t
-        evil-org-key-theme '(textobjects navigation additional todo)))
+                             (evil-normalize-keymaps))))
 
 (use-package org-keys
   :straight nil
   :after org
+  :custom
+  (org-return-follows-link t)
+  (org-mouse-1-follows-link t)
   :config
-  (setq org-return-follows-link t
-        org-mouse-1-follows-link t)
-
   (defun calendar-one-day-forward ()
     (interactive)
     (org-eval-in-calendar '(calendar-forward-day 1)))
@@ -1047,18 +1056,18 @@
 (use-package ob
   :straight (:type built-in)
   :defer t
+  :custom
+  (org-babel-languages '(lisp clojure scheme
+                              dot shell awk restclient
+                              http C ruby
+                              lua fennel nix
+                              hledger python))
   :config
   (add-hook 'org-babel-after-execute-hook
             (lambda ()
               (when org-inline-image-overlays
                 (org-redisplay-inline-images))))
 
-  :config
-  (setq org-babel-languages '(lisp clojure scheme
-                                   dot shell awk restclient
-                                   http C ruby
-                                   lua fennel nix
-                                   hledger python))
   (org-babel-do-load-languages
    'org-babel-load-languages
    (mapcar (lambda (language) `(,language . t)) org-babel-languages))
@@ -1092,6 +1101,18 @@
 (use-package org-capture
   :straight nil
   :defer    t
+  :custom
+  (org-capture-templates
+   `(("t" "TODO" entry (file+headline ,(concat org-directory "/TODO.org") "Tasks")
+      "** TODO %?          :%^{Tag}:\n\nEntered on %U\n%i\n%a\n")
+     ("l" "TIL" entry (file+headline ,(concat org-directory "/TIL.org") "TIL")
+      "** %?          :%^{Tag}:\n\nEntered on %U\n%i\n%a\n")
+     ("c" "Clipboard" entry (file+headline ,(concat org-directory "/Clipboard.org") "Clipboard")
+      "** %?          :%^{Tag}:\n\nEntered on %U\n%i\n%a\n")
+     ("a" "Journal" entry (file+datetree,(concat org-directory "/Journal.org"))
+      "** %U\n\n%?\n%i\n")
+     ("n" "ShowerThoughts" entry (file+headline ,(concat org-directory "/ShowerThoughts.org") "ShowerThoughts")
+      "** %?          :%^{Tag}:\n\nEntered on %U\n%i\n%a\n")))
   :general-config
   (local-leader
     :major-modes '(org-capture-mode t)
@@ -1100,31 +1121,23 @@
     "a"          'org-capture-kill
     "c"          'org-capture-finalize
     "k"          'org-capture-kill
-    "r"          'org-capture-refile)
-
-  :config
-  (setq org-capture-templates
-        `(("t" "TODO" entry (file+headline ,(concat org-directory "/TODO.org") "Tasks")
-           "** TODO %?          :%^{Tag}:\n\nEntered on %U\n%i\n%a\n")
-          ("l" "TIL" entry (file+headline ,(concat org-directory "/TIL.org") "TIL")
-           "** %?          :%^{Tag}:\n\nEntered on %U\n%i\n%a\n")
-          ("c" "Clipboard" entry (file+headline ,(concat org-directory "/Clipboard.org") "Clipboard")
-           "** %?          :%^{Tag}:\n\nEntered on %U\n%i\n%a\n")
-          ("a" "Journal" entry (file+datetree,(concat org-directory "/Journal.org"))
-           "** %U\n\n%?\n%i\n")
-          ("n" "ShowerThoughts" entry (file+headline ,(concat org-directory "/ShowerThoughts.org") "ShowerThoughts")
-           "** %?          :%^{Tag}:\n\nEntered on %U\n%i\n%a\n"))))
+    "r"          'org-capture-refile))
 
 (use-package org-agenda
   :straight nil
   :defer    t
-  :config
-  (setq org-agenda-clockreport-parameter-plist
-        '(:link t :scope subtree :maxlevel 2 :step day :block thisweek :stepskip0 t :fileskip0 t)))
+  :custom
+  (org-agenda-clockreport-parameter-plist
+   '(:link t :scope subtree :maxlevel 2 :step day :block thisweek :stepskip0 t :fileskip0 t)))
 
 (use-package org-src
   :straight nil
   :defer    t
+  :custom
+  (org-src-window-setup 'split-window-below)
+  (org-src-fontify-natively t)
+  (org-src-tab-acts-natively t)
+  (org-edit-src-content-indentation 0)
   :general-config
   (local-leader
     :major-modes '(org-src-mode t)
@@ -1133,12 +1146,7 @@
     "a"          'org-edit-src-abort
     "c"          'org-edit-src-exit
     "k"          'org-edit-src-abort
-    "'"          'org-edit-src-exit)
-  :config
-  (setq org-src-window-setup 'split-window-below
-        org-src-fontify-natively t
-        org-src-tab-acts-natively t
-        org-edit-src-content-indentation 0))
+    "'"          'org-edit-src-exit))
 
 (use-package org-habit
   :straight (:type built-in)
@@ -1147,47 +1155,18 @@
 (use-package org-compat
   :straight nil
   :defer t
-  :config
-  (setq org-latex-create-formula-image-program 'dvisvgm))
+  :custom
+  (org-latex-create-formula-image-program 'dvisvgm))
 
 (use-package org-roam
   :defer t
-  :general-config
-  (local-leader
-    :major-modes '(org-mode t)
-    :keymaps     '(org-mode-map)
-    "r"          (which-key-prefix "org-roam")
-    "rc"         'org-roam-capture
-    "rf"         'org-roam-node-find
-    "rg"         'org-roam-graph
-    "ri"         'org-roam-node-insert
-    "rI"         'org-id-get-create
-    "rl"         'org-roam-buffer-toggle
-    "ra"         'org-roam-alias-add
-
-    "rd"         (which-key-prefix "org-roam-dailies")
-    "rdy"        'org-roam-dailies-goto-yesterday
-    "rdt"        'org-roam-dailies-goto-today
-    "rdT"        'org-roam-dailies-goto-tomorrow
-    "rdd"        'org-roam-dailies-goto-date
-
-    "rt"         (which-key-prefix "org-roam-tags")
-    "rta"        'org-roam-tag-add
-    "rtr"        'org-roam-tag-remove)
-  :config
-  (defvar oc-capture-prmt-history nil
-    "History of prompt answers for org capture.")
-  (defun oc/prmt (prompt variable)
-    "PROMPT for string, save it to VARIABLE and insert it."
-    (make-local-variable variable)
-    (set variable (read-string (concat prompt ": ") nil oc-capture-prmt-history)))
-
-  (setq ;; Default Org-Roam directory. Multiple org-roam directories are registered separately using `.dir-locals.el`.
-   org-roam-directory (if android-p "~/storage/shared/OrgRoam/" "~/OrgRoam/")
-   org-roam-node-display-template (concat "${title:*} " (propertize "${tags:10}" 'face 'org-tag))
-   org-roam-completion-everywhere t
-   org-roam-dailies-directory "Dailies/"
-   org-roam-capture-templates
+  :custom
+  ;; Default Org-Roam directory. Multiple org-roam directories are registered separately using `.dir-locals.el`.
+  (org-roam-directory (if android-p "~/storage/shared/OrgRoam/" "~/OrgRoam/"))
+  (org-roam-node-display-template (concat "${title:*} " (propertize "${tags:10}" 'face 'org-tag)))
+  (org-roam-completion-everywhere t)
+  (org-roam-dailies-directory "Dailies/")
+  (org-roam-capture-templates
    `(("d" "Default" plain
       (file ,(concat user-emacs-directory "/CaptureTemplates/OrgRoam/DefaultTemplate.org"))
       :if-new (file+head "${slug}.org" "#+TITLE: ${title}\n#+DATE:%U\n")
@@ -1220,20 +1199,49 @@
       (file ,(concat user-emacs-directory "/CaptureTemplates/OrgRoam/NewJapaneseFlashbackTemplate.org"))
       :if-new (file+head "Languages/Japanese/Flashbacks/${slug}.org" "#+TITLE: ${title}\n#+DATE:%U\n")
       :unnarrowed t)))
+  :general-config
+  (local-leader
+    :major-modes '(org-mode t)
+    :keymaps     '(org-mode-map)
+    "r"          (which-key-prefix "org-roam")
+    "rc"         'org-roam-capture
+    "rf"         'org-roam-node-find
+    "rg"         'org-roam-graph
+    "ri"         'org-roam-node-insert
+    "rI"         'org-id-get-create
+    "rl"         'org-roam-buffer-toggle
+    "ra"         'org-roam-alias-add
+
+    "rd"         (which-key-prefix "org-roam-dailies")
+    "rdy"        'org-roam-dailies-goto-yesterday
+    "rdt"        'org-roam-dailies-goto-today
+    "rdT"        'org-roam-dailies-goto-tomorrow
+    "rdd"        'org-roam-dailies-goto-date
+
+    "rt"         (which-key-prefix "org-roam-tags")
+    "rta"        'org-roam-tag-add
+    "rtr"        'org-roam-tag-remove)
+  :config
+  (defvar oc-capture-prmt-history nil
+    "History of prompt answers for org capture.")
+  (defun oc/prmt (prompt variable)
+    "PROMPT for string, save it to VARIABLE and insert it."
+    (make-local-variable variable)
+    (set variable (read-string (concat prompt ": ") nil oc-capture-prmt-history)))
   (org-roam-db-autosync-mode))
 
 (use-package org-roam-ui
-  :after org-roam
+  :after (org-roam)
+  :custom
+  (org-roam-ui-sync-theme t)
+  (org-roam-ui-follow t)
+  (org-roam-ui-update-on-save t)
+  (org-roam-ui-open-on-start t)
   :general-config
   (local-leader
     :major-modes (org-mode t)
     :keymaps     (org-mode-map)
-    "ru"         'org-roam-ui-mode)
-  :config
-  (setq org-roam-ui-sync-theme t
-        org-roam-ui-follow t
-        org-roam-ui-update-on-save t
-        org-roam-ui-open-on-start t))
+    "ru"         'org-roam-ui-mode))
 
 (use-package org-indent
   :straight nil
@@ -1242,41 +1250,29 @@
 (use-package org-clock
   :straight nil
   :after    org
-  :config
-  (setq
-   ;; Save the running clock and all clock history when exiting Emacs, load it on startup
-   org-clock-persist t
-   ;; Resume clocking task on clock-in if the clock is open
-   org-clock-in-resume t
-   ;; Do not prompt to resume an active clock, just resume it
-   org-clock-persist-query-resume nil
-   ;; Change tasks to WORKING when clocking in
-   org-clock-in-switch-to-state "WORKING"
-   ;; Change tasks to DONE when clocking out
-   ;; org-clock-out-switch-to-state "DONE"
-   ;; Save clock data and state changes and notes in the LOGBOOK drawer
-   org-clock-into-drawer t
-   ;; Don't remove clocks with 0:00 duration
-   org-clock-out-remove-zero-time-clocks nil
-   ;; Clock out when moving task to a done state
-   org-clock-out-when-done t
-   ;; Enable auto clock resolution for finding open clocks
-   org-clock-auto-clock-resolution 'when-no-clock-is-running
-   ;; Include current clocking task in clock reports
-   org-clock-report-include-clocking-task t
-   org-clock-idle-time nil
-   org-clock-persist-file (cache: "org-clock-save.el"))
-
-  (defun org-generate-time-table ()
-    "Spawn time table for the week."
-    (interactive)
-    (insert
-     "#+BEGIN: clocktable :maxlevel 6 :block thisweek :scope file :step day :stepskip0 t :fileskip0 t\n#+END:")
-    (org-ctrl-c-ctrl-c))
-
-  ;; Resume clocking task when emacs is restarted
-  (org-clock-persistence-insinuate)
-
+  :custom
+  ;; Save the running clock and all clock history when exiting Emacs, load it on startup
+  (org-clock-persist t)
+  ;; Resume clocking task on clock-in if the clock is open
+  (org-clock-in-resume t)
+  ;; Do not prompt to resume an active clock, just resume it
+  (org-clock-persist-query-resume nil)
+  ;; Change tasks to WORKING when clocking in
+  (org-clock-in-switch-to-state "WORKING")
+  ;; Change tasks to DONE when clocking out
+  ;; org-clock-out-switch-to-state "DONE"
+  ;; Save clock data and state changes and notes in the LOGBOOK drawer
+  (org-clock-into-drawer t)
+  ;; Don't remove clocks with 0:00 duration
+  (org-clock-out-remove-zero-time-clocks nil)
+  ;; Clock out when moving task to a done state
+  (org-clock-out-when-done t)
+  ;; Enable auto clock resolution for finding open clocks
+  (org-clock-auto-clock-resolution 'when-no-clock-is-running)
+  ;; Include current clocking task in clock reports
+  (org-clock-report-include-clocking-task t)
+  (org-clock-idle-time nil)
+  (org-clock-persist-file (cache: "org-clock-save.el"))
   :general-config
   (local-leader
     :major-modes '(org-mode t)
@@ -1291,12 +1287,22 @@
     "cr"         'org-clock-report
     "cR"         'org-resolve-clocks
     "ct"         'org-clock-modify-effort-estimate
-    "cT"         'org-generate-time-table))
+    "cT"         'org-generate-time-table)
+  :config
+  (defun org-generate-time-table ()
+    "Spawn time table for the week."
+    (interactive)
+    (insert
+     "#+BEGIN: clocktable :maxlevel 6 :block thisweek :scope file :step day :stepskip0 t :fileskip0 t\n#+END:")
+    (org-ctrl-c-ctrl-c))
+
+  ;; Resume clocking task when emacs is restarted
+  (org-clock-persistence-insinuate))
 
 (use-package org-pomodoro
   :after org
-  :config
-  (setq org-pomodoro-length 20)
+  :custom
+  (org-pomodoro-length 20)
   :general-config
   (local-leader
     :major-modes '(org-mode t)
@@ -1305,8 +1311,11 @@
 
 (use-package org-journal
   :after org
-  :config
-  (setq org-journal-file-format "%Y%m%d.org")
+  :custom
+  (org-journal-file-format "%Y%m%d.org")
+  (org-journal-dir (if android-p
+                       "~/storage/shared/Org/Journal/"
+                     "~/Org/Journal/"))
   :general-config
   (local-leader
     :major-modes '(calendar-mode t)
@@ -1324,11 +1333,7 @@
     :keymaps     '(org-journal-mode-map)
     "j"          'org-journal-new-entry
     "n"          'org-journal-next-entry
-    "p"          'org-journal-previous-entry)
-  :config
-  (setq org-journal-dir (if android-p
-                            "~/storage/shared/Org/Journal/"
-                          "~/Org/Journal/")))
+    "p"          'org-journal-previous-entry))
 
 (use-package org-tempo
   :straight (:type built-in)
@@ -1376,14 +1381,14 @@
 (use-package ox-latex
   :straight nil
   :defer t
-  :config
-  (setq org-latex-prefer-user-labels t))
+  :custom
+  (org-latex-prefer-user-labels t))
 
 (use-package ox-publish
   :straight nil
   :defer t
-  :config
-  (setq org-publish-timestamp-directory (cache: ".org-timestamps/")))
+  :custom
+  (org-publish-timestamp-directory (cache: ".org-timestamps/")))
 
 (use-package ox-epub
   :defer t)
@@ -1396,17 +1401,17 @@
 
 (use-package ox-pandoc
   :defer t
-  :config
-  (setq org-pandoc-options-for-gfm '((wrap . none) (toc . false))))
+  :custom
+  (org-pandoc-options-for-gfm '((wrap . none) (toc . false))))
 
 ;; Esup config ======================================
 ;; ==================================================
 
 (use-package esup
   :defer t
-  :config
-  (setq esup-user-init-file (file-truename "~/.emacs.d/init.el")
-        esup-depth 0))
+  :custom
+  (esup-user-init-file (file-truename "~/.emacs.d/init.el")
+                       esup-depth 0))
 
 ;; macOS Settings ===================================
 ;; ==================================================
@@ -1475,15 +1480,15 @@
   :when macOS-p
   :commands
   (osx-clipboard-paste-function osx-clipboard-cut-function)
-  :config
-  (setq interprogram-cut-function (lambda (text &rest ignore)
-                                    (if (display-graphic-p)
-                                        (gui-select-text text)
-                                      (osx-clipboard-cut-function text)))
-        interprogram-paste-function (lambda ()
-                                      (if (display-graphic-p)
-                                          (gui-selection-value)
-                                        (osx-clipboard-paste-function)))))
+  :custom
+  (interprogram-cut-function (lambda (text &rest ignore)
+                               (if (display-graphic-p)
+                                   (gui-select-text text)
+                                 (osx-clipboard-cut-function text))))
+  (interprogram-paste-function (lambda ()
+                                 (if (display-graphic-p)
+                                     (gui-selection-value)
+                                   (osx-clipboard-paste-function)))))
 
 (use-package reveal-in-osx-finder
   :when macOS-p
@@ -1496,7 +1501,7 @@
   "s-W"  'delete-frame
   "s-N"  'make-frame
   "s-`"  'other-frame
-  "s-z"  'undo-tree-undo
+  "s-z"  'undo
   "s-s"  'save-buffer
   "s-:"  'previous-error
   "s-\"" 'next-error)
@@ -1559,8 +1564,8 @@
 (use-package grep
   :straight (:type built-in)
   :defer t
-  :config
-  (setq grep-command "grep --color=auto -nH --null -R -e"))
+  :custom
+  (grep-command "grep --color=auto -nH --null -R -e"))
 
 ;; Occur / Wgrep ====================================
 ;; ==================================================
@@ -1577,10 +1582,10 @@
 
 (use-package isearch
   :straight (:type built-in)
-  :config
-  (setopt isearch-lazy-count t)
-  (setopt lazy-count-prefix-format "(%s/%s) ")
-  (setopt lazy-count-suffix-format " [%s/%s]"))
+  :custom
+  (isearch-lazy-count t)
+  (lazy-count-prefix-format "(%s/%s) ")
+  (lazy-count-suffix-format " [%s/%s]"))
 
 ;; CodeQL config ====================================
 ;; ==================================================
@@ -1600,9 +1605,10 @@
                              :repo "jeongsoolee09/emacs-codeql"
                              ;; :branch "unlocalize-database"
                              :branch "main"))
-  :config
-  (setq codeql-transient-binding "C-c q"
-        codeql-configure-eglot-lsp t)
+  :custom
+  (codeql-transient-binding "C-c q")
+  (codeql-configure-eglot-lsp t)
+  (codeql-search-paths '("./"))
   :general-config
   (local-leader
     :major-modes '(ql-tree-sitter-mode t)
@@ -1636,7 +1642,6 @@
     "vs"         'codeql-set-max-paths)
 
   :config
-  (setq codeql-search-paths '("./"))
   (defun elispm/clear-codeql-variables ()
     (interactive)
     (setq codeql--path-problem-max-paths 10)
@@ -1697,8 +1702,8 @@
    (go-mode      . eglot-ensure)
    (lua-mode     . eglot-ensure))
 
-  :config
-  (setq eglot-stay-out-of '(company))   ; I use corfu instead
+  :custom
+  (eglot-stay-out-of '(company))   ; I use corfu instead
 
   :general-config
   (local-leader
@@ -1709,15 +1714,15 @@
     "as"     'imenu
     "aS"     'consult-eglot-symbols
     "at"     'eglot-show-type-hierarchy
-    "ac"     'eglot-show-call-hierarchy))
+    "ac"     'eglot-show-call-hierarchy)
 
-:config
-(setq-default eglot-workspace-configuration
-              '((lua_ls
-                 (format
-                  (defaultConfig
-                   indent_style "space"
-                   indent_size "2")))))
+  :config
+  (setq-default eglot-workspace-configuration
+                '((lua_ls
+                   (format
+                    (defaultConfig
+                     indent_style "space"
+                     indent_size "2"))))))
 
 (use-package eglot-x
   :straight (eglot-x :type git
@@ -1746,8 +1751,8 @@
           ielm-mode
           eval-expression-minibuffer-setup)
          . turn-on-eldoc-mode)
-  :config
-  (setq eldoc-echo-area-use-multiline-p 3))
+  :custom
+  (eldoc-echo-area-use-multiline-p 3))
 
 (use-package eldoc-box
   :when GUI-p
@@ -1755,10 +1760,10 @@
   :custom-face
   ;; (eldoc-box-border ((t (:inherit posframe-border :background unspecified))))
   (eldoc-box-body ((t (:inherit tooltip))))
-  :config
-  (setq eldoc-box-lighter nil
-        eldoc-box-only-multi-line t
-        eldoc-box-clear-with-C-g t)
+  :custom
+  (eldoc-box-lighter nil)
+  (eldoc-box-only-multi-line t)
+  (eldoc-box-clear-with-C-g t)
   :general-config
   (normal-mode-major-mode
     :keymaps '(eglot-mode-map)
@@ -1769,16 +1774,17 @@
 
 (use-package gptel
   :defer t
-  :hook (gptel-mode . gptel-highlight-mode)
+  :hook ((gptel-mode . gptel-highlight-mode)
+         (evil-collection-setup . evil-collection-gptel-setup))
+  :custom
+  (gptel-model 'claude-opus-4.7)
+  (gptel-default-mode 'org-mode)
+  (gptel-highlight-methods '(face))
+  (gptel-prompt-prefix-alist '((markdown-mode . "# ")
+                               (org-mode . "* ")
+                               (text-mode . "# ")))
   :config
-  (evil-collection-gptel-setup)
-  (setq gptel-model 'claude-opus-4.5
-        gptel-backend (gptel-make-gh-copilot "Copilot")
-        gptel-default-mode 'org-mode
-        gptel-highlight-methods '(face)
-        gptel-prompt-prefix-alist '((markdown-mode . "# ")
-                                    (org-mode . "* ")
-                                    (text-mode . "# ")))
+  (setq gptel-backend (gptel-make-gh-copilot "Copilot"))
   :general-config
   (local-leader
     :major-modes '(gptel-mode t)
@@ -1805,9 +1811,9 @@
 
 (use-package agent-shell
   :defer t
-  :config
-  (setq agent-shell-github-command nil
-        agent-shell-github-acp-command '("copilot" "--acp" "--model" "claude-opus-4.7")))
+  :custom
+  (agent-shell-github-command nil)
+  (agent-shell-github-acp-command '("copilot" "--acp" "--model" "claude-opus-4.7")))
 
 ;; Shell config =====================================
 ;; ==================================================
@@ -2191,10 +2197,11 @@
                                            (concat lua-process-init-code "\n")))))
                  (message "Switched to Lua.")))))))
 
-  (setq lua-indent-level 2
-        lua-indent-string-contents t)
-
   (define-key lua-mode-map (kbd "q") nil)
+
+  :custom
+  (lua-indent-level 2)
+  (lua-indent-string-contents t)
 
   :general-config
   (local-leader
@@ -2240,6 +2247,11 @@
 (use-package minibuffer
   :straight nil
   :hook (minibuffer-mode . smartparens-mode)
+  :custom
+  (completion-styles '(basic substring partial-completion flex orderless))
+  (completion-category-defaults nil)
+  (completion-category-overrides '((file (styles partial-completion))))
+  (read-file-name-completion-ignore-case t)
   :general-config
   (insert-mode-major-mode
     :major-modes '(minibuffer-mode t)
@@ -2251,15 +2263,15 @@
 ;; ==================================================
 
 (use-package imenu
-  :straight nil  
+  :straight nil
   :general
   (global-leader
     "i"      (which-key-prefix "imenu")
     "ii"     'imenu
     "il"     'imenu-list
     "ib"     'breadcrumb-jump)
-  :config
-  (setq imenu-list-position 'left))
+  :custom
+  (imenu-list-position 'left))
 
 (use-package imenu-list
   :defer t)
@@ -2282,16 +2294,17 @@
 
 (use-package paren
   :straight nil
-  :config
-  (setq show-paren-delay 0)
+  :custom
+  (show-paren-delay 0)
   :config
   (show-paren-mode 1))
 
 (use-package smartparens
+  :custom
+  (sp-highlight-pair-overlay nil)
+  (sp-highlight-wrap-overlay nil)
+  (sp-highlight-wrap-tag-overlay nil)
   :config
-  (setq sp-highlight-pair-overlay nil
-        sp-highlight-wrap-overlay nil
-        sp-highlight-wrap-tag-overlay nil)
   (smartparens-global-mode)
   ;; Regular quote
   (sp-local-pair '(fennel-mode hy-mode clojure-mode lisp-mode emacs-lisp-mode
@@ -2333,23 +2346,13 @@
 (use-package evil-cleverparens
   ;; :init
   ;; (setq evil-cleverparens-use-additional-bindings nil)
+  :custom
+  (evil-cleverparens-use-additional-bindings t)
   :config
-  (setq evil-cleverparens-use-additional-bindings t)
   (unless window-system
     (setq evil-cp-additional-bindings (assoc-delete-all "M-[" evil-cp-additional-bindings)
           evil-cp-additional-bindings (assoc-delete-all "M-]" evil-cp-additional-bindings)))
   (evil-cp-set-additional-bindings))
-
-(use-package flash
-  :commands (flash-jump flash-treesitter)
-  :bind ("s-j" . flash-jump)
-  ;; :init
-  ;; (with-eval-after-load 'evil
-  ;;   (require 'flash-evil)
-  ;;   (flash-evil-setup t))
-  :config
-  (require 'flash-isearch)
-  (flash-isearch-mode 1))
 
 ;; KMonad ===========================================
 ;; ==================================================
@@ -2369,7 +2372,9 @@
   :hook      (lisp-mode . evil-cleverparens-mode))
 
 (use-package slime
-  :commands slime-mode
+  :commands (slime-mode)
+  :custom
+  (slime-complete-symbol-function 'slime-fuzzy-complete-symbol)
   :config
   (setq slime-contribs '(slime-asdf
                          slime-fancy
@@ -2377,8 +2382,7 @@
                          slime-sbcl-exts
                          slime-scratch)
         inferior-lisp-program "sbcl")
-  (setq slime-complete-symbol*-fancy t
-        slime-complete-symbol-function 'slime-fuzzy-complete-symbol)
+  :config
   (slime-setup)
   (defun cl-eval-current-symbol-sp ()
     "Call `eval-last-sexp' on the symbol around point.
@@ -2765,12 +2769,12 @@ Requires smartparens because all movement is done using `sp-forward-symbol'."
 
 (use-package cider
   :after clojure-mode
-  :config
-  (setq cider-stacktrace-default-filters '(tooling dup)
-        cider-repl-pop-to-buffer-on-connect nil
-        cider-prompt-save-file-on-load nil
-        cider-repl-use-clojure-font-lock t)
+  :custom
+  (cider-stacktrace-default-filters '(tooling dup))
+  (cider-repl-pop-to-buffer-on-connect nil)
+  (cider-repl-use-clojure-font-lock t)
 
+  :config
   (defun cider-eval-sexp-end-of-line ()
     "Evaluate the last sexp at the end of the current line."
     (interactive)
@@ -3202,12 +3206,7 @@ set so that it clears the whole REPL buffer, not just the output."
   :defer t
   :hook (clj-refactor-mode . clojure-mode-hook)
   :config
-  (cljr-add-keybindings-with-prefix "C-c C-f")
-  ;; Usually we do not set keybindings in :config, however this must be done
-  ;; here because it reads the variable `cljr--all-helpers'. Since
-  ;; `clj-refactor-mode' is added to the hook, this should trigger when a
-  ;; clojure buffer is opened anyway, so there's no "keybinding delay".
-  )
+  (cljr-add-keybindings-with-prefix "C-c C-f"))
 
 (use-package clojure-snippets
   :defer t)
@@ -3577,13 +3576,12 @@ set so that it clears the whole REPL buffer, not just the output."
 (use-package haskell-mode
   :defer t
   :mode "\\.(hs|lhs|cabal)\\'"
-  :config
-  (setq haskell-notify-p t
-        haskell-interactive-popup-errors nil
-        haskell-process-suggest-remove-import-lines t
-        haskell-process-auto-import-loaded-modules t
-        haskell-stylish-on-save nil)
-
+  :custom
+  (haskell-notify-p t)
+  (haskell-interactive-popup-errors nil)
+  (haskell-process-suggest-remove-import-lines t)
+  (haskell-process-auto-import-loaded-modules t)
+  (haskell-stylish-on-save nil)
   :config
   (defun haskell-interactive-bring ()
     "Bring up the interactive mode for this session without
@@ -3735,8 +3733,9 @@ set so that it clears the whole REPL buffer, not just the output."
     "hp" 'prolog-help-on-predicate))
 
 (use-package ediprolog
+  :custom
+  (ediprolog-system 'swi)
   :config
-  (setq ediprolog-system 'swi)
   (defun ediprolog-kill-prolog-process ()
     (interactive)
     (ediprolog-kill-prolog)
@@ -3795,10 +3794,11 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (use-package nix-mode
   :mode "\\.nix\\'"
+  :custom
+  (nix-repl-executable-args '("repl" "--expr" "import <nixpkgs> {}"))
   :config
   (add-to-list 'eglot-server-programs
-               '((nix-mode nix-ts-mode) . ("nixd")))
-  (setq nix-repl-executable-args '("repl" "--expr" "import <nixpkgs> {}")))
+               '((nix-mode nix-ts-mode) . ("nixd"))))
 
 (use-package nix-modeline
   :after nix-mode)
@@ -3984,9 +3984,10 @@ set so that it clears the whole REPL buffer, not just the output."
 (use-package rustic
   :mode ("\\.rs$" . rustic-mode)
   :hook (rustic-mode . (lambda () (setq indent-tabs-mode nil)))
+  :custom
+  (rustic-lsp-client 'eglot)
+  (rustic-lsp-server 'rust-analyzer)
   :config
-  (setq rustic-lsp-client 'eglot
-        rustic-lsp-server 'rust-analyzer)
   (setq auto-mode-alist (delete '("\\.rs\\'" . rust-mode) auto-mode-alist))
   (evil-set-initial-state 'rustic-popup-mode 'motion)
   (add-to-list 'eglot-server-programs
@@ -4309,8 +4310,9 @@ set so that it clears the whole REPL buffer, not just the output."
   :mode ("\\.jsx?\\'" . js-mode)
   :hook (js-mode . (lambda ()
                      (setq indent-tabs-mode nil)))
+  :custom
+  (js-indent-level 2)
   :config
-  (setq-default js-indent-level 2)
   (add-to-list 'eglot-server-programs
                '(js-mode . ("typescript-language-server" "--stdio")))
   (add-to-list 'eglot-server-programs
@@ -4341,9 +4343,10 @@ set so that it clears the whole REPL buffer, not just the output."
    ("\\.mdk\\'" . markdown-mode)
    ("\\.mdx\\'" . markdown-mode))
 
+  :custom
+  (markdown-fontify-code-blocks-natively t)
+  (markdown-command "pandoc")
   :config
-  (setq markdown-fontify-code-blocks-natively t
-        markdown-command "pandoc")
   (defun insert-keybinding-markdown (key)
     "Ask for a key then insert its description.
      Will work on both org-mode and any mode that accepts plain html."
@@ -4547,8 +4550,10 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (use-package pandoc-mode                ; TODO
   :defer t
-  :commands run-pandoc
   :hook (pandoc-mode . pandoc-load-default-settings)
+  :commands (run-pandoc)
+  :custom
+  (pandoc-data-dir (concat user-emacs-directory "pandoc/"))
   :config
   (defun run-pandoc ()
     "Start pandoc for the buffer and open the menu"
@@ -4556,9 +4561,7 @@ set so that it clears the whole REPL buffer, not just the output."
     ;; only run pandoc-mode if not active, as it resets
     ;; pandoc--local-settings
     (if (not (bound-and-true-p pandoc-mode)) (pandoc-mode))
-    (pandoc-main-hydra/body))
-  :config
-  (setq pandoc-data-dir (concat user-emacs-directory "pandoc/")))
+    (pandoc-main-hydra/body)))
 
 ;; Spell-Check ======================================
 ;; ==================================================
@@ -4566,8 +4569,8 @@ set so that it clears the whole REPL buffer, not just the output."
 (use-package ispell
   :straight nil
   :defer t
-  :config
-  (setq ispell-program-name "aspell"))
+  :custom
+  (ispell-program-name "aspell"))
 
 ;; Dictionaries =====================================
 ;; ==================================================
@@ -4656,6 +4659,7 @@ set so that it clears the whole REPL buffer, not just the output."
 (defun set-newline-and-indent ()
   "Auto-indentation on pressing RET."
   (local-set-key (kbd "RET") 'newline-and-indent))
+
 (add-hook 'prog-mode-hook 'set-newline-and-indent)
 
 ;; exec-path-from-shell =============================
@@ -4667,14 +4671,6 @@ set so that it clears the whole REPL buffer, not just the output."
   :config
   (setq explicit-shell-file-name "/bin/zsh"))
 
-;; (use-package exec-path-from-shell
-;;   :when (or macOS-p linux-p)
-;;   :config
-;;   (setq exec-path-from-shell-variables '("PATH" "JAVA_HOME" "BROWSER"
-;;                                         "OPAMCLI" "WORK_MACHINE")
-;;        exec-path-from-shell-arguments '("-l"))
-;;   (exec-path-from-shell-initialize))
-
 ;; Hide-mode-line ===================================
 ;; ==================================================
 
@@ -4684,27 +4680,21 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; ==================================================
 
 (use-package vertico
+  :custom
+  (vertico-scroll-margin 0)
+  (vertico-count 20)
+  (vertico-resize t)
+  (vertico-cycle t)
   :config
-  (setq vertico-scroll-margin 0
-        vertico-count 20
-        vertico-resize t
-        vertico-cycle t)
   (vertico-mode)
   (define-key vertico-map (kbd "C-l") #'vertico-directory-up))
 
 (use-package savehist
   :straight nil
+  :custom
+  (savehist-file (concat user-emacs-directory "savehist"))
+  (savehist-autosave-interval 60)
   :config
-  (setq savehist-file (concat user-emacs-directory "savehist")
-        enable-recursive-minibuffers t
-        history-length 1000
-        savehist-additional-variables '(mark-ring
-                                        global-mark-ring
-                                        search-ring
-                                        regexp-search-ring
-                                        extended-command-history
-                                        kill-ring)
-        savehist-autosave-interval 60)
   (add-hook 'savehist-save-hook
             (lambda ()
               (setq kill-ring
@@ -4734,7 +4724,22 @@ set so that it clears the whole REPL buffer, not just the output."
 
   ;; Hmmm: https://kristofferbalintona.me/posts/202202270056/
   (completion-cycle-threshold nil)
-  ;; ===============================================
+
+  (history-length 1000)
+  (enable-recursive-minibuffers t)
+  (minibuffer-prompt-properties
+   '(read-only t cursor-intangible t face minibuffer-prompt))
+  (enable-recursive-minibuffers t)
+
+  (ring-bell-function 'ignore)
+
+  ;; Increase the buffer size coming in from external programs
+  (read-process-output-max (* 4 1024 1024))
+
+  (highlight-nonselected-windows nil)
+
+  (read-buffer-completion-ignore-case t)
+  (completion-ignore-case t)
   :init
   (defun crm-indicator (args)
     (cons (format "[CRM%s] %s"
@@ -4745,12 +4750,7 @@ set so that it clears the whole REPL buffer, not just the output."
           (cdr args)))
   (advice-add #'completing-read-multiple :filter-args #'crm-indicator)
 
-  (setq minibuffer-prompt-properties
-        '(read-only t cursor-intangible t face minibuffer-prompt))
   (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
-
-  (setq enable-recursive-minibuffers t)
-  (setq ring-bell-function 'ignore)
 
   (defun change-window-divider ()
     "Change the window divider to a Unicode vertical pipe instead of the ASCII one."
@@ -4785,47 +4785,36 @@ set so that it clears the whole REPL buffer, not just the output."
   ;; Disable syntax highlighting during typing
   (setq redisplay-skip-fontification-on-input t)
 
-  ;; Increase the buffer size coming in from external programs
-  (setq read-process-output-max (* 4 1024 1024))
-
   ;; Don't render cursors in non-focused windows
-  (setq-default cursor-in-non-selected-windows nil)
-  (setq highlight-nonselected-windows nil))
+  (setq-default cursor-in-non-selected-windows nil))
 
 (use-package simple
   :straight (:type built-in)
+  :custom
+  ;; Save the existing clipboard content before overwriting
+  (save-interprogram-paste-before-kill t)
+  ;; De-duplicate the kill ring
+  (kill-do-not-save-duplicates t)
+  ;; Let mark popping be repeatable
+  (set-mark-command-repeat-pop t)
+  ;; I KNOW
+  (suggest-key-bindings nil)
   :config
-  (setq
-   ;; Save the existing clipboard content before overwriting
-   save-interprogram-paste-before-kill t
-   ;; De-duplicate the kill ring
-   kill-do-not-save-duplicates t
-   ;; Let mark popping be repeatable
-   set-mark-command-repeat-pop t
-   ;; I KNOW
-   suggest-key-bindings nil)
   (add-hook 'after-save-hook
             #'executable-make-buffer-file-executable-if-script-p))
 
 (use-package ffap
   :straight (:type built-in)
   :defer t
-  :config
-  (setq ffap-machine-p-known 'reject))
+  :custom
+  (ffap-machine-p-known 'reject))
 
 (use-package orderless
-  :config
-  (setq
-   ;; orderless-style-dispatchers '(first-initialism flex-if-twiddle
-   ;;               without-if-bang)
-   orderless-matching-styles '(orderless-regexp)
-   orderless-component-separator #'orderless-escapable-split-on-space)
-  (setq completion-styles '(basic substring partial-completion flex orderless)
-        completion-category-defaults nil
-        completion-category-overrides '((file (styles partial-completion))))
-  (setq read-file-name-completion-ignore-case t
-        read-buffer-completion-ignore-case t
-        completion-ignore-case t))
+  :custom
+  (orderless-style-dispatchers '(first-initialism flex-if-twiddle
+                                                  without-if-bang))
+  (orderless-matching-styles '(orderless-regexp))
+  (orderless-component-separator #'orderless-escapable-split-on-space))
 
 (use-package vertico-directory
   :straight nil
@@ -4906,35 +4895,37 @@ set so that it clears the whole REPL buffer, not just the output."
   :hook
   (completion-list-mode . consult-preview-at-point-mode)
   :init
-  (setq register-preview-delay 0.5
-        register-preview-function #'consult-register-format)
-
+  ;; Prepare Projectile to use in :custom
+  (autoload 'projectile-project-root "projectile")
   (advice-add #'register-preview :override #'consult-register-window)
-
-  (setq xref-show-xrefs-function #'consult-xref
-        xref-show-definitions-function #'consult-xref)
-
+  :custom
+  (consult-project-function (lambda (_) (projectile-project-root)))
+  (consult-narrow-key "<")
   :config
   (consult-customize
    consult-theme :preview-key '(:debounce 0.2 any)
    consult-ripgrep consult-git-grep consult-grep
    consult-bookmark consult-xref
    consult--source-bookmark consult--source-file-register
-   consult--source-recent-file consult--source-project-recent-file
-   :preview-key '(:debounce 0.4 any))
-
-  (setq consult-narrow-key "<")
-
-  (define-key consult-narrow-map (vconcat consult-narrow-key "?") #'consult-narrow-help)
-
-  (autoload 'projectile-project-root "projectile")
-  (setq consult-project-function (lambda (_) (projectile-project-root)))
-  (consult-customize consult-recent-file :preview-key "M-."))
+   consult--source-recent-file consult--source-project-recent-file :preview-key '(:debounce 0.4 any)
+   consult-recent-file :preview-key "M-.")
+  (define-key consult-narrow-map (vconcat consult-narrow-key "?") #'consult-narrow-help))
 
 (use-package consult-dir
   :after consult
   :config
   (setq consult-dir-project-list-function #'consult-dir-projectile-dirs))
+
+(use-package register
+  :straight nil
+  :custom
+  (register-preview-delay 0.5)
+  (register-preview-function #'consult-register-format))
+
+(use-package xref
+  :custom
+  (xref-show-xrefs-function #'consult-xref)
+  (xref-show-definitions-function #'consult-xref))
 
 ;; iedit config =====================================
 ;; ==================================================
@@ -5031,8 +5022,7 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (use-package diredfl
   :after dired
-  :config
-  (diredfl-global-mode))
+  :hook (dired-load . diredfl-global-mode))
 
 (use-package dirvish
   :after dired)
@@ -5057,6 +5047,45 @@ set so that it clears the whole REPL buffer, not just the output."
                                         ; refactored with `when`???
       nil))
   (add-hook 'project-find-functions #'elispm/project-override))
+
+;; Projectile config ================================
+;; ==================================================
+
+(use-package projectile
+  :defer t
+  :custom
+  (savehist-additional-variables '(mark-ring
+                                   global-mark-ring
+                                   search-ring
+                                   regexp-search-ring
+                                   extended-command-history
+                                   kill-ring))
+  :config
+  (global-leader
+    "p"    (which-key-prefix "projectile")
+    "p!"   'projectile-run-shell-command-in-root
+    "p%"   'projectile-replace-regexp
+    "p&"   'projectile-run-async-shell-command-in-root
+    "p$"   'projectile-run-vterm-other-window
+    "p/"   'projectile-ripgrep
+    "pB"   'projectile-ibuffer
+    "pd"   'projectile-dired
+    "px"   'projectile-remove-current-project-from-known-projects
+    "pF"   'projectile-find-file-dwim
+    "pa"   'projectile-add-known-project
+    "pb"   'projectile-switch-to-buffer
+    "pc"   'projectile-compile-project
+    "pd"   'projectile-remove-known-project
+    "pe"   'projectile-edit-dir-locals
+    "pf"   'projectile-find-file
+    "pg"   'projectile-vc
+    "pk"   'projectile-kill-buffers
+    "pp"   'projectile-switch-project
+    "pR"   'projectile-replace-regexp
+    "pr"   'projectile-run-project
+    "ps"   'projectile-save-project-buffers
+    "pv"   'projectile-run-vterm
+    "pV"   'projectile-run-vterm-other-window))
 
 ;; xwidget config ===================================
 ;; ==================================================
@@ -6776,32 +6805,6 @@ removal."
   "hdv"   'helpful-variable
   "hdp"   'helpful-at-point
   "hu"    'helpful-update)
-
-(global-leader
-  "p"    (which-key-prefix "projectile")
-  "p!"   'projectile-run-shell-command-in-root
-  "p%"   'projectile-replace-regexp
-  "p&"   'projectile-run-async-shell-command-in-root
-  "p$"   'projectile-run-vterm-other-window
-  "p/"   'projectile-ripgrep
-  "pB"   'projectile-ibuffer
-  "pd"   'projectile-dired
-  "px"   'projectile-remove-current-project-from-known-projects
-  "pF"   'projectile-find-file-dwim
-  "pa"   'projectile-add-known-project
-  "pb"   'projectile-switch-to-buffer
-  "pc"   'projectile-compile-project
-  "pd"   'projectile-remove-known-project
-  "pe"   'projectile-edit-dir-locals
-  "pf"   'projectile-find-file
-  "pg"   'projectile-vc
-  "pk"   'projectile-kill-buffers
-  "pp"   'projectile-switch-project
-  "pR"   'projectile-replace-regexp
-  "pr"   'projectile-run-project
-  "ps"   'projectile-save-project-buffers
-  "pv"   'projectile-run-vterm
-  "pV"   'projectile-run-vterm-other-window)
 
 (global-leader
   "P"    (which-key-prefix "project")
