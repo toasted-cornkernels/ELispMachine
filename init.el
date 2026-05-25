@@ -5040,8 +5040,8 @@ set so that it clears the whole REPL buffer, not just the output."
               (evil-define-key 'normal dired-mode-map (kbd "SPC") nil))))
 
 (use-package diredfl
-  :after dired
-  :hook (dired-load . diredfl-global-mode))
+  :after (dired)
+  :hook (dired-mode . diredfl-global-mode))
 
 (use-package dirvish
   :after dired)
