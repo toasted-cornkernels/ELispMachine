@@ -121,37 +121,6 @@
     :states  '(visual)
     :prefix  ""))
 
-;; No Littering! ====================================
-;; ==================================================
-
-(use-package no-littering
-  :custom
-  (auto-save-file-name-transforms
-   `((".*" ,(no-littering-expand-var-file-name "auto-save/") t)))
-  (custom-file (no-littering-expand-etc-file-name "custom.el"))
-  :config
-  (when (fboundp 'startup-redirect-eln-cache)
-    (defvar native-comp-eln-load-path nil)
-    (startup-redirect-eln-cache
-     (convert-standard-filename
-      (expand-file-name  "var/eln-cache/" user-emacs-directory)))))
-
-(use-package files
-  :straight (:type built-in)
-  :hook
-  (after-init . auto-save-visited-mode)
-  :custom
-  (backup-directory-alist `(("." . ,(concat user-emacs-directory "backups/"))))
-  (backup-by-copying t)
-  (delete-old-versions t)
-  (kept-new-versions 6)
-  (kept-old-versions 2)
-  (version-control t)
-  :config
-  (remove-hook 'find-file-hooks 'vc-find-file-hook)
-  (when macOS-p
-    (setq insert-directory-program "gls")))
-
 ;; Which-key configs ================================
 ;; ==================================================
 
@@ -346,10 +315,43 @@
     "C"   (which-key-prefix "colors")
     "C."  'symbol-overlay-put))
 
+;; No Littering! ====================================
+;; ==================================================
+
+(use-package no-littering
+  :custom
+  (auto-save-file-name-transforms
+   `((".*" ,(no-littering-expand-var-file-name "auto-save/") t)))
+  (custom-file (no-littering-expand-etc-file-name "custom.el"))
+  :config
+  (when (fboundp 'startup-redirect-eln-cache)
+    (defvar native-comp-eln-load-path nil)
+    (startup-redirect-eln-cache
+     (convert-standard-filename
+      (expand-file-name  "var/eln-cache/" user-emacs-directory)))))
+
+(use-package files
+  :straight (:type built-in)
+  :hook
+  (after-init . auto-save-visited-mode)
+  :custom
+  (backup-directory-alist `(("." . ,(concat user-emacs-directory "backups/"))))
+  (backup-by-copying t)
+  (delete-old-versions t)
+  (kept-new-versions 6)
+  (kept-old-versions 2)
+  (version-control t)
+  :config
+  (remove-hook 'find-file-hooks 'vc-find-file-hook)
+  (when macOS-p
+    (setq insert-directory-program "gls")))
+
+
 ;; evil-mode config =================================
 ;; ==================================================
 
 (use-package evil
+  :after (evil-vars)
   :config
   (evil-mode 1)
   ;; set leader key in normal state
@@ -377,7 +379,6 @@
 
 (use-package evil-vars
   :straight nil
-  :after (evil)
   :custom
   (evil-want-keybinding nil)
   (evil-disable-insert-state-bindings t)
@@ -419,7 +420,7 @@
   (toggle-input-method))
 
 (use-package evil-collection
-  :after (evil)
+  :after (evil evil-vars)
   :custom
   (evil-collection-calendar-want-org-bindings t)
   :config
@@ -4759,6 +4760,13 @@ set so that it clears the whole REPL buffer, not just the output."
 
   (read-buffer-completion-ignore-case t)
   (completion-ignore-case t)
+
+  (inhibit-splash-screen t)
+  (inhibit-startup-echo-area-message "")
+  (inhibit-startup-message t)
+  (inhibit-default-init t)
+
+  (site-run-file nil)
   :init
   (defun crm-indicator (args)
     (cons (format "[CRM%s] %s"
@@ -4805,22 +4813,22 @@ set so that it clears the whole REPL buffer, not just the output."
   (setq redisplay-skip-fontification-on-input t)
 
   ;; Don't render cursors in non-focused windows
-  (setq-default cursor-in-non-selected-windows nil))
+  (setq-default cursor-in-non-selected-windows nil)
 
-(use-package simple
-  :straight (:type built-in)
-  :custom
-  ;; Save the existing clipboard content before overwriting
-  (save-interprogram-paste-before-kill t)
-  ;; De-duplicate the kill ring
-  (kill-do-not-save-duplicates t)
-  ;; Let mark popping be repeatable
-  (set-mark-command-repeat-pop t)
-  ;; I KNOW
-  (suggest-key-bindings nil)
-  :config
-  (add-hook 'after-save-hook
-            #'executable-make-buffer-file-executable-if-script-p))
+  (use-package simple
+    :straight (:type built-in)
+    :custom
+    ;; Save the existing clipboard content before overwriting
+    (save-interprogram-paste-before-kill t)
+    ;; De-duplicate the kill ring
+    (kill-do-not-save-duplicates t)
+    ;; Let mark popping be repeatable
+    (set-mark-command-repeat-pop t)
+    ;; I KNOW
+    (suggest-key-bindings nil)
+    :config
+    (add-hook 'after-save-hook
+              #'executable-make-buffer-file-executable-if-script-p)))
 
 (use-package ffap
   :straight (:type built-in)
@@ -4925,8 +4933,8 @@ set so that it clears the whole REPL buffer, not just the output."
    consult-theme :preview-key '(:debounce 0.2 any)
    consult-ripgrep consult-git-grep consult-grep
    consult-bookmark consult-xref
-   consult--source-bookmark consult--source-file-register
-   consult--source-recent-file consult--source-project-recent-file :preview-key '(:debounce 0.4 any)
+   consult-source-bookmark consult-source-file-register
+   consult-source-recent-file consult-source-project-recent-file :preview-key '(:debounce 0.4 any)
    consult-recent-file :preview-key "M-.")
   (define-key consult-narrow-map (vconcat consult-narrow-key "?") #'consult-narrow-help))
 
@@ -7725,15 +7733,6 @@ Optional argument MSG First message shown in buffer."
 
 ;; Misc =============================================
 ;; ==================================================
-
-(use-package startup
-  :straight (:type built-in)
-  :init
-  (setq inhibit-splash-screen t
-        inhibit-startup-echo-area-message ""
-        inhibit-startup-message t
-        site-run-file nil
-        inhibit-default-init t))
 
 (setq-default indent-tabs-mode nil	; Noooooooo please!
               standard-indent 2
