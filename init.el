@@ -4838,8 +4838,8 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (use-package orderless
   :custom
-  (orderless-style-dispatchers '(first-initialism flex-if-twiddle
-                                                  without-if-bang))
+  ;; (orderless-style-dispatchers '(first-initialism flex-if-twiddle
+  ;;                                                 without-if-bang))
   (orderless-matching-styles '(orderless-regexp))
   (orderless-component-separator #'orderless-escapable-split-on-space))
 
