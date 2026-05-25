@@ -121,37 +121,6 @@
     :states  '(visual)
     :prefix  ""))
 
-;; No Littering! ====================================
-;; ==================================================
-
-(use-package no-littering
-  :custom
-  (auto-save-file-name-transforms
-   `((".*" ,(no-littering-expand-var-file-name "auto-save/") t)))
-  (custom-file (no-littering-expand-etc-file-name "custom.el"))
-  :config
-  (when (fboundp 'startup-redirect-eln-cache)
-    (defvar native-comp-eln-load-path nil)
-    (startup-redirect-eln-cache
-     (convert-standard-filename
-      (expand-file-name  "var/eln-cache/" user-emacs-directory)))))
-
-(use-package files
-  :straight (:type built-in)
-  :hook
-  (after-init . auto-save-visited-mode)
-  :custom
-  (backup-directory-alist `(("." . ,(concat user-emacs-directory "backups/"))))
-  (backup-by-copying t)
-  (delete-old-versions t)
-  (kept-new-versions 6)
-  (kept-old-versions 2)
-  (version-control t)
-  :config
-  (remove-hook 'find-file-hooks 'vc-find-file-hook)
-  (when macOS-p
-    (setq insert-directory-program "gls")))
-
 ;; Which-key configs ================================
 ;; ==================================================
 
@@ -345,6 +314,38 @@
   (global-leader
     "C"   (which-key-prefix "colors")
     "C."  'symbol-overlay-put))
+
+;; No Littering! ====================================
+;; ==================================================
+
+(use-package no-littering
+  :custom
+  (auto-save-file-name-transforms
+   `((".*" ,(no-littering-expand-var-file-name "auto-save/") t)))
+  (custom-file (no-littering-expand-etc-file-name "custom.el"))
+  :config
+  (when (fboundp 'startup-redirect-eln-cache)
+    (defvar native-comp-eln-load-path nil)
+    (startup-redirect-eln-cache
+     (convert-standard-filename
+      (expand-file-name  "var/eln-cache/" user-emacs-directory)))))
+
+(use-package files
+  :straight (:type built-in)
+  :hook
+  (after-init . auto-save-visited-mode)
+  :custom
+  (backup-directory-alist `(("." . ,(concat user-emacs-directory "backups/"))))
+  (backup-by-copying t)
+  (delete-old-versions t)
+  (kept-new-versions 6)
+  (kept-old-versions 2)
+  (version-control t)
+  :config
+  (remove-hook 'find-file-hooks 'vc-find-file-hook)
+  (when macOS-p
+    (setq insert-directory-program "gls")))
+
 
 ;; evil-mode config =================================
 ;; ==================================================
