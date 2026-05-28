@@ -2,7 +2,10 @@
 ;; ==================================================
 
 (defvar y-combinator
-  '(λ (f) ((λ (x) (f (x x))) (λ (x) (f (x x))))))
+  '(lambda (f) ((lambda (x) (f (x x))) (lambda (x) (f (x x))))))
+
+(defvar life
+  '((lambda (x) (list x (list 'quote x))) '(lambda (x) (list x (list 'quote x)))))
 
 ;; Initial Setups ===================================
 ;; ==================================================
@@ -379,6 +382,7 @@
 
 (use-package evil-vars
   :straight nil
+  :after (evil-states)
   :custom
   (evil-want-keybinding nil)
   (evil-disable-insert-state-bindings t)
@@ -393,7 +397,6 @@
 
 (use-package evil-states
   :straight nil
-  :after (evil)
   :custom
   (evil-motion-state-cursor 'box)
   (evil-visual-state-cursor 'box)
@@ -600,42 +603,6 @@
 (setq epg-gpg-program "gpg")
 (when terminal-p
   (setq epg-pinentry-mode 'loopback))
-
-;; Korean environment ===============================
-;; ==================================================
-
-(set-language-environment "Korean")
-(prefer-coding-system 'utf-8)
-
-;; Korean input method ==============================
-;; ==================================================
-
-(global-set-key (kbd "<f6>") 'toggle-korean-input-method)
-
-(unbind-key (kbd "C-d"))
-(unbind-key (kbd "C-d C-l"))
-(global-set-key (kbd "C-d C-l") 'toggle-korean-input-method)
-
-(defun set-input-method-to-korean ()
-  (interactive)
-  (set-input-method 'korean-hangul))
-
-(global-set-key (kbd "C-d C-k") 'set-input-method-to-korean)
-
-;; Japanese input method ============================
-;; ==================================================
-
-(defun set-input-method-to-japanese ()
-  (interactive)
-  (set-input-method 'japanese-skk))
-
-(global-set-key (kbd "C-d C-j") 'set-input-method-to-japanese)
-
-(use-package ddskk
-  :defer t
-  :custom
-  (skk-tut-file (concat (elispm/straight-get-repo-dir "ddskk") "/etc/SKK.tut"))
-  (skk-large-jisyo "~/LambdaMachine/ExternalConfigs/SKKJisho/SKK-JISYO.L"))
 
 ;; Manage-minor-mode ================================
 ;; ==================================================
@@ -1787,7 +1754,6 @@
 ;; ==================================================
 
 (use-package gptel
-  :defer t
   :hook ((gptel-mode . gptel-highlight-mode))
   :custom
   (gptel-model 'claude-opus-4.7)
@@ -6292,7 +6258,7 @@ the buffer works like a pager."
   "C-s-a" 'insert-ampersand
   "C-s-c" 'world-clock
   "C-s-e" 'eshell
-  "C-s-t" 'modus-themes-toggle
+  "C-s-t" 'auto-dark-toggle-appearance
   "C-s-r" 'eradio-toggle
   "C-s-f" 'toggle-frame-fullscreen
   "C-s-s" 'ace-swap-window
@@ -7622,9 +7588,9 @@ removal."
     "q"   'tetris-end-game
     "h"   'tetris-move-left
     "j"   'tetris-move-down
-    "k"   'tetris-rotate-prev
+    "k"   'tetris-rotate-next
     "l"   'tetris-move-right
-    "i"   'tetris-rotate-next
+    "i"   'tetris-rotate-prev
     "m"   'tetris-move-bottom
     "SPC" 'tetris-move-bottom		; not working
     "n"   'tetris-start-game))
@@ -7683,6 +7649,42 @@ removal."
 
 (use-package flycheck-hledger
   :after hledger-mode)
+
+;; Korean environment ===============================
+;; ==================================================
+
+(set-language-environment "Korean")
+(prefer-coding-system 'utf-8)
+
+;; Korean input method ==============================
+;; ==================================================
+
+(global-set-key (kbd "<f6>") 'toggle-korean-input-method)
+
+(unbind-key (kbd "C-d"))
+(unbind-key (kbd "C-d C-l"))
+(global-set-key (kbd "C-d C-l") 'toggle-korean-input-method)
+
+(defun set-input-method-to-korean ()
+  (interactive)
+  (set-input-method 'korean-hangul))
+
+(global-set-key (kbd "C-d C-k") 'set-input-method-to-korean)
+
+;; Japanese input method ============================
+;; ==================================================
+
+(defun set-input-method-to-japanese ()
+  (interactive)
+  (set-input-method 'japanese-skk))
+
+(global-set-key (kbd "C-d C-j") 'set-input-method-to-japanese)
+
+(use-package ddskk
+  :defer t
+  :custom
+  (skk-tut-file (concat (elispm/straight-get-repo-dir "ddskk") "/etc/SKK.tut"))
+  (skk-large-jisyo "~/LambdaMachine/ExternalConfigs/SKKJisho/SKK-JISYO.L"))
 
 ;; Patchups =========================================
 ;; ==================================================
