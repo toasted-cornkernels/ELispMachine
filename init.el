@@ -5965,8 +5965,24 @@ Uses `magit-patch-save-arguments' internally, so inherit its settings."
   :custom-face
   (org-block ((t (:foreground "#BBCCDD" :background "#000000")))))
 
+(defun elispm/pdf-enable-midnight-mode ()
+  "Enable midnight mode in all open PDF buffers."
+  (dolist (buf (buffer-list))
+    (with-current-buffer buf
+      (when (derived-mode-p 'pdf-view-mode)
+        (pdf-view-midnight-minor-mode 1)))))
+
+(defun elispm/pdf-disable-midnight-mode ()
+  "Disable midnight mode in all open PDF buffers."
+  (dolist (buf (buffer-list))
+    (with-current-buffer buf
+      (when (derived-mode-p 'pdf-view-mode)
+        (pdf-view-midnight-minor-mode -1)))))
+
 (use-package auto-dark
   :when (not (or chromeOS-p android-p terminal-p))
+  :hook ((auto-dark-dark-mode  . elispm/pdf-enable-midnight-mode)
+         (auto-dark-light-mode . elispm/pdf-disable-midnight-mode))
   :config
   (setq custom-safe-themes t)
   (setq auto-dark-themes '((modus-vivendi) (modus-operandi))
