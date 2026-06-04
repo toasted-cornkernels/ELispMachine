@@ -6021,6 +6021,10 @@ the buffer works like a pager."
     (setq-local cursor-type (or hide-cursor--original
                                 t))))
 
+(use-package ansi-color
+  :straight (:type built-in)
+  :hook (compilation-filter . ansi-color-compilation-filter))
+
 ;; hl-todo config ==================================
 ;; =================================================
 
