@@ -697,6 +697,7 @@
                          ol-info
                          ol-man)))
   (org-fontify-quote-and-verse-blocks t)
+  (org-use-sub-superscripts '{})
   :general-config
   (local-leader
     :major-modes '(org-mode t)
