@@ -5585,10 +5585,9 @@ Uses `magit-patch-save-arguments' internally, so inherit its settings."
     "a"          'forge-post-cancel))
 
 (use-package gh-notify
-  ;; :after (magit forge)
   :defer t
   :general-config
-  (agnostic-key               ; TODO: complete this
+  (normal-mode-major-mode               ; TODO: complete this
     :major-modes '(gh-notify-mode t)
     :keymaps     '(gh-notify-mode-map)
     "RET"        'gh-notify-visit-notification
