@@ -911,6 +911,9 @@
                 org-insert-structure-template))
     (advice-add fn :after #'evil-insert-state)))
 
+(use-package org-table
+  :hook (markdown-mode . orgtbl-mode))
+
 (use-package evil-org
   :after (evil org)
   :custom
@@ -4322,8 +4325,7 @@ set so that it clears the whole REPL buffer, not just the output."
 (use-package markdown-mode
   :hook (((gfm-mode markdown-mode) . (lambda ()
                                        (setq indent-tabs-mode nil)))
-         ((gfm-mode markdown-mode) . outline-minor-mode)
-         ((gfm-mode markdown-mode) . orgtbl-mode))
+         ((gfm-mode markdown-mode) . outline-minor-mode))
   :mode
   (("\\.md\\'"  . gfm-mode)
    ("\\.mkd\\'" . markdown-mode)
