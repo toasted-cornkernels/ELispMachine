@@ -912,6 +912,7 @@
     (advice-add fn :after #'evil-insert-state)))
 
 (use-package org-table
+  :straight nil
   :hook (markdown-mode . orgtbl-mode))
 
 (use-package evil-org
