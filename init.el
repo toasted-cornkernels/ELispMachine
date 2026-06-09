@@ -1757,7 +1757,7 @@
 (use-package gptel
   :hook ((gptel-mode . gptel-highlight-mode))
   :custom
-  (gptel-model 'claude-opus-4.7)
+  (gptel-model 'claude-opus-4.6)
   (gptel-default-mode 'org-mode)
   (gptel-highlight-methods '(face))
   (gptel-prompt-prefix-alist '((markdown-mode . "# ")
