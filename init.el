@@ -1753,8 +1753,8 @@
   (eldoc-box-clear-with-C-g t)
   :general
   (normal-mode-major-mode
-    :keymaps '(eglot-mode-map)
-    "K"      'eldoc-box-help-at-point))
+    :major-modes '(eldoc-mode)
+    "K"          'eldoc-box-help-at-point))
 
 ;; GPTel config =====================================
 ;; ==================================================
