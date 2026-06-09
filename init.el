@@ -6975,7 +6975,6 @@ removal."
 ;; ==================================================
 
 (use-package ace-link
-  ;; TODO
   :bind (:map Info-mode-map
               ("o" . 'ace-link-info)
               Info-mode-map
@@ -6987,6 +6986,8 @@ removal."
               w3m-link-map
               ("o" . 'ace-link-info)
               w3m-mode-map
+              ("o" . 'ace-link-info)
+              elfeed-show-mode
               ("o" . 'ace-link-info)))
 
 (use-package ace-window
