@@ -5662,7 +5662,7 @@ Uses `magit-patch-save-arguments' internally, so inherit its settings."
 ;; ==================================================
 
 (use-package newcomment
-  :straight nil
+  :straight (:type built-in)
   :general-config
   (agnostic-key "M-;" 'comment-dwim))
 
