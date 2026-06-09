@@ -67,8 +67,8 @@
 ;; Profiling ========================================
 ;; ==================================================
 
-;; (setq use-package-verbose t
-;;       use-package-compute-statistics t)
+(setq use-package-verbose t
+      use-package-compute-statistics t)
 
 ;; General.el config ================================
 ;; ==================================================
@@ -4683,6 +4683,7 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (use-package savehist
   :straight nil
+  :hook (after-init . savehist-mode)
   :custom
   (savehist-file (concat user-emacs-directory "savehist"))
   (savehist-autosave-interval 60)
@@ -4691,8 +4692,7 @@ set so that it clears the whole REPL buffer, not just the output."
             (lambda ()
               (setq kill-ring
                     (mapcar #'substring-no-properties
-                            (cl-remove-if-not #'stringp kill-ring)))))
-  (savehist-mode t))
+                            (cl-remove-if-not #'stringp kill-ring))))))
 
 (use-package emacs
   :straight nil
@@ -4798,6 +4798,8 @@ set so that it clears the whole REPL buffer, not just the output."
     (set-mark-command-repeat-pop t)
     ;; I KNOW
     (suggest-key-bindings nil)
+    (column-number-mode t)
+    (global-visual-line-mode t)
     :config
     (add-hook 'after-save-hook
               #'executable-make-buffer-file-executable-if-script-p)))
@@ -5689,7 +5691,7 @@ Uses `magit-patch-save-arguments' internally, so inherit its settings."
 ;; ==================================================
 
 (use-package isearch
-  :straight nil
+  :straight (:type built-in)
   :general-config
   (agnostic-key
     "C-s" 'isearch-forward-regexp))
@@ -5697,32 +5699,36 @@ Uses `magit-patch-save-arguments' internally, so inherit its settings."
 ;; hippie-expand configs ============================
 ;; ==================================================
 
-(global-set-key (kbd "M-/") 'hippie-expand)
-
-(setq hippie-expand-try-functions-list
-      '(try-expand-dabbrev
-        try-expand-dabbrev-all-buffers
-        try-expand-dabbrev-from-kill
-        try-complete-lisp-symbol-partially
-        try-complete-lisp-symbol))
+(use-package hippie-exp
+  :straight (:type built-in)
+  :custom
+  (hippie-expand-try-functions-list
+   '(try-expand-dabbrev
+     try-expand-dabbrev-all-buffers
+     try-expand-dabbrev-from-kill
+     try-complete-lisp-symbol-partially
+     try-complete-lisp-symbol))
+  :general
+  (agnostic-key
+    "M-/" 'hippie-expand))
 
 ;; Uniquify configs =================================
 ;; ==================================================
 
 (use-package uniquify
-  :straight nil
-  :config
-  (setq uniquify-buffer-name-style 'post-forward-angle-brackets
-        ;; don't screw special buffers
-        uniquify-ignore-buffers-re "^\\*"))
+  :straight (:type built-in)
+  :custom
+  (uniquify-buffer-name-style 'post-forward-angle-brackets)
+  ;; don't screw special buffers
+  (uniquify-ignore-buffers-re "^\\*"))
 
 ;; Helpful & Help ===================================
 ;; ==================================================
 
 (use-package help
   :straight (:type built-in)
-  :config
-  (setq help-window-select t))
+  :custom
+  (help-window-select t))
 
 (use-package helpful
   :defer t)
@@ -5732,15 +5738,15 @@ Uses `magit-patch-save-arguments' internally, so inherit its settings."
 
 (use-package recentf
   :straight (:type built-in)
+  :hook (after-init . recentf-mode)
   :defer t
+  :custom
+  (recentf-keep '(file-remote-p file-readable-p))
+  (recentf-save-file (concat user-emacs-directory ".recentf"))
+  (recentf-max-saved-items 1000)
+  (recentf-max-menu-items 40)
+  (recentf-auto-cleanup 'never)
   :config
-  (setq recentf-keep '(file-remote-p file-readable-p)
-        recentf-save-file (concat user-emacs-directory ".recentf")
-        recentf-max-saved-items 1000
-        recentf-max-menu-items 40
-        recentf-auto-cleanup 'never)
-  (setq recentf-auto-save-timer (run-with-idle-timer 600 t 'recentf-save-list))
-  (recentf-mode 1)
   (add-to-list 'recentf-exclude (recentf-expand-file-name package-user-dir))
   (add-to-list 'recentf-exclude "/private/var/folders/.*")
   (add-to-list 'recentf-exclude "/var/folders/.*")
@@ -5766,8 +5772,8 @@ Uses `magit-patch-save-arguments' internally, so inherit its settings."
 (use-package image-mode
   :straight nil
   :defer t
-  :config
-  (setq image-animate-loop t)
+  :custom
+  (image-animate-loop t)
   :general-config
   (local-leader
     :major-modes '(image-mode t)
@@ -5801,13 +5807,14 @@ Uses `magit-patch-save-arguments' internally, so inherit its settings."
 ;; ==================================================
 
 (use-package ediff
-  ;; TODO make sure that ediff-cleanup-mess runs after a session
   :defer t
+  :custom
+  (ediff-window-setup-function 'ediff-setup-windows-plain)
+  (ediff-split-window-function 'split-window-horizontally)
+  (ediff-merge-split-window-function 'split-window-horizontally)
   :config
-  (setq-default ediff-window-setup-function 'ediff-setup-windows-plain
-                ediff-split-window-function 'split-window-horizontally
-                ediff-merge-split-window-function 'split-window-horizontally)
   (require 'outline)
+  ;; TODO make sure that ediff-cleanup-mess runs after a session
   (add-hook 'ediff-prepare-buffer-hook #'show-all)
   (add-hook 'ediff-quit-hook           #'winner-undo)
   (defun disable-y-or-n-p (orig-fun &rest args)
@@ -5854,9 +5861,10 @@ Uses `magit-patch-save-arguments' internally, so inherit its settings."
 ;; ==================================================
 
 (use-package minions
-  :config
-  (minions-mode 1)
-  (setq minions-hidden-modes t))
+  :hook
+  (after-init . minions-mode)
+  :custom
+  (minions-hidden-modes t))
 
 ;; Visuals ==========================================
 ;; ==================================================
@@ -5873,17 +5881,17 @@ Uses `magit-patch-save-arguments' internally, so inherit its settings."
 (use-package spacious-padding
   :straight (spacious-padding :host github
                               :repo "protesilaos/spacious-padding")
+  :hook (after-init . spacious-padding-mode)
   :when GUI-p
-  :config
-  (setq spacious-padding-widths
-        '(:internal-border-width 15
-                                 :header-line-width 4
-                                 :mode-line-width 6
-                                 :tab-width 4
-                                 :right-divider-width 30
-                                 :scroll-bar-width 8
-                                 :fringe-width 8))
-  (spacious-padding-mode 1))
+  :custom
+  (spacious-padding-widths
+   '(:internal-border-width 15
+                            :header-line-width 4
+                            :mode-line-width 6
+                            :tab-width 4
+                            :right-divider-width 30
+                            :scroll-bar-width 8
+                            :fringe-width 8)))
 
 (use-package adaptive-wrap
   :config
@@ -5891,12 +5899,9 @@ Uses `magit-patch-save-arguments' internally, so inherit its settings."
     (lambda () (adaptive-wrap-prefix-mode 1)))
   (elispm/global-adaptive-wrap-prefix-mode 1))
 
-(setq column-number-mode t)
-
 (use-package xt-mouse
-  :straight nil
-  :config
-  (xterm-mouse-mode 1))
+  :straight (:type built-in)
+  :hook (after-init . xterm-mouse-mode))
 
 (use-package menu-bar
   :straight nil
@@ -5905,10 +5910,11 @@ Uses `magit-patch-save-arguments' internally, so inherit its settings."
 
 (use-package tab-bar
   :straight nil
+  :hook (after-init . tab-bar-history-mode)
+  :custom
+  (tab-bar-position t) ; place the tab-bar below the tool bar
+  (tab-bar-auto-width nil)
   :config
-  (setq tab-bar-position t  ; place the tab-bar below the tool bar
-        tab-bar-auto-width nil)
-
   (defun disable-tab-bar-if-unnecessary (_)
     "Hide the tab bar if there is only one tab left."
     (when (= (length (tab-bar-tabs)) 1)
@@ -5919,8 +5925,6 @@ Uses `magit-patch-save-arguments' internally, so inherit its settings."
   (defun tab-move-previous ()
     (interactive)
     (tab-move -1))
-
-  (tab-bar-history-mode t)
 
   :general-config
   (agnostic-key
@@ -5933,14 +5937,15 @@ Uses `magit-patch-save-arguments' internally, so inherit its settings."
     "s-."        'tab-new
     "s-,"        'tab-close))
 
-(blink-cursor-mode 0)
-(global-visual-line-mode t)
-
 (use-package scroll-bar
-  :straight nil
-  :config
-  (when (fboundp 'scroll-bar-mode)
-    (scroll-bar-mode -1)))
+  :straight (:type built-in)
+  :custom
+  (scroll-bar-mode nil))
+
+(use-package frame
+  :straight (:type built-in)
+  :custom
+  (blink-cursor-mode nil))
 
 (use-package faces
   :straight nil
@@ -5956,10 +5961,11 @@ Uses `magit-patch-save-arguments' internally, so inherit its settings."
                       (font-spec :name "NanumGothic"))))
 
 (use-package modus-themes
+  :custom
+  (modus-themes-italic-constructs t)
+  (modus-themes-bold-constructs nil)
   :config
   (setq custom-safe-themes t)
-  (setq modus-themes-italic-constructs t
-        modus-themes-bold-constructs nil)
   (load-theme 'modus-operandi t)
   (load-theme 'modus-vivendi t))
 
@@ -5990,12 +5996,12 @@ Uses `magit-patch-save-arguments' internally, so inherit its settings."
   :hook ((after-init . auto-dark-mode)
          (auto-dark-dark-mode  . elispm/pdf-enable-midnight-mode)
          (auto-dark-light-mode . elispm/pdf-disable-midnight-mode))
+  :custom
+  (auto-dark-themes '((modus-vivendi) (modus-operandi)))
+  (auto-dark-allow-osascript t)
+  (auto-dark-allow-powershell nil)
   :config
-  (setq custom-safe-themes t)
-  (setq auto-dark-themes '((modus-vivendi) (modus-operandi))
-        auto-dark-allow-osascript t
-        auto-dark-allow-powershell nil)
-  (auto-dark-mode t))
+  (setq custom-safe-themes t))
 
 (use-package writeroom-mode
   :custom
@@ -6969,14 +6975,19 @@ removal."
 ;; ==================================================
 
 (use-package ace-link
-  :config
-  (define-key Info-mode-map   "o" 'ace-link-info)
-  (define-key help-mode-map   "o" 'ace-link-help)
-  ;; (define-key woman-mode-map  "o" 'link-hint-open-link)
-  (define-key eww-link-keymap "o" 'ace-link-eww)
-  (define-key eww-mode-map    "o" 'ace-link-eww)
-  (define-key w3m-link-map    "o" 'ace-link-w3m)
-  (define-key w3m-mode-map    "o" 'ace-link-w3m))
+  ;; TODO
+  :bind (:map Info-mode-map
+              ("o" . 'ace-link-info)
+              Info-mode-map
+              ("o" . 'ace-link-info)
+              eww-link-keymap
+              ("o" . 'ace-link-info)
+              eww-mode-map
+              ("o" . 'ace-link-info)
+              w3m-link-map
+              ("o" . 'ace-link-info)
+              w3m-mode-map
+              ("o" . 'ace-link-info)))
 
 (use-package ace-window
   :defer t
@@ -7311,10 +7322,6 @@ removal."
     "<C-down-mouse-1>"       'pdf-view-mouse-extend-region
     "<M-down-mouse-1>"       'pdf-view-mouse-set-region-rectangle
     "<down-mouse-1>"         'pdf-view-mouse-set-region))
-
-(use-package image-roll
-  :straight
-  (:host github :repo "dalanicolai/image-roll.el"))
 
 (use-package pdf-view-restore
   :after pdf-tools
