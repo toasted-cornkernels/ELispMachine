@@ -67,8 +67,8 @@
 ;; Profiling ========================================
 ;; ==================================================
 
-(setq use-package-verbose t
-      use-package-compute-statistics t)
+;; (setq use-package-verbose t
+;;       use-package-compute-statistics t)
 
 ;; General.el config ================================
 ;; ==================================================
@@ -356,8 +356,8 @@
 (use-package evil
   :demand t
   :after (evil-vars)
+  :hook (after-init . evil-mode)
   :config
-  (evil-mode 1)
   ;; set leader key in normal state
   (evil-set-leader 'normal (kbd "SPC"))
   ;; set local leader
@@ -454,7 +454,7 @@
   :custom
   (evil-lisp-state-global t)
   (evil-lisp-state-cursor '(hbar . 2))
-  :general-config
+  :general
   (global-leader
     "k"   (which-key-prefix :lisp)
     "k$"  'evil-lisp-state-sp-end-of-sexp
@@ -2293,12 +2293,12 @@
   (show-paren-mode 1))
 
 (use-package smartparens
+  :hook (prog-mode . smartparens-mode)
   :custom
   (sp-highlight-pair-overlay nil)
   (sp-highlight-wrap-overlay nil)
   (sp-highlight-wrap-tag-overlay nil)
   :config
-  (smartparens-global-mode)
   ;; Regular quote
   (sp-local-pair '(fennel-mode hy-mode clojure-mode lisp-mode emacs-lisp-mode
                                geiser-mode scheme-mode racket-mode
@@ -3726,6 +3726,7 @@ set so that it clears the whole REPL buffer, not just the output."
     "hp" 'prolog-help-on-predicate))
 
 (use-package ediprolog
+  :defer t
   :custom
   (ediprolog-system 'swi)
   :config
@@ -3762,25 +3763,25 @@ set so that it clears the whole REPL buffer, not just the output."
   (local-leader
     :major-modes '(prolog-mode t)
     :keymaps     '(prolog-mode-map)
-    "e"  (which-key-prefix "eval")
-    "ee" 'ediprolog-dwim
-    "eb" 'ediprolog-consult-buffer
-    "et" 'ediprolog-back-to-toplevel
-    "ec" 'ediprolog-remove-interactions
-    "eq" 'ediprolog-consult-buffer-then-query
-
-    "k"  (which-key-prefix "kill")
-    "kk" 'ediprolog-kill-prolog-process
-    "kb" 'ediprolog-kill-then-consult-buffer
-    "kq" 'ediprolog-kill-then-consult-then-query
-
-    "l"  'ediprolog-localize
-    "L"  'ediprolog-unlocalize))
+    "e"          (which-key-prefix "eval")
+    "ee"         'ediprolog-dwim
+    "eb"         'ediprolog-consult-buffer
+    "et"         'ediprolog-back-to-toplevel
+    "ec"         'ediprolog-remove-interactions
+    "eq"         'ediprolog-consult-buffer-then-query
+    
+    "k"          (which-key-prefix "kill")
+    "kk"         'ediprolog-kill-prolog-process
+    "kb"         'ediprolog-kill-then-consult-buffer
+    "kq"         'ediprolog-kill-then-consult-then-query
+    
+    "l"          'ediprolog-localize
+    "L"          'ediprolog-unlocalize))
 
 (use-package sweeprolog
   :defer t
-  :config
-  (setq sweeprolog--directory "~/.emacs.d/straight/repos/sweeprolog"))
+  :custom
+  (sweeprolog--directory "~/.emacs.d/straight/repos/sweeprolog"))
 
 ;; Nix config =======================================
 ;; ==================================================
