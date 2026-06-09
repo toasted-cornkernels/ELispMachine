@@ -354,6 +354,7 @@
 ;; ==================================================
 
 (use-package evil
+  :demand t
   :after (evil-vars)
   :config
   (evil-mode 1)
@@ -382,7 +383,7 @@
 
 (use-package evil-vars
   :straight nil
-  :after (evil-states)
+  :demand t
   :custom
   (evil-want-keybinding nil)
   (evil-disable-insert-state-bindings t)
@@ -397,6 +398,7 @@
 
 (use-package evil-states
   :straight nil
+  :demand t
   :custom
   (evil-motion-state-cursor 'box)
   (evil-visual-state-cursor 'box)
@@ -910,6 +912,10 @@
                 org-insert-item
                 org-insert-structure-template))
     (advice-add fn :after #'evil-insert-state)))
+
+(use-package org-table
+  :straight nil
+  :hook (markdown-mode . orgtbl-mode))
 
 (use-package evil-org
   :after (evil org)
@@ -4322,8 +4328,7 @@ set so that it clears the whole REPL buffer, not just the output."
 (use-package markdown-mode
   :hook (((gfm-mode markdown-mode) . (lambda ()
                                        (setq indent-tabs-mode nil)))
-         ((gfm-mode markdown-mode) . outline-minor-mode)
-         ((gfm-mode markdown-mode) . orgtbl-mode))
+         ((gfm-mode markdown-mode) . outline-minor-mode))
   :mode
   (("\\.md\\'"  . gfm-mode)
    ("\\.mkd\\'" . markdown-mode)
@@ -5981,8 +5986,9 @@ Uses `magit-patch-save-arguments' internally, so inherit its settings."
         (pdf-view-midnight-minor-mode -1)))))
 
 (use-package auto-dark
-  :when (not (or chromeOS-p android-p terminal-p))
-  :hook ((auto-dark-dark-mode  . elispm/pdf-enable-midnight-mode)
+  :when (not (or chromeOS-p android-p))
+  :hook ((after-init . auto-dark-mode)
+         (auto-dark-dark-mode  . elispm/pdf-enable-midnight-mode)
          (auto-dark-light-mode . elispm/pdf-disable-midnight-mode))
   :config
   (setq custom-safe-themes t)
@@ -6029,27 +6035,26 @@ the buffer works like a pager."
 ;; =================================================
 
 (use-package hl-todo
-  :demand t
-  :config
-  (global-hl-todo-mode)
-  (setq hl-todo-keyword-faces
-        '(("HOLD"    . "#d0bf8f")
-          ("TODO"    . "#cc9393")
-          ("NEXT"    . "#dca3a3")
-          ("THEM"    . "#dc8cc3")
-          ("WORKING" . "#7cb8bb")
-          ("PROG"    . "#7cb8bb")
-          ("OKAY"    . "#7cb8bb")
-          ("DONT"    . "#5f7f5f")
-          ("FAIL"    . "#8c5353")
-          ("DONE"    . "#afd8af")
-          ("NOTE"    . "#d0bf8f")
-          ("KLUDGE"  . "#d0bf8f")
-          ("HACK"    . "#d0bf8f")
-          ("TEMP"    . "#d0bf8f")
-          ("FIXME"   . "#cc9393")
-          ("UNSURE"  . "#cc9393")
-          ("WORKAROUND"    . "#d0bf8f"))))
+  :hook (after-init . global-hl-todo-mode)
+  :custom
+  (hl-todo-keyword-faces
+   '(("HOLD"          . "#d0bf8f")
+     ("TODO"          . "#cc9393")
+     ("NEXT"          . "#dca3a3")
+     ("THEM"          . "#dc8cc3")
+     ("WORKING"       . "#7cb8bb")
+     ("PROG"          . "#7cb8bb")
+     ("OKAY"          . "#7cb8bb")
+     ("DONT"          . "#5f7f5f")
+     ("FAIL"          . "#8c5353")
+     ("DONE"          . "#afd8af")
+     ("NOTE"          . "#d0bf8f")
+     ("KLUDGE"        . "#d0bf8f")
+     ("HACK"          . "#d0bf8f")
+     ("TEMP"          . "#d0bf8f")
+     ("FIXME"         . "#cc9393")
+     ("UNSURE"        . "#cc9393")
+     ("WORKAROUND"    . "#d0bf8f"))))
 
 ;; line numbers ====================================
 ;; =================================================
@@ -6076,23 +6081,6 @@ the buffer works like a pager."
 (use-package eshell
   :straight (:type built-in)
   :defer t)
-
-;; EAT config =======================================
-;; ==================================================
-
-(use-package eat
-  :defer t
-  :straight
-  (:type git
-         :host codeberg
-         :repo "akib/emacs-eat"
-         :files ("*.el" ("term" "term/*.el") "*.texi"
-                 "*.ti" ("terminfo/e" "terminfo/e/*")
-                 ("terminfo/65" "terminfo/65/*")
-                 ("integration" "integration/*")
-                 (:exclude ".dir-locals.el" "*-tests.el")))
-  :config
-  (setq eat-kill-buffer-on-exit t))
 
 ;; vterm config =====================================
 ;; ==================================================
@@ -6156,20 +6144,21 @@ the buffer works like a pager."
 
 (use-package time
   :straight (:type built-in)
-  ;; :defer t
+  :init
+  (defvar elispm/world-clock-cities '(("America/New_York"    "New York")
+                                      ("America/Los_Angeles" "Los Angeles")
+                                      ("Europe/London"       "Oxford")
+                                      ("Europe/Zurich"       "Zurich")
+                                      ("Asia/Tokyo"          "Tokyo")))
+  :custom
+  (display-time-default-load-average nil)
+  (display-time-load-average nil)
+  (display-time-format "%b %d %l:%M %p")
+  (display-time-world-time-format "%a %d %b %I:%M %p %Z")
+  (world-clock-list t)
+  (display-time-world-list elispm/world-clock-cities)
+  (zoneinfo-style-world-list elispm/world-clock-cities)
   :config
-  (let ((cities '(("America/New_York"    "New York")
-                  ("America/Los_Angeles" "Los Angeles")
-                  ("Europe/London"       "Oxford")
-                  ("Europe/Zurich"       "Zurich")
-                  ("Asia/Tokyo"          "Tokyo"))))
-    (setq display-time-default-load-average nil
-          display-time-load-average nil
-          display-time-format "%b %d %l:%M %p"
-          display-time-world-time-format "%a %d %b %I:%M %p %Z"
-          display-time-world-list cities
-          world-clock-list t
-          zoneinfo-style-world-list cities))
   (defun display-current-time ()
     "Display the current time in the buffer."
     (interactive)
@@ -6973,14 +6962,13 @@ removal."
          ("\\.rackdiag\\'"  . graphviz-dot-mode)
          ("\\.dot\\'"       . graphviz-dot-mode)
          ("\\.gv\\'"        . graphviz-dot-mode))
-  :config
-  (setq graphviz-dot-indent-width tab-width))
+  :custom
+  (graphviz-dot-indent-width tab-width))
 
 ;; ace-link config ==================================
 ;; ==================================================
 
 (use-package ace-link
-  :after (eww w3m)
   :config
   (define-key Info-mode-map   "o" 'ace-link-info)
   (define-key help-mode-map   "o" 'ace-link-help)
@@ -6992,9 +6980,9 @@ removal."
 
 (use-package ace-window
   :defer t
-  :config
-  (setq aw-keys '(?q ?w ?e ?r ?t ?y ?u ?i ?o ?p)
-        aw-background nil))
+  :custom
+  (aw-keys '(?q ?w ?e ?r ?t ?y ?u ?i ?o ?p))
+  (aw-background nil))
 
 (use-package ace-jump-mode
   :defer t)
@@ -7004,6 +6992,18 @@ removal."
 
 (use-package w3m
   :defer t
+  :custom
+  (w3m-user-agent "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36")
+  (w3m-coding-system 'utf-8)
+  (w3m-file-coding-system 'utf-8)
+  (w3m-file-name-coding-system 'utf-8)
+  (w3m-input-coding-system 'utf-8)
+  (w3m-output-coding-system 'utf-8)
+  (w3m-terminal-coding-system 'utf-8)
+  (w3m-default-display-inline-images t)
+  (w3m-session-load-crashed-sessions 'never)
+  (w3m-search-word-at-point nil)
+
   :config
   (defun xwidget-webkit-open-w3m-current-url ()
     (interactive)
@@ -7074,15 +7074,6 @@ removal."
      (list (read-string "Enter website address (default: duckduckgo.com): " nil nil "duckduckgo.com" nil )))
     (w3m-open-url-with 'w3m-goto-url-new-session url))
 
-  (setq browse-url-browser-function 'w3m-goto-url-new-session
-        w3m-user-agent "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36"
-        w3m-coding-system 'utf-8
-        w3m-file-coding-system 'utf-8
-        w3m-file-name-coding-system 'utf-8
-        w3m-input-coding-system 'utf-8
-        w3m-output-coding-system 'utf-8
-        w3m-terminal-coding-system 'utf-8)
-
   :general-config
   (local-leader
     :major-modes '(w3m-mode t)
@@ -7138,43 +7129,42 @@ removal."
   (if GUI-p
       (setq browse-url-browser-function 'browse-url-default-browser)
     (setq browse-url-browser-function 'w3m-browse-url))
-  (setq w3m-default-display-inline-images t
-        w3m-session-load-crashed-sessions 'never
-        w3m-search-word-at-point nil))
 
-(use-package inherit-org
-  :defer t
-  :straight (inherit-org :type git
-                         :host github
-                         :repo "chenyanming/inherit-org"))
+  (use-package inherit-org
+    :defer t
+    :straight (inherit-org :type git
+                           :host github
+                           :repo "chenyanming/inherit-org"))
 
-;; eww config =======================================
-;; ==================================================
+  ;; eww config =======================================
+  ;; ==================================================
 
-(use-package eww
-  :straight (:type built-in)
-  :defer t
-  :config
-  (defun eww-open-w3m-current-url ()
-    (interactive)
-    (w3m-browse-url (eww-copy-page-url)))
-  (defun eww-search-namu-wiki ()
-    (interactive)
-    (let ((url (read-from-minibuffer "URL: " "https://namu.wiki/w/")))
-      (eww-browse-url url)))
+  (use-package eww
+    :straight (:type built-in)
+    :defer t
+    :custom
+    (eww-search-prefix "https://www.duckduckgo.com/search?q=")
+    (eww-browse-url-new-window-is-tab nil)
+    :config
+    (defun eww-open-w3m-current-url ()
+      (interactive)
+      (w3m-browse-url (eww-copy-page-url)))
 
-  (evil-define-key 'normal eww-mode-map (kbd "c") 'eww-copy-page-url)
-  (setq eww-search-prefix "https://www.duckduckgo.com/search?q=")
-  (setq browse-url-browser-function (lambda (url session)
-                                      (if (or (string-match ".*youtube.com.*" url)
-                                              (string-match ".*youtu.be.*" url))
-                                          (xwidget-webkit-browse-url url session)
-                                        (eww-browse-url url))))
-  (setq eww-browse-url-new-window-is-tab nil)
-  :bind
-  (:map eww-mode-map
-        ("<mouse-4>" . eww-back-url)
-        ("<mouse-5>" . eww-forward-url)))
+    (defun eww-search-namu-wiki ()
+      (interactive)
+      (let ((url (read-from-minibuffer "URL: " "https://namu.wiki/w/")))
+        (eww-browse-url url)))
+
+    (evil-define-key 'normal eww-mode-map (kbd "c") 'eww-copy-page-url)
+    (setq browse-url-browser-function (lambda (url session)
+                                        (if (or (string-match ".*youtube.com.*" url)
+                                                (string-match ".*youtu.be.*" url))
+                                            (xwidget-webkit-browse-url url session)
+                                          (eww-browse-url url))))
+    :bind
+    (:map eww-mode-map
+          ("<mouse-4>" . eww-back-url)
+          ("<mouse-5>" . eww-forward-url))))
 
 (use-package shrface
   :defer t)
@@ -7315,11 +7305,12 @@ removal."
     "tf" 'next-error-follow-minor-mode)
 
   :config
-  (evil-define-key 'visual pdf-view-mode-map
-    "y" 'pdf-view-kill-ring-save
-    (kbd "<C-down-mouse-1>") 'pdf-view-mouse-extend-region
-    (kbd "<M-down-mouse-1>") 'pdf-view-mouse-set-region-rectangle
-    (kbd "<down-mouse-1>")  'pdf-view-mouse-set-region))
+  (visual-mode-major-mode
+    :major-modes '(pdf-view-mode-map)
+    "y"                      'pdf-view-kill-ring-save
+    "<C-down-mouse-1>"       'pdf-view-mouse-extend-region
+    "<M-down-mouse-1>"       'pdf-view-mouse-set-region-rectangle
+    "<down-mouse-1>"         'pdf-view-mouse-set-region))
 
 (use-package image-roll
   :straight
@@ -7336,7 +7327,7 @@ removal."
   :defer t
   :mode ("\\.epub\\'" . nov-mode)
   :hook (nov-mode . (lambda () (setq line-spacing 0.3)))
-  :config
+  :general-config
   (normal-mode-major-mode
     :major-modes '(nov-mode t)
     :keymaps     '(nov-mode-map)
@@ -7357,29 +7348,26 @@ removal."
 
 (use-package eradio
   :defer t
-  :config
-  (setq eradio-player   '("mpv" "--no-video" "--no-terminal" "--really-quiet")
-        eradio-channels '(("WFUV 90.7"     . "https://onair.wfuv.org/onair-aacplus")
-                          ("WNYC 93.9 FM"  . "https://fm939.wnyc.org/wnycfm.aac")
-                          ("WBBR 1130 AM"  . "http://14123.live.streamtheworld.com/WBBRAMAAC_SC")
-                          ("Bloomberg TV"  . "https://www.bloomberg.com/media-manifest/streams/phoenix-us.m3u8")
-                          ("MBC FM4U"      . "https://radio.bsod.kr/stream/?stn=mbc&ch=fm4u")
-                          ("MBC mini 올댓뮤직" . "https://radio.bsod.kr/stream/?stn=mbc&ch=chm")
-                          ("MBC 표준FM"    . "https://radio.bsod.kr/stream/?stn=mbc&ch=sfm")
-                          ("SBS 파워FM"    . "https://radio.bsod.kr/stream/?stn=sbs&ch=powerfm")
-                          ("SBS 러브FM"    . "https://radio.bsod.kr/stream/?stn=sbs&ch=lovefm")
-                          ("TBS 교통방송"  . "http://tbs.hscdn.com/tbsradio/fm/playlist.m3u8")
-                          ("TBS eFM"       . "http://tbs.hscdn.com/tbsradio/efm/playlist.m3u8")
-                          ("CBS 음악방송"  . "http://aac.cbs.co.kr/cbs939/cbs939.stream/playlist.m3u8"))))
+  :custom
+  (eradio-player   '("mpv" "--no-video" "--no-terminal" "--really-quiet"))
+  (eradio-channels '(("WFUV 90.7"     . "https://onair.wfuv.org/onair-aacplus")
+                     ("WNYC 93.9 FM"  . "https://fm939.wnyc.org/wnycfm.aac")
+                     ("WBBR 1130 AM"  . "http://14123.live.streamtheworld.com/WBBRAMAAC_SC")
+                     ("Bloomberg TV"  . "https://www.bloomberg.com/media-manifest/streams/phoenix-us.m3u8")
+                     ("MBC FM4U"      . "https://radio.bsod.kr/stream/?stn=mbc&ch=fm4u")
+                     ("MBC mini 올댓뮤직" . "https://radio.bsod.kr/stream/?stn=mbc&ch=chm")
+                     ("MBC 표준FM"    . "https://radio.bsod.kr/stream/?stn=mbc&ch=sfm")
+                     ("SBS 파워FM"    . "https://radio.bsod.kr/stream/?stn=sbs&ch=powerfm")
+                     ("SBS 러브FM"    . "https://radio.bsod.kr/stream/?stn=sbs&ch=lovefm")
+                     ("TBS 교통방송"  . "http://tbs.hscdn.com/tbsradio/fm/playlist.m3u8")
+                     ("TBS eFM"       . "http://tbs.hscdn.com/tbsradio/efm/playlist.m3u8")
+                     ("CBS 음악방송"  . "http://aac.cbs.co.kr/cbs939/cbs939.stream/playlist.m3u8"))))
 
 ;; Elfeed config ====================================
 ;; ==================================================
 
 (use-package elfeed
   :defer t
-  ;; :hook (elfeed-show-mode . (lambda ()
-  ;;                             (setq fill-column 120) ; is it needed?
-  ;;                             (setq elfeed-show-entry-switch #'my-show-elfeed)))
   :general-config
   (normal-mode-major-mode
     :major-modes '(elfeed-search-mode t)
@@ -7492,6 +7480,13 @@ removal."
 
 (use-package emms
   :defer t
+  :custom
+  (emms-player-mpv-parameters '("--really-quiet" "--no-audio-display" "--no-video"))
+  (emms-source-file-default-directory (cond (macOS-p "~/Music/Music/")
+                                            (chromeOS-p "/mnt/chromeos/removable/SD Card/Music/")
+                                            (t "~/")))
+  (emms-playlist-buffer-name "*Music*")
+  (emms-info-asynchronously t)
   :config
   (defun emms-mode-line-only-filename ()
     "Format the currently playing song."
@@ -7502,21 +7497,16 @@ removal."
 
   (require 'emms-setup)
   (emms-all)
-  (emms-default-players)
-  (setq emms-player-mpv-parameters '("--really-quiet" "--no-audio-display" "--no-video")
-        emms-source-file-default-directory (cond (macOS-p "~/Music/Music/")
-                                                 (chromeOS-p "/mnt/chromeos/removable/SD Card/Music/")
-                                                 (t "~/"))
-        emms-playlist-buffer-name "*Music*"
-        emms-info-asynchronously t))
+  (emms-default-players))
 
 (use-package emms-mode-line
   :after    emms
   :straight nil
+  :custom
+  (emms-mode-line-mode-line-function #'emms-mode-line-only-filename)
   :config
   (emms-mode-line-enable)
-  (emms-mode-line 1)
-  (setq emms-mode-line-mode-line-function #'emms-mode-line-only-filename))
+  (emms-mode-line 1))
 
 (use-package emms-playing-time
   :after    emms
@@ -7529,10 +7519,11 @@ removal."
 
 (use-package ready-player
   :defer t
+  :custom
+  (ready-player-my-media-collection-location "~/Music/Music")
+  (ready-player-ask-for-project-sustainability nil)
+  (ready-player-hide-modeline nil)
   :config
-  (setq ready-player-my-media-collection-location "~/Music/Music"
-        ready-player-ask-for-project-sustainability nil
-        ready-player-hide-modeline nil)
   (ready-player-mode))
 
 ;; Listen.el config =================================
@@ -7546,9 +7537,9 @@ removal."
 
 (use-package streamlink
   :defer t
-  :config
-  (setq streamlink-player "mpv"
-        streamlink-opts "--player-args '--no-video'"))
+  :custom
+  (streamlink-player "mpv")
+  (streamlink-opts "--player-args '--no-video'"))
 
 ;; XKCD config ======================================
 ;; ==================================================
@@ -7580,18 +7571,19 @@ removal."
 (use-package tramp
   :straight (:type built-in)
   :defer t
+  :custom
+  (tramp-copy-size-limit 10000000)
+  (tramp-inline-compress-start-size 10000000)
   :config
-  (setq tramp-copy-size-limit 10000000
-        tramp-inline-compress-start-size 10000000
-        vc-handled-backends '(Git)))
+  (setq vc-handled-backends '(Git)))
 
 ;; killing ==========================================
 ;; ==================================================
 
+;; TODO
 (setq select-enable-clipboard t
       select-enable-primary t
       save-interprogram-paste-before-kill t
-      apropos-do-all t
       mouse-yank-at-point t)
 
 (evil-define-key 'insert 'global-map (kbd "C-h") 'backward-delete-char)
