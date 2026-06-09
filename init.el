@@ -1744,7 +1744,6 @@
 
 (use-package eldoc-box
   :when GUI-p
-  :after eldoc
   :custom-face
   ;; (eldoc-box-border ((t (:inherit posframe-border :background unspecified))))
   (eldoc-box-body ((t (:inherit tooltip))))
@@ -1752,7 +1751,7 @@
   (eldoc-box-lighter nil)
   (eldoc-box-only-multi-line t)
   (eldoc-box-clear-with-C-g t)
-  :general-config
+  :general
   (normal-mode-major-mode
     :keymaps '(eglot-mode-map)
     "K"      'eldoc-box-help-at-point))
