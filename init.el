@@ -5670,10 +5670,11 @@ Uses `magit-patch-save-arguments' internally, so inherit its settings."
 ;; ==================================================
 
 (use-package saveplace
-  :straight nil
+  :hook (after-init . save-place-mode)
+  :straight (:type built-in)
+  :custom
+  (save-place-file (concat user-emacs-directory "places"))
   :config
-  (setq-default save-place t)
-  (setq save-place-file (concat user-emacs-directory "places"))
   (advice-add 'save-place-find-file-hook :after
               (lambda (&rest _)
                 (when buffer-file-name (ignore-errors (recenter))))))
