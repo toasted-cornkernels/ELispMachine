@@ -5683,8 +5683,7 @@ Uses `magit-patch-save-arguments' internally, so inherit its settings."
 ;; ==================================================
 
 (use-package winner
-  :config
-  (winner-mode 1))
+  :hook (after-init . winner-mode))
 
 ;; isearch configs ==================================
 ;; ==================================================
