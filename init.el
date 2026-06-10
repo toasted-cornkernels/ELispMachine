@@ -1043,22 +1043,20 @@
 
 (use-package ob
   :straight (:type built-in)
+  :hook (org-babel-after-execute
+         . (lambda ()
+             (when org-inline-image-overlays
+               (org-redisplay-inline-images))))
   :defer t
-  :custom
-  (org-babel-languages '(lisp clojure scheme
-                              dot shell awk restclient
-                              http C ruby
-                              lua fennel nix
-                              hledger python))
   :config
-  (add-hook 'org-babel-after-execute-hook
-            (lambda ()
-              (when org-inline-image-overlays
-                (org-redisplay-inline-images))))
-
-  (org-babel-do-load-languages
-   'org-babel-load-languages
-   (mapcar (lambda (language) `(,language . t)) org-babel-languages))
+  (let ((org-babel-languages '(lisp clojure scheme
+                                    dot shell awk restclient
+                                    http C ruby
+                                    lua fennel nix
+                                    hledger python)))
+    (org-babel-do-load-languages
+     'org-babel-load-languages
+     (mapcar (lambda (language) `(,language . t)) org-babel-languages)))
 
   :general-config
   (local-leader
