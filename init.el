@@ -6982,19 +6982,17 @@ removal."
 
 (use-package ace-link
   :bind (:map Info-mode-map
-              ("o" . 'ace-link-info)
-              Info-mode-map
-              ("o" . 'ace-link-info)
-              eww-link-keymap
-              ("o" . 'ace-link-info)
-              eww-mode-map
-              ("o" . 'ace-link-info)
-              w3m-link-map
-              ("o" . 'ace-link-info)
-              w3m-mode-map
-              ("o" . 'ace-link-info)
-              elfeed-show-mode-map
-              ("o" . 'ace-link-info)))
+              ("o" . ace-link-info)
+              :map eww-link-keymap
+              ("o" . ace-link-info)
+              :map eww-mode-map
+              ("o" . ace-link-info)
+              :map w3m-link-map
+              ("o" . ace-link-info)
+              :map w3m-mode-map
+              ("o" . ace-link-info)
+              :map elfeed-show-mode-map
+              ("o" . ace-link-info)))
 
 (use-package ace-window
   :defer t
