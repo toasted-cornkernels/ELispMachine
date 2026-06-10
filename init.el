@@ -6993,7 +6993,7 @@ removal."
               ("o" . 'ace-link-info)
               w3m-mode-map
               ("o" . 'ace-link-info)
-              elfeed-show-mode
+              elfeed-show-mode-map
               ("o" . 'ace-link-info)))
 
 (use-package ace-window
