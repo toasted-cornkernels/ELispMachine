@@ -1811,15 +1811,19 @@
 ;; ==================================================
 
 (use-package sh-script
-  :straight nil
-  :hook
-  (shell-script-mode . (lambda ()
-                         (setq indent-tabs-mode nil)))
+  :straight (:type built-in)
+  :hook (shell-script-mode . (lambda ()
+                               (setq indent-tabs-mode nil)))
   :mode (("\\.sh\\'"           . shell-script-mode)
          ("\\.(ba|z)shrc.*\\'" . shell-script-mode)
          ("\\.zshenv.*\\'"     . shell-script-mode)
          ("\\.bash_profile\\'" . shell-script-mode)
          ("\\.zprofile\\'"     . shell-script-mode)))
+
+(use-package shell
+  :straight (:type built-in)
+  :defer t
+  :hook (shell-mode . ansi-color-for-comint-mode-on))
 
 ;; C/C++ config =====================================
 ;; ==================================================
@@ -2226,6 +2230,8 @@
 (use-package comint
   :straight nil
   :defer t
+  :config
+  (add-to-list 'comint-preoutput-filter-functions #'ansi-color-filter-apply)
   :general-config
   (normal-mode-major-mode
     :major-modes '(comint-mode t)
