@@ -533,7 +533,7 @@
   (corfu-auto t)
   (corfu-min-width 40)
   (corfu-auto-prefix 2)
-  (corfu-auto-delay 0.25)
+  (corfu-auto-delay 0.2)
   :init
   (global-corfu-mode)
   (corfu-echo-mode)
