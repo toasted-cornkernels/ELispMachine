@@ -357,10 +357,13 @@
   :demand t
   :after (evil-vars)
   :hook (after-init . evil-mode)
+  :custom
+  ;; NOTE This option is from evil-vars, but evil the package seems to
+  ;; override it during its loading. Use-package permits customizable
+  ;; variables to be set by a different package, so set it here.
+  (evil-disable-insert-state-bindings t)
   :config
-  ;; set leader key in normal state
   (evil-set-leader 'normal (kbd "SPC"))
-  ;; set local leader
   (evil-set-leader 'normal "," t)
   (evil-ex-define-cmd "q" 'kill-current-buffer)
   (evil-ex-define-cmd "Q" 'kill-current-buffer)
@@ -385,8 +388,7 @@
   :straight nil
   :demand t
   :custom
-  (evil-want-keybinding nil)
-  (evil-disable-insert-state-bindings t)
+  (evil-want-keybinding t)
   (evil-want-C-u-scroll t)
   (evil-want-integration t)
   (evil-undo-system 'undo-fu)
