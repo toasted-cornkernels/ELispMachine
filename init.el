@@ -388,7 +388,7 @@
   :straight nil
   :demand t
   :custom
-  (evil-want-keybinding t)
+  (evil-want-keybinding nil)
   (evil-want-C-u-scroll t)
   (evil-want-integration t)
   (evil-undo-system 'undo-fu)
@@ -4744,7 +4744,6 @@ set so that it clears the whole REPL buffer, not just the output."
   (inhibit-startup-message t)
   (inhibit-default-init t)
 
-  (site-run-file nil)
   :init
   (defun crm-indicator (args)
     (cons (format "[CRM%s] %s"
