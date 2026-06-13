@@ -1549,12 +1549,6 @@
     "C-j"        'next-error
     "C-k"        'previous-error))
 
-(use-package grep
-  :straight (:type built-in)
-  :defer t
-  :custom
-  (grep-command "grep --color=auto -nH --null -R -e"))
-
 ;; Occur / Wgrep ====================================
 ;; ==================================================
 
