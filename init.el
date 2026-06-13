@@ -2336,8 +2336,6 @@
   )
 
 (use-package evil-cleverparens
-  ;; :init
-  ;; (setq evil-cleverparens-use-additional-bindings nil)
   :custom
   (evil-cleverparens-use-additional-bindings t)
   :config
