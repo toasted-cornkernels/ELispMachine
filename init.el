@@ -394,7 +394,7 @@
   (evil-undo-system 'undo-fu)
   (evil-want-fine-undo t)
   (evil-mode-line-format nil)
-  (evil-shift-width 2)             ; TODO Make this language-dependent
+  (evil-shift-width 2)
   (evil-vsplit-window-right t)
   (evil-split-window-below t))
 
