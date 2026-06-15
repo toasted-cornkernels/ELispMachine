@@ -349,7 +349,6 @@
   (when macOS-p
     (setq insert-directory-program "gls")))
 
-
 ;; evil-mode config =================================
 ;; ==================================================
 
@@ -7428,7 +7427,7 @@ removal."
     "gk"         'elfeed-show-prev
     "go"         'elfeed-search-browse-url
     "gr"         'elfeed-show-refresh
-    "q"          'elfeed-kill-buffer
+    "q"          'kill-current-buffer
     "ZQ"         'elfeed-kill-buffer
     "ZZ"         'elfeed-kill-buffer
     "b"          'elfeed-show-visit)
