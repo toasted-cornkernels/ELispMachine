@@ -6784,32 +6784,23 @@ removal."
                           (executable-find "emacs"))))
 
 (global-leader
-  "H"    (which-key-prefix :help)
-  "HH"   'help
-  "Hd"   (which-key-prefix :describe)
-  "Hdb"  'describe-bindings
-  "Hdf"  'describe-function
-  "Hdk"  'describe-key
-  "Hdv"  'describe-variable
-  "Hdm"  'describe-mode
-  "Hdp"  'describe-package
-  "Hdx"  'describe-char
-  "HdM"  'describe-keymap
-  "HdC"  'describe-command)
-
-(global-leader
   "h"     (which-key-prefix :helpful)
   "hk"    'helpful-kill-buffers
+  "hh"    'help
   "hd"    (which-key-prefix :describe)
+  "hdb"   'describe-bindings
   "hdf"   'helpful-callable
   "hdf"   'helpful-function
   "hds"   'helpful-symbol
-  "hdm"   'helpful-macro
-  "hdC"   'helpful-command
+  "Hdm"   'helpful-mode
+  "hdM"   'describe-keymap
+  "hdc"   'helpful-command
   "hdk"   'helpful-key
   "hdv"   'helpful-variable
-  "hdp"   'helpful-at-point
-  "hu"    'helpful-update)
+  "hdp"   'describe-package
+  "hd."   'helpful-at-point
+  "hu"    'helpful-update
+  "hdx"   'describe-char)
 
 (global-leader
   "P"    (which-key-prefix "project")
