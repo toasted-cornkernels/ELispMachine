@@ -6882,7 +6882,9 @@ removal."
   "t TAB"  'tab-recent
   "td"     'tab-close
   "tD"     'tab-close-other
+  "t."     'tab-new
   "tN"     'tab-new
+  "tc"     'tab-new
   "tb"     'switch-to-buffer-other-tab
   "tF"     'dired-other-tab
   "tf"     'find-file-other-tab
