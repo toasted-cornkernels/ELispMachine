@@ -4657,13 +4657,8 @@ set so that it clears the whole REPL buffer, not just the output."
 (use-package shell
   :straight (:type built-in)
   :defer t
-  :config
-  (setq explicit-shell-file-name "/bin/zsh"))
-
-;; Hide-mode-line ===================================
-;; ==================================================
-
-(use-package hide-mode-line :defer t)
+  :custom
+  (explicit-shell-file-name "/bin/zsh"))
 
 ;; Vertico config ===================================
 ;; ==================================================
@@ -6917,7 +6912,6 @@ removal."
   "TD"   'toggle-debug-on-error
   "Tl"   'display-line-numbers-mode
   "TL"   'global-display-line-numbers-mode
-  "Tm"   'hide-mode-line-mode
   "Tf"   (defun mac-non-native-toggle-frame-fullscreen ()
            (interactive)
            (call-interactively #'toggle-frame-fullscreen))
@@ -7181,8 +7175,7 @@ removal."
   :defer t
   :if (not chromeOS-p)
   :mode (("\\.pdf\\'" . pdf-view-mode))
-  :hook ((pdf-view-mode-hook . hide-mode-line-mode)
-         (pdf-view-mode-hook . hide-cursor-mode))
+  :hook ((pdf-view-mode-hook . hide-cursor-mode))
   :general-config
   (local-leader
     :major-modes '(pdf-view-mode t)
