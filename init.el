@@ -313,7 +313,7 @@
 
 (use-package symbol-overlay             ; TODO
   :defer t
-  :general-config
+  :general
   (global-leader
     "C"   (which-key-prefix "colors")
     "C."  'symbol-overlay-put))
