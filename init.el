@@ -5897,13 +5897,18 @@ Uses `magit-patch-save-arguments' internally, so inherit its settings."
   :straight (:type built-in)
   :hook (after-init . xterm-mouse-mode))
 
+(use-package tool-bar
+  :straight (:type built-in)
+  :config
+  (tool-bar-mode -1))
+
 (use-package menu-bar
-  :straight nil
+  :straight (:type built-in)
   :config
   (menu-bar-mode -1))
 
 (use-package tab-bar
-  :straight nil
+  :straight (:type built-in)
   :hook (after-init . tab-bar-history-mode)
   :custom
   (tab-bar-position t) ; place the tab-bar below the tool bar
@@ -5986,7 +5991,7 @@ Uses `magit-patch-save-arguments' internally, so inherit its settings."
          (auto-dark-light-mode . elispm/pdf-disable-midnight-mode))
   :custom
   (custom-safe-themes t)
-  (auto-dark-themes '((tron-legacy) (modus-operandi)))
+  (auto-dark-themes '((modus-vivendi) (modus-operandi)))
   (auto-dark-allow-osascript t)
   (auto-dark-allow-powershell nil))
 
