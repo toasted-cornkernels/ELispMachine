@@ -4693,8 +4693,9 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (use-package emacs
   :straight nil
-  ;; ==================== corfu ====================
   :custom
+  (mode-line-format nil)
+  ;; ==================== corfu ====================
   ;; TAB cycle if there are only few candidates
   ;; (completion-cycle-threshold 3)
 
