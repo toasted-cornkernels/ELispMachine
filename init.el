@@ -5957,19 +5957,6 @@ Uses `magit-patch-save-arguments' internally, so inherit its settings."
     (set-fontset-font t 'hangul
                       (font-spec :name "NanumGothic"))))
 
-(use-package auto-dark
-  :when (not (or chromeOS-p android-p))
-  :hook ((after-init           . auto-dark-mode)
-         (auto-dark-dark-mode  . elispm/pdf-enable-midnight-mode)
-         (auto-dark-light-mode . elispm/pdf-disable-midnight-mode))
-  :custom
-  (custom-safe-themes t)
-  (auto-dark-themes '((tron-legacy) (modus-operandi)))
-  (auto-dark-allow-osascript t)
-  (auto-dark-allow-powershell nil)
-  :config
-  (setq custom-safe-themes t))
-
 (use-package modus-themes
   :custom
   (modus-themes-italic-constructs t)
@@ -5994,6 +5981,17 @@ Uses `magit-patch-save-arguments' internally, so inherit its settings."
    ((t (:foreground "#17181b" :background "#000000"))))
   (font-lock-warning-face
    ((t (:foreground "#B62D66" :background "#000000")))))
+
+(use-package auto-dark
+  :when (not (or chromeOS-p android-p))
+  :hook ((after-init           . auto-dark-mode)
+         (auto-dark-dark-mode  . elispm/pdf-enable-midnight-mode)
+         (auto-dark-light-mode . elispm/pdf-disable-midnight-mode))
+  :custom
+  (custom-safe-themes t)
+  (auto-dark-themes '((tron-legacy) (modus-operandi)))
+  (auto-dark-allow-osascript t)
+  (auto-dark-allow-powershell nil))
 
 (defun elispm/pdf-enable-midnight-mode ()
   "Enable midnight mode in all open PDF buffers."
