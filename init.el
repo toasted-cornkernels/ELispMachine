@@ -313,7 +313,7 @@
 
 (use-package symbol-overlay             ; TODO
   :defer t
-  :general-config
+  :general
   (global-leader
     "C"   (which-key-prefix "colors")
     "C."  'symbol-overlay-put))
@@ -438,9 +438,9 @@
   :after (evil)
   :hook (after-init . global-evil-surround-mode))
 
-(use-package evil-anzu
-  :after (evil)
-  :hook (after-init . global-anzu-mode))
+;; (use-package evil-anzu
+;;   :after (evil)
+;;   :hook (after-init . global-anzu-mode))
 
 (use-package evil-commentary
   :after (evil)
@@ -532,7 +532,7 @@
   :custom
   (corfu-cycle t)
   (corfu-auto t)
-  (corfu-min-width 40)
+  (corfu-min-width 20)
   (corfu-auto-prefix 2)
   (corfu-auto-delay 0.2)
   :init
@@ -3765,12 +3765,12 @@ set so that it clears the whole REPL buffer, not just the output."
     "et"         'ediprolog-back-to-toplevel
     "ec"         'ediprolog-remove-interactions
     "eq"         'ediprolog-consult-buffer-then-query
-    
+
     "k"          (which-key-prefix "kill")
     "kk"         'ediprolog-kill-prolog-process
     "kb"         'ediprolog-kill-then-consult-buffer
     "kq"         'ediprolog-kill-then-consult-then-query
-    
+
     "l"          'ediprolog-localize
     "L"          'ediprolog-unlocalize))
 
@@ -4657,26 +4657,23 @@ set so that it clears the whole REPL buffer, not just the output."
 (use-package shell
   :straight (:type built-in)
   :defer t
-  :config
-  (setq explicit-shell-file-name "/bin/zsh"))
-
-;; Hide-mode-line ===================================
-;; ==================================================
-
-(use-package hide-mode-line :defer t)
+  :custom
+  (explicit-shell-file-name "/bin/zsh"))
 
 ;; Vertico config ===================================
 ;; ==================================================
 
 (use-package vertico
+  :hook (after-init . vertico-mode)
   :custom
   (vertico-scroll-margin 0)
   (vertico-count 20)
   (vertico-resize t)
   (vertico-cycle t)
-  :config
-  (vertico-mode)
-  (define-key vertico-map (kbd "C-l") #'vertico-directory-up))
+  :general-config
+  (agnostic-key
+    :keymaps '(vertico-mode-map)
+    "C-l"    'vertico-directory-up))
 
 (use-package savehist
   :straight nil
@@ -4693,8 +4690,8 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (use-package emacs
   :straight nil
-  ;; ==================== corfu ====================
   :custom
+  ;; ==================== corfu ====================
   ;; TAB cycle if there are only few candidates
   ;; (completion-cycle-threshold 3)
 
@@ -4735,6 +4732,7 @@ set so that it clears the whole REPL buffer, not just the output."
   (inhibit-startup-message t)
   (inhibit-default-init t)
 
+  (mode-line-format nil)
   :init
   (defun crm-indicator (args)
     (cons (format "[CRM%s] %s"
@@ -4961,9 +4959,9 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; =================================================
 
 (use-package winum
-  :config
-  (setq winum-auto-setup-mode-line t)
-  (winum-mode))
+  :hook (after-init . winum-mode)
+  :custom
+  (winum-auto-setup-mode-line nil))
 
 ;; scratch buffer configs ==========================
 ;; =================================================
@@ -5899,13 +5897,18 @@ Uses `magit-patch-save-arguments' internally, so inherit its settings."
   :straight (:type built-in)
   :hook (after-init . xterm-mouse-mode))
 
+(use-package tool-bar
+  :straight (:type built-in)
+  :config
+  (tool-bar-mode -1))
+
 (use-package menu-bar
-  :straight nil
+  :straight (:type built-in)
   :config
   (menu-bar-mode -1))
 
 (use-package tab-bar
-  :straight nil
+  :straight (:type built-in)
   :hook (after-init . tab-bar-history-mode)
   :custom
   (tab-bar-position t) ; place the tab-bar below the tool bar
@@ -5959,19 +5962,38 @@ Uses `magit-patch-save-arguments' internally, so inherit its settings."
 (use-package modus-themes
   :custom
   (modus-themes-italic-constructs t)
-  (modus-themes-bold-constructs nil)
-  :config
-  (setq custom-safe-themes t)
-  (load-theme 'modus-operandi t)
-  (load-theme 'modus-vivendi t))
-
-(use-package doric-themes
-  :defer t)
+  (modus-themes-bold-constructs nil))
 
 (use-package tron-legacy-theme
   :defer t
   :custom-face
-  (org-block ((t (:foreground "#BBCCDD" :background "#000000")))))
+  (corfu-border
+   ((t (:background "#000000"))))
+  (corfu-default
+   ((t (:foreground "#BBCCDD" :background "#000000"))))
+  (corfu-current
+   ((t (:foreground "#BBCCDD" :background "#17181b"))))
+  (org-block
+   ((t (:foreground "#BBCCDD" :background "#000000"))))
+  (elfeed-search-title-face
+   ((t (:foreground "#BBCCDD" :background "#000000"))))
+  (tool-bar
+   ((t (:background "#000000"))))
+  (header-line
+   ((t (:foreground "#17181b" :background "#000000"))))
+  (font-lock-warning-face
+   ((t (:foreground "#B62D66" :background "#000000")))))
+
+(use-package auto-dark
+  :when (not (or chromeOS-p android-p))
+  :hook ((after-init           . auto-dark-mode)
+         (auto-dark-dark-mode  . elispm/pdf-enable-midnight-mode)
+         (auto-dark-light-mode . elispm/pdf-disable-midnight-mode))
+  :custom
+  (custom-safe-themes t)
+  (auto-dark-themes '((modus-vivendi) (modus-operandi)))
+  (auto-dark-allow-osascript t)
+  (auto-dark-allow-powershell nil))
 
 (defun elispm/pdf-enable-midnight-mode ()
   "Enable midnight mode in all open PDF buffers."
@@ -5986,18 +6008,6 @@ Uses `magit-patch-save-arguments' internally, so inherit its settings."
     (with-current-buffer buf
       (when (derived-mode-p 'pdf-view-mode)
         (pdf-view-midnight-minor-mode -1)))))
-
-(use-package auto-dark
-  :when (not (or chromeOS-p android-p))
-  :hook ((after-init . auto-dark-mode)
-         (auto-dark-dark-mode  . elispm/pdf-enable-midnight-mode)
-         (auto-dark-light-mode . elispm/pdf-disable-midnight-mode))
-  :custom
-  (auto-dark-themes '((modus-vivendi) (modus-operandi)))
-  (auto-dark-allow-osascript t)
-  (auto-dark-allow-powershell nil)
-  :config
-  (setq custom-safe-themes t))
 
 (use-package writeroom-mode
   :custom
@@ -6911,7 +6921,6 @@ removal."
   "TD"   'toggle-debug-on-error
   "Tl"   'display-line-numbers-mode
   "TL"   'global-display-line-numbers-mode
-  "Tm"   'hide-mode-line-mode
   "Tf"   (defun mac-non-native-toggle-frame-fullscreen ()
            (interactive)
            (call-interactively #'toggle-frame-fullscreen))
@@ -7175,8 +7184,7 @@ removal."
   :defer t
   :if (not chromeOS-p)
   :mode (("\\.pdf\\'" . pdf-view-mode))
-  :hook ((pdf-view-mode-hook . hide-mode-line-mode)
-         (pdf-view-mode-hook . hide-cursor-mode))
+  :hook ((pdf-view-mode-hook . hide-cursor-mode))
   :general-config
   (local-leader
     :major-modes '(pdf-view-mode t)
@@ -7771,17 +7779,3 @@ Optional argument MSG First message shown in buffer."
         gc-cons-percentage elispm/gc-cons-percentage))
 
 (message "config loaded!")
-
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(custom-safe-themes
-   '("a8950f7287870cd993d7e56991a45e1414a09d97e4fbf08f48973a1381bc7aaf" "92d350334df87fe61a682518ff214c773625c6d5ace8060d128adc550bc60c9b" default)))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
