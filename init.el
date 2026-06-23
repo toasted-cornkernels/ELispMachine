@@ -438,9 +438,9 @@
   :after (evil)
   :hook (after-init . global-evil-surround-mode))
 
-;; (use-package evil-anzu
-;;   :after (evil)
-;;   :hook (after-init . global-anzu-mode))
+(use-package evil-anzu
+  :after (evil)
+  :hook (after-init . global-anzu-mode))
 
 (use-package evil-commentary
   :after (evil)
@@ -4732,7 +4732,6 @@ set so that it clears the whole REPL buffer, not just the output."
   (inhibit-startup-message t)
   (inhibit-default-init t)
 
-  (mode-line-format nil)
   :init
   (defun crm-indicator (args)
     (cons (format "[CRM%s] %s"
@@ -4961,7 +4960,7 @@ set so that it clears the whole REPL buffer, not just the output."
 (use-package winum
   :hook (after-init . winum-mode)
   :custom
-  (winum-auto-setup-mode-line nil))
+  (winum-auto-setup-mode-line t))
 
 ;; scratch buffer configs ==========================
 ;; =================================================
@@ -6018,6 +6017,9 @@ Uses `magit-patch-save-arguments' internally, so inherit its settings."
 (use-package olivetti
   :defer t)                             ; TODO
 
+(use-package hide-mode-line
+  :defer t)
+
 ;; Copied from https://karthinks.com/software/more-less-emacs/
 
 (defvar-local hide-cursor--original nil)
@@ -6927,6 +6929,7 @@ removal."
   "TF"   'mac-toggle-frame-fullscreen
   "TM"   'manage-minor-mode
   "Tp"   'spacious-padding-mode
+  "Tm"   'hide-mode-line-mode
   "Tw"   'writeroom-mode
   "Tb"   'breadcrumb-mode
   "To"   (which-key-prefix :olivetti)
@@ -7184,7 +7187,8 @@ removal."
   :defer t
   :if (not chromeOS-p)
   :mode (("\\.pdf\\'" . pdf-view-mode))
-  :hook ((pdf-view-mode-hook . hide-cursor-mode))
+  :hook ((pdf-view-mode-hook . hide-mode-line-mode)
+         (pdf-view-mode-hook . hide-cursor-mode))
   :general-config
   (local-leader
     :major-modes '(pdf-view-mode t)
