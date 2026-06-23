@@ -6930,6 +6930,7 @@ removal."
   "TM"   'manage-minor-mode
   "Tp"   'spacious-padding-mode
   "Tm"   'hide-mode-line-mode
+  "TM"   'global-hide-mode-line-mode
   "Tw"   'writeroom-mode
   "Tb"   'breadcrumb-mode
   "To"   (which-key-prefix :olivetti)
