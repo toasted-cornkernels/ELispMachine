@@ -313,7 +313,7 @@
 
 (use-package symbol-overlay             ; TODO
   :defer t
-  :general-config
+  :general
   (global-leader
     "C"   (which-key-prefix "colors")
     "C."  'symbol-overlay-put))
@@ -6810,7 +6810,9 @@ removal."
   "hdp"   'describe-package
   "hd."   'helpful-at-point
   "hu"    'helpful-update
-  "hdx"   'describe-char)
+  "hdx"   'describe-char
+  
+  "ha"    (which-key-prefix :apropos))
 
 (global-leader
   "P"    (which-key-prefix "project")
