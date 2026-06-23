@@ -5951,7 +5951,7 @@ Uses `magit-patch-save-arguments' internally, so inherit its settings."
   :config
   (if (not chromeOS-p)
       (set-face-attribute 'default nil
-                          :font "D2Coding ligature"
+                          :font "D2CodingLigature Nerd Font"
                           :weight 'light
                           :height 180)
     (set-face-attribute 'default nil
