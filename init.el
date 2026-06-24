@@ -6214,6 +6214,41 @@ Like normal Emacs `C-k'.  Kill to end of line and put content in kill-ring."
   (setq mode-line-end-spaces
         (list (propertize " " 'display '(space :align-to (- right 15)))
               'display-time-string)))
+;; Korean environment ===============================
+;; ==================================================
+
+(set-language-environment "Korean")
+(prefer-coding-system 'utf-8)
+
+;; Korean input method ==============================
+;; ==================================================
+
+(global-set-key (kbd "<f6>") 'toggle-korean-input-method)
+
+(unbind-key (kbd "C-d"))
+(unbind-key (kbd "C-d C-l"))
+(global-set-key (kbd "C-d C-l") 'toggle-korean-input-method)
+
+(defun set-input-method-to-korean ()
+  (interactive)
+  (set-input-method 'korean-hangul))
+
+(global-set-key (kbd "C-d C-k") 'set-input-method-to-korean)
+
+;; Japanese input method ============================
+;; ==================================================
+
+(defun set-input-method-to-japanese ()
+  (interactive)
+  (set-input-method 'japanese-skk))
+
+(global-set-key (kbd "C-d C-j") 'set-input-method-to-japanese)
+
+(use-package ddskk
+  :defer t
+  :custom
+  (skk-tut-file (concat (elispm/straight-get-repo-dir "ddskk") "/etc/SKK.tut"))
+  (skk-large-jisyo "~/LambdaMachine/ExternalConfigs/SKKJisho/SKK-JISYO.L"))
 
 ;; Mode-agnostic keybindings ==========================
 ;; ====================================================
@@ -6878,6 +6913,11 @@ removal."
   "xie"   'emojify-insert-emoji
   "xiE"   'emoji-insert
   "xix"   'insert-char
+
+  "xlk"   'set-input-method-to-korean
+  "xll"   'toggle-korean-input-method  ; not possible in evil
+  "xlj"   'set-input-method-to-japanese
+  
   "x TAB" 'indent-rigidly
   "xu"    'vundo
 
@@ -7502,7 +7542,9 @@ removal."
       (elfeed-search-untag-all-unread)))
 
   ;; (advice-add 'elfeed-search-show-entry :after #'elfeed-show-refresh)
-  (let ((opml-location "~/RSSFeed/feeds.opml"))
+  (let ((opml-location (if android-p
+                           "~/storage/shared/RSSFeed/feeds.opml"
+                         "~/RSSFeed/feeds.opml")))
     (when (file-exists-p opml-location)
       (elfeed-load-opml opml-location))))
 
@@ -7696,42 +7738,6 @@ removal."
 
 (use-package flycheck-hledger
   :after hledger-mode)
-
-;; Korean environment ===============================
-;; ==================================================
-
-(set-language-environment "Korean")
-(prefer-coding-system 'utf-8)
-
-;; Korean input method ==============================
-;; ==================================================
-
-(global-set-key (kbd "<f6>") 'toggle-korean-input-method)
-
-(unbind-key (kbd "C-d"))
-(unbind-key (kbd "C-d C-l"))
-(global-set-key (kbd "C-d C-l") 'toggle-korean-input-method)
-
-(defun set-input-method-to-korean ()
-  (interactive)
-  (set-input-method 'korean-hangul))
-
-(global-set-key (kbd "C-d C-k") 'set-input-method-to-korean)
-
-;; Japanese input method ============================
-;; ==================================================
-
-(defun set-input-method-to-japanese ()
-  (interactive)
-  (set-input-method 'japanese-skk))
-
-(global-set-key (kbd "C-d C-j") 'set-input-method-to-japanese)
-
-(use-package ddskk
-  :defer t
-  :custom
-  (skk-tut-file (concat (elispm/straight-get-repo-dir "ddskk") "/etc/SKK.tut"))
-  (skk-large-jisyo "~/LambdaMachine/ExternalConfigs/SKKJisho/SKK-JISYO.L"))
 
 ;; Patchups =========================================
 ;; ==================================================
