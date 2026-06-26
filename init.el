@@ -6585,7 +6585,7 @@ removal."
   "fF"  'find-file-other-window
   "fT"  'find-file-other-tab
   "fc"  'elispm/copy-this-file
-  "fR"  'write-region
+  "fR"  'rename-visited-file
   "fi"  'insert-file
   "fl"  'locate
   "fE"  'elispm/sudo-edit
@@ -6630,7 +6630,7 @@ removal."
   "fgR" 'consult-grep
   "fgg" 'consult-git-grep
 
-  "fr"  'rename-visited-file
+  "fr"  'consult-recentf
   "fj"  'dired-jump
   "fF"  'find-name-dired
   "fG"  'find-grep-dired
