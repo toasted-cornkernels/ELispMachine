@@ -1,11 +1,14 @@
 ;; Salutation to λ before beginning =================
 ;; ==================================================
 
-(defvar y-combinator
-  '(lambda (f) ((lambda (x) (f (x x))) (lambda (x) (f (x x))))))
+(defvar life1
+  (lambda (f)
+    ((lambda (x) (f (x x)))
+     (lambda (x) (f (x x))))))
 
-(defvar life
-  '((lambda (x) (list x (list 'quote x))) '(lambda (x) (list x (list 'quote x)))))
+(defvar life2
+  '((lambda (x) (list x (list 'quote x)))
+    (lambda (x) (list x (list 'quote x)))))
 
 ;; Straight =========================================
 ;; ==================================================
