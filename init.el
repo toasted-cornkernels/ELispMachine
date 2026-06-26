@@ -4752,12 +4752,6 @@ set so that it clears the whole REPL buffer, not just the output."
         (set-window-display-table (selected-window) display-table))))
   (add-hook 'window-configuration-change-hook 'change-window-divider)
 
-  (defun on-after-init ()
-    "Make the background transparent when running in a tty."
-    (unless (display-graphic-p (selected-frame))
-      (set-face-background 'default "unspecified-bg" (selected-frame))))
-  (add-hook 'window-setup-hook 'on-after-init)
-
   (add-to-list 'exec-path "/nix/var/nix/profiles/default/bin")
   (add-to-list 'exec-path (expand-file-name "~/.nix-profile/bin"))
   (add-to-list 'exec-path (expand-file-name "~/.cargo/bin"))
