@@ -4683,10 +4683,29 @@ set so that it clears the whole REPL buffer, not just the output."
   (vertico-count 20)
   (vertico-resize t)
   (vertico-cycle t)
-  :general-config
+  :general
   (agnostic-key
-    :keymaps '(vertico-mode-map)
+    :keymaps '(vertico-map)
     "C-l"    'vertico-directory-up))
+(use-package vertico
+  :hook (after-init . vertico-mode)
+  :custom
+  (vertico-scroll-margin 0)
+  (vertico-count 20)
+  (vertico-resize t)
+  (vertico-cycle t))
+
+(use-package vertico-directory
+  :straight nil
+  :after vertico
+  :hook (rfn-eshadow-update-overlay . vertico-directory-tidy)
+  :general
+  (agnostic-key
+    :keymaps '(vertico-map)
+    "C-l"    'vertico-directory-up
+    "RET"    'vertico-directory-enter
+    "DEL"    'vertico-directory-delete-char
+    "M-DEL"  'vertico-directory-delete-word))
 
 (use-package savehist
   :straight nil
@@ -4816,15 +4835,6 @@ set so that it clears the whole REPL buffer, not just the output."
   ;;                                                 without-if-bang))
   (orderless-matching-styles '(orderless-regexp))
   (orderless-component-separator #'orderless-escapable-split-on-space))
-
-(use-package vertico-directory
-  :straight nil
-  :after vertico
-  :bind (:map vertico-map
-              ("RET" . vertico-directory-enter)
-              ("DEL" . vertico-directory-delete-char)
-              ("M-DEL" . vertico-directory-delete-word))
-  :hook (rfn-eshadow-update-overlay . vertico-directory-tidy))
 
 ;; Marginalia config ================================
 ;; ==================================================
