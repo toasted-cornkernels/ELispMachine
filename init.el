@@ -1338,17 +1338,17 @@
 (use-package org-tempo
   :straight (:type built-in)
   :after org
-  :config
-  (dolist (item '(("sh" . "src sh")
-                  ("el" . "src emacs-lisp")
-                  ("li" . "src lisp")
-                  ("sc" . "src scheme")
-                  ("ql" . "src ql-tree-sitter")
-                  ("py" . "src python")
-                  ("yaml" . "src yaml")
-                  ("json" . "src json")
-                  ("gfm" . "src gfm")))
-    (add-to-list 'org-structure-template-alist item)))
+  :custom
+  (org-structure-template-alist '(("sh" . "src sh")
+                                  ("el" . "src emacs-lisp")
+                                  ("li" . "src lisp")
+                                  ("sc" . "src scheme")
+                                  ("ql" . "src ql-tree-sitter")
+                                  ("py" . "src python")
+                                  ("yaml" . "src yaml")
+                                  ("json" . "src json")
+                                  ("gfm" . "src gfm")
+                                  ("txt" . "src text"))))
 
 (use-package org-kanban
   :after org
