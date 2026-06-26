@@ -5984,7 +5984,7 @@ Uses `magit-patch-save-arguments' internally, so inherit its settings."
    ((t (:foreground "#B62D66" :background "#000000")))))
 
 (use-package auto-dark
-  :when (not (or chromeOS-p android-p))
+  :when (not (or chromeOS-p))
   :hook ((after-init           . auto-dark-mode)
          (auto-dark-dark-mode  . elispm/pdf-enable-midnight-mode)
          (auto-dark-light-mode . elispm/pdf-disable-midnight-mode))
