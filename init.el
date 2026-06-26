@@ -6630,7 +6630,7 @@ removal."
   "fgR" 'consult-grep
   "fgg" 'consult-git-grep
 
-  "fr"  'consult-recentf
+  "fr"  'consult-recent-file
   "fj"  'dired-jump
   "fF"  'find-name-dired
   "fG"  'find-grep-dired
