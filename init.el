@@ -7,16 +7,6 @@
 (defvar life
   '((lambda (x) (list x (list 'quote x))) '(lambda (x) (list x (list 'quote x)))))
 
-;; Initial Setups ===================================
-;; ==================================================
-
-(setq warning-minimum-level     :emergency
-      warning-minimum-log-level :warning)
-(setq ad-redefinition-action 'accept)
-(setq confirm-kill-processes nil)  ; Just shut up and die
-
-(fset 'yes-or-no-p 'y-or-n-p)
-
 ;; Straight =========================================
 ;; ==================================================
 
@@ -44,6 +34,25 @@
   "Return the path of the package in straight's `repo` redirectory."
   (straight--repos-dir
    (plist-get (gethash package straight--recipe-cache) :local-repo)))
+
+;; Initial Setups ===================================
+;; ==================================================
+
+(use-package warnings
+  :straight (:type built-in)
+  :custom
+  (warning-minimum-level :emergency)
+  (warning-minimum-log-level :warning))
+
+(use-package advice
+  :straight (:type built-in)
+  :custom
+  (ad-redefinition-action 'accept))
+
+(use-package subr
+  :straight (:type built-in)
+  :config
+  (fset 'yes-or-no-p 'y-or-n-p))
 
 ;; Custom Lisp files ================================
 ;; ==================================================
@@ -344,6 +353,7 @@
   (kept-new-versions 6)
   (kept-old-versions 2)
   (version-control t)
+  (confirm-kill-processes nil)  ; Just shut up and die
   :config
   (remove-hook 'find-file-hooks 'vc-find-file-hook)
   (when macOS-p
