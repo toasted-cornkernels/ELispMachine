@@ -4682,17 +4682,6 @@ set so that it clears the whole REPL buffer, not just the output."
   (vertico-scroll-margin 0)
   (vertico-count 20)
   (vertico-resize t)
-  (vertico-cycle t)
-  :general
-  (agnostic-key
-    :keymaps '(vertico-map)
-    "C-l"    'vertico-directory-up))
-(use-package vertico
-  :hook (after-init . vertico-mode)
-  :custom
-  (vertico-scroll-margin 0)
-  (vertico-count 20)
-  (vertico-resize t)
   (vertico-cycle t))
 
 (use-package vertico-directory
