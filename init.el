@@ -7679,7 +7679,7 @@ removal."
   :straight nil
   :defer t
   :general-config
-  (normal-mode-major-mode
+  (agnostic-key
     :major-modes '(tetris-mode t)
     :keymaps     '(tetris-mode-map)
     "q"   'tetris-end-game
