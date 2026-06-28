@@ -1,12 +1,12 @@
 ;; Salutation to λ before beginning =================
 ;; ==================================================
 
-(defvar life1
+(defvar life-1
   (lambda (f)
     ((lambda (x) (f (x x)))
      (lambda (x) (f (x x))))))
 
-(defvar life2
+(defvar life-2
   '((lambda (x) (list x (list 'quote x)))
     (lambda (x) (list x (list 'quote x)))))
 
@@ -7806,7 +7806,7 @@ Optional argument MSG First message shown in buffer."
 (put 'narrow-to-region 'disabled nil)   ; I need it
 
 (defun display-startup-echo-area-message ()
-  (message (prin1-to-string y-combinator)))
+  (message (prin1-to-string life-1)))
 
 (global-auto-revert-mode 1)    ; Refresh buffers with changed local files
 
