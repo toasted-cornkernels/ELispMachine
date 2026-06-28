@@ -608,7 +608,8 @@
   (global-leader
     "e"      (which-key-prefix :embark)
     "ee"     'embark-act
-    "eb"     'embark-bindings))
+    "eb"     'embark-bindings
+    "ec"     'embark-collect))
 
 (use-package embark-consult
   :after embark)
@@ -1766,7 +1767,8 @@
 ;; ==================================================
 
 (use-package gptel
-  :hook ((gptel-mode . gptel-highlight-mode))
+  :hook ((gptel-mode . gptel-highlight-mode)
+         (gptel-mode . (lambda () (breadcrumb-local-mode -1))))
   :custom
   (gptel-model 'claude-opus-4.6)
   (gptel-default-mode 'org-mode)
@@ -2267,18 +2269,16 @@
 ;; ==================================================
 
 (use-package imenu
-  :straight nil
+  :straight (:type built-in)
+  :custom
+  (imenu-list-position 'left)
+  (imenu-list-size 0.18)
   :general
   (global-leader
     "i"      (which-key-prefix "imenu")
     "ii"     'imenu
     "il"     'imenu-list
-    "ib"     'breadcrumb-jump)
-  :custom
-  (imenu-list-position 'left))
-
-(use-package imenu-list
-  :defer t)
+    "ib"     'breadcrumb-jump))
 
 (use-package breadcrumb
   :defer t
@@ -7006,7 +7006,8 @@ removal."
   "Tm"   'hide-mode-line-mode
   "TM"   'global-hide-mode-line-mode
   "Tw"   'writeroom-mode
-  "Tb"   'breadcrumb-mode
+  "Tb"   'breadcrumb-local-mode
+  "TB"   'breadcrumb-mode
   "To"   (which-key-prefix :olivetti)
   "Too"  'olivetti-mode)
 
