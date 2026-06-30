@@ -1539,12 +1539,6 @@
     "qR"         'quickrun-replace-region
     "qm"         'quickrun-autorun-mode))
 
-;; Yasnippet config  ================================
-;; ==================================================
-
-(use-package yasnippet
-  :hook (prog-mode . yas-minor-mode))
-
 ;; Search Functionalities ===========================
 ;; ==================================================
 
