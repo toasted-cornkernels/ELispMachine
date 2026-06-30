@@ -54,7 +54,7 @@
 
 (use-package subr
   :straight (:type built-in)
-  :config
+  :init
   (fset 'yes-or-no-p 'y-or-n-p))
 
 ;; Custom Lisp files ================================
