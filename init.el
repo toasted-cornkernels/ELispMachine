@@ -7560,6 +7560,7 @@ removal."
   (emms-player-mpv-parameters '("--really-quiet" "--no-audio-display" "--no-video"))
   (emms-source-file-default-directory (cond (macOS-p "~/Music/Music/")
                                             (chromeOS-p "/mnt/chromeos/removable/SD Card/Music/")
+                                            (android-p "~/storage/shared/Music/Music")
                                             (t "~/")))
   (emms-playlist-buffer-name "*Music*")
   (emms-info-asynchronously t)
