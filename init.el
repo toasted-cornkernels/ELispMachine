@@ -52,11 +52,6 @@
   :custom
   (ad-redefinition-action 'accept))
 
-(use-package subr
-  :straight (:type built-in)
-  :init
-  (fset 'yes-or-no-p 'y-or-n-p))
-
 ;; Custom Lisp files ================================
 ;; ==================================================
 
@@ -4757,6 +4752,8 @@ set so that it clears the whole REPL buffer, not just the output."
           (cdr args)))
   (advice-add #'completing-read-multiple :filter-args #'crm-indicator)
 
+  (fset 'yes-or-no-p 'y-or-n-p)
+  
   (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
 
   (defun change-window-divider ()
