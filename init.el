@@ -4742,6 +4742,7 @@ set so that it clears the whole REPL buffer, not just the output."
   (inhibit-startup-message t)
   (inhibit-default-init t)
 
+  (delete-by-moving-to-trash t)
   :init
   (defun crm-indicator (args)
     (cons (format "[CRM%s] %s"
