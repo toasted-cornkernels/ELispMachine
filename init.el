@@ -4717,6 +4717,7 @@ set so that it clears the whole REPL buffer, not just the output."
 
   ;; Hmmm: https://kristofferbalintona.me/posts/202202270056/
   (completion-cycle-threshold nil)
+  ;; ===============================================
 
   (history-length 1000)
   (enable-recursive-minibuffers t)
@@ -4740,6 +4741,9 @@ set so that it clears the whole REPL buffer, not just the output."
   (inhibit-default-init t)
 
   (delete-by-moving-to-trash t)
+
+  (initial-scratch-message "")
+  (initial-major-mode 'fundamental-mode)
   :init
   (defun crm-indicator (args)
     (cons (format "[CRM%s] %s"
@@ -4799,13 +4803,13 @@ set so that it clears the whole REPL buffer, not just the output."
     (global-visual-line-mode t)
     :config
     (add-hook 'after-save-hook
-              #'executable-make-buffer-file-executable-if-script-p)))
+              #'executable-make-buffer-file-executable-if-script-p))
 
-(use-package ffap
-  :straight (:type built-in)
-  :defer t
-  :custom
-  (ffap-machine-p-known 'reject))
+  (use-package ffap
+    :straight (:type built-in)
+    :defer t
+    :custom
+    (ffap-machine-p-known 'reject)))
 
 (use-package orderless
   :custom
@@ -4957,11 +4961,14 @@ set so that it clears the whole REPL buffer, not just the output."
   :custom
   (winum-auto-setup-mode-line t))
 
-;; scratch buffer configs ==========================
+;; Window and Frame ================================
 ;; =================================================
 
-(setq initial-scratch-message ""
-      initial-major-mode 'fundamental-mode)
+(use-package window
+  :straight (:type built-in)
+  :custom
+  (display-buffer-alist '(("\\*compilation\\*" display-buffer-reuse-window
+                           (reusable-frames . t)))))
 
 ;; LaTeX config =====================================
 ;; ==================================================
@@ -5020,7 +5027,7 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; ==================================================
 
 (use-package project
-  :straight nil
+  :straight (:type built-in)
   :defer t
   :config
   ;; Stolen from
@@ -5415,11 +5422,11 @@ Uses `magit-patch-save-arguments' internally, so inherit its settings."
     "k"          'with-editor-cancel))
 
 (use-package magit-ediff
-  :straight (:type built-in)
+  :straight nil
   :after magit)
 
 (use-package magit-git
-  :straight (:type built-in)
+  :straight nil
   :after    magit)
 
 (use-package magit-lfs
