@@ -7551,6 +7551,8 @@ removal."
 
 (use-package elfeed-goodies
   :after elfeed
+  :custom
+  (elfeed-goodies/powerline-default-separator 'box)
   :config
   (elfeed-goodies/setup))
 
