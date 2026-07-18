@@ -7557,7 +7557,9 @@ removal."
       (elfeed-load-opml opml-location))))
 
 (use-package elfeed-goodies
-  :commands elfeed-goodies/setup)
+  :after elfeed
+  :config
+  (elfeed-goodies/setup))
 
 ;; Emms config ======================================
 ;; ==================================================
