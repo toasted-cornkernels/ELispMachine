@@ -6186,16 +6186,18 @@ Like normal Emacs `C-k'.  Kill to end of line and put content in kill-ring."
   (add-to-list 'project-switch-commands '(ghostel-project-list-buffers "Ghostel buffers") t)
   (add-to-list 'ghostel-eval-cmds '("magit-status-setup-buffer" magit-status-setup-buffer)))
 
-;; world clock config ===============================
+;; World clock config ===============================
 ;; ==================================================
 
 (use-package time
   :straight (:type built-in)
   :init
   (defvar elispm/world-clock-cities '(("America/New_York"    "New York")
+                                      ("America/Phoenix"     "Phoenix")
                                       ("America/Los_Angeles" "Los Angeles")
                                       ("Europe/London"       "Oxford")
                                       ("Europe/Zurich"       "Zurich")
+                                      ("Asia/Seoul"          "Seoul")
                                       ("Asia/Tokyo"          "Tokyo")))
   :custom
   (display-time-default-load-average nil)
