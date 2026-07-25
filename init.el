@@ -7477,9 +7477,9 @@ removal."
     "S"          'elfeed-search-set-filter
     "c"          'elfeed-search-clear-filter
 
-    "q"          'elfeed-search-quit-window
-    "ZQ"         'elfeed-search-quit-window
-    "ZZ"         'elfeed-search-quit-window
+    "q"          'quit-window
+    "ZQ"         'quit-window
+    "ZZ"         'quit-window
 
     "+"          'elfeed-search-tag-all
     "-"          'elfeed-search-untag-all
