@@ -4905,9 +4905,8 @@ set so that it clears the whole REPL buffer, not just the output."
   (define-key consult-narrow-map (vconcat consult-narrow-key "?") #'consult-narrow-help))
 
 (use-package consult-dir
-  :after consult
-  :config
-  (setq consult-dir-project-list-function #'consult-dir-projectile-dirs))
+  :custom
+  (consult-dir-project-list-function #'consult-dir-projectile-dirs))
 
 (use-package register
   :straight nil
