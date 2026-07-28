@@ -841,6 +841,7 @@
     "ta"         'org-table-align
     "tb"         'org-table-blank-field
     "tc"         'org-table-convert
+    "tC"         'org-table-create-or-convert-from-region
     "te"         'org-table-eval-formula
     "tf"         'org-table-field-info
     "th"         'org-table-previous-field
