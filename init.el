@@ -5877,7 +5877,6 @@ Uses `magit-patch-save-arguments' internally, so inherit its settings."
   :straight (spacious-padding :host github
                               :repo "protesilaos/spacious-padding")
   :hook (after-init . spacious-padding-mode)
-  :when GUI-p
   :custom
   (spacious-padding-widths
    '(:internal-border-width 15
@@ -5989,6 +5988,7 @@ Uses `magit-patch-save-arguments' internally, so inherit its settings."
 (use-package batppuccin
   :custom
   (batppuccin-flat-mode-line t)
+  (batppuccin-scale-headings nil)
   :config
   (when android-p
     (load-theme 'batppuccin-mocha t)))
