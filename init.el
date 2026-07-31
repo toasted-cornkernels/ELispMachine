@@ -5886,7 +5886,8 @@ Uses `magit-patch-save-arguments' internally, so inherit its settings."
                             :tab-width 4
                             :right-divider-width 30
                             :scroll-bar-width 8
-                            :fringe-width 8)))
+                            :fringe-width 8))
+  (spacious-padding-subtle-frame-lines t))
 
 (use-package adaptive-wrap
   :config
@@ -5963,10 +5964,7 @@ Uses `magit-patch-save-arguments' internally, so inherit its settings."
 (use-package modus-themes
   :custom
   (modus-themes-italic-constructs t)
-  (modus-themes-bold-constructs nil)
-  :config
-  (when android-p
-    (load-theme 'modus-vivendi t)))
+  (modus-themes-bold-constructs nil))
 
 (use-package tron-legacy-theme
   :defer t
@@ -5988,6 +5986,13 @@ Uses `magit-patch-save-arguments' internally, so inherit its settings."
   (font-lock-warning-face
    ((t (:foreground "#B62D66" :background "#000000")))))
 
+(use-package batppuccin
+  :custom
+  (batppuccin-flat-mode-line t)
+  :config
+  (when android-p
+    (load-theme 'batppuccin-mocha t)))
+
 (use-package auto-dark
   :when (not (or chromeOS-p android-p))
   :hook ((after-init           . auto-dark-mode)
@@ -5995,7 +6000,7 @@ Uses `magit-patch-save-arguments' internally, so inherit its settings."
          (auto-dark-light-mode . elispm/pdf-disable-midnight-mode))
   :custom
   (custom-safe-themes t)
-  (auto-dark-themes '((modus-vivendi) (modus-operandi)))
+  (auto-dark-themes '((batppuccin-mocha) (batppuccin-latte)))
   (auto-dark-allow-osascript t)
   (auto-dark-allow-powershell nil))
 
