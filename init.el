@@ -5978,7 +5978,9 @@ Uses `magit-patch-save-arguments' internally, so inherit its settings."
   (header-line
    ((t (:foreground "#17181b" :background "#000000"))))
   (font-lock-warning-face
-   ((t (:foreground "#B62D66" :background "#000000")))))
+   ((t (:foreground "#B62D66" :background "#000000"))))
+  (tab-line
+   ((t (:foreground "#BBCCDD" :background "#000000")))))
 
 (use-package batppuccin
   :custom
@@ -7555,13 +7557,6 @@ removal."
                          "~/RSSFeed/feeds.opml")))
     (when (file-exists-p opml-location)
       (elfeed-load-opml opml-location))))
-
-(use-package elfeed-goodies
-  :after elfeed
-  :custom
-  (elfeed-goodies/powerline-default-separator 'box)
-  :config
-  (elfeed-goodies/setup))
 
 ;; Emms config ======================================
 ;; ==================================================
