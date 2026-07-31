@@ -4762,7 +4762,7 @@ set so that it clears the whole REPL buffer, not just the output."
   (defun change-window-divider ()
     "Change the window divider to a Unicode vertical pipe instead of the ASCII one."
     (unless (display-graphic-p (selected-frame))
-      (let ((display-table (or buffer-display-table standard-display-table)))
+      (let ((display-table (or buffer-display-table standard-display-table (make-display-table))))
         (set-display-table-slot display-table 5 ?│)
         (set-window-display-table (selected-window) display-table))))
   (add-hook 'window-configuration-change-hook 'change-window-divider)
