@@ -841,6 +841,7 @@
     "ta"         'org-table-align
     "tb"         'org-table-blank-field
     "tc"         'org-table-convert
+    "tC"         'org-table-create-or-convert-from-region
     "te"         'org-table-eval-formula
     "tf"         'org-table-field-info
     "th"         'org-table-previous-field
@@ -4905,9 +4906,8 @@ set so that it clears the whole REPL buffer, not just the output."
   (define-key consult-narrow-map (vconcat consult-narrow-key "?") #'consult-narrow-help))
 
 (use-package consult-dir
-  :after consult
-  :config
-  (setq consult-dir-project-list-function #'consult-dir-projectile-dirs))
+  :custom
+  (consult-dir-project-list-function #'consult-dir-projectile-dirs))
 
 (use-package register
   :straight nil
@@ -7563,6 +7563,8 @@ removal."
 
 (use-package elfeed-goodies
   :after elfeed
+  :custom
+  (elfeed-goodies/powerline-default-separator 'box)
   :config
   (elfeed-goodies/setup))
 
