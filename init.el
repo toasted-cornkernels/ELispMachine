@@ -842,6 +842,7 @@
     "ta"         'org-table-align
     "tb"         'org-table-blank-field
     "tc"         'org-table-convert
+    "tC"         'org-table-create-or-convert-from-region
     "te"         'org-table-eval-formula
     "tf"         'org-table-field-info
     "th"         'org-table-previous-field
@@ -4762,7 +4763,7 @@ set so that it clears the whole REPL buffer, not just the output."
   (defun change-window-divider ()
     "Change the window divider to a Unicode vertical pipe instead of the ASCII one."
     (unless (display-graphic-p (selected-frame))
-      (let ((display-table (or buffer-display-table standard-display-table)))
+      (let ((display-table (or buffer-display-table standard-display-table (make-display-table))))
         (set-display-table-slot display-table 5 ?│)
         (set-window-display-table (selected-window) display-table))))
   (add-hook 'window-configuration-change-hook 'change-window-divider)
@@ -4906,9 +4907,8 @@ set so that it clears the whole REPL buffer, not just the output."
   (define-key consult-narrow-map (vconcat consult-narrow-key "?") #'consult-narrow-help))
 
 (use-package consult-dir
-  :after consult
-  :config
-  (setq consult-dir-project-list-function #'consult-dir-projectile-dirs))
+  :custom
+  (consult-dir-project-list-function #'consult-dir-projectile-dirs))
 
 (use-package register
   :straight nil
@@ -4940,12 +4940,7 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; ==================================================
 
 (use-package rainbow-delimiters
-  :hook (prog-mode . rainbow-delimiters-mode)
-  ;; :config
-  ;; (define-globalized-minor-mode elispm/global-rainbow-delimiters-mode rainbow-delimiters-mode
-  ;;   (lambda () (rainbow-delimiters-mode 1)))
-  ;; (elispm/global-rainbow-delimiters-mode 1)
-  )
+  :hook (prog-mode . rainbow-delimiters-mode))
 
 ;; Undo config ======================================
 ;; ==================================================
@@ -5878,7 +5873,6 @@ Uses `magit-patch-save-arguments' internally, so inherit its settings."
   :straight (spacious-padding :host github
                               :repo "protesilaos/spacious-padding")
   :hook (after-init . spacious-padding-mode)
-  :when GUI-p
   :custom
   (spacious-padding-widths
    '(:internal-border-width 15
@@ -5887,7 +5881,8 @@ Uses `magit-patch-save-arguments' internally, so inherit its settings."
                             :tab-width 4
                             :right-divider-width 30
                             :scroll-bar-width 8
-                            :fringe-width 8)))
+                            :fringe-width 8))
+  (spacious-padding-subtle-frame-lines t))
 
 (use-package adaptive-wrap
   :config
@@ -5964,10 +5959,7 @@ Uses `magit-patch-save-arguments' internally, so inherit its settings."
 (use-package modus-themes
   :custom
   (modus-themes-italic-constructs t)
-  (modus-themes-bold-constructs nil)
-  :config
-  (when android-p
-    (load-theme 'modus-vivendi t)))
+  (modus-themes-bold-constructs nil))
 
 (use-package tron-legacy-theme
   :defer t
@@ -5987,7 +5979,17 @@ Uses `magit-patch-save-arguments' internally, so inherit its settings."
   (header-line
    ((t (:foreground "#17181b" :background "#000000"))))
   (font-lock-warning-face
-   ((t (:foreground "#B62D66" :background "#000000")))))
+   ((t (:foreground "#B62D66" :background "#000000"))))
+  (tab-line
+   ((t (:foreground "#BBCCDD" :background "#000000")))))
+
+(use-package batppuccin
+  :custom
+  (batppuccin-flat-mode-line t)
+  (batppuccin-scale-headings nil)
+  :config
+  (when android-p
+    (load-theme 'batppuccin-mocha t)))
 
 (use-package auto-dark
   :when (not (or chromeOS-p android-p))
@@ -5996,7 +5998,7 @@ Uses `magit-patch-save-arguments' internally, so inherit its settings."
          (auto-dark-light-mode . elispm/pdf-disable-midnight-mode))
   :custom
   (custom-safe-themes t)
-  (auto-dark-themes '((modus-vivendi) (modus-operandi)))
+  (auto-dark-themes '((batppuccin-mocha) (batppuccin-latte)))
   (auto-dark-allow-osascript t)
   (auto-dark-allow-powershell nil))
 
@@ -7005,6 +7007,7 @@ removal."
   "TF"   'mac-toggle-frame-fullscreen
   "TM"   'manage-minor-mode
   "Tp"   'spacious-padding-mode
+  "Tt"   'consult-theme
   "Tm"   'hide-mode-line-mode
   "TM"   'global-hide-mode-line-mode
   "Tw"   'writeroom-mode
@@ -7480,9 +7483,9 @@ removal."
     "S"          'elfeed-search-set-filter
     "c"          'elfeed-search-clear-filter
 
-    "q"          'elfeed-search-quit-window
-    "ZQ"         'elfeed-search-quit-window
-    "ZZ"         'elfeed-search-quit-window
+    "q"          'quit-window
+    "ZQ"         'quit-window
+    "ZZ"         'quit-window
 
     "+"          'elfeed-search-tag-all
     "-"          'elfeed-search-untag-all
@@ -7558,11 +7561,6 @@ removal."
                          "~/RSSFeed/feeds.opml")))
     (when (file-exists-p opml-location)
       (elfeed-load-opml opml-location))))
-
-(use-package elfeed-goodies
-  :after elfeed
-  :config
-  (elfeed-goodies/setup))
 
 ;; Emms config ======================================
 ;; ==================================================
