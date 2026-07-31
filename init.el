@@ -837,7 +837,7 @@
     "tJ"         'org-table-move-row-down
     "tK"         'org-table-move-row-up
     "tL"         'org-table-move-column-right
-    "tN"         'org-table-create-with-table
+    "tN"         'org-table-create-with-table.el
     "tR"         'org-table-recalculate-buffer-tables
     "ta"         'org-table-align
     "tb"         'org-table-blank-field
