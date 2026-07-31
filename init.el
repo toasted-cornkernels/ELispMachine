@@ -7004,6 +7004,7 @@ removal."
   "TF"   'mac-toggle-frame-fullscreen
   "TM"   'manage-minor-mode
   "Tp"   'spacious-padding-mode
+  "Tt"   'consult-theme
   "Tm"   'hide-mode-line-mode
   "TM"   'global-hide-mode-line-mode
   "Tw"   'writeroom-mode
