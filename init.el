@@ -5611,8 +5611,9 @@ Uses `magit-patch-save-arguments' internally, so inherit its settings."
          (magit-post-refresh . diff-hl-magit-post-refresh))
 
   :custom
-  (diff-hl-show-staged-changes nil)
+  (diff-hl-flydiff-mode t)
   (diff-hl-update-async t)
+  (diff-hl-show-staged-changes nil)
   (diff-hl-global-modes '(not pdf-view-mode doc-view-mode image-mode))
 
   :general-config
