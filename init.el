@@ -5612,6 +5612,7 @@ Uses `magit-patch-save-arguments' internally, so inherit its settings."
 
   :custom
   (diff-hl-show-staged-changes nil)
+  (diff-hl-update-async t)
   (diff-hl-global-modes '(not pdf-view-mode doc-view-mode image-mode))
 
   :general-config
