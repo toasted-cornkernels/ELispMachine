@@ -1053,6 +1053,10 @@
           :branch "master")
   :defer t)
 
+(use-package ob-gptel
+  :straight (ob-gptel :type git :host github
+                      :repo  "jwiegley/ob-gptel"))
+
 (use-package ob
   :straight (:type built-in)
   :hook (org-babel-after-execute
@@ -1065,7 +1069,7 @@
                                     dot shell awk restclient
                                     http C ruby
                                     lua fennel nix
-                                    hledger python)))
+                                    hledger python gptel)))
     (org-babel-do-load-languages
      'org-babel-load-languages
      (mapcar (lambda (language) `(,language . t)) org-babel-languages)))
