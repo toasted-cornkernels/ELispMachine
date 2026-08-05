@@ -5965,25 +5965,33 @@ Uses `magit-patch-save-arguments' internally, so inherit its settings."
 
 (use-package tron-legacy-theme
   :defer t
-  :custom-face
-  (corfu-border
-   ((t (:background "#000000"))))
-  (corfu-default
-   ((t (:foreground "#BBCCDD" :background "#000000"))))
-  (corfu-current
-   ((t (:foreground "#BBCCDD" :background "#17181b"))))
-  (org-block
-   ((t (:foreground "#BBCCDD" :background "#000000"))))
-  (elfeed-search-title-face
-   ((t (:foreground "#BBCCDD" :background "#000000"))))
-  (tool-bar
-   ((t (:background "#000000"))))
-  (header-line
-   ((t (:foreground "#17181b" :background "#000000"))))
-  (font-lock-warning-face
-   ((t (:foreground "#B62D66" :background "#000000"))))
-  (tab-line
-   ((t (:foreground "#BBCCDD" :background "#000000")))))
+  :config
+  (custom-theme-set-faces
+   'tron-legacy
+   '(corfu-border
+     ((t (:background "#000000"))))
+   '(corfu-default
+     ((t (:foreground "#BBCCDD" :background "#000000"))))
+   '(corfu-current
+     ((t (:foreground "#BBCCDD" :background "#17181b"))))
+   '(org-block
+     ((t (:foreground "#BBCCDD" :background "#000000"))))
+   '(elfeed-search-title-face
+     ((t (:foreground "#BBCCDD" :background "#000000"))))
+   '(tool-bar
+     ((t (:background "#000000"))))
+   '(header-line
+     ((t (:foreground "#17181b" :background "#000000"))))
+   '(font-lock-warning-face
+     ((t (:foreground "#B62D66" :background "#000000"))))
+   '(tab-line
+     ((t (:foreground "#BBCCDD" :background "#000000"))))
+   '(diff-hl-insert
+     ((t (:foreground "#BBCCDD" :background "#4BB5BE"))))
+   '(diff-hl-change
+     ((t (:foreground "#BBCCDD" :background "#387AAA"))))
+   '(diff-hl-delete
+     ((t (:foreground "#BBCCDD" :background "#B62D66"))))))
 
 (use-package batppuccin
   :custom
