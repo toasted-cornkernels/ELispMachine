@@ -5986,6 +5986,7 @@ Uses `magit-patch-save-arguments' internally, so inherit its settings."
      ((t (:foreground "#B62D66" :background "#000000"))))
    '(tab-line
      ((t (:foreground "#BBCCDD" :background "#000000"))))
+   ;;; TODO: Below is not working
    '(diff-hl-insert
      ((t (:foreground "#BBCCDD" :background "#4BB5BE"))))
    '(diff-hl-change
