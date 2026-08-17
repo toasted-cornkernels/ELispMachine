@@ -74,8 +74,8 @@
 ;; Profiling ========================================
 ;; ==================================================
 
-;; (setq use-package-verbose t
-;;       use-package-compute-statistics t)
+(setq use-package-verbose t
+      use-package-compute-statistics t)
 
 ;; General.el config ================================
 ;; ==================================================
@@ -1055,7 +1055,8 @@
 
 (use-package ob-gptel
   :straight (ob-gptel :type git :host github
-                      :repo  "jwiegley/ob-gptel"))
+                      :repo  "jwiegley/ob-gptel")
+  :defer t)
 
 (use-package ob
   :straight (:type built-in)
@@ -1152,7 +1153,7 @@
 
 (use-package org-habit
   :straight (:type built-in)
-  :after    org)
+  :defer    t)
 
 (use-package org-compat
   :straight nil
@@ -1855,7 +1856,7 @@
   :mode (("CMakeLists.txt" . cmake-mode)))
 
 (use-package cmake-integration
-  :after cc-mode
+  :defer t
   :straight (cmake-integration :type git :host github
                                :repo "darcamo/cmake-integration"))
 
@@ -4911,6 +4912,7 @@ set so that it clears the whole REPL buffer, not just the output."
   (define-key consult-narrow-map (vconcat consult-narrow-key "?") #'consult-narrow-help))
 
 (use-package consult-dir
+  :defer t
   :custom
   (consult-dir-project-list-function #'consult-dir-projectile-dirs))
 
