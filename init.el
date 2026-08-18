@@ -437,8 +437,6 @@
   (toggle-input-method))
 
 (use-package evil-collection
-  ;; :after (evil evil-vars)
-  :defer t
   :custom
   (evil-collection-calendar-want-org-bindings t)
   :config
