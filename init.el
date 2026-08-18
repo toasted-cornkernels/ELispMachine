@@ -325,6 +325,10 @@
     "C"   (which-key-prefix "colors")
     "C."  'symbol-overlay-put))
 
+(defun debug-on-load (package)
+  (with-eval-after-load package
+    (debug)))
+
 ;; No Littering! ====================================
 ;; ==================================================
 
@@ -4171,7 +4175,7 @@ set so that it clears the whole REPL buffer, not just the output."
   (defun go-run-generate-current-buffer ()
     (interactive)
     (compilation-start
-     (concat go-generate-command " " (buffer-file-name))
+     (concat go-generate-command " " buffer-file-name)
      nil (lambda (n) go-generate-buffer-name) nil))
 
   ;; misc
@@ -5610,14 +5614,23 @@ Uses `magit-patch-save-arguments' internally, so inherit its settings."
 ;; diff-hl config ===================================
 ;; ==================================================
 
+(defun elispm/diff-hl-maybe-enable ()
+  (when-let* ((path (if (derived-mode-p 'dired-mode)
+                        default-directory
+                      (and buffer-file-name
+                           (file-name-directory buffer-file-name))))
+              (_ (locate-dominating-file path ".git")))
+    (if (derived-mode-p 'dired-mode)
+        (diff-hl-dired-mode 1)
+      (diff-hl-mode 1))))
+
 (use-package diff-hl
-  :hook ((after-init . global-diff-hl-mode)
+  :hook (((prog-mode dired-mode) . elispm/diff-hl-maybe-enable)
          (dired-mode . diff-hl-dired-mode-unless-remote)
          (magit-pre-refresh . diff-hl-magit-pre-refresh)
          (magit-post-refresh . diff-hl-magit-post-refresh))
 
   :custom
-  (diff-hl-flydiff-mode t)
   (diff-hl-update-async t)
   (diff-hl-show-staged-changes nil)
   (diff-hl-global-modes '(not pdf-view-mode doc-view-mode image-mode))
@@ -5641,7 +5654,10 @@ Uses `magit-patch-save-arguments' internally, so inherit its settings."
     "vS"  'diff-hl-stage-some
     "vr"  'diff-hl-revert-hunk
     "vm"  'diff-hl-mark-hunk
-    "v."  'diff-hl-show-hunk))
+    "v."  'diff-hl-show-hunk)
+
+  :config
+  (setq diff-hl-flydiff-mode t))
 
 ;; Smerge Config ====================================
 ;; ==================================================
@@ -5904,6 +5920,7 @@ Uses `magit-patch-save-arguments' internally, so inherit its settings."
 
 (use-package tool-bar
   :straight (:type built-in)
+  :defer t
   :config
   (tool-bar-mode -1))
 
@@ -5993,12 +6010,13 @@ Uses `magit-patch-save-arguments' internally, so inherit its settings."
    '(tab-line
      ((t (:foreground "#BBCCDD" :background "#000000"))))
    ;;; TODO: Below is not working
-   '(diff-hl-insert
-     ((t (:foreground "#BBCCDD" :background "#4BB5BE"))))
-   '(diff-hl-change
-     ((t (:foreground "#BBCCDD" :background "#387AAA"))))
-   '(diff-hl-delete
-     ((t (:foreground "#BBCCDD" :background "#B62D66"))))))
+   ;; '(diff-hl-insert
+   ;;   ((t (:foreground "#BBCCDD" :background "#4BB5BE"))))
+   ;; '(diff-hl-change
+   ;;   ((t (:foreground "#BBCCDD" :background "#387AAA"))))
+   ;; '(diff-hl-delete
+   ;;   ((t (:foreground "#BBCCDD" :background "#B62D66"))))
+   ))
 
 (use-package batppuccin
   :custom
@@ -6575,7 +6593,7 @@ If FORCE-P, overwrite the destination file if it exists, without confirmation."
 
 If prefix ARG is non-nil, delete without confirmation."
   (interactive "P")
-  (let ((filename (buffer-file-name))
+  (let ((filename buffer-file-name)
         (buffer (current-buffer))
         (name (buffer-name)))
     (if (not (and filename (file-exists-p filename)))
@@ -7130,13 +7148,13 @@ removal."
 
   (defun w3m-open-this-file ()
     (interactive)
-    (let ((current-filename (buffer-file-name)))
+    (let ((current-filename buffer-file-name))
       (w3m-find-file current-filename)))
 
   ;; shameless ripoffs from `venmos/w3m-layer`
   (defun w3m-save-buffer-to-file ()
     (interactive)
-    (let* ((curr (buffer-file-name))
+    (let* ((curr buffer-file-name)
            (new (read-file-name
                  "Save to file: " nil nil nil
                  (and curr (file-name-nondirectory curr))))
