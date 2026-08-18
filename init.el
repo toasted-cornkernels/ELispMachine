@@ -4761,7 +4761,7 @@ set so that it clears the whole REPL buffer, not just the output."
   (advice-add #'completing-read-multiple :filter-args #'crm-indicator)
 
   (fset 'yes-or-no-p 'y-or-n-p)
-  
+
   (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
 
   (defun change-window-divider ()
@@ -6917,7 +6917,7 @@ removal."
   "hd."   'helpful-at-point
   "hu"    'helpful-update
   "hdx"   'describe-char
-  
+
   "ha"    (which-key-prefix :apropos))
 
 (global-leader
@@ -6960,7 +6960,7 @@ removal."
   "xlk"   'set-input-method-to-korean
   "xll"   'toggle-korean-input-method  ; not possible in evil
   "xlj"   'set-input-method-to-japanese
-  
+
   "x TAB" 'indent-rigidly
   "xu"    'vundo
 
