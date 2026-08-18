@@ -77,8 +77,8 @@
 ;; Profiling ========================================
 ;; ==================================================
 
-(setq use-package-verbose t
-      use-package-compute-statistics t)
+;; (setq use-package-verbose t
+;;       use-package-compute-statistics t)
 
 ;; General.el config ================================
 ;; ==================================================
