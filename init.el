@@ -1,5 +1,5 @@
-(with-eval-after-load 'xref
-  (debug))
+;; (with-eval-after-load 'xref
+;;   (debug))
 
 ;; Salutation to λ before beginning =================
 ;; ==================================================
@@ -363,9 +363,23 @@
 ;; evil-mode config =================================
 ;; ==================================================
 
+(use-package evil-vars
+  :straight nil
+  :custom
+  (evil-want-integration t)
+  (evil-want-keybinding nil)
+  (evil-want-C-u-scroll t)
+  (evil-want-fine-undo t)
+  (evil-undo-system 'undo-fu)
+  (evil-mode-line-format nil)
+  (evil-shift-width 2)
+  (evil-vsplit-window-right t)
+  (evil-split-window-below t)
+  (evil-cross-lines t))
+
 (use-package evil
   :demand t
-  :after (evil-vars)
+  ;; :after (evil-vars)
   :hook (after-init . evil-mode)
   :custom
   ;; NOTE This option is from evil-vars, but evil the package seems to
@@ -394,24 +408,9 @@
   ;; make evil-search-word look for symbol rather than word boundaries
   (setq-default evil-symbol-word-search t))
 
-(use-package evil-vars
-  :straight nil
-  :demand t
-  :custom
-  (evil-want-integration t)
-  (evil-want-keybinding nil)
-  (evil-want-C-u-scroll t)
-  (evil-want-fine-undo t)
-  (evil-undo-system 'undo-fu)
-  (evil-mode-line-format nil)
-  (evil-shift-width 2)
-  (evil-vsplit-window-right t)
-  (evil-split-window-below t)
-  (evil-cross-lines t))
-
 (use-package evil-states
   :straight nil
-  :demand t
+  ;; :demand t
   :custom
   (evil-motion-state-cursor 'box)
   (evil-visual-state-cursor 'box)
@@ -438,7 +437,8 @@
   (toggle-input-method))
 
 (use-package evil-collection
-  :after (evil evil-vars)
+  ;; :after (evil evil-vars)
+  :defer t
   :custom
   (evil-collection-calendar-want-org-bindings t)
   :config
@@ -447,15 +447,12 @@
         (remove 'elfeed evil-collection-mode-list)))
 
 (use-package evil-surround
-  :after (evil)
   :hook (after-init . global-evil-surround-mode))
 
 (use-package evil-anzu
-  :after (evil)
   :hook (after-init . global-anzu-mode))
 
 (use-package evil-commentary
-  :after (evil)
   :hook (after-init . evil-commentary-mode))
 
 (use-package evil-terminal-cursor-changer
@@ -463,7 +460,7 @@
   :hook (after-init . evil-terminal-cursor-changer-activate))
 
 (use-package evil-lisp-state
-  :after (evil)
+  :when (derived-mode-p 'lisp-data-mode)
   :custom
   (evil-lisp-state-global t)
   (evil-lisp-state-cursor '(hbar . 2))
@@ -2294,10 +2291,9 @@
 
 (use-package paren
   :straight nil
+  :hook (prog-mode . show-paren-mode)
   :custom
-  (show-paren-delay 0)
-  :config
-  (show-paren-mode 1))
+  (show-paren-delay 0))
 
 (use-package smartparens
   :hook (prog-mode . smartparens-mode)
@@ -2344,6 +2340,7 @@
   )
 
 (use-package evil-cleverparens
+  :when (derived-mode-p 'lisp-data-mode)
   :custom
   (evil-cleverparens-use-additional-bindings t)
   :config
@@ -3393,6 +3390,7 @@ set so that it clears the whole REPL buffer, not just the output."
     "tb" 'racket-test))
 
 (use-package scribble
+  :defer t
   :straight (scribble
              :type git :host github :repo "toasted-cornkernels/scribble.el"))
 
@@ -5888,10 +5886,10 @@ Uses `magit-patch-save-arguments' internally, so inherit its settings."
   :straight (ultra-scroll :host github
                           :repo "jdtsmith/ultra-scroll")
   :when GUI-p
+  :hook (after-init . ultra-scroll-mode)
   :config
   (setq scroll-conservatively 101
-        scroll-margin 0)
-  (ultra-scroll-mode 1))
+        scroll-margin 0))
 
 (use-package spacious-padding
   :straight (spacious-padding :host github
@@ -5928,7 +5926,8 @@ Uses `magit-patch-save-arguments' internally, so inherit its settings."
 
 (use-package tab-bar
   :straight (:type built-in)
-  :hook (after-init . tab-bar-history-mode)
+  :hook ((after-init . tab-bar-mode)
+         (after-init . tab-bar-history-mode))
   :custom
   (tab-bar-position t) ; place the tab-bar below the tool bar
   (tab-bar-auto-width nil)
@@ -5957,6 +5956,7 @@ Uses `magit-patch-save-arguments' internally, so inherit its settings."
 
 (use-package scroll-bar
   :straight (:type built-in)
+  :defer t
   :custom
   (scroll-bar-mode nil))
 
@@ -6226,6 +6226,7 @@ Like normal Emacs `C-k'.  Kill to end of line and put content in kill-ring."
 
 (use-package time
   :straight (:type built-in)
+  :defer t
   :init
   (defvar elispm/world-clock-cities '(("America/New_York"    "New York")
                                       ("America/Phoenix"     "Phoenix")
