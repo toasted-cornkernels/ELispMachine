@@ -1,3 +1,6 @@
+(with-eval-after-load 'xref
+  (debug))
+
 ;; Salutation to λ before beginning =================
 ;; ==================================================
 
@@ -324,10 +327,6 @@
   (global-leader
     "C"   (which-key-prefix "colors")
     "C."  'symbol-overlay-put))
-
-(defun debug-on-load (package)
-  (with-eval-after-load package
-    (debug)))
 
 ;; No Littering! ====================================
 ;; ==================================================
@@ -4927,6 +4926,7 @@ set so that it clears the whole REPL buffer, not just the output."
   (register-preview-function #'consult-register-format))
 
 (use-package xref
+  :defer t
   :custom
   (xref-show-xrefs-function #'consult-xref)
   (xref-show-definitions-function #'consult-xref))
@@ -5920,14 +5920,11 @@ Uses `magit-patch-save-arguments' internally, so inherit its settings."
 
 (use-package tool-bar
   :straight (:type built-in)
-  :defer t
-  :config
-  (tool-bar-mode -1))
+  :hook (after-init . (lambda () (tool-bar-mode -1))))
 
 (use-package menu-bar
   :straight (:type built-in)
-  :config
-  (menu-bar-mode -1))
+  :hook (after-init . (lambda () (menu-bar-mode -1))))
 
 (use-package tab-bar
   :straight (:type built-in)
@@ -5982,6 +5979,7 @@ Uses `magit-patch-save-arguments' internally, so inherit its settings."
                       (font-spec :name "NanumGothic"))))
 
 (use-package modus-themes
+  :defer t
   :custom
   (modus-themes-italic-constructs t)
   (modus-themes-bold-constructs nil))
@@ -6009,14 +6007,13 @@ Uses `magit-patch-save-arguments' internally, so inherit its settings."
      ((t (:foreground "#B62D66" :background "#000000"))))
    '(tab-line
      ((t (:foreground "#BBCCDD" :background "#000000"))))
-   ;;; TODO: Below is not working
-   ;; '(diff-hl-insert
-   ;;   ((t (:foreground "#BBCCDD" :background "#4BB5BE"))))
-   ;; '(diff-hl-change
-   ;;   ((t (:foreground "#BBCCDD" :background "#387AAA"))))
-   ;; '(diff-hl-delete
-   ;;   ((t (:foreground "#BBCCDD" :background "#B62D66"))))
-   ))
+    ;;; TODO: Below is not working
+   '(diff-hl-insert
+     ((t (:foreground "#BBCCDD" :background "#4BB5BE"))))
+   '(diff-hl-change
+     ((t (:foreground "#BBCCDD" :background "#387AAA"))))
+   '(diff-hl-delete
+     ((t (:foreground "#BBCCDD" :background "#B62D66"))))))
 
 (use-package batppuccin
   :custom
