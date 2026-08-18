@@ -379,7 +379,6 @@
 
 (use-package evil
   :demand t
-  ;; :after (evil-vars)
   :hook (after-init . evil-mode)
   :custom
   ;; NOTE This option is from evil-vars, but evil the package seems to
@@ -458,7 +457,6 @@
   :hook (after-init . evil-terminal-cursor-changer-activate))
 
 (use-package evil-lisp-state
-  :when (derived-mode-p 'lisp-data-mode)
   :custom
   (evil-lisp-state-global t)
   (evil-lisp-state-cursor '(hbar . 2))
@@ -2338,7 +2336,6 @@
   )
 
 (use-package evil-cleverparens
-  :when (derived-mode-p 'lisp-data-mode)
   :custom
   (evil-cleverparens-use-additional-bindings t)
   :config
