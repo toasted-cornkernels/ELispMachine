@@ -328,6 +328,16 @@
     "C"   (which-key-prefix "colors")
     "C."  'symbol-overlay-put))
 
+(defun display-current-time ()
+  "Display the current time in the buffer."
+  (interactive)
+  (message (format-time-string "%Y-%m-%d %H:%M:%S %a")))
+
+(defun insert-current-time ()
+  "Insert the current time at point."
+  (interactive)
+  (insert (format-time-string "%Y-%m-%d %H:%M:%S %a")))
+
 ;; No Littering! ====================================
 ;; ==================================================
 
@@ -6239,16 +6249,6 @@ Like normal Emacs `C-k'.  Kill to end of line and put content in kill-ring."
   (display-time-world-list elispm/world-clock-cities)
   (zoneinfo-style-world-list elispm/world-clock-cities)
   :config
-  (defun display-current-time ()
-    "Display the current time in the buffer."
-    (interactive)
-    (message (format-time-string "%Y-%m-%d %H:%M:%S %a")))
-
-  (defun insert-current-time ()
-    "Insert the current time at point."
-    (interactive)
-    (insert (format-time-string "%Y-%m-%d %H:%M:%S %a")))
-
   (display-time-mode 1)
   (setq global-mode-string (remove 'display-time-string global-mode-string))
   (setq mode-line-end-spaces
