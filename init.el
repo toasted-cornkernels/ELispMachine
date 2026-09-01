@@ -1769,7 +1769,7 @@
   :hook ((gptel-mode . gptel-highlight-mode)
          (gptel-mode . (lambda () (breadcrumb-local-mode -1))))
   :custom
-  (gptel-model 'claude-opus-4.6)
+  (gptel-model 'gpt-5.6-sol)
   (gptel-default-mode 'org-mode)
   (gptel-highlight-methods '(face))
   (gptel-prompt-prefix-alist '((markdown-mode . "# ")
