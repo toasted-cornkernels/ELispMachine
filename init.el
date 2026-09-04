@@ -1812,7 +1812,25 @@
   :defer t
   :custom
   (agent-shell-github-command nil)
-  (agent-shell-github-acp-command '("copilot" "--acp" "--model" "claude-opus-4.7")))
+  (agent-shell-github-acp-command '("copilot" "--acp" "--model" "claude-opus-4.7"))
+  (agent-shell-show-context-usage-indicator 'detailed)
+  (agent-shell-show-usage-at-turn-end t)
+  (agent-shell-show-busy-indicator t)
+  (agent-shell-highlight-blocks t)
+  (agent-shell context-sources '(files region error))
+  (agent-shell-file-completion-enabled t)
+  (agent-shell-thought-process-expand-by-default nil)
+  (agent-shell-tool-use-expand-by-default nil)
+  (agent-shell-user-message-expand-by-default nil)
+  (agent-shell-preferred-agent-config 'copilot)
+  (agent-shell-session-restore-verbosity 'first-last)
+  :config
+  (setq agent-shell-anthropic-authentication
+        (agent-shell-anthropic-make-authentication :login t))
+  ;; Hmm:
+  ;; (setq shell-maker-root-path
+  ;;       (no-littering-expand-var-file-name "shell-maker/"))
+  )
 
 ;; Shell config =====================================
 ;; ==================================================
