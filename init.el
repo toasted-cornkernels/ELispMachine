@@ -6228,15 +6228,26 @@ the buffer works like a pager."
     :keymaps     '(ghostel-semi-char-mode-map)
     "C-s"        'consult-line
     "C-k"        'elispm/ghostel-send-C-k-and-kill
-    "C-p"        (lambda () (interactive)
-                   (ghostel-send-key "p" "ctrl"))
-    "C-n"        (lambda () (interactive)
-                   (ghostel-send-key "n" "ctrl")))
+    "C-p"        'elispm/ghostel-send-C-p
+    "C-n"        'elispm/ghostel-send-C-n
+    "C-<escape>" 'elispm/ghostel-send-C-escape)
   (agnostic-key
     :keymaps    '(project-prefix-map)
     "m"         'ghostel-project
     "M"         'ghostel-project-list-buffers)
   :config
+  (defun elispm/ghostel-send-C-p ()
+    (interactive)
+    (ghostel-send-key "p" "ctrl"))
+
+  (defun elispm/ghostel-send-C-n ()
+    (interactive)
+    (ghostel-send-key "n" "ctrl"))
+
+  (defun elispm/ghostel-send-C-escape ()
+    (interactive)
+    (ghostel-send-key "escape" "ctrl"))
+
   (defun elispm/ghostel-send-C-k-and-kill ()
     "Send `C-k' to ghostel.
 Like normal Emacs `C-k'.  Kill to end of line and put content in kill-ring."
