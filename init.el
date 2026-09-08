@@ -1824,6 +1824,7 @@
   (agent-shell-user-message-expand-by-default nil)
   (agent-shell-preferred-agent-config 'copilot)
   (agent-shell-session-restore-verbosity 'first-last)
+  ;; TODO: This :config is probably not needed anymore.
   :config
   (setq agent-shell-anthropic-authentication
         (agent-shell-anthropic-make-authentication :login t))
