@@ -769,17 +769,17 @@
     "is"         'org-insert-subheading
 
     "it"         (which-key-prefix :template)
-    "it/"        (org-insert-structure org-insert-comment "comment")
-    "itC"        (org-insert-structure org-insert-comment "comment")
-    "itE"        (org-insert-structure org-insert-export "export")
-    "ita"        (org-insert-structure org-insert-ascii "ascii")
-    "itc"        (org-insert-structure org-insert-center "center")
-    "ite"        (org-insert-structure org-insert-example "example")
-    "ith"        (org-insert-structure org-insert-export-html "html")
-    "itl"        (org-insert-structure org-insert-export-latex "latex")
-    "itq"        (org-insert-structure org-insert-quote "quote")
-    "its"        (org-insert-structure org-insert-src "src")
-    "itv"        (org-insert-structure org-insert-verse "verse")
+    "it/"        (elispm/org-insert-structure org-insert-comment "comment")
+    "itC"        (elispm/org-insert-structure org-insert-comment "comment")
+    "itE"        (elispm/org-insert-structure org-insert-export "export")
+    "ita"        (elispm/org-insert-structure org-insert-ascii "ascii")
+    "itc"        (elispm/org-insert-structure org-insert-center "center")
+    "ite"        (elispm/org-insert-structure org-insert-example "example")
+    "ith"        (elispm/org-insert-structure org-insert-export-html "html")
+    "itl"        (elispm/org-insert-structure org-insert-export-latex "latex")
+    "itq"        (elispm/org-insert-structure org-insert-quote "quote")
+    "its"        (elispm/org-insert-structure org-insert-src "src")
+    "itv"        (elispm/org-insert-structure org-insert-verse "verse")
 
     "iD"         (which-key-prefix :download)
 
@@ -916,7 +916,7 @@
                    (and (org-entry-is-done-p) (> n-not-done 0)))
            (org-todo))))
 
-  (defmacro org-insert-structure (fname code)
+  (defmacro elispm/org-insert-structure (fname code)
     "Make function called FNAME for inserting structure (signified by CODE) in org mode."
     `(defun ,fname ()
        (interactive)
@@ -6228,21 +6228,27 @@ the buffer works like a pager."
     :keymaps     '(ghostel-semi-char-mode-map)
     "C-s"        'consult-line
     "C-k"        'elispm/ghostel-send-C-k-and-kill
-    "C-p"        'elispm/ghostel-send-C-p
-    "C-n"        'elispm/ghostel-send-C-n
+    "C-p"        (elispm/ghostel-send-C- p)
+    "C-n"        (elispm/ghostel-send-C- n)
+    "C-u"        (elispm/ghostel-send-C- u)
     "C-<escape>" 'elispm/ghostel-send-C-escape)
   (agnostic-key
     :keymaps    '(project-prefix-map)
     "m"         'ghostel-project
     "M"         'ghostel-project-list-buffers)
   :config
-  (defun elispm/ghostel-send-C-p ()
-    (interactive)
-    (ghostel-send-key "p" "ctrl"))
+  (make-symbol (string-join (list "hihi" "hoho")))
 
-  (defun elispm/ghostel-send-C-n ()
+  ;; TODO Handle special cases like <escape>
+  (defmacro elispm/ghostel-send-C- (char)
+    `(defun (make-symbol
+             (string-join (list "elispm/ghostel-send-C-" ,char))) ()
+       (interactive)
+       (ghostel-send-key ,char "ctrl")))
+
+  (defun elispm/ghostel-send-C-d ()
     (interactive)
-    (ghostel-send-key "n" "ctrl"))
+    (ghostel-send-key "d" "ctrl"))
 
   (defun elispm/ghostel-send-C-escape ()
     (interactive)
