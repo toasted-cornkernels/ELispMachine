@@ -384,8 +384,7 @@
   (evil-mode-line-format nil)
   (evil-shift-width 2)
   (evil-vsplit-window-right t)
-  (evil-split-window-below t)
-  (evil-cross-lines t))
+  (evil-split-window-below t))
 
 (use-package evil
   :demand t
