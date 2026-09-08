@@ -6221,17 +6221,21 @@ the buffer works like a pager."
 
 (use-package ghostel
   :when (not android-p)
-  :bind (("C-x m" . ghostel)
-         :map ghostel-semi-char-mode-map
-         ("C-s"  . consult-line)
-         ("C-k"  . elispm/ghostel-send-C-k-and-kill)
-         ;; ;; I'm used to go up/down the shell history with M-n/p from eshell
-         ;; ;; Simulate this behavior in ghostel by sending C-p and C-n
-         ("M-p" . (lambda () (interactive) (ghostel-send-key "p" "ctrl")))
-         ("M-n" . (lambda () (interactive) (ghostel-send-key "n" "ctrl")))
-         :map project-prefix-map
-         ("m" . ghostel-project)
-         ("M" . ghostel-project-list-buffers))
+  :general-config
+  (insert-mode-major-mode
+    ;; Default input mode (semi-char mode).
+    :major-modes '(ghostel-semi-char-mode t)
+    :keymaps     '(ghostel-semi-char-mode-map)
+    "C-s"        'consult-line
+    "C-k"        'elispm/ghostel-send-C-k-and-kill
+    "C-p"        (lambda () (interactive)
+                   (ghostel-send-key "p" "ctrl"))
+    "C-n"        (lambda () (interactive)
+                   (ghostel-send-key "n" "ctrl")))
+  (agnostic-key
+    :keymaps    '(project-prefix-map)
+    "m"         'ghostel-project
+    "M"         'ghostel-project-list-buffers)
   :config
   (defun elispm/ghostel-send-C-k-and-kill ()
     "Send `C-k' to ghostel.
@@ -6405,7 +6409,7 @@ Like normal Emacs `C-k'.  Kill to end of line and put content in kill-ring."
   "C-s-r" 'eradio-toggle
   "C-s-f" 'toggle-frame-fullscreen
   "C-s-s" 'ace-swap-window
-  "C-s-g" 'ag-dired-regexp
+  "C-s-g" 'ghostel
   "C-s-v" 'multi-vterm
   "C-s-u" 'emms-pause
   "C-s-," 'emms-seek-backward
@@ -6414,7 +6418,6 @@ Like normal Emacs `C-k'.  Kill to end of line and put content in kill-ring."
   "C-s-9" 'emms-volume-lower
   "C-s-0" 'emms-volume-raise
   "C-s-=" 'balance-windows
-  ;; "C-s-i" 'imenu-list
   "C-s-x" 'delete-trailing-whitespace
   "C-s-y" 'youtube-viewer-start
   "C-s-;" 'flymake-goto-prev-error
