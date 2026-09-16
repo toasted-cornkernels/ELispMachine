@@ -55,6 +55,33 @@
   :custom
   (ad-redefinition-action 'accept))
 
+;; Deal with exec-path ==============================
+;; ==================================================
+
+(defun elispm/prepend-to-exec-path (dir)
+  "Put DIR at the front of `exec-path' and of the PATH environment variable."
+  (let ((dir (directory-file-name (expand-file-name dir))))
+    (when (file-directory-p dir)
+      (setq exec-path (cons dir (delete dir exec-path)))
+      (setenv "PATH"
+              (mapconcat #'identity
+                         (cons dir (delete dir (split-string (or (getenv "PATH") "")
+                                                             path-separator t)))
+                         path-separator)))))
+
+(dolist (dir (reverse
+              ;; One closer to the top wins!
+              (list "/opt/homebrew/bin"
+                    "/opt/homebrew/sbin"
+                    "~/.local/bin"
+                    "~/.cargo/bin"
+                    "~/.nix-profile/bin"
+                    (concat "/etc/profiles/per-user/" (user-login-name) "/bin")
+                    "/run/current-system/sw/bin"
+                    "/nix/var/nix/profiles/default/bin"
+                    "/usr/local/bin")))
+  (elispm/prepend-to-exec-path dir))
+
 ;; Custom Lisp files ================================
 ;; ==================================================
 
@@ -1812,7 +1839,7 @@
   :custom
   (agent-shell-github-command nil)
   (agent-shell-github-acp-command '("copilot" "--acp" "--model" "claude-opus-4.7"))
-  (agent-shell-show-context-usage-indicator 'detailed)
+  (agent-shell-show-context-usage-indicator 't)
   (agent-shell-show-usage-at-turn-end t)
   (agent-shell-show-busy-indicator t)
   (agent-shell-highlight-blocks t)
@@ -4796,11 +4823,6 @@ set so that it clears the whole REPL buffer, not just the output."
         (set-display-table-slot display-table 5 ?│)
         (set-window-display-table (selected-window) display-table))))
   (add-hook 'window-configuration-change-hook 'change-window-divider)
-
-  (add-to-list 'exec-path "/nix/var/nix/profiles/default/bin")
-  (add-to-list 'exec-path (expand-file-name "~/.nix-profile/bin"))
-  (add-to-list 'exec-path (expand-file-name "~/.cargo/bin"))
-  (add-to-list 'exec-path (concat "/etc/profiles/per-user/" (user-login-name) "/bin"))
 
   (when macOS-p
     (add-to-list 'default-frame-alist '(fullscreen . fullboth))
@@ -7884,6 +7906,11 @@ Optional argument MSG First message shown in buffer."
   :general
   (global-leader
     "qr" 'restart-emacs))
+
+;; Per-user customizations ==========================
+;; ==================================================
+
+(load (expand-file-name "~/.emacs-local.el") :noerror)
 
 ;; config end =======================================
 ;; ==================================================
