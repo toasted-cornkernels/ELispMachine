@@ -415,6 +415,7 @@
 
 (use-package evil
   :demand t
+  :after evil-vars
   :hook (after-init . evil-mode)
   :custom
   ;; NOTE This option is from evil-vars, but evil the package seems to
