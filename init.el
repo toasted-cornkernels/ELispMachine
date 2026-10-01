@@ -1148,7 +1148,12 @@
      ("a" "Journal" entry (file+datetree,(concat org-directory "/Journal.org"))
       "** %U\n\n%?\n%i\n")
      ("n" "ShowerThoughts" entry (file+headline ,(concat org-directory "/ShowerThoughts.org") "ShowerThoughts")
-      "** %?          :%^{Tag}:\n\nEntered on %U\n%i\n%a\n")))
+      "** %?          :%^{Tag}:\n\nEntered on %U\n%i\n%a\n")
+     ("T" "Thought Record" entry
+      (file+headline ,(concat org-directory "/ThoughtRecord.org")
+                     "Thought Record")
+      (file ,(concat user-emacs-directory "/CaptureTemplates/Org/ThoughtRecordTemplate.org"))
+      :empty-lines 1)))
   :general-config
   (local-leader
     :major-modes '(org-capture-mode t)
