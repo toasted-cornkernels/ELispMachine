@@ -6249,30 +6249,13 @@ the buffer works like a pager."
 
 (use-package ghostel
   :when (not android-p)
-  :general-config
-  (insert-mode-major-mode
-    ;; Default input mode (semi-char mode).
-    :major-modes '(ghostel-semi-char-mode t)
-    :keymaps     '(ghostel-semi-char-mode-map)
-    "C-s"        'consult-line
-    "C-k"        'elispm/ghostel-send-C-k-and-kill
-    "C-p"        (elispm/ghostel-send-C- p)
-    "C-n"        (elispm/ghostel-send-C- n)
-    "C-u"        (elispm/ghostel-send-C- u)
-    "C-<escape>" 'elispm/ghostel-send-C-escape)
-  (agnostic-key
-    :keymaps    '(project-prefix-map)
-    "m"         'ghostel-project
-    "M"         'ghostel-project-list-buffers)
   :config
-  (make-symbol (string-join (list "hihi" "hoho")))
-
   ;; TODO Handle special cases like <escape>
   (defmacro elispm/ghostel-send-C- (char)
-    `(defun (make-symbol
-             (string-join (list "elispm/ghostel-send-C-" ,char))) ()
-       (interactive)
-       (ghostel-send-key ,char "ctrl")))
+    (let ((function-name (intern (concat "elispm/ghostel-send-C-" (symbol-name char)))))
+      `(defun ,function-name ()
+         (interactive)
+         (ghostel-send-key ,char "ctrl"))))
 
   (defun elispm/ghostel-send-C-d ()
     (interactive)
@@ -6291,7 +6274,23 @@ Like normal Emacs `C-k'.  Kill to end of line and put content in kill-ring."
 
   (add-to-list 'project-switch-commands '(ghostel-project "Ghostel") t)
   (add-to-list 'project-switch-commands '(ghostel-project-list-buffers "Ghostel buffers") t)
-  (add-to-list 'ghostel-eval-cmds '("magit-status-setup-buffer" magit-status-setup-buffer)))
+  (add-to-list 'ghostel-eval-cmds '("magit-status-setup-buffer" magit-status-setup-buffer))
+
+  :general-config
+  (insert-mode-major-mode
+    ;; Default input mode (semi-char mode).
+    :major-modes '(ghostel-semi-char-mode t)
+    :keymaps     '(ghostel-semi-char-mode-map)
+    "C-s"        'consult-line
+    "C-k"        'elispm/ghostel-send-C-k-and-kill
+    "C-p"        (elispm/ghostel-send-C- p)
+    "C-n"        (elispm/ghostel-send-C- n)
+    "C-u"        (elispm/ghostel-send-C- u)
+    "C-<escape>" 'elispm/ghostel-send-C-escape)
+  (agnostic-key
+    :keymaps    '(project-prefix-map)
+    "m"         'ghostel-project
+    "M"         'ghostel-project-list-buffers))
 
 ;; World clock config ===============================
 ;; ==================================================
