@@ -23,7 +23,7 @@
 - *Magnification and minimization*: 어떤 사건이나 실수의 중요성을 실제보다 지나치게 키우거나 줄여서 본다.
 - *Catastrophizing*: 가능한 결과들 가운데 최악의 결과만을 중심으로 생각한다.
 - *Overgeneralization*: 한두 번의 경험을 바탕으로 훨씬 넓은 상황에 일반화한다.
-- *Magical thinking*: 내 생각·행동·감정이 실제로 관련 없는 사건에 영향을 준다고 생각한다.
+- *Magical thinking*: 내 생각/행동/감정이 실제로 관련 없는 사건에 영향을 준다고 생각한다.
 - *Personalization*: 내가 통제할 수 없는 일까지 내 책임이라고 생각한다.
 - *Jumping to conclusions*: 충분한 근거가 없는데도 상황의 의미나 결론을 미리 정한다.
 - *Mind reading*: 충분한 근거 없이 다른 사람이 무엇을 생각하거나 믿는지 안다고 가정한다.
