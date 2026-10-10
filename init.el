@@ -400,9 +400,13 @@
 ;; evil-mode config =================================
 ;; ==================================================
 
-(use-package evil-vars
-  :straight nil
+(use-package evil
+  :demand t
+  :hook (after-init . evil-mode)
   :custom
+  ;; NOTE These options are from evil-vars, but evil the package seems to
+  ;; override it during its loading. Use-package permits customizable
+  ;; variables to be set by a different package, so set it here.
   (evil-want-integration t)
   (evil-want-keybinding nil)
   (evil-want-C-u-scroll t)
@@ -411,15 +415,7 @@
   (evil-mode-line-format nil)
   (evil-shift-width 2)
   (evil-vsplit-window-right t)
-  (evil-split-window-below t))
-
-(use-package evil
-  :demand t
-  :hook (after-init . evil-mode)
-  :custom
-  ;; NOTE This option is from evil-vars, but evil the package seems to
-  ;; override it during its loading. Use-package permits customizable
-  ;; variables to be set by a different package, so set it here.
+  (evil-split-window-below t)
   (evil-disable-insert-state-bindings t)
   :config
   (evil-set-leader 'normal (kbd "SPC"))
