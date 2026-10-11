@@ -1,6 +1,3 @@
-;; (with-eval-after-load 'xref
-;;   (debug))
-
 ;; Salutation to λ before beginning =================
 ;; ==================================================
 
