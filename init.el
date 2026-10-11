@@ -593,12 +593,12 @@
     "M-n"        'corfu-popupinfo-scroll-up))
 
 (use-package corfu-terminal
-  :when (< emacs-major-version 31)
+  :when (and terminal-p (< emacs-major-version 31))
   :straight (corfu-terminal
              :type git
              :host codeberg
              :repo "akib/emacs-corfu-terminal")
-  :when terminal-p)
+  :hook (after-init . corfu-terminal-mode))
 
 (use-package cape
   ;; Bind prefix keymap providing all Cape commands under a mnemonic key.
