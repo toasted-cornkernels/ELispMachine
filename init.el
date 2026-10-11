@@ -1832,6 +1832,9 @@
 
 (use-package agent-shell
   :defer t
+  :commands (agent-shell-anthropic-start-claude-code
+             agent-shell-openai-start-codex
+             agent-shell-github-start-copilot)
   :custom
   (agent-shell-github-command nil)
   (agent-shell-github-acp-command '("copilot" "--acp" "--model" "claude-opus-4.7"))
@@ -1849,7 +1852,9 @@
   ;; TODO: This :config is probably not needed anymore.
   :config
   (setq agent-shell-anthropic-authentication
-        (agent-shell-anthropic-make-authentication :login t))
+        (agent-shell-anthropic-make-authentication :login t)
+        agent-shell-openai-authentication
+        (agent-shell-openai-make-authentication :login t))
   ;; Hmm:
   ;; (setq shell-maker-root-path
   ;;       (no-littering-expand-var-file-name "shell-maker/"))
