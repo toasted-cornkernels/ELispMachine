@@ -5273,6 +5273,8 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (use-package magit
   :defer t
+  :init
+  (setq forge-add-default-bindings nil)
   :custom
   (magit-bury-buffer-function #'magit-restore-window-configuration)
   ;; TODO
@@ -5607,7 +5609,7 @@ Uses `magit-patch-save-arguments' internally, so inherit its settings."
             which-key-replacement-alist))))
 
 (use-package forge
-  :after magit
+  :after magit  
   :general-config
   (local-leader
     :major-modes '(forge-topic-mode t)
