@@ -593,6 +593,7 @@
     "M-n"        'corfu-popupinfo-scroll-up))
 
 (use-package corfu-terminal
+  :when (< emacs-major-version 31)
   :straight (corfu-terminal
              :type git
              :host codeberg
