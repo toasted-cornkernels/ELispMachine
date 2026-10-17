@@ -1,6 +1,3 @@
-;; (with-eval-after-load 'xref
-;;   (debug))
-
 ;; Salutation to λ before beginning =================
 ;; ==================================================
 
@@ -104,8 +101,8 @@
 ;; Profiling ========================================
 ;; ==================================================
 
-;; (setq use-package-verbose t
-;;       use-package-compute-statistics t)
+(setq use-package-verbose t
+      use-package-compute-statistics t)
 
 ;; General.el config ================================
 ;; ==================================================
@@ -400,28 +397,20 @@
 ;; evil-mode config =================================
 ;; ==================================================
 
-(use-package evil-vars
-  :straight nil
-  :custom
-  (evil-want-integration t)
-  (evil-want-keybinding nil)
-  (evil-want-C-u-scroll t)
-  (evil-want-fine-undo t)
-  (evil-undo-system 'undo-fu)
-  (evil-mode-line-format nil)
-  (evil-shift-width 2)
-  (evil-vsplit-window-right t)
-  (evil-split-window-below t))
-
 (use-package evil
   :demand t
-  :after evil-vars
   :hook (after-init . evil-mode)
-  :custom
-  ;; NOTE This option is from evil-vars, but evil the package seems to
-  ;; override it during its loading. Use-package permits customizable
-  ;; variables to be set by a different package, so set it here.
-  (evil-disable-insert-state-bindings t)
+  :init
+  (setq evil-want-integration t
+        evil-want-keybinding nil
+        evil-want-C-u-scroll t
+        evil-want-fine-undo t
+        evil-undo-system 'undo-fu
+        evil-mode-line-format nil
+        evil-shift-width 2
+        evil-vsplit-window-right t
+        evil-split-window-below t
+        evil-disable-insert-state-bindings t)
   :config
   (evil-set-leader 'normal (kbd "SPC"))
   (evil-set-leader 'normal "," t)
@@ -601,11 +590,12 @@
     "M-n"        'corfu-popupinfo-scroll-up))
 
 (use-package corfu-terminal
+  :when (and terminal-p (< emacs-major-version 31))
   :straight (corfu-terminal
              :type git
              :host codeberg
              :repo "akib/emacs-corfu-terminal")
-  :when terminal-p)
+  :hook (after-init . corfu-terminal-mode))
 
 (use-package cape
   ;; Bind prefix keymap providing all Cape commands under a mnemonic key.
@@ -1842,6 +1832,9 @@
 
 (use-package agent-shell
   :defer t
+  :commands (agent-shell-anthropic-start-claude-code
+             agent-shell-openai-start-codex
+             agent-shell-github-start-copilot)
   :custom
   (agent-shell-github-command nil)
   (agent-shell-github-acp-command '("copilot" "--acp" "--model" "claude-opus-4.7"))
@@ -1859,7 +1852,9 @@
   ;; TODO: This :config is probably not needed anymore.
   :config
   (setq agent-shell-anthropic-authentication
-        (agent-shell-anthropic-make-authentication :login t))
+        (agent-shell-anthropic-make-authentication :login t)
+        agent-shell-openai-authentication
+        (agent-shell-openai-make-authentication :login t))
   ;; Hmm:
   ;; (setq shell-maker-root-path
   ;;       (no-littering-expand-var-file-name "shell-maker/"))
@@ -2399,11 +2394,11 @@
 (use-package evil-cleverparens
   :custom
   (evil-cleverparens-use-additional-bindings t)
+  :hook (after-init . evil-cp-additional-bindings)
   :config
   (unless window-system
     (setq evil-cp-additional-bindings (assoc-delete-all "M-[" evil-cp-additional-bindings)
-          evil-cp-additional-bindings (assoc-delete-all "M-]" evil-cp-additional-bindings)))
-  (evil-cp-set-additional-bindings))
+          evil-cp-additional-bindings (assoc-delete-all "M-]" evil-cp-additional-bindings))))
 
 ;; KMonad ===========================================
 ;; ==================================================
@@ -5281,6 +5276,8 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (use-package magit
   :defer t
+  :init
+  (setq forge-add-default-bindings nil)
   :custom
   (magit-bury-buffer-function #'magit-restore-window-configuration)
   ;; TODO
@@ -5615,7 +5612,7 @@ Uses `magit-patch-save-arguments' internally, so inherit its settings."
             which-key-replacement-alist))))
 
 (use-package forge
-  :after magit
+  :after magit  
   :general-config
   (local-leader
     :major-modes '(forge-topic-mode t)
