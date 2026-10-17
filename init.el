@@ -5111,7 +5111,7 @@ set so that it clears the whole REPL buffer, not just the output."
                                    regexp-search-ring
                                    extended-command-history
                                    kill-ring))
-  :config
+  :general
   (global-leader
     "p"    (which-key-prefix "projectile")
     "p!"   'projectile-run-shell-command-in-root
