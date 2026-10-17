@@ -5092,7 +5092,32 @@ set so that it clears the whole REPL buffer, not just the output."
                                         ; stop working when it's
                                         ; refactored with `when`???
       nil))
-  (add-hook 'project-find-functions #'elispm/project-override))
+  (add-hook 'project-find-functions #'elispm/project-override)
+
+  :general
+  (global-leader
+    "P"    (which-key-prefix "project")
+    "P!"   'project-shell-command
+    "P&"   'project-async-shell-command
+    "P%"   'project-query-replace-regexp
+    "Pa"   'project-remember-project
+    "PA"   'project-remember-project-under
+    "Pb"   'project-switch-to-buffer
+    "Pc"   'project-compile
+    "PC"   'project-recompile
+    "Pd"   'project-forget-project
+    "PD"   'project-forget-zombie-projects
+    "Pu"   'project-any-command
+    "PD"   'project-dired
+    "Pe"   'project-customize-dirlocals
+    "Pf"   'project-find-file
+    "PF"   'project-or-external-find-file
+    "Pg"   'project-find-regexp
+    "PG"   'project-or-external-find-regexp
+    "Pk"   'project-kill-buffers
+    "Pp"   'project-switch-project
+    "Ps"   'project-save-some-buffers
+    "Pv"   'project-vs-dir))
 
 ;; Projectile config ================================
 ;; ==================================================
@@ -5612,7 +5637,7 @@ Uses `magit-patch-save-arguments' internally, so inherit its settings."
             which-key-replacement-alist))))
 
 (use-package forge
-  :after magit  
+  :after magit
   :general-config
   (local-leader
     :major-modes '(forge-topic-mode t)
@@ -6978,30 +7003,6 @@ removal."
   "hdx"   'describe-char
 
   "ha"    (which-key-prefix :apropos))
-
-(global-leader
-  "P"    (which-key-prefix "project")
-  "P!"   'project-shell-command
-  "P&"   'project-async-shell-command
-  "P%"   'project-query-replace-regexp
-  "Pa"   'project-remember-project
-  "PA"   'project-remember-project-under
-  "Pb"   'project-switch-to-buffer
-  "Pc"   'project-compile
-  "PC"   'project-recompile
-  "Pd"   'project-forget-project
-  "PD"   'project-forget-zombie-projects
-  "Pu"   'project-any-command
-  "PD"   'project-dired
-  "Pe"   'project-customize-dirlocals
-  "Pf"   'project-find-file
-  "PF"   'project-or-external-find-file
-  "Pg"   'project-find-regexp
-  "PG"   'project-or-external-find-regexp
-  "Pk"   'project-kill-buffers
-  "Pp"   'project-switch-project
-  "Ps"   'project-save-some-buffers
-  "Pv"   'project-vs-dir)
 
 (defun insert-lambda ()
   "Insert λ."
