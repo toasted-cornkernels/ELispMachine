@@ -101,8 +101,8 @@
 ;; Profiling ========================================
 ;; ==================================================
 
-(setq use-package-verbose t
-      use-package-compute-statistics t)
+;; (setq use-package-verbose t
+;;       use-package-compute-statistics t)
 
 ;; General.el config ================================
 ;; ==================================================
@@ -2394,7 +2394,7 @@
 (use-package evil-cleverparens
   :custom
   (evil-cleverparens-use-additional-bindings t)
-  :hook (after-init . evil-cp-additional-bindings)
+  :hook (after-init . evil-cp-set-additional-bindings)
   :config
   (unless window-system
     (setq evil-cp-additional-bindings (assoc-delete-all "M-[" evil-cp-additional-bindings)
