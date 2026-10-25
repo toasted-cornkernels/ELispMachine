@@ -1407,6 +1407,67 @@
 
 (use-package org-web-tools :defer t)
 
+;; Maps and Org geo links
+
+(use-package osm
+  :after org
+  :demand t
+  :bind ("C-c M" . osm-prefix-map)
+  :init
+  ;; Global Visual Line mode runs after `osm-mode-hook'.
+  (define-advice turn-on-visual-line-mode (:before-while () elispm/skip-osm)
+    (not (derived-mode-p 'osm-mode)))
+  :hook
+  (osm-mode . (lambda ()
+                ;; Wrapped lines break the map's tile grid.
+                (visual-line-mode -1)
+                (when (fboundp 'adaptive-wrap-prefix-mode)
+                  (adaptive-wrap-prefix-mode -1))
+                (setq-local truncate-lines t)))
+  :custom
+  (osm-default-zoom 15)
+  (osm-home '(40.7536 -73.9832 15)) ; Bryant Park, Midtown Manhattan
+  :config
+  (evil-set-initial-state 'osm-mode 'normal)
+  :general-config
+  (normal-mode-major-mode
+    :major-modes '(osm-mode t)
+    :keymaps     '(osm-mode-map)
+    "SPC"        nil
+    ;; Keep Evil's mouse selection from taking over map clicks and drags.
+    "<down-mouse-1>" 'osm-mouse-drag
+    "<mouse-1>"      'osm-mouse-pin
+    "<drag-mouse-1>" 'ignore
+    "h"          'osm-left
+    "j"          'osm-down
+    "k"          'osm-up
+    "l"          'osm-right
+    "H"          'osm-left-left
+    "J"          'osm-down-down
+    "K"          'osm-up-up
+    "L"          'osm-right-right
+    "+"          'osm-zoom-in
+    "="          'osm-zoom-in
+    "-"          'osm-zoom-out
+    "/"          'osm-search
+    "gh"         'osm-home
+    "gj"         'osm-jump
+    "gg"         'osm-goto
+    "gu"         'osm-url
+    "gr"         'revert-buffer
+    "c"          'osm-center
+    "r"          'osm-route
+    "v"          'osm-server
+    "b"          'osm-bookmark-set
+    "n"          'osm-rename
+    "d"          'osm-delete
+    "f"          'osm-open
+    "F"          'osm-hide
+    "yy"         'osm-save-url
+    "yl"         'org-store-link
+    "o"          'clone-buffer
+    "q"          'quit-window))
+
 ;; Exporters
 
 (use-package ox-latex
@@ -5982,7 +6043,9 @@ Uses `magit-patch-save-arguments' internally, so inherit its settings."
 (use-package adaptive-wrap
   :config
   (define-globalized-minor-mode elispm/global-adaptive-wrap-prefix-mode adaptive-wrap-prefix-mode
-    (lambda () (adaptive-wrap-prefix-mode 1)))
+    (lambda ()
+      (unless (derived-mode-p 'osm-mode)
+        (adaptive-wrap-prefix-mode 1))))
   (elispm/global-adaptive-wrap-prefix-mode 1))
 
 (use-package xt-mouse
@@ -6893,6 +6956,7 @@ removal."
   "aodl"  'org-roam-dailies-goto-next-note
 
   "aw"   (which-key-prefix :web)
+  "awM"  'osm-home
   "aww"  (which-key-prefix :eww)
   "awww" 'eww
   "awws" 'eww-search-words
