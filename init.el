@@ -1432,6 +1432,38 @@
   (osm-default-zoom 15)
   (osm-home '(40.7536 -73.9832 15)) ; Bryant Park, Midtown Manhattan
   :config
+  (defun elispm/osm-embed-tile-image (image)
+    "Embed the bitmap background of SVG tile IMAGE for emacs-mac.
+Avoid external SVG image references, which can display stale or wrong tiles
+on Mac builds.  Leave plain bitmap tiles and placeholders unchanged."
+    (let* ((properties (cdr image))
+           (file (plist-get properties :base-uri))
+           (data (plist-get properties :data)))
+      (if (and (eq (plist-get properties :type) 'svg)
+               (stringp file) (stringp data) (file-readable-p file))
+          (let* ((mime (pcase (downcase (or (file-name-extension file) ""))
+                         ((or "jpg" "jpeg") "image/jpeg")
+                         ("webp" "image/webp")
+                         (_ "image/png")))
+                 (uri (concat "data:" mime ";base64,"
+                              (with-temp-buffer
+                                (set-buffer-multibyte nil)
+                                (insert-file-contents-literally file)
+                                (base64-encode-string (buffer-string) t))))
+                 (image (copy-tree image)))
+            (setcdr image
+                    (plist-put
+                     (cdr image) :data
+                     (replace-regexp-in-string
+                      (regexp-quote
+                       (concat "xlink:href='" (file-name-nondirectory file) "'"))
+                      (concat "xlink:href='" uri "'") data t t)))
+            image)
+        image)))
+
+  (when (eq window-system 'mac)
+    (advice-add 'osm--draw-tile :filter-return #'elispm/osm-embed-tile-image))
+
   (defvar-local elispm/osm-magnification 0.0
     "Accumulated logarithmic pinch magnification for the current map.")
 
