@@ -6176,7 +6176,7 @@ Uses `magit-patch-save-arguments' internally, so inherit its settings."
    '(tool-bar
      ((t (:background "#000000"))))
    '(header-line
-     ((t (:foreground "#17181b" :background "#000000"))))
+     ((t (:foreground "#BBCCDD" :background "#000000"))))
    '(font-lock-warning-face
      ((t (:foreground "#B62D66" :background "#000000"))))
    '(tab-line
