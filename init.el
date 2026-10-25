@@ -1410,8 +1410,8 @@
 ;; Maps and Org geo links
 
 (use-package osm
-  :after org
-  :demand t
+  :defer t
+  :commands osm-home
   :bind
   ("C-c M" . osm-prefix-map)
   (:map osm-mode-map
