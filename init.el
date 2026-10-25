@@ -1412,7 +1412,11 @@
 (use-package osm
   :after org
   :demand t
-  :bind ("C-c M" . osm-prefix-map)
+  :bind
+  ("C-c M" . osm-prefix-map)
+  (:map osm-mode-map
+        ("<magnify-up>" . elispm/osm-magnify)
+        ("<magnify-down>" . elispm/osm-magnify))
   :init
   ;; Global Visual Line mode runs after `osm-mode-hook'.
   (define-advice turn-on-visual-line-mode (:before-while () elispm/skip-osm)
@@ -1428,6 +1432,40 @@
   (osm-default-zoom 15)
   (osm-home '(40.7536 -73.9832 15)) ; Bryant Park, Midtown Manhattan
   :config
+  (defvar-local elispm/osm-magnification 0.0
+    "Accumulated logarithmic pinch magnification for the current map.")
+
+  (defun elispm/osm-magnify (event)
+    "Zoom the map under emacs-mac magnify EVENT around the pointer.
+Accumulate continuous pinch deltas; each 30 percent change is one level."
+    (interactive "e")
+    (with-selected-window (posn-window (event-start event))
+      (when (derived-mode-p 'osm-mode)
+        (let* ((properties (nth 3 event))
+               (phase (plist-get properties :phase))
+               (delta (plist-get properties :magnification))
+               (step (log 1.3)))
+          (when (eq phase 'began)
+            (setq elispm/osm-magnification 0.0))
+          (cond
+           ((memq phase '(ended cancelled))
+            (setq elispm/osm-magnification 0.0))
+           ((null phase)
+            ;; Smart magnify (two-finger double tap) has no pinch phase.
+            (if (eq (event-basic-type event) 'magnify-down)
+                (osm-mouse-zoom-out event)
+              (osm-mouse-zoom-in event)))
+           ((and (numberp delta) (> delta -1.0))
+            (setq elispm/osm-magnification
+                  (+ elispm/osm-magnification (log (+ 1.0 delta))))
+            (let ((levels (truncate (/ elispm/osm-magnification step))))
+              (setq elispm/osm-magnification
+                    (- elispm/osm-magnification (* levels step)))
+              (dotimes (_ (abs levels))
+                (if (> levels 0)
+                    (osm-mouse-zoom-in event)
+                  (osm-mouse-zoom-out event))))))))))
+
   (evil-set-initial-state 'osm-mode 'normal)
   :general-config
   (normal-mode-major-mode
