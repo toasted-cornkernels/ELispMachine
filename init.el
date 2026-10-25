@@ -1461,8 +1461,21 @@ on Mac builds.  Leave plain bitmap tiles and placeholders unchanged."
             image)
         image)))
 
+  (defun elispm/osm-revert (&rest _)
+    "Rebuild OSM maps without clearing emacs-mac's shared image cache.
+Keep decoded images intact: globally clearing them can corrupt map tiles
+and unrelated tab-bar icons on emacs-mac.  Like OSM's normal revert, this
+uses the on-disk tile cache rather than forcing a server download."
+    (setq osm--tile-cache nil)
+    (osm--each
+     (setq osm--overlays nil)
+     (osm--update)))
+
+  ;; Remove the earlier repaint workaround when re-evaluating this block.
+  (advice-remove 'osm--revert 'osm--revert@elispm/redraw-mac-display)
   (when (eq window-system 'mac)
-    (advice-add 'osm--draw-tile :filter-return #'elispm/osm-embed-tile-image))
+    (advice-add 'osm--draw-tile :filter-return #'elispm/osm-embed-tile-image)
+    (advice-add 'osm--revert :override #'elispm/osm-revert))
 
   (defvar-local elispm/osm-magnification 0.0
     "Accumulated logarithmic pinch magnification for the current map.")
