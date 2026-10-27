@@ -952,6 +952,18 @@
   :straight nil
   :hook (markdown-mode . orgtbl-mode))
 
+;; evil-org uses `custom-initialize-after-file-load' (Emacs 31+).
+(unless (fboundp 'custom-initialize-after-file-load)
+  (defun custom-initialize-after-file-load (symbol exp)
+    "Initialize SYMBOL with EXP, running its :set function after the file loads."
+    (custom-initialize-default symbol exp)
+    (let ((setter (get symbol 'custom-set))
+          (file load-file-name))
+      (if (and setter file)
+          (with-eval-after-load file
+            (funcall setter symbol (default-toplevel-value symbol)))
+        (custom-initialize-reset symbol exp)))))
+
 (use-package evil-org
   :after (evil org)
   :custom
@@ -1079,6 +1091,7 @@
 (use-package ob-gptel
   :straight (ob-gptel :type git :host github
                       :repo  "jwiegley/ob-gptel")
+  :after org
   :defer t)
 
 (use-package ob
@@ -1089,11 +1102,17 @@
                (org-redisplay-inline-images))))
   :defer t
   :config
+  ;; NOTE: `gptel' is intentionally excluded here. Eagerly requiring
+  ;; `ob-gptel' via `org-babel-do-load-languages' while `ob' (part of
+  ;; org core) is itself still being loaded causes a circular
+  ;; `require' of org -> org-element -> ob-gptel -> org, which Emacs
+  ;; reports as "Recursive load". `ob-gptel' is loaded separately
+  ;; above with `:after org', once org has fully finished loading.
   (let ((org-babel-languages '(lisp clojure scheme
                                     dot shell awk restclient
                                     http C ruby
                                     lua fennel nix
-                                    hledger python gptel)))
+                                    hledger python)))
     (org-babel-do-load-languages
      'org-babel-load-languages
      (mapcar (lambda (language) `(,language . t)) org-babel-languages)))
