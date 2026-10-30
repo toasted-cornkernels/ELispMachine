@@ -5111,6 +5111,9 @@ set so that it clears the whole REPL buffer, not just the output."
   :custom
   (consult-project-function (lambda (_) (projectile-project-root)))
   (consult-narrow-key "<")
+  (consult-async-input-debounce 0.05)
+  (consult-async-input-throttle 0.1)
+  (consult-async-refresh-delay 0.05)
   :config
   (consult-customize
    consult-theme :preview-key '(:debounce 0.2 any)
