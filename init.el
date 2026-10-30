@@ -389,6 +389,9 @@
   (kept-old-versions 2)
   (version-control t)
   (confirm-kill-processes nil)  ; Just shut up and die
+  (enable-local-variables :safe)
+  (enable-dir-local-variables t)
+  (enable-remote-dir-locals nil)
   :config
   (remove-hook 'find-file-hooks 'vc-find-file-hook)
   (when macOS-p
