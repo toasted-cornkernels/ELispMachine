@@ -1785,7 +1785,6 @@ Accumulate continuous pinch deltas; each 30 percent change is one level."
                 :files (:defaults "bin")
                 :fork (:host github
                              :repo "jeongsoolee09/emacs-codeql"
-                             ;; :branch "unlocalize-database"
                              :branch "main"))
   :custom
   (codeql-transient-binding "C-c q")
