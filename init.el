@@ -389,6 +389,9 @@
   (kept-old-versions 2)
   (version-control t)
   (confirm-kill-processes nil)  ; Just shut up and die
+  (enable-local-variables :safe)
+  (enable-dir-local-variables t)
+  (enable-remote-dir-locals nil)
   :config
   (remove-hook 'find-file-hooks 'vc-find-file-hook)
   (when macOS-p
@@ -952,6 +955,18 @@
   :straight nil
   :hook (markdown-mode . orgtbl-mode))
 
+;; evil-org uses `custom-initialize-after-file-load' (Emacs 31+).
+(unless (fboundp 'custom-initialize-after-file-load)
+  (defun custom-initialize-after-file-load (symbol exp)
+    "Initialize SYMBOL with EXP, running its :set function after the file loads."
+    (custom-initialize-default symbol exp)
+    (let ((setter (get symbol 'custom-set))
+          (file load-file-name))
+      (if (and setter file)
+          (with-eval-after-load file
+            (funcall setter symbol (default-toplevel-value symbol)))
+        (custom-initialize-reset symbol exp)))))
+
 (use-package evil-org
   :after (evil org)
   :custom
@@ -1079,6 +1094,7 @@
 (use-package ob-gptel
   :straight (ob-gptel :type git :host github
                       :repo  "jwiegley/ob-gptel")
+  :after org
   :defer t)
 
 (use-package ob
@@ -1089,11 +1105,17 @@
                (org-redisplay-inline-images))))
   :defer t
   :config
+  ;; NOTE: `gptel' is intentionally excluded here. Eagerly requiring
+  ;; `ob-gptel' via `org-babel-do-load-languages' while `ob' (part of
+  ;; org core) is itself still being loaded causes a circular
+  ;; `require' of org -> org-element -> ob-gptel -> org, which Emacs
+  ;; reports as "Recursive load". `ob-gptel' is loaded separately
+  ;; above with `:after org', once org has fully finished loading.
   (let ((org-babel-languages '(lisp clojure scheme
                                     dot shell awk restclient
                                     http C ruby
                                     lua fennel nix
-                                    hledger python gptel)))
+                                    hledger python)))
     (org-babel-do-load-languages
      'org-babel-load-languages
      (mapcar (lambda (language) `(,language . t)) org-babel-languages)))
@@ -1763,7 +1785,6 @@ Accumulate continuous pinch deltas; each 30 percent change is one level."
                 :files (:defaults "bin")
                 :fork (:host github
                              :repo "jeongsoolee09/emacs-codeql"
-                             ;; :branch "unlocalize-database"
                              :branch "main"))
   :commands (codeql-next-alert
              codeql-previous-alert
@@ -5126,6 +5147,9 @@ set so that it clears the whole REPL buffer, not just the output."
   :custom
   (consult-project-function (lambda (_) (projectile-project-root)))
   (consult-narrow-key "<")
+  (consult-async-input-debounce 0.05)
+  (consult-async-input-throttle 0.1)
+  (consult-async-refresh-delay 0.05)
   :config
   (consult-customize
    consult-theme :preview-key '(:debounce 0.2 any)
