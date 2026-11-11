@@ -1812,10 +1812,10 @@ Accumulate continuous pinch deltas; each 30 percent change is one level."
     "sK"         'codeql-cli-servers-shutdown
 
     "e"          (which-key-prefix "run")
-    "ee"         'codeql-query-server-run-query
-    "ev"         'codeql-query-server-quick-eval
-    "en"         'codeql-query-server-quick-eval-count
-    "eq"         'codeql-query-server-cancel-query
+    "er"         'codeql-query-server-run-query
+    "ee"         'codeql-query-server-quick-eval
+    "ec"         'codeql-query-server-quick-eval-count
+    "ex"         'codeql-query-server-cancel-query
 
     "p"          (which-key-prefix "performance")
     "pp"         'codeql-query-performance
