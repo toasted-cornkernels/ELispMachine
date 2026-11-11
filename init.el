@@ -1798,6 +1798,8 @@ Accumulate continuous pinch deltas; each 30 percent change is one level."
   (local-leader
     :major-modes '(ql-tree-sitter-mode t)
     :keymaps     '(ql-tree-sitter-mode-map)
+    "'"          'codeql-transient-query-server-interact
+
     "="          (which-key-prefix "format")
     "=="         'codeql-format
     "=r"         'codeql-format-region
@@ -1835,8 +1837,6 @@ Accumulate continuous pinch deltas; each 30 percent change is one level."
     "h"          (which-key-prefix "history")
     "hq"         'codeql-query-history
     "hd"         'codeql-database-history
-
-    "t"          'codeql-transient-query-server-interact
 
     "v"          (which-key-prefix "options")
     "vs"         'codeql-set-max-paths)
