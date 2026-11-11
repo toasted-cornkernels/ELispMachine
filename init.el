@@ -1765,6 +1765,10 @@ Accumulate continuous pinch deltas; each 30 percent change is one level."
                              :repo "jeongsoolee09/emacs-codeql"
                              ;; :branch "unlocalize-database"
                              :branch "main"))
+  :commands (codeql-next-alert
+             codeql-previous-alert
+             codeql-next-alert-location
+             codeql-previous-alert-location)
   :custom
   (codeql-transient-binding "C-c q")
   (codeql-configure-eglot-lsp t)
@@ -1779,10 +1783,22 @@ Accumulate continuous pinch deltas; each 30 percent change is one level."
 
     "r"          (which-key-prefix "results")
     "rc"         'codeql-clear-state-dirs
+    "rC"         'codeql-query-history-compare
+
+    "s"          (which-key-prefix "server")
+    "sk"         'codeql-transient-query-server-stop
+    "si"         'codeql-query-server-inherit
+    "sK"         'codeql-cli-servers-shutdown
 
     "e"          (which-key-prefix "run")
     "ee"         'codeql-query-server-run-query
+    "ev"         'codeql-query-server-quick-eval
+    "en"         'codeql-query-server-quick-eval-count
     "eq"         'codeql-query-server-cancel-query
+
+    "p"          (which-key-prefix "performance")
+    "pp"         'codeql-query-performance
+    "pc"         'codeql-query-performance-compare
 
     "a"          (which-key-prefix "AST")
     "aa"         'codeql-view-ast
@@ -1791,15 +1807,33 @@ Accumulate continuous pinch deltas; each 30 percent change is one level."
     "d"          (which-key-prefix "database")
     "dr"         'codeql-query-server-register-database
     "do"         'codeql-database-open-source-archive-file
+    "du"         'codeql-database-delete-lock
+    "dd"         'codeql-database-dired
+    "dy"         'codeql-database-copy-path
 
     "h"          (which-key-prefix "history")
     "hq"         'codeql-query-history
     "hd"         'codeql-database-history
 
-    "t"          (which-key-prefix "transient")
+    "t"          'codeql-transient-query-server-interact
 
     "v"          (which-key-prefix "options")
     "vs"         'codeql-set-max-paths)
+
+  ;; results buffers use codeql-results-mode (derived from org-mode)
+  (local-leader
+    :major-modes '(codeql-results-mode t)
+    :keymaps     '(codeql-results-mode-map)
+    "q"          (which-key-prefix "codeql")
+    "qg"         'codeql-results-goto-location
+    "qD"         'codeql-results-diagnostics-mode
+    "qn"         'codeql-results-next-page
+    "qp"         'codeql-results-previous-page
+    "qj"         'codeql-results-goto-page
+    "q<"         'codeql-results-first-page
+    "q>"         'codeql-results-last-page
+    "qs"         'codeql-results-sort
+    "qr"         'codeql-results-select-result-set)
 
   :config
   (defun elispm/clear-codeql-variables ()
@@ -6948,7 +6982,12 @@ removal."
   "lmr"  'rustic-mode
   "lmo"  'org-mode
   "lmm"  'gfm-mode
-  "lme"  'emacs-lisp-mode)
+  "lme"  'emacs-lisp-mode
+  "lc"   (which-key-prefix :codeql)
+  "lcn"  'codeql-next-alert
+  "lcp"  'codeql-previous-alert
+  "lcj"  'codeql-next-alert-location
+  "lck"  'codeql-previous-alert-location)
 
 (global-leader
   "L"    (which-key-prefix :LLMs)
