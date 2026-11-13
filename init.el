@@ -1919,6 +1919,8 @@ Accumulate continuous pinch deltas; each 30 percent change is one level."
 
   :custom
   (eglot-stay-out-of '(company))   ; I use corfu instead
+  (eglot-send-changes-idle-time 0.2)
+  (flymake-no-changes-timeout 0.2)
 
   :general-config
   (local-leader
