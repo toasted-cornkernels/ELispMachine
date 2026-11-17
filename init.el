@@ -1789,7 +1789,8 @@ Accumulate continuous pinch deltas; each 30 percent change is one level."
   :commands (codeql-next-alert
              codeql-previous-alert
              codeql-next-alert-location
-             codeql-previous-alert-location)
+             codeql-previous-alert-location
+             codeql-query-servers)
   :custom
   (codeql-transient-binding "C-c q")
   (codeql-configure-eglot-lsp t)
@@ -1807,7 +1808,10 @@ Accumulate continuous pinch deltas; each 30 percent change is one level."
     "rC"         'codeql-query-history-compare
 
     "s"          (which-key-prefix "server")
+    "ss"         'codeql-query-server-start
     "sk"         'codeql-transient-query-server-stop
+    "sr"         'codeql-query-server-restart
+    "sm"         'codeql-query-servers
     "si"         'codeql-query-server-inherit
     "sK"         'codeql-cli-servers-shutdown
 
@@ -7011,7 +7015,8 @@ removal."
   "lcn"  'codeql-next-alert
   "lcp"  'codeql-previous-alert
   "lcj"  'codeql-next-alert-location
-  "lck"  'codeql-previous-alert-location)
+  "lck"  'codeql-previous-alert-location
+  "lcs"  'codeql-query-servers)
 
 (global-leader
   "L"    (which-key-prefix :LLMs)
@@ -7929,6 +7934,23 @@ removal."
   :custom
   (streamlink-player "mpv")
   (streamlink-opts "--player-args '--no-video'"))
+
+(use-package train-time
+  :straight (train-time :type git
+                        :host github
+                        :repo "jeongsoolee09/train-time.el"
+                        :branch "main"
+                        :protocol ssh)
+  :custom
+  (train-time-home "701")              ; Flushing-Main St
+  (train-time-work "631")              ; Grand Central-42 St
+  ;; (train-time-osm-terminal 'geo)    ; open a map app instead of a browser in Termux
+  :bind (("C-c T t" . train-time)
+         ("C-c T m" . train-time-map)
+         ("C-c T h" . train-time-home-to-work)
+         ("C-c T w" . train-time-work-to-home)
+         ("C-c T a" . train-time-alerts)))
+
 
 ;; XKCD config ======================================
 ;; ==================================================
