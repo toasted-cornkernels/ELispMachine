@@ -1799,6 +1799,8 @@ Accumulate continuous pinch deltas; each 30 percent change is one level."
   (local-leader
     :major-modes '(ql-tree-sitter-mode t)
     :keymaps     '(ql-tree-sitter-mode-map)
+    "'"          'codeql-transient-query-server-interact
+
     "="          (which-key-prefix "format")
     "=="         'codeql-format
     "=r"         'codeql-format-region
@@ -1816,10 +1818,10 @@ Accumulate continuous pinch deltas; each 30 percent change is one level."
     "sK"         'codeql-cli-servers-shutdown
 
     "e"          (which-key-prefix "run")
-    "ee"         'codeql-query-server-run-query
-    "ev"         'codeql-query-server-quick-eval
-    "en"         'codeql-query-server-quick-eval-count
-    "eq"         'codeql-query-server-cancel-query
+    "er"         'codeql-query-server-run-query
+    "ee"         'codeql-query-server-quick-eval
+    "ec"         'codeql-query-server-quick-eval-count
+    "ex"         'codeql-query-server-cancel-query
 
     "p"          (which-key-prefix "performance")
     "pp"         'codeql-query-performance
@@ -1839,8 +1841,6 @@ Accumulate continuous pinch deltas; each 30 percent change is one level."
     "h"          (which-key-prefix "history")
     "hq"         'codeql-query-history
     "hd"         'codeql-database-history
-
-    "t"          'codeql-transient-query-server-interact
 
     "v"          (which-key-prefix "options")
     "vs"         'codeql-set-max-paths)
@@ -1923,6 +1923,8 @@ Accumulate continuous pinch deltas; each 30 percent change is one level."
 
   :custom
   (eglot-stay-out-of '(company))   ; I use corfu instead
+  (eglot-send-changes-idle-time 0.2)
+  (flymake-no-changes-timeout 0.2)
 
   :general-config
   (local-leader
