@@ -2042,7 +2042,7 @@ Accumulate continuous pinch deltas; each 30 percent change is one level."
              agent-shell-github-start-copilot)
   :custom
   (agent-shell-github-command nil)
-  (agent-shell-github-acp-command '("copilot" "--acp" "--model" "claude-opus-4.7"))
+  (agent-shell-github-acp-command '("copilot" "--acp" "--model" "claude-opus-5.5"))
   (agent-shell-show-context-usage-indicator 't)
   (agent-shell-show-usage-at-turn-end t)
   (agent-shell-show-busy-indicator t)
