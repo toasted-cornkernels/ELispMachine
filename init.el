@@ -7983,7 +7983,7 @@ removal."
                         :protocol ssh)
   :custom
   (train-time-home "701")              ; Flushing-Main St
-  (train-time-work "631")              ; Grand Central-42 St
+  (train-time-work "725")              ; Times Sq-42 St (7)
   ;; (train-time-osm-terminal 'geo)    ; open a map app instead of a browser in Termux
   :bind (("C-c T t" . train-time)
          ("C-c T m" . train-time-map)
