@@ -6,6 +6,15 @@
 
 (setq package-enable-at-startup nil) ; I don't use package.el
 
+(defvar macOS-p (equal system-type 'darwin)
+  "Am I in macOS?")
+
+(defvar linux-p (equal system-type 'gnu/linux)
+  "Am I in a generic Linux distro?")
+
+(defvar chromeOS-p (string= (system-name) "penguin")
+  "Am I in chromeOS?")
+
 ;; Create the first frame in its final shape, instead of resizing and
 ;; redrawing it as init.el changes the font, bars, and fullscreen state.
 (setq frame-inhibit-implied-resize t)
@@ -15,9 +24,9 @@
 (setq menu-bar-mode nil
       tool-bar-mode nil
       scroll-bar-mode nil)
-(unless (string= (system-name) "penguin") ; chromeOS sets its font in init.el
+(unless chromeOS-p ; chromeOS sets its font in init.el
   (push '(font . "D2CodingLigature Nerd Font-18:weight=light") default-frame-alist))
-(when (eq system-type 'darwin)
+(when macOS-p
   (push '(fullscreen . fullboth) default-frame-alist))
 
 ;; Each `require' walks every `load-path' dir (one per straight package), trying

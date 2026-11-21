@@ -289,14 +289,7 @@
    :ignore t
    :which-key (if (keywordp label) (keyword-to-string label) label)))
 
-(defvar macOS-p (equal system-type 'darwin)
-  "Am I in macOS?")
-
-(defvar linux-p (equal system-type 'gnu/linux)
-  "Am I in a generic Linux distro?")
-
-(defvar chromeOS-p (string= (system-name) "penguin")
-  "Am I in chromeOS?")
+;; macOS-p, linux-p and chromeOS-p are in early-init.el.
 
 (defvar android-p
   (let ((uname-output
