@@ -1897,8 +1897,40 @@ Accumulate continuous pinch deltas; each 30 percent change is one level."
                           :repo "souffle-lang/souffle-mode")
   :defer t)
 
-;; Codespaces config ================================
+;; Tree-sitter config ===============================
 ;; ==================================================
+
+;; LambdaMachine links the grammars here (see Common/modules/emacs-treesitter.nix).
+;; Without them (e.g. on plain Termux), the classic major modes stay.
+(defvar elispm/treesit-grammar-directory
+  (expand-file-name "emacs/tree-sitter"
+                    (or (getenv "XDG_DATA_HOME") "~/.local/share")))
+
+(defvar treesit-grammars-p
+  (and (fboundp 'treesit-available-p)
+       (treesit-available-p)
+       (file-directory-p elispm/treesit-grammar-directory))
+  "Do I have the tree-sitter grammars?")
+
+(use-package treesit
+  :straight (:type built-in)
+  :when treesit-grammars-p
+  :defer t
+  :custom
+  (treesit-extra-load-path (list elispm/treesit-grammar-directory))
+  (major-mode-remap-alist '((sh-mode         . bash-ts-mode)
+                            (c-mode          . c-ts-mode)
+                            (c++-mode        . c++-ts-mode)
+                            (c-or-c++-mode   . c-or-c++-ts-mode)
+                            (csharp-mode     . csharp-ts-mode)
+                            (css-mode        . css-ts-mode)
+                            (js-mode         . js-ts-mode)
+                            (javascript-mode . js-ts-mode)
+                            (js-json-mode    . json-ts-mode)
+                            (json-mode       . json-ts-mode)
+                            (python-mode     . python-ts-mode)
+                            (conf-toml-mode  . toml-ts-mode)
+                            (toml-mode       . toml-ts-mode))))
 
 ;; Eglot config =====================================
 ;; ==================================================
@@ -1908,14 +1940,20 @@ Accumulate continuous pinch deltas; each 30 percent change is one level."
   ((rustic-mode  . eglot-ensure)
    (clojure-mode . eglot-ensure)
    (python-mode  . eglot-ensure)
+   (python-ts-mode . eglot-ensure)
    (tuareg-mode  . eglot-ensure)
    (cpp-mode     . eglot-ensure)
    (c-mode       . eglot-ensure)
+   (c-ts-mode    . eglot-ensure)
    (c++-mode     . eglot-ensure)
+   (c++-ts-mode  . eglot-ensure)
    (csharp-mode  . eglot-ensure)
+   (csharp-ts-mode . eglot-ensure)
    (ql-tree-sitter-mode . eglot-ensure)
    (js-mode      . eglot-ensure)
+   (js-ts-mode   . eglot-ensure)
    (json-mode    . eglot-ensure)
+   (json-ts-mode . eglot-ensure)
    (nix-mode     . eglot-ensure)
    (go-mode      . eglot-ensure)
    (lua-mode     . eglot-ensure))
@@ -2069,13 +2107,13 @@ Accumulate continuous pinch deltas; each 30 percent change is one level."
 
 (use-package sh-script
   :straight (:type built-in)
-  :hook (shell-script-mode . (lambda ()
-                               (setq indent-tabs-mode nil)))
-  :mode (("\\.sh\\'"           . shell-script-mode)
-         ("\\.(ba|z)shrc.*\\'" . shell-script-mode)
-         ("\\.zshenv.*\\'"     . shell-script-mode)
-         ("\\.bash_profile\\'" . shell-script-mode)
-         ("\\.zprofile\\'"     . shell-script-mode)))
+  :hook (sh-base-mode . (lambda ()
+                          (setq indent-tabs-mode nil)))
+  :mode (("\\.sh\\'"           . sh-mode)
+         ("\\.(ba|z)shrc.*\\'" . sh-mode)
+         ("\\.zshenv.*\\'"     . sh-mode)
+         ("\\.bash_profile\\'" . sh-mode)
+         ("\\.zprofile\\'"     . sh-mode)))
 
 (use-package shell
   :straight (:type built-in)
@@ -2098,6 +2136,22 @@ Accumulate continuous pinch deltas; each 30 percent change is one level."
   (local-leader
     :major-modes '(c-mode c++-mode t)
     :keymaps     '(c-mode-map c++-mode-map)
+    "'"          'cmake-integration-transient
+    "g"          (which-key-prefix "goto")
+    "ga"         'ff-find-other-file
+    "gA"         'ff-find-other-file-other-window))
+
+(use-package c-ts-mode
+  :straight (:type built-in)
+  :defer t
+  :hook ((c-ts-mode . (lambda ()
+                        (setq indent-tabs-mode 4)))
+         (c++-ts-mode . (lambda ()
+                          (setq indent-tabs-mode 4))))
+  :general-config
+  (local-leader
+    :major-modes '(c-ts-mode c++-ts-mode t)
+    :keymaps     '(c-ts-mode-map c++-ts-mode-map)
     "'"          'cmake-integration-transient
     "g"          (which-key-prefix "goto")
     "ga"         'ff-find-other-file
@@ -2266,8 +2320,8 @@ Accumulate continuous pinch deltas; each 30 percent change is one level."
                             python-shell-interpreter-args "--simple-prompt")))
   :general-config
   (local-leader
-    :major-modes '(python-mode t)
-    :keymaps     '(python-mode-map)
+    :major-modes '(python-mode python-ts-mode t)
+    :keymaps     '(python-mode-map python-ts-mode-map)
     "'"          'elispm/python-start-or-switch-repl
 
     "s"          (which-key-prefix "REPL")
@@ -2358,7 +2412,7 @@ Accumulate continuous pinch deltas; each 30 percent change is one level."
 
 (use-package code-cells
   :commands (code-cells-mode)
-  :hook     (python-mode . code-cells-mode)
+  :hook     ((python-mode python-ts-mode) . code-cells-mode)
   :general-config
   (local-leader
     :major-modes '(code-cells-mode t)
@@ -2370,14 +2424,14 @@ Accumulate continuous pinch deltas; each 30 percent change is one level."
 
 (use-package flymake-ruff
   :defer t
-  :hook (python-mode . flymake-ruff-load))
+  :hook ((python-mode python-ts-mode) . flymake-ruff-load))
 
 (use-package ruff-format
   :after python
   :general-config
   (local-leader
-    :major-modes '(python-mode t)
-    :keymaps     '(python-mode-map)
+    :major-modes '(python-mode python-ts-mode t)
+    :keymaps     '(python-mode-map python-ts-mode-map)
     "="          (which-key-prefix "format")
     "=="         'ruff-format-buffer
     "=r"         'ruff-format-region))
@@ -4233,10 +4287,12 @@ set so that it clears the whole REPL buffer, not just the output."
   :mode ("\\.rs$" . rustic-mode)
   :hook (rustic-mode . (lambda () (setq indent-tabs-mode nil)))
   :custom
+  (rust-mode-treesitter-derive treesit-grammars-p)
   (rustic-lsp-client 'eglot)
   (rustic-lsp-server 'rust-analyzer)
   :config
   (setq auto-mode-alist (delete '("\\.rs\\'" . rust-mode) auto-mode-alist))
+  (setq auto-mode-alist (delete '("\\.rs\\'" . rust-ts-mode) auto-mode-alist))
   (evil-set-initial-state 'rustic-popup-mode 'motion)
   (add-to-list 'eglot-server-programs
                '((rustic-mode) .
@@ -4556,8 +4612,8 @@ set so that it clears the whole REPL buffer, not just the output."
 (use-package js
   :straight nil
   :mode ("\\.jsx?\\'" . js-mode)
-  :hook (js-mode . (lambda ()
-                     (setq indent-tabs-mode nil)))
+  :hook ((js-mode js-ts-mode) . (lambda ()
+                                  (setq indent-tabs-mode nil)))
   :custom
   (js-indent-level 2)
   :config
@@ -4575,7 +4631,14 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; ==================================================
 
 (use-package typescript-mode
+  :unless treesit-grammars-p
   :mode ("\\.tsx?\\'" . typescript-mode))
+
+(use-package typescript-ts-mode
+  :straight (:type built-in)
+  :when treesit-grammars-p
+  :mode (("\\.ts\\'"  . typescript-ts-mode)
+         ("\\.tsx\\'" . tsx-ts-mode)))
 
 ;; Markdown config ==================================
 ;; ==================================================
@@ -4847,8 +4910,8 @@ set so that it clears the whole REPL buffer, not just the output."
          (csharp-ts-mode . omnisharp-mode))
   :general-config
   (local-leader
-    :major-modes '(csharp-mode t)
-    :keymaps     '(csharp-mode-map)
+    :major-modes '(csharp-mode csharp-ts-mode t)
+    :keymaps     '(csharp-mode-map csharp-ts-mode-map)
     "u"  'omnisharp-auto-complete-overrides
     "i"  'omnisharp-fix-usings
 
@@ -5413,8 +5476,8 @@ set so that it clears the whole REPL buffer, not just the output."
 (use-package json-mode
   ;; :straight nil
   :mode "\\.json\\'"
-  :hook (json-mode . (lambda ()
-                       (setq indent-tabs-mode nil))))
+  :hook ((json-mode json-ts-mode) . (lambda ()
+                                      (setq indent-tabs-mode nil))))
 
 (use-package jsonc-mode
   :straight nil
