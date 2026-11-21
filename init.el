@@ -117,6 +117,9 @@
 
 (use-package general
   :config
+  ;; Only feeds `general-describe-keybindings', yet dedups the whole record in
+  ;; O(n^2) per state on every definition: ~0.9s of startup.
+  (advice-add 'general--record-keybindings :override #'ignore)
   (general-override-mode)
   (general-auto-unbind-keys)
   (setq general-use-package-emit-autoloads t)
