@@ -6489,6 +6489,7 @@ the buffer works like a pager."
 
 (use-package ghostel
   :when (not android-p)
+  :defer t
   :config
   ;; TODO Handle special cases like <escape>
   (defmacro elispm/ghostel-send-C- (char)
@@ -6512,8 +6513,6 @@ Like normal Emacs `C-k'.  Kill to end of line and put content in kill-ring."
     (kill-ring-save (point) (line-end-position))
     (ghostel-send-key "k" "ctrl"))
 
-  (add-to-list 'project-switch-commands '(ghostel-project "Ghostel") t)
-  (add-to-list 'project-switch-commands '(ghostel-project-list-buffers "Ghostel buffers") t)
   (add-to-list 'ghostel-eval-cmds '("magit-status-setup-buffer" magit-status-setup-buffer))
 
   :general-config
@@ -6526,7 +6525,17 @@ Like normal Emacs `C-k'.  Kill to end of line and put content in kill-ring."
     "C-p"        (elispm/ghostel-send-C- p)
     "C-n"        (elispm/ghostel-send-C- n)
     "C-u"        (elispm/ghostel-send-C- u)
-    "C-<escape>" 'elispm/ghostel-send-C-escape)
+    "C-<escape>" 'elispm/ghostel-send-C-escape))
+
+;; Hooks ghostel into project.el as soon as project loads, without loading ghostel.
+(use-package project
+  :straight (:type built-in)
+  :when (not android-p)
+  :defer t
+  :config
+  (add-to-list 'project-switch-commands '(ghostel-project "Ghostel") t)
+  (add-to-list 'project-switch-commands '(ghostel-project-list-buffers "Ghostel buffers") t)
+  :general-config
   (agnostic-key
     :keymaps    '(project-prefix-map)
     "m"         'ghostel-project
