@@ -5052,7 +5052,6 @@ set so that it clears the whole REPL buffer, not just the output."
   (add-hook 'window-configuration-change-hook 'change-window-divider)
 
   (when macOS-p
-    (add-to-list 'default-frame-alist '(fullscreen . fullboth))
     (setq ns-use-native-fullscreen t))
 
   (setq-default window-combination-resize t)
@@ -6220,14 +6219,6 @@ Uses `magit-patch-save-arguments' internally, so inherit its settings."
   :straight (:type built-in)
   :hook (after-init . xterm-mouse-mode))
 
-(use-package tool-bar
-  :straight (:type built-in)
-  :hook (after-init . (lambda () (tool-bar-mode -1))))
-
-(use-package menu-bar
-  :straight (:type built-in)
-  :hook (after-init . (lambda () (menu-bar-mode -1))))
-
 (use-package tab-bar
   :straight (:type built-in)
   :hook ((after-init . tab-bar-mode)
@@ -6258,29 +6249,20 @@ Uses `magit-patch-save-arguments' internally, so inherit its settings."
     "s-."        'tab-new
     "s-,"        'tab-close))
 
-(use-package scroll-bar
-  :straight (:type built-in)
-  :defer t
-  :custom
-  (scroll-bar-mode nil))
-
 (use-package frame
   :straight (:type built-in)
   :custom
   (blink-cursor-mode nil))
 
+;; Other platforms get their font from default-frame-alist in early-init.el.
 (use-package faces
   :straight nil
+  :when chromeOS-p
   :config
-  (if (not chromeOS-p)
-      (set-face-attribute 'default nil
-                          :font "D2CodingLigature Nerd Font"
-                          :weight 'light
-                          :height 180)
-    (set-face-attribute 'default nil
-                        :height 140)
-    (set-fontset-font t 'hangul
-                      (font-spec :name "NanumGothic"))))
+  (set-face-attribute 'default nil
+                      :height 140)
+  (set-fontset-font t 'hangul
+                    (font-spec :name "NanumGothic")))
 
 (use-package modus-themes
   :defer t
