@@ -87,20 +87,13 @@
                     "/usr/local/bin")))
   (elispm/prepend-to-exec-path dir))
 
-;; Custom Lisp files ================================
+;; Cache files ======================================
 ;; ==================================================
 
-(setq custom-lisp-directory (concat user-emacs-directory "lisp/"))
 (setq global-cache-directory (concat user-emacs-directory "cache/"))
 
-(dolist (dir (list custom-lisp-directory global-cache-directory))
-  (unless (file-directory-p dir)
-    (make-directory dir))
-  (add-to-list 'load-path dir))
-
-(add-to-list 'load-path
-             (concat user-emacs-directory
-                     "straight/repos/vertico/extensions/"))
+(unless (file-directory-p global-cache-directory)
+  (make-directory global-cache-directory))
 
 (defun cache: (subpath)
   "Concatenate the SUBPATH to the global-cache-directory."
