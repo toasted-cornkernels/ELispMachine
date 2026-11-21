@@ -15,6 +15,9 @@
 (defvar chromeOS-p (string= (system-name) "penguin")
   "Am I in chromeOS?")
 
+(defvar android-p (file-directory-p "/data/data/com.termux/files/usr")
+  "Am I in Termux on Android?")
+
 ;; Create the first frame in its final shape, instead of resizing and
 ;; redrawing it as init.el changes the font, bars, and fullscreen state.
 (setq frame-inhibit-implied-resize t)

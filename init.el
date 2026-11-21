@@ -282,12 +282,7 @@
    :ignore t
    :which-key (if (keywordp label) (keyword-to-string label) label)))
 
-;; macOS-p, linux-p and chromeOS-p are in early-init.el.
-
-(defvar android-p
-  (let ((uname-output
-         (s-trim-right (shell-command-to-string "uname -o"))))
-    (string= uname-output "Android")))
+;; macOS-p, linux-p, chromeOS-p and android-p are in early-init.el.
 
 (defvar GUI-p (display-graphic-p)
   "Am I in a GUI Client?")
