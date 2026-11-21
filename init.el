@@ -1900,13 +1900,6 @@ Accumulate continuous pinch deltas; each 30 percent change is one level."
 ;; Codespaces config ================================
 ;; ==================================================
 
-(use-package codespaces
-  :ensure-system-package gh
-  :defer t
-  :config
-  (setq vc-handled-backends '(Git))
-  (codespaces-setup))
-
 ;; Eglot config =====================================
 ;; ==================================================
 
