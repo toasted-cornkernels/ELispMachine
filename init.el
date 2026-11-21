@@ -8152,7 +8152,11 @@ Optional argument MSG First message shown in buffer."
 (defun display-startup-echo-area-message ()
   (message (prin1-to-string life-1)))
 
-(global-auto-revert-mode 1)    ; Refresh buffers with changed local files
+(use-package autorevert
+  :straight (:type built-in)
+  :defer 1
+  :config
+  (global-auto-revert-mode))
 
 (use-package restart-emacs
   :defer t
