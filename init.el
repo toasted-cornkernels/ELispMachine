@@ -2623,13 +2623,9 @@ Accumulate continuous pinch deltas; each 30 percent change is one level."
   )
 
 (use-package evil-cleverparens
+  :defer t
   :custom
-  (evil-cleverparens-use-additional-bindings t)
-  :hook (after-init . evil-cp-set-additional-bindings)
-  :config
-  (unless window-system
-    (setq evil-cp-additional-bindings (assoc-delete-all "M-[" evil-cp-additional-bindings)
-          evil-cp-additional-bindings (assoc-delete-all "M-]" evil-cp-additional-bindings))))
+  (evil-cleverparens-use-additional-bindings t))
 
 ;; KMonad ===========================================
 ;; ==================================================
