@@ -15,8 +15,10 @@
 (defvar chromeOS-p (string= (system-name) "penguin")
   "Am I in chromeOS?")
 
-(defvar android-p (file-directory-p "/data/data/com.termux/files/usr")
-  "Am I in Termux on Android?")
+;; Both the Termux and Nix-on-Droid apps export ANDROID_ROOT, and the latter's
+;; proot keeps it.
+(defvar android-p (and (getenv "ANDROID_ROOT") t)
+  "Am I in Termux or Nix-on-Droid on Android?")
 
 ;; Create the first frame in its final shape, instead of resizing and
 ;; redrawing it as init.el changes the font, bars, and fullscreen state.
