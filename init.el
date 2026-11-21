@@ -120,6 +120,18 @@
   ;; Only feeds `general-describe-keybindings', yet dedups the whole record in
   ;; O(n^2) per state on every definition: ~0.9s of startup.
   (advice-add 'general--record-keybindings :override #'ignore)
+  ;; :which-key runs once per evil state, so skip entries which-key already has.
+  (advice-add 'general--add-which-key-replacement :before-until
+              (lambda (mode replacement)
+                (member replacement (if mode
+                                        (alist-get mode which-key-replacement-alist)
+                                      which-key-replacement-alist))))
+  (advice-add 'general--add-which-key-title-prefix :before-until
+              (lambda (mode keys title-prefix)
+                (member (cons keys title-prefix)
+                        (if mode
+                            (alist-get mode which-key--prefix-title-alist)
+                          which-key--prefix-title-alist))))
   (general-override-mode)
   (general-auto-unbind-keys)
   (setq general-use-package-emit-autoloads t)
@@ -173,6 +185,9 @@
 ;; ==================================================
 
 (use-package which-key
+  ;; Load it before any general.el :which-key binding; otherwise those all
+  ;; queue up as eval-after-load forms, which are slow to flush.
+  :demand t
   :hook
   (after-init . which-key-mode)
   :custom
