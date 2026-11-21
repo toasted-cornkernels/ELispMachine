@@ -52,6 +52,14 @@
   :custom
   (ad-redefinition-action 'accept))
 
+;; emacsclient needs it: Hammerspoon's EMMS, radio, capture and Emacs-mode keys.
+(use-package server
+  :straight (:type built-in)
+  :demand t
+  :config
+  (unless (server-running-p)
+    (server-start)))
+
 ;; Deal with exec-path ==============================
 ;; ==================================================
 
@@ -7909,6 +7917,36 @@ removal."
   :straight nil
   :config
   (emms-playing-time nil))
+
+;; mpv also takes play/pause, next and previous from the media keys and macOS's
+;; Now Playing (Hammerspoon's Cmd-SPC m). Keep EMMS's paused state in step, and
+;; let EMMS change tracks, since it gives mpv one track at a time.
+(use-package emms-player-mpv
+  :after    emms
+  :straight nil
+  :config
+  (defun elispm/emms-mpv-follow-media-keys ()
+    ;; Per connection, unlike `emms-player-mpv-observe-property' (per process).
+    (emms-player-mpv-ipc-req-send
+     `(observe_property ,(emms-player-mpv-ipc-id-get) pause))
+    (emms-player-mpv-ipc-req-send '(keybind "NEXT" "script-message emms next"))
+    (emms-player-mpv-ipc-req-send '(keybind "PREV" "script-message emms previous")))
+
+  (defun elispm/emms-mpv-media-key-event (json)
+    (pcase (alist-get 'event json)
+      ("property-change"
+       (when (equal (alist-get 'name json) "pause")
+         (let ((paused (eq (alist-get 'data json) t)))
+           (unless (eq paused emms-player-paused-p)
+             (setq emms-player-paused-p paused)
+             (run-hooks 'emms-player-paused-hook)))))
+      ("client-message"
+       (pcase (append (alist-get 'args json) nil)
+         (`("emms" "next") (emms-next))
+         (`("emms" "previous") (emms-previous))))))
+
+  (add-hook 'emms-player-mpv-event-connect-hook #'elispm/emms-mpv-follow-media-keys)
+  (add-hook 'emms-player-mpv-event-functions #'elispm/emms-mpv-media-key-event))
 
 ;; Ready-player config ==============================
 ;; ==================================================
