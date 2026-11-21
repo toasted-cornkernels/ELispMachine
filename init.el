@@ -1034,7 +1034,7 @@
 
     "M-H"    'calendar-one-month-backward
     "M-K"    'calendar-one-year-backward
-    "M-J"    'calednar-one-year-forward
+    "M-J"    'calendar-one-year-forward
     "M-L"    'calendar-one-month-forward))
 
 (use-package org-ql :defer t)
