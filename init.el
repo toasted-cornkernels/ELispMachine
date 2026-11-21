@@ -8202,9 +8202,18 @@ Optional argument MSG First message shown in buffer."
 ;; config end =======================================
 ;; ==================================================
 
-(when (= gc-cons-threshold most-positive-fixnum)
-  (message "Restoring GC settings.")
-  (setq gc-cons-threshold elispm/gc-cons-threshold
-        gc-cons-percentage elispm/gc-cons-percentage))
+;; early-init.el turns GC off; gcmh turns it back on once startup is done, then
+;; keeps the threshold high while I'm typing and collects when I go idle.
+;; Settings are Doom's.
+(use-package gcmh
+  :hook (emacs-startup . gcmh-mode)
+  :custom
+  (gcmh-idle-delay 'auto)
+  (gcmh-auto-idle-delay-factor 10)
+  (gcmh-high-cons-threshold (* 64 1024 1024))
+  (gcmh-low-cons-threshold elispm/gc-cons-threshold)
+  :config
+  ;; gcmh only manages the threshold.
+  (setq gc-cons-percentage elispm/gc-cons-percentage))
 
 (message "config loaded!")
