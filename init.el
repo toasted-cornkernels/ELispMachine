@@ -588,7 +588,6 @@
 ;; ==================================================
 
 (use-package corfu
-  :when GUI-p
   :custom
   (corfu-cycle t)
   (corfu-auto t)
