@@ -2081,6 +2081,8 @@ Accumulate continuous pinch deltas; each 30 percent change is one level."
   :custom
   (agent-shell-github-command nil)
   (agent-shell-github-acp-command '("copilot" "--acp")) ; NOTE always configure the Copilot CLI through its config file, or in Nix, using its home-manager module!
+  (agent-shell-github-default-model-id "claude-opus-5.5")
+  (agent-shell-github-default-session-mode-id "autopilot")
   (agent-shell-show-context-usage-indicator 't)
   (agent-shell-show-usage-at-turn-end t)
   (agent-shell-show-busy-indicator t)
@@ -5314,6 +5316,9 @@ set so that it clears the whole REPL buffer, not just the output."
 (use-package dired
   :straight nil
   :defer t
+  :custom
+  (dired-recursive-copies 'always)
+  (dired-recursive-deletes 'always)
   :config
   ;; Fix for dired in TRAMP environment
   (setq dired-kill-when-opening-new-dired-buffer t)
