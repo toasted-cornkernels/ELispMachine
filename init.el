@@ -52,6 +52,14 @@
   :custom
   (ad-redefinition-action 'accept))
 
+;; emacsclient needs it: Hammerspoon's EMMS, radio, capture and Emacs-mode keys.
+(use-package server
+  :straight (:type built-in)
+  :demand t
+  :config
+  (unless (server-running-p)
+    (server-start)))
+
 ;; Deal with exec-path ==============================
 ;; ==================================================
 
@@ -79,20 +87,13 @@
                     "/usr/local/bin")))
   (elispm/prepend-to-exec-path dir))
 
-;; Custom Lisp files ================================
+;; Cache files ======================================
 ;; ==================================================
 
-(setq custom-lisp-directory (concat user-emacs-directory "lisp/"))
 (setq global-cache-directory (concat user-emacs-directory "cache/"))
 
-(dolist (dir (list custom-lisp-directory global-cache-directory))
-  (unless (file-directory-p dir)
-    (make-directory dir))
-  (add-to-list 'load-path dir))
-
-(add-to-list 'load-path
-             (concat user-emacs-directory
-                     "straight/repos/vertico/extensions/"))
+(unless (file-directory-p global-cache-directory)
+  (make-directory global-cache-directory))
 
 (defun cache: (subpath)
   "Concatenate the SUBPATH to the global-cache-directory."
@@ -109,6 +110,21 @@
 
 (use-package general
   :config
+  ;; Only feeds `general-describe-keybindings', yet dedups the whole record in
+  ;; O(n^2) per state on every definition: ~0.9s of startup.
+  (advice-add 'general--record-keybindings :override #'ignore)
+  ;; :which-key runs once per evil state, so skip entries which-key already has.
+  (advice-add 'general--add-which-key-replacement :before-until
+              (lambda (mode replacement)
+                (member replacement (if mode
+                                        (alist-get mode which-key-replacement-alist)
+                                      which-key-replacement-alist))))
+  (advice-add 'general--add-which-key-title-prefix :before-until
+              (lambda (mode keys title-prefix)
+                (member (cons keys title-prefix)
+                        (if mode
+                            (alist-get mode which-key--prefix-title-alist)
+                          which-key--prefix-title-alist))))
   (general-override-mode)
   (general-auto-unbind-keys)
   (setq general-use-package-emit-autoloads t)
@@ -162,6 +178,9 @@
 ;; ==================================================
 
 (use-package which-key
+  ;; Load it before any general.el :which-key binding; otherwise those all
+  ;; queue up as eval-after-load forms, which are slow to flush.
+  :demand t
   :hook
   (after-init . which-key-mode)
   :custom
@@ -263,19 +282,7 @@
    :ignore t
    :which-key (if (keywordp label) (keyword-to-string label) label)))
 
-(defvar macOS-p (equal system-type 'darwin)
-  "Am I in macOS?")
-
-(defvar linux-p (equal system-type 'gnu/linux)
-  "Am I in a generic Linux distro?")
-
-(defvar chromeOS-p (string= (system-name) "penguin")
-  "Am I in chromeOS?")
-
-(defvar android-p
-  (let ((uname-output
-         (s-trim-right (shell-command-to-string "uname -o"))))
-    (string= uname-output "Android")))
+;; macOS-p, linux-p, chromeOS-p and android-p are in early-init.el.
 
 (defvar GUI-p (display-graphic-p)
   "Am I in a GUI Client?")
@@ -562,7 +569,6 @@
 ;; ==================================================
 
 (use-package corfu
-  :when GUI-p
   :custom
   (corfu-cycle t)
   (corfu-auto t)
@@ -1026,7 +1032,7 @@
 
     "M-H"    'calendar-one-month-backward
     "M-K"    'calendar-one-year-backward
-    "M-J"    'calednar-one-year-forward
+    "M-J"    'calendar-one-year-forward
     "M-L"    'calendar-one-month-forward))
 
 (use-package org-ql :defer t)
@@ -1891,15 +1897,41 @@ Accumulate continuous pinch deltas; each 30 percent change is one level."
                           :repo "souffle-lang/souffle-mode")
   :defer t)
 
-;; Codespaces config ================================
+;; Tree-sitter config ===============================
 ;; ==================================================
 
-(use-package codespaces
-  :ensure-system-package gh
+;; LambdaMachine links the grammars here (see Common/modules/emacs-treesitter.nix).
+;; Without them (e.g. on plain Termux), the classic major modes stay.
+(defvar elispm/treesit-grammar-directory
+  (expand-file-name "emacs/tree-sitter"
+                    (or (getenv "XDG_DATA_HOME") "~/.local/share")))
+
+(defvar treesit-grammars-p
+  (and (fboundp 'treesit-available-p)
+       (treesit-available-p)
+       (file-directory-p elispm/treesit-grammar-directory))
+  "Do I have the tree-sitter grammars?")
+
+(use-package treesit
+  :straight (:type built-in)
+  :when treesit-grammars-p
   :defer t
-  :config
-  (setq vc-handled-backends '(Git))
-  (codespaces-setup))
+  :custom
+  (treesit-extra-load-path (list elispm/treesit-grammar-directory))
+  (major-mode-remap-alist '((sh-mode         . bash-ts-mode)
+                            (c-mode          . c-ts-mode)
+                            (c++-mode        . c++-ts-mode)
+                            (c-or-c++-mode   . c-or-c++-ts-mode)
+                            (csharp-mode     . csharp-ts-mode)
+                            (css-mode        . css-ts-mode)
+                            (js-mode         . js-ts-mode)
+                            (javascript-mode . js-ts-mode)
+                            (js-json-mode    . json-ts-mode)
+                            (json-mode       . json-ts-mode)
+                            (python-mode     . python-ts-mode)
+                            (conf-toml-mode  . toml-ts-mode)
+                            (toml-mode       . toml-ts-mode)
+                            (yaml-mode       . yaml-ts-mode))))
 
 ;; Eglot config =====================================
 ;; ==================================================
@@ -1909,14 +1941,20 @@ Accumulate continuous pinch deltas; each 30 percent change is one level."
   ((rustic-mode  . eglot-ensure)
    (clojure-mode . eglot-ensure)
    (python-mode  . eglot-ensure)
+   (python-ts-mode . eglot-ensure)
    (tuareg-mode  . eglot-ensure)
    (cpp-mode     . eglot-ensure)
    (c-mode       . eglot-ensure)
+   (c-ts-mode    . eglot-ensure)
    (c++-mode     . eglot-ensure)
+   (c++-ts-mode  . eglot-ensure)
    (csharp-mode  . eglot-ensure)
+   (csharp-ts-mode . eglot-ensure)
    (ql-tree-sitter-mode . eglot-ensure)
    (js-mode      . eglot-ensure)
+   (js-ts-mode   . eglot-ensure)
    (json-mode    . eglot-ensure)
+   (json-ts-mode . eglot-ensure)
    (nix-mode     . eglot-ensure)
    (go-mode      . eglot-ensure)
    (lua-mode     . eglot-ensure))
@@ -2042,12 +2080,14 @@ Accumulate continuous pinch deltas; each 30 percent change is one level."
              agent-shell-github-start-copilot)
   :custom
   (agent-shell-github-command nil)
-  (agent-shell-github-acp-command '("copilot" "--acp" "--model" "claude-opus-5.5"))
+  (agent-shell-github-acp-command '("copilot" "--acp")) ; NOTE always configure the Copilot CLI through its config file, or in Nix, using its home-manager module!
+  (agent-shell-github-default-model-id "claude-opus-5.5")
+  (agent-shell-github-default-session-mode-id "https://agentclientprotocol.com/protocol/session-modes#autopilot")
   (agent-shell-show-context-usage-indicator 't)
   (agent-shell-show-usage-at-turn-end t)
   (agent-shell-show-busy-indicator t)
   (agent-shell-highlight-blocks t)
-  (agent-shell context-sources '(files region error))
+  (agent-shell-context-sources '(files region error))
   (agent-shell-file-completion-enabled t)
   (agent-shell-thought-process-expand-by-default nil)
   (agent-shell-tool-use-expand-by-default nil)
@@ -2070,13 +2110,13 @@ Accumulate continuous pinch deltas; each 30 percent change is one level."
 
 (use-package sh-script
   :straight (:type built-in)
-  :hook (shell-script-mode . (lambda ()
-                               (setq indent-tabs-mode nil)))
-  :mode (("\\.sh\\'"           . shell-script-mode)
-         ("\\.(ba|z)shrc.*\\'" . shell-script-mode)
-         ("\\.zshenv.*\\'"     . shell-script-mode)
-         ("\\.bash_profile\\'" . shell-script-mode)
-         ("\\.zprofile\\'"     . shell-script-mode)))
+  :hook (sh-base-mode . (lambda ()
+                          (setq indent-tabs-mode nil)))
+  :mode (("\\.sh\\'"           . sh-mode)
+         ("\\.(ba|z)shrc.*\\'" . sh-mode)
+         ("\\.zshenv.*\\'"     . sh-mode)
+         ("\\.bash_profile\\'" . sh-mode)
+         ("\\.zprofile\\'"     . sh-mode)))
 
 (use-package shell
   :straight (:type built-in)
@@ -2099,6 +2139,22 @@ Accumulate continuous pinch deltas; each 30 percent change is one level."
   (local-leader
     :major-modes '(c-mode c++-mode t)
     :keymaps     '(c-mode-map c++-mode-map)
+    "'"          'cmake-integration-transient
+    "g"          (which-key-prefix "goto")
+    "ga"         'ff-find-other-file
+    "gA"         'ff-find-other-file-other-window))
+
+(use-package c-ts-mode
+  :straight (:type built-in)
+  :defer t
+  :hook ((c-ts-mode . (lambda ()
+                        (setq indent-tabs-mode 4)))
+         (c++-ts-mode . (lambda ()
+                          (setq indent-tabs-mode 4))))
+  :general-config
+  (local-leader
+    :major-modes '(c-ts-mode c++-ts-mode t)
+    :keymaps     '(c-ts-mode-map c++-ts-mode-map)
     "'"          'cmake-integration-transient
     "g"          (which-key-prefix "goto")
     "ga"         'ff-find-other-file
@@ -2267,8 +2323,8 @@ Accumulate continuous pinch deltas; each 30 percent change is one level."
                             python-shell-interpreter-args "--simple-prompt")))
   :general-config
   (local-leader
-    :major-modes '(python-mode t)
-    :keymaps     '(python-mode-map)
+    :major-modes '(python-mode python-ts-mode t)
+    :keymaps     '(python-mode-map python-ts-mode-map)
     "'"          'elispm/python-start-or-switch-repl
 
     "s"          (which-key-prefix "REPL")
@@ -2359,7 +2415,7 @@ Accumulate continuous pinch deltas; each 30 percent change is one level."
 
 (use-package code-cells
   :commands (code-cells-mode)
-  :hook     (python-mode . code-cells-mode)
+  :hook     ((python-mode python-ts-mode) . code-cells-mode)
   :general-config
   (local-leader
     :major-modes '(code-cells-mode t)
@@ -2371,14 +2427,14 @@ Accumulate continuous pinch deltas; each 30 percent change is one level."
 
 (use-package flymake-ruff
   :defer t
-  :hook (python-mode . flymake-ruff-load))
+  :hook ((python-mode python-ts-mode) . flymake-ruff-load))
 
 (use-package ruff-format
   :after python
   :general-config
   (local-leader
-    :major-modes '(python-mode t)
-    :keymaps     '(python-mode-map)
+    :major-modes '(python-mode python-ts-mode t)
+    :keymaps     '(python-mode-map python-ts-mode-map)
     "="          (which-key-prefix "format")
     "=="         'ruff-format-buffer
     "=r"         'ruff-format-region))
@@ -2597,13 +2653,9 @@ Accumulate continuous pinch deltas; each 30 percent change is one level."
   )
 
 (use-package evil-cleverparens
+  :defer t
   :custom
-  (evil-cleverparens-use-additional-bindings t)
-  :hook (after-init . evil-cp-set-additional-bindings)
-  :config
-  (unless window-system
-    (setq evil-cp-additional-bindings (assoc-delete-all "M-[" evil-cp-additional-bindings)
-          evil-cp-additional-bindings (assoc-delete-all "M-]" evil-cp-additional-bindings))))
+  (evil-cleverparens-use-additional-bindings t))
 
 ;; KMonad ===========================================
 ;; ==================================================
@@ -4238,10 +4290,12 @@ set so that it clears the whole REPL buffer, not just the output."
   :mode ("\\.rs$" . rustic-mode)
   :hook (rustic-mode . (lambda () (setq indent-tabs-mode nil)))
   :custom
+  (rust-mode-treesitter-derive treesit-grammars-p)
   (rustic-lsp-client 'eglot)
   (rustic-lsp-server 'rust-analyzer)
   :config
   (setq auto-mode-alist (delete '("\\.rs\\'" . rust-mode) auto-mode-alist))
+  (setq auto-mode-alist (delete '("\\.rs\\'" . rust-ts-mode) auto-mode-alist))
   (evil-set-initial-state 'rustic-popup-mode 'motion)
   (add-to-list 'eglot-server-programs
                '((rustic-mode) .
@@ -4561,8 +4615,8 @@ set so that it clears the whole REPL buffer, not just the output."
 (use-package js
   :straight nil
   :mode ("\\.jsx?\\'" . js-mode)
-  :hook (js-mode . (lambda ()
-                     (setq indent-tabs-mode nil)))
+  :hook ((js-mode js-ts-mode) . (lambda ()
+                                  (setq indent-tabs-mode nil)))
   :custom
   (js-indent-level 2)
   :config
@@ -4580,7 +4634,14 @@ set so that it clears the whole REPL buffer, not just the output."
 ;; ==================================================
 
 (use-package typescript-mode
+  :unless treesit-grammars-p
   :mode ("\\.tsx?\\'" . typescript-mode))
+
+(use-package typescript-ts-mode
+  :straight (:type built-in)
+  :when treesit-grammars-p
+  :mode (("\\.ts\\'"  . typescript-ts-mode)
+         ("\\.tsx\\'" . tsx-ts-mode)))
 
 ;; Markdown config ==================================
 ;; ==================================================
@@ -4852,8 +4913,8 @@ set so that it clears the whole REPL buffer, not just the output."
          (csharp-ts-mode . omnisharp-mode))
   :general-config
   (local-leader
-    :major-modes '(csharp-mode t)
-    :keymaps     '(csharp-mode-map)
+    :major-modes '(csharp-mode csharp-ts-mode t)
+    :keymaps     '(csharp-mode-map csharp-ts-mode-map)
     "u"  'omnisharp-auto-complete-overrides
     "i"  'omnisharp-fix-usings
 
@@ -5031,7 +5092,6 @@ set so that it clears the whole REPL buffer, not just the output."
   (add-hook 'window-configuration-change-hook 'change-window-divider)
 
   (when macOS-p
-    (add-to-list 'default-frame-alist '(fullscreen . fullboth))
     (setq ns-use-native-fullscreen t))
 
   (setq-default window-combination-resize t)
@@ -5256,6 +5316,9 @@ set so that it clears the whole REPL buffer, not just the output."
 (use-package dired
   :straight nil
   :defer t
+  :custom
+  (dired-recursive-copies 'always)
+  (dired-recursive-deletes 'always)
   :config
   ;; Fix for dired in TRAMP environment
   (setq dired-kill-when-opening-new-dired-buffer t)
@@ -5419,8 +5482,8 @@ set so that it clears the whole REPL buffer, not just the output."
 (use-package json-mode
   ;; :straight nil
   :mode "\\.json\\'"
-  :hook (json-mode . (lambda ()
-                       (setq indent-tabs-mode nil))))
+  :hook ((json-mode json-ts-mode) . (lambda ()
+                                      (setq indent-tabs-mode nil))))
 
 (use-package jsonc-mode
   :straight nil
@@ -5436,6 +5499,16 @@ set so that it clears the whole REPL buffer, not just the output."
          "Procfile\\'"
          "\\.qlpack\\'"
          "\\.qls" ))
+
+(use-package yaml-ts-mode
+  :straight (:type built-in)
+  :when treesit-grammars-p
+  :hook (yaml-ts-mode . elispm/yaml-ts-indent-like-yaml-mode)
+  :config
+  (defun elispm/yaml-ts-indent-like-yaml-mode ()
+    "Use `yaml-mode''s indentation, as `yaml-ts-mode' has none."
+    (require 'yaml-mode)
+    (setq-local indent-line-function #'yaml-indent-line)))
 
 ;; csv config ======================================
 ;; =================================================
@@ -6199,14 +6272,6 @@ Uses `magit-patch-save-arguments' internally, so inherit its settings."
   :straight (:type built-in)
   :hook (after-init . xterm-mouse-mode))
 
-(use-package tool-bar
-  :straight (:type built-in)
-  :hook (after-init . (lambda () (tool-bar-mode -1))))
-
-(use-package menu-bar
-  :straight (:type built-in)
-  :hook (after-init . (lambda () (menu-bar-mode -1))))
-
 (use-package tab-bar
   :straight (:type built-in)
   :hook ((after-init . tab-bar-mode)
@@ -6237,29 +6302,20 @@ Uses `magit-patch-save-arguments' internally, so inherit its settings."
     "s-."        'tab-new
     "s-,"        'tab-close))
 
-(use-package scroll-bar
-  :straight (:type built-in)
-  :defer t
-  :custom
-  (scroll-bar-mode nil))
-
 (use-package frame
   :straight (:type built-in)
   :custom
   (blink-cursor-mode nil))
 
+;; Other platforms get their font from default-frame-alist in early-init.el.
 (use-package faces
   :straight nil
+  :when chromeOS-p
   :config
-  (if (not chromeOS-p)
-      (set-face-attribute 'default nil
-                          :font "D2CodingLigature Nerd Font"
-                          :weight 'light
-                          :height 180)
-    (set-face-attribute 'default nil
-                        :height 140)
-    (set-fontset-font t 'hangul
-                      (font-spec :name "NanumGothic"))))
+  (set-face-attribute 'default nil
+                      :height 140)
+  (set-fontset-font t 'hangul
+                    (font-spec :name "NanumGothic")))
 
 (use-package modus-themes
   :defer t
@@ -6481,6 +6537,7 @@ the buffer works like a pager."
 
 (use-package ghostel
   :when (not android-p)
+  :defer t
   :config
   ;; TODO Handle special cases like <escape>
   (defmacro elispm/ghostel-send-C- (char)
@@ -6504,8 +6561,6 @@ Like normal Emacs `C-k'.  Kill to end of line and put content in kill-ring."
     (kill-ring-save (point) (line-end-position))
     (ghostel-send-key "k" "ctrl"))
 
-  (add-to-list 'project-switch-commands '(ghostel-project "Ghostel") t)
-  (add-to-list 'project-switch-commands '(ghostel-project-list-buffers "Ghostel buffers") t)
   (add-to-list 'ghostel-eval-cmds '("magit-status-setup-buffer" magit-status-setup-buffer))
 
   :general-config
@@ -6518,7 +6573,17 @@ Like normal Emacs `C-k'.  Kill to end of line and put content in kill-ring."
     "C-p"        (elispm/ghostel-send-C- p)
     "C-n"        (elispm/ghostel-send-C- n)
     "C-u"        (elispm/ghostel-send-C- u)
-    "C-<escape>" 'elispm/ghostel-send-C-escape)
+    "C-<escape>" 'elispm/ghostel-send-C-escape))
+
+;; Hooks ghostel into project.el as soon as project loads, without loading ghostel.
+(use-package project
+  :straight (:type built-in)
+  :when (not android-p)
+  :defer t
+  :config
+  (add-to-list 'project-switch-commands '(ghostel-project "Ghostel") t)
+  (add-to-list 'project-switch-commands '(ghostel-project-list-buffers "Ghostel buffers") t)
+  :general-config
   (agnostic-key
     :keymaps    '(project-prefix-map)
     "m"         'ghostel-project
@@ -7910,6 +7975,36 @@ removal."
   :config
   (emms-playing-time nil))
 
+;; mpv also takes play/pause, next and previous from the media keys and macOS's
+;; Now Playing (Hammerspoon's Cmd-SPC m). Keep EMMS's paused state in step, and
+;; let EMMS change tracks, since it gives mpv one track at a time.
+(use-package emms-player-mpv
+  :after    emms
+  :straight nil
+  :config
+  (defun elispm/emms-mpv-follow-media-keys ()
+    ;; Per connection, unlike `emms-player-mpv-observe-property' (per process).
+    (emms-player-mpv-ipc-req-send
+     `(observe_property ,(emms-player-mpv-ipc-id-get) pause))
+    (emms-player-mpv-ipc-req-send '(keybind "NEXT" "script-message emms next"))
+    (emms-player-mpv-ipc-req-send '(keybind "PREV" "script-message emms previous")))
+
+  (defun elispm/emms-mpv-media-key-event (json)
+    (pcase (alist-get 'event json)
+      ("property-change"
+       (when (equal (alist-get 'name json) "pause")
+         (let ((paused (eq (alist-get 'data json) t)))
+           (unless (eq paused emms-player-paused-p)
+             (setq emms-player-paused-p paused)
+             (run-hooks 'emms-player-paused-hook)))))
+      ("client-message"
+       (pcase (append (alist-get 'args json) nil)
+         (`("emms" "next") (emms-next))
+         (`("emms" "previous") (emms-previous))))))
+
+  (add-hook 'emms-player-mpv-event-connect-hook #'elispm/emms-mpv-follow-media-keys)
+  (add-hook 'emms-player-mpv-event-functions #'elispm/emms-mpv-media-key-event))
+
 ;; Ready-player config ==============================
 ;; ==================================================
 
@@ -7945,7 +8040,7 @@ removal."
                         :protocol ssh)
   :custom
   (train-time-home "701")              ; Flushing-Main St
-  (train-time-work "631")              ; Grand Central-42 St
+  (train-time-work "725")              ; Times Sq-42 St (7)
   ;; (train-time-osm-terminal 'geo)    ; open a map app instead of a browser in Termux
   :bind (("C-c T t" . train-time)
          ("C-c T m" . train-time-map)
@@ -8136,7 +8231,11 @@ Optional argument MSG First message shown in buffer."
 (defun display-startup-echo-area-message ()
   (message (prin1-to-string life-1)))
 
-(global-auto-revert-mode 1)    ; Refresh buffers with changed local files
+(use-package autorevert
+  :straight (:type built-in)
+  :defer 1
+  :config
+  (global-auto-revert-mode))
 
 (use-package restart-emacs
   :defer t
@@ -8152,9 +8251,18 @@ Optional argument MSG First message shown in buffer."
 ;; config end =======================================
 ;; ==================================================
 
-(when (= gc-cons-threshold most-positive-fixnum)
-  (message "Restoring GC settings.")
-  (setq gc-cons-threshold elispm/gc-cons-threshold
-        gc-cons-percentage elispm/gc-cons-percentage))
+;; early-init.el turns GC off; gcmh turns it back on once startup is done, then
+;; keeps the threshold high while I'm typing and collects when I go idle.
+;; Settings are Doom's.
+(use-package gcmh
+  :hook (emacs-startup . gcmh-mode)
+  :custom
+  (gcmh-idle-delay 'auto)
+  (gcmh-auto-idle-delay-factor 10)
+  (gcmh-high-cons-threshold (* 64 1024 1024))
+  (gcmh-low-cons-threshold elispm/gc-cons-threshold)
+  :config
+  ;; gcmh only manages the threshold.
+  (setq gc-cons-percentage elispm/gc-cons-percentage))
 
 (message "config loaded!")
