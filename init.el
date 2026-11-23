@@ -3598,7 +3598,42 @@ set so that it clears the whole REPL buffer, not just the output."
 
 (use-package fennel-mode
   :defer t
-  :hook  (fennel-mode . evil-cleverparens-mode)
+  :hook  ((fennel-mode . evil-cleverparens-mode)
+          (fennel-mode . hammerspoon-fennel-setup))
+  :init
+  (defvar hammerspoon-fennel-program
+    (expand-file-name "~/.hammerspoon/bin/hs-fennel-repl")
+    "Runs a Fennel REPL inside Hammerspoon, on stdin and stdout.")
+
+  (defun hammerspoon-fennel-file-p ()
+    "Whether the current buffer visits a file of the Hammerspoon config."
+    (and buffer-file-name
+         (file-in-directory-p (file-truename buffer-file-name)
+                              (file-truename "~/.hammerspoon/"))))
+
+  (defun hammerspoon-fennel-setup ()
+    "Evaluate the Hammerspoon config's Fennel in Hammerspoon itself."
+    (when (and (hammerspoon-fennel-file-p)
+               (file-executable-p hammerspoon-fennel-program))
+      (setq-local fennel-program hammerspoon-fennel-program)
+      (fennel-proto-repl-minor-mode 1)))
+
+  (defun hammerspoon-repl ()
+    "Switch to a Fennel REPL in Hammerspoon, starting one if there's none."
+    (interactive)
+    (require 'fennel-proto-repl)
+    (if-let* ((repl (seq-find (lambda (buffer)
+                                (equal (buffer-local-value 'fennel-program buffer)
+                                       hammerspoon-fennel-program))
+                              (fennel-proto-repl-live-repls))))
+        (pop-to-buffer repl)
+      (let ((default-directory (file-truename "~/.hammerspoon/")))
+        (if (derived-mode-p 'fennel-mode)
+            (fennel-proto-repl hammerspoon-fennel-program)
+          ;; It would link the current buffer to the REPL otherwise.
+          (with-temp-buffer
+            (fennel-proto-repl hammerspoon-fennel-program))))))
+
   :general-config
   (local-leader
     :major-modes '(fennel-mode t)
@@ -3642,7 +3677,31 @@ set so that it clears the whole REPL buffer, not just the output."
   :config
   (defun fennel-show-arglist-at-point ()
     (interactive)
-    (fennel-show-arglist (thing-at-point 'symbol))))
+    (fennel-show-arglist (thing-at-point 'symbol)))
+
+  (with-eval-after-load 'fennel-proto-repl
+    ;; In buffers talking to a Proto REPL (Hammerspoon's, say), over the above.
+    (local-leader
+      :keymaps     'fennel-proto-repl-minor-mode-map
+      "ep"         'fennel-proto-repl-eval-paragraph
+      "er"         'fennel-proto-repl-eval-region
+      "ef"         'fennel-proto-repl-eval-defun
+      "ee"         'fennel-proto-repl-eval-last-sexp
+      "eE"         'fennel-proto-repl-eval-form-and-next
+      "eb"         'fennel-proto-repl-eval-buffer
+
+      "ha"         'fennel-proto-repl-show-arglist
+      "m"          'fennel-proto-repl-macroexpand
+
+      "dd"         'fennel-proto-repl-show-documentation
+      "dv"         'fennel-proto-repl-show-var-documentation
+
+      "fd"         'xref-find-definitions
+      "fp"         'xref-go-back
+
+      "'"          'fennel-proto-repl-switch-to-repl
+      "l"          'fennel-proto-repl-link-buffer
+      "r"          'fennel-proto-repl-reload)))
 
 ;; Racket config ====================================
 ;; ==================================================
