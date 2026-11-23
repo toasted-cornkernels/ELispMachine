@@ -2082,7 +2082,7 @@ Accumulate continuous pinch deltas; each 30 percent change is one level."
   (agent-shell-github-command nil)
   (agent-shell-github-acp-command '("copilot" "--acp")) ; NOTE always configure the Copilot CLI through its config file, or in Nix, using its home-manager module!
   (agent-shell-github-default-model-id "claude-opus-5.5")
-  (agent-shell-github-default-session-mode-id "autopilot")
+  (agent-shell-github-default-session-mode-id "https://agentclientprotocol.com/protocol/session-modes#autopilot")
   (agent-shell-show-context-usage-indicator 't)
   (agent-shell-show-usage-at-turn-end t)
   (agent-shell-show-busy-indicator t)
