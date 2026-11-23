@@ -2080,12 +2080,12 @@ Accumulate continuous pinch deltas; each 30 percent change is one level."
              agent-shell-github-start-copilot)
   :custom
   (agent-shell-github-command nil)
-  (agent-shell-github-acp-command '("copilot" "--acp" "--model" "claude-opus-4.7"))
+  (agent-shell-github-acp-command '("copilot" "--acp")) ; NOTE always configure the Copilot CLI through its config file, or in Nix, using its home-manager module!
   (agent-shell-show-context-usage-indicator 't)
   (agent-shell-show-usage-at-turn-end t)
   (agent-shell-show-busy-indicator t)
   (agent-shell-highlight-blocks t)
-  (agent-shell context-sources '(files region error))
+  (agent-shell-context-sources '(files region error))
   (agent-shell-file-completion-enabled t)
   (agent-shell-thought-process-expand-by-default nil)
   (agent-shell-tool-use-expand-by-default nil)
