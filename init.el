@@ -52,7 +52,7 @@
   :custom
   (ad-redefinition-action 'accept))
 
-;; emacsclient needs it: Hammerspoon's EMMS, radio, capture and Emacs-mode keys.
+;; The server allows Emacs to talk to Hammerspoon, so don't disable it!
 (use-package server
   :straight (:type built-in)
   :demand t
