@@ -1298,8 +1298,8 @@
   (org-roam-ui-open-on-start t)
   :general-config
   (local-leader
-    :major-modes (org-mode t)
-    :keymaps     (org-mode-map)
+    :major-modes '(org-mode t)
+    :keymaps     '(org-mode-map)
     "ru"         'org-roam-ui-mode))
 
 (use-package org-indent
