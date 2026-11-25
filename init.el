@@ -152,25 +152,21 @@
 
   ;; works in any evil state
   (general-create-definer agnostic-key
-    :keymaps 'override
     :prefix  ""
     "" '(:ignore t))
 
   ;; extends insert mode for a major mode
   (general-create-definer insert-mode-major-mode
-    :keymaps 'override
     :states  '(insert)
     :prefix  "")
 
   ;; extends normal mode for a major mode
   (general-create-definer normal-mode-major-mode
-    :keymaps 'override
     :states  '(normal)
     :prefix  "")
 
   ;; extends visual mode for a major mode
   (general-create-definer visual-mode-major-mode
-    :keymaps 'override
     :states  '(visual)
     :prefix  ""))
 
