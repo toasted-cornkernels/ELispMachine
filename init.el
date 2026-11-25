@@ -52,7 +52,7 @@
   :custom
   (ad-redefinition-action 'accept))
 
-;; emacsclient needs it: Hammerspoon's EMMS, radio, capture and Emacs-mode keys.
+;; The server allows Emacs to talk to Hammerspoon, so don't disable it!
 (use-package server
   :straight (:type built-in)
   :demand t
@@ -1294,8 +1294,8 @@
   (org-roam-ui-open-on-start t)
   :general-config
   (local-leader
-    :major-modes (org-mode t)
-    :keymaps     (org-mode-map)
+    :major-modes '(org-mode t)
+    :keymaps     '(org-mode-map)
     "ru"         'org-roam-ui-mode))
 
 (use-package org-indent
