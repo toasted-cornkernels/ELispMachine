@@ -1778,7 +1778,12 @@ Accumulate continuous pinch deltas; each 30 percent change is one level."
   :mode (("\\.qll?\\'" . ql-tree-sitter-mode)
          ("\\.dil\\'" . ql-tree-sitter-mode))
   :hook (ql-tree-sitter-mode . (lambda ()
-                                 (setq indent-tabs-mode nil)))
+                                 (setq indent-tabs-mode nil)
+                                 ;; The QL server's check only starts once a
+                                 ;; didChange arrives; the global 0.2s idle delay
+                                 ;; holds it back until typing stops (Neovim sends
+                                 ;; while typing), so send almost immediately here.
+                                 (setq-local eglot-send-changes-idle-time 0.05)))
   :straight
   (emacs-codeql :type git
                 :host github
