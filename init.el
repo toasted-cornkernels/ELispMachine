@@ -2261,6 +2261,29 @@ Accumulate continuous pinch deltas; each 30 percent change is one level."
     "r"          'agent-shell-diff-reject-all
     "o"          'agent-shell-diff-open-file))
 
+;; Voice config =====================================
+;; ==================================================
+
+;; Local dictation (voice.el); does nothing on Macs without the Nix-written
+;; ~/.config/voice/config.json.
+(use-package voice
+  :straight nil
+  :load-path "lisp"
+  :commands (voice-dictate voice-command voice-cancel voice-set-language
+             voice-correct voice-edit-corrections)
+  :general
+  (agnostic-key
+    "C-s-d"      'voice-dictate
+    "C-s-k"      'voice-command)
+  (global-leader
+    "av"         (which-key-prefix :voice)
+    "avv"        'voice-dictate
+    "avc"        'voice-command
+    "avq"        'voice-cancel
+    "ave"        'voice-correct
+    "avE"        'voice-edit-corrections
+    "avl"        'voice-set-language))
+
 ;; Shell config =====================================
 ;; ==================================================
 

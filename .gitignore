@@ -6,5 +6,7 @@
 !LICENSE
 !init.el
 !early-init.el
+!lisp/
+!lisp/voice.el
 !CaptureTemplates/
 !CaptureTemplates/**
