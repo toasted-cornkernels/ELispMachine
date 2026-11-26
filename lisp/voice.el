@@ -13,15 +13,17 @@
 ;; Darwin/programs/voice.nix writes it on the personal Macs only.
 ;;
 ;; Naming the language halves the latency (whisper skips detection), so the
-;; language is sticky; `C-u' before dictating picks another.
+;; language is sticky, and shared with Hammerspoon's global dictation;
+;; `C-u' before dictating picks another.
 ;;
 ;; `voice-command' listens for a phrase from `voice-commands' instead, and
 ;; runs its command; anything else is only shown, never run.
 ;;
 ;; Transcripts go through learned corrections first: `voice-correct' fixes a
-;; word of the last dictation and remembers the fix, in
-;; `voice-corrections-file' (kept out of the repo).  `voice-vocabulary' primes
-;; whisper with words it should expect.
+;; word of the last dictation and remembers the fix.  voice.fnl keeps them in
+;; `voice-corrections-file' and applies them, for Emacs and its global
+;; dictation alike.  The config's vocabulary (set in Nix) primes whisper with
+;; words it should expect.
 
 ;;; Code:
 
@@ -40,9 +42,10 @@
   "Config written by Nix; voice does nothing without it."
   :type 'file)
 
-(defcustom voice-language "en"
-  "Language to transcribe as: a code from the config's languages, or \"auto\"."
-  :type 'string)
+(defvar voice-language "en"
+  "Language to transcribe as: a code from the config's languages, or \"auto\".
+Hammerspoon keeps it, so that its global dictation uses the same one;
+`voice-set-language' sets it.")
 
 (defcustom voice-hs-program "hs"
   "Hammerspoon's command line tool."
@@ -73,23 +76,12 @@ Case and punctuation don't matter, and close wordings match too; see
 exactly, 0 anything."
   :type 'number)
 
-(defcustom voice-corrections-file
-  (locate-user-emacs-file "var/voice-corrections.eld")
-  "Where `voice-correct' keeps what was heard and what was meant."
+(defcustom voice-corrections-file "~/.local/share/voice/corrections.json"
+  "Where voice.fnl keeps what was heard and what was meant, by language."
   :type 'file)
-
-(defcustom voice-vocabulary
-  '(("en" "Emacs" "ELisp" "Nix" "nix-darwin" "Hammerspoon" "Fennel"
-     "agent-shell" "Magit" "evil" "whisper.cpp" "CodeQL"))
-  "Words whisper should expect, by language: entries of (LANGUAGE WORD...).
-Sent along as its prompt, which biases it toward these spellings."
-  :type '(alist :key-type string :value-type (repeat string)))
 
 (defvar voice--last nil
   "The last dictation: (BUFFER START END LANGUAGE), START and END markers.")
-
-(defvar voice--corrections-cache nil
-  "(MTIME . CORRECTIONS) of `voice-corrections-file'.")
 
 (defvar voice--paused-emms nil
   "Whether this dictation paused EMMS.")
@@ -131,16 +123,17 @@ Sent along as its prompt, which biases it toward these spellings."
 (defun voice--languages (config)
   (append (alist-get 'languages config) '("auto")))
 
-(defun voice--hs (form)
-  "Evaluate Lua FORM in Hammerspoon; return its result as a string."
+(defun voice--hs-voice (fn &rest args)
+  "Call voice.fnl's FN with string ARGS; return its result as a string.
+The arguments travel as hs's command line arguments, never as code."
   (with-temp-buffer
-    (let ((code (call-process voice-hs-program nil t nil "-q" "-c" form)))
+    (let ((code (apply #'call-process voice-hs-program nil t nil "-q" "-c"
+                       (format "return require(\"voice\").%s(table.unpack(_cli.args, 2))"
+                               fn)
+                       "--" args)))
       (unless (eq code 0)
         (error "Hammerspoon: %s" (string-trim (buffer-string))))
       (string-trim (buffer-string)))))
-
-(defun voice--hs-voice (fn)
-  (voice--hs (format "return require(\"voice\").%s()" fn)))
 
 (defun voice--pause-media ()
   (when (and voice-pause-emms
@@ -185,8 +178,14 @@ Sent along as its prompt, which biases it toward these spellings."
     (message "Voice: no audio from the microphone (permission for Hammerspoon?)"))))
 
 (defun voice--start (handler toggle)
+  (setq voice-language (or (ignore-errors (voice--hs-voice "language"))
+                           voice-language))
   (voice--pause-media)
-  (let ((result (condition-case err (voice--hs-voice "start")
+  (let ((result (condition-case err
+                    (voice--hs-voice "start"
+                                     (format "%s to stop  ·  %s to cancel"
+                                             (voice--key-hint toggle)
+                                             (voice--key-hint 'voice-cancel)))
                   (error (voice--resume-media) (signal (car err) (cdr err))))))
     (unless (equal result "ok")
       (voice--resume-media)
@@ -342,6 +341,7 @@ enough, as (COMMAND . SIMILARITY)."
                  (eq (process-exit-status process) 0))))
     (kill-buffer (process-buffer process))
     (delete-file audio)
+    (ignore-errors (voice--hs-voice "transcribed"))
     (voice--set-state nil)
     (let* ((json (and ok (ignore-errors
                            (json-parse-string output :object-type 'alist))))
@@ -354,19 +354,22 @@ enough, as (COMMAND . SIMILARITY)."
                    ;; Segments carry their own leading space when a new
                    ;; word starts, so the newlines between them go.
                    (voice--correct-text
-                    (replace-regexp-in-string
-                     "[ \t]\\{2,\\}" " " (string-replace "\n" "" text))
+                    (string-trim
+                     (replace-regexp-in-string
+                      "[ \t]\\{2,\\}" " " (string-replace "\n" "" text)))
                     language)
                    marker language))))))
 
 (defun voice--stop (config)
   (voice--cancel-ready-timer)
-  (let ((audio (unwind-protect (voice--hs-voice "stop")
+  (let ((audio (unwind-protect (voice--hs-voice "stop" "keep-hud")
                  (voice--resume-media)))
         (marker voice--marker)
         (handler voice--handler)
         (language voice-language)
-        (prompt (string-join (cdr (assoc voice-language voice-vocabulary)) ", ")))
+        (prompt (string-join (alist-get (intern voice-language)
+                                        (alist-get 'vocabulary config))
+                             ", ")))
     (setq voice--marker nil)
     (when (string-prefix-p "error:" audio)
       (voice--set-state nil)
@@ -403,88 +406,11 @@ enough, as (COMMAND . SIMILARITY)."
         ((eq (aref char-script-table char) 'hangul) 'hangul)
         ((string-match-p "[[:alnum:]]" (string char)) 'word)))
 
-(defun voice--replace (heard meant start end)
-  "Replace whole-word HEARD with MEANT between START and END in this buffer;
-return END, moved by the replacements.  Case doesn't matter for HEARD.
-
-A match must not continue a word of the same kind on either side: ビジ isn't
-in ビジネス, nor cat in concatenate.  Korean words take particles, so after
-Hangul only the start counts: 장치 is replaced in 장치에서는."
-  (let ((first (voice--char-class (aref heard 0)))
-        (last (voice--char-class (aref heard (1- (length heard)))))
-        (end (copy-marker end))
-        (case-fold-search t))
-    (save-excursion
-      (goto-char start)
-      (while (search-forward heard end t)
-        (when (and (not (eq first (voice--char-class
-                                   (char-before (match-beginning 0)))))
-                   (or (eq last 'hangul)
-                       (not (eq last (voice--char-class
-                                      (char-after (match-end 0)))))))
-          (replace-match meant t t))))
-    (prog1 (marker-position end) (set-marker end nil))))
-
-(defun voice--read-corrections ()
-  "The saved corrections: entries of (LANGUAGE (HEARD . MEANT)...)."
-  (let* ((file (expand-file-name voice-corrections-file))
-         (mtime (file-attribute-modification-time (file-attributes file))))
-    (cond
-     ((not mtime) nil)
-     ((equal mtime (car voice--corrections-cache)) (cdr voice--corrections-cache))
-     (t (let ((corrections (with-temp-buffer
-                             (insert-file-contents file)
-                             (read (current-buffer)))))
-          (setq voice--corrections-cache (cons mtime corrections))
-          corrections)))))
-
-(defun voice--write-corrections (corrections)
-  (let ((file (expand-file-name voice-corrections-file)))
-    (make-directory (file-name-directory file) t)
-    (with-temp-file file
-      (insert ";; -*- mode: lisp-data; coding: utf-8 -*-\n"
-              ";; What whisper heard and what was meant, by language; "
-              "see `voice-correct'.\n")
-      (let ((print-length nil) (print-level nil))
-        (pp corrections (current-buffer))))
-    (setq voice--corrections-cache nil)))
-
-(defun voice--corrections-for (language)
-  "Corrections that apply to LANGUAGE (all of them for \"auto\"), longest
-first so that they don't cut into each other."
-  (sort (copy-sequence
-         (if (equal language "auto")
-             (apply #'append (mapcar #'cdr (voice--read-corrections)))
-           (cdr (assoc language (voice--read-corrections)))))
-        (lambda (a b) (> (length (car a)) (length (car b))))))
-
 (defun voice--correct-text (text language)
-  "TEXT with the saved corrections for LANGUAGE applied."
-  (let ((corrections (voice--corrections-for language)))
-    (if (not corrections) text
-      (with-temp-buffer
-        (insert text)
-        (dolist (correction corrections)
-          (voice--replace (car correction) (cdr correction)
-                          (point-min) (point-max)))
-        (buffer-string)))))
-
-(defun voice--language-of (text)
-  "A guess at the language TEXT is in, by its script."
-  (pcase (seq-some #'voice--char-class (seq-remove (lambda (c) (< c 128)) text))
-    ('hangul "ko")
-    ((or 'hiragana 'katakana 'han) "ja")
-    (_ "en")))
-
-(defun voice--remember (language heard meant)
-  (let* ((corrections (voice--read-corrections))
-         (entry (or (assoc language corrections)
-                    (car (push (list language) corrections))))
-         (old (assoc-string heard (cdr entry) t)))
-    (if old
-        (setcdr old meant)
-      (setcdr entry (append (cdr entry) (list (cons heard meant)))))
-    (voice--write-corrections corrections)))
+  "TEXT with the learned corrections for LANGUAGE applied, by voice.fnl."
+  (condition-case err (voice--hs-voice "correct" text language)
+    (error (message "Voice: corrections skipped: %s" (error-message-string err))
+           text)))
 
 (defconst voice--tokenizer-script
   "ObjC.import('NaturalLanguage');
@@ -600,11 +526,14 @@ HEARD is the region if active, else read with the word at point as default."
     (when (string-empty-p meant)
       (user-error "Voice: give what was meant"))
     (with-current-buffer buffer
-      (voice--replace heard meant start end))
+      (let* ((text (buffer-substring-no-properties start end))
+             (fixed (voice--hs-voice "replace" text heard meant)))
+        (unless (equal text fixed)
+          (replace-region-contents start end (lambda () fixed)))))
     (deactivate-mark)
-    (let ((language (if (equal language "auto") (voice--language-of heard)
-                      language)))
-      (voice--remember language heard meant)
+    (let ((language (voice--hs-voice "remember" language heard meant)))
+      (when (string-prefix-p "error:" language)
+        (user-error "Voice: %s" language))
       (message "Voice: %s → %s, for %s from now on" heard meant language))))
 
 (defun voice-edit-corrections ()
@@ -617,9 +546,11 @@ HEARD is the region if active, else read with the word at point as default."
   (interactive
    (let ((config (or (voice--config)
                      (user-error "Voice isn't set up on this machine"))))
-     (list (completing-read (format "Language (now %s): " voice-language)
+     (list (completing-read (format "Language (now %s): "
+                                    (or (ignore-errors (voice--hs-voice "language"))
+                                        voice-language))
                             (voice--languages config) nil t))))
-  (setq voice-language language)
+  (setq voice-language (voice--hs-voice "set_language" language))
   (message "Voice language: %s" language))
 
 ;;;###autoload

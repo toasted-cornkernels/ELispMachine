@@ -2273,7 +2273,7 @@ Accumulate continuous pinch deltas; each 30 percent change is one level."
              voice-correct voice-edit-corrections)
   :general
   (agnostic-key
-    "C-s-d"      'voice-dictate
+    "C-s-l"      'voice-dictate
     "C-s-k"      'voice-command)
   (global-leader
     "av"         (which-key-prefix :voice)
