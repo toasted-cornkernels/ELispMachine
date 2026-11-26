@@ -1789,7 +1789,7 @@ Accumulate continuous pinch deltas; each 30 percent change is one level."
                 :host github
                 :repo "anticomputer/emacs-codeql"
                 :branch "main"
-                :files (:defaults "bin")
+                :files (:defaults "bin" "queries")
                 :fork (:host github
                              :repo "jeongsoolee09/emacs-codeql"
                              :branch "main"))
@@ -1827,6 +1827,7 @@ Accumulate continuous pinch deltas; each 30 percent change is one level."
     "e"          (which-key-prefix "run")
     "er"         'codeql-query-server-run-query
     "ee"         'codeql-query-server-quick-eval
+    "ep"         'codeql-query-server-quick-eval-predicate
     "ec"         'codeql-query-server-quick-eval-count
     "ex"         'codeql-query-server-cancel-query
 
@@ -1934,8 +1935,6 @@ Accumulate continuous pinch deltas; each 30 percent change is one level."
                             (toml-mode       . toml-ts-mode)
                             (yaml-mode       . yaml-ts-mode))))
 
-;; Mirrors treewalker.nvim: M-hjkl walks nodes, M-HJKL drags them.
-;; Only the languages Combobulate supports activate; the rest are no-ops.
 (use-package combobulate
   :straight (combobulate :type git :host github
                          :repo "mickeynp/combobulate")
