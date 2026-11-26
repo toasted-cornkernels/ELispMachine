@@ -1934,6 +1934,32 @@ Accumulate continuous pinch deltas; each 30 percent change is one level."
                             (toml-mode       . toml-ts-mode)
                             (yaml-mode       . yaml-ts-mode))))
 
+;; Mirrors treewalker.nvim: M-hjkl walks nodes, M-HJKL drags them.
+;; Only the languages Combobulate supports activate; the rest are no-ops.
+(use-package combobulate
+  :straight (combobulate :type git :host github
+                         :repo "mickeynp/combobulate")
+  :when treesit-grammars-p
+  :hook (prog-mode . combobulate-mode)
+  :general
+  (normal-mode-major-mode
+    :keymaps     '(combobulate-key-map)
+    "M-h"        'combobulate-navigate-up
+    "M-j"        'combobulate-navigate-next
+    "M-k"        'combobulate-navigate-previous
+    "M-l"        'combobulate-navigate-down
+    "M-H"        'combobulate-drag-up
+    "M-J"        'combobulate-drag-down
+    "M-K"        'combobulate-drag-up
+    "M-L"        'combobulate-drag-down)
+
+  (visual-mode-major-mode
+    :keymaps     '(combobulate-key-map)
+    "M-h"        'combobulate-navigate-up
+    "M-j"        'combobulate-navigate-next
+    "M-k"        'combobulate-navigate-previous
+    "M-l"        'combobulate-navigate-down))
+
 ;; Eglot config =====================================
 ;; ==================================================
 
@@ -7062,6 +7088,35 @@ Like normal Emacs `C-k'.  Kill to end of line and put content in kill-ring."
     (elispm/avy-goto-url)
     (browse-url-at-point)))
 
+(defun elispm/avy-select-node ()
+  "Use avy to pick a tree-sitter node enclosing point and select it.
+Labels sit on node starts, falling back to ends on shared starts.
+Works as an evil motion, so `d SPC j t' deletes the picked node."
+  (interactive)
+  (unless (treesit-parser-list)
+    (user-error "No tree-sitter parser in this buffer"))
+  (require 'avy)
+  (let ((node (treesit-node-at (point)))
+        labels)
+    (while node
+      (let* ((range (cons (treesit-node-start node) (treesit-node-end node)))
+             (label (if (assoc (car range) labels) (1- (cdr range)) (car range))))
+        (unless (or (rassoc range labels) (assoc label labels))
+          (push (cons label range) labels)))
+      (setq node (treesit-node-parent node)))
+    (when-let* ((picked (let ((avy-action #'ignore)
+                              (avy-pre-action #'ignore)
+                              (avy-command 'elispm/avy-select-node))
+                          (avy-process
+                           (mapcar (lambda (label)
+                                     (cons (cons (car label) (car label))
+                                           (selected-window)))
+                                   labels))))
+                (range (and (consp picked) (cdr (assoc (car picked) labels)))))
+      (if (evil-operator-state-p)
+          (evil-range (car range) (cdr range) 'exclusive)
+        (evil-visual-select (car range) (1- (cdr range)))))))
+
 (global-leader
   "j"   (which-key-prefix :jump)
   "jl"  'ace-link
@@ -7071,6 +7126,7 @@ Like normal Emacs `C-k'.  Kill to end of line and put content in kill-ring."
   "jC"  'avy-goto-char
   "js"  'avy-isearch
   "jw"  'avy-goto-whitespace-end
+  "jt"  'elispm/avy-select-node
   "ju"  'goto-last-change
   "jU"  'goto-last-change-reverse
   "ju"  'elipsm/avy-goto-url
