@@ -7259,6 +7259,67 @@ removal."
   "/"    'flymake-goto-next-error
   "\\"   'flymake-goto-prev-error)
 
+;; Borrowed from VSpaceCode's menu (mirrored in NeovimConfig and .vimrc).
+
+(defun elispm/consult-ripgrep-at-point ()
+  "Search the project for the region or the symbol at point."
+  (interactive)
+  (consult-ripgrep nil (if (use-region-p)
+                           (buffer-substring-no-properties
+                            (region-beginning) (region-end))
+                         (thing-at-point 'symbol t))))
+
+(defun elispm/edit-symbol ()
+  "Rename the symbol via eglot if the buffer is managed, else `iedit-mode'."
+  (interactive)
+  (if (bound-and-true-p eglot--managed-mode)
+      (call-interactively #'eglot-rename)
+    (call-interactively #'iedit-mode)))
+
+(defun elispm/external-terminal ()
+  "Open a shell in `default-directory'.
+A tmux pane below this one when Emacs runs inside tmux, else Terminal.app."
+  (interactive)
+  (let ((dir (expand-file-name default-directory)))
+    (if (getenv "TMUX")
+        (call-process "tmux" nil 0 nil "split-window" "-v"
+                      "-t" (or (getenv "TMUX_PANE") "") "-c" dir)
+      (call-process "open" nil 0 nil "-a" "Terminal" dir))))
+
+(use-package expreg
+  :commands (expreg-expand expreg-contract))
+
+(use-package vertico-repeat
+  :straight nil
+  :after vertico
+  :hook (minibuffer-setup . vertico-repeat-save))
+
+(global-leader
+  "c"    (which-key-prefix :compile/comments)
+  "cl"   'comment-line
+  "cn"   'next-error
+  "cp"   'previous-error
+
+  "s"    (which-key-prefix :search)
+  "sp"   'consult-ripgrep
+  "sP"   'elispm/consult-ripgrep-at-point
+  "sj"   'consult-imenu
+  "sJ"   'consult-imenu-multi
+  "sr"   'xref-find-references
+  "se"   'elispm/edit-symbol
+
+  "r"    (which-key-prefix :resume/recent)
+  "rl"   'vertico-repeat
+  "rb"   'consult-buffer
+
+  "v"    (which-key-prefix :expand-region)
+  "vv"   'expreg-expand
+  "vV"   'expreg-contract
+
+  "*"    'elispm/consult-ripgrep-at-point
+  "?"    'embark-bindings
+  "\""   'elispm/external-terminal)
+
 (global-leader
   "l"    (which-key-prefix :lang-tools)
   "lm"   (which-key-prefix :major-modes)
