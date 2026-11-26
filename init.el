@@ -2099,7 +2099,137 @@ Accumulate continuous pinch deltas; each 30 percent change is one level."
   ;; Hmm:
   ;; (setq shell-maker-root-path
   ;;       (no-littering-expand-var-file-name "shell-maker/"))
-  )
+  :general
+  (global-leader
+    "$"    (which-key-prefix "agent-shell")
+    "$$"   'agent-shell
+    "$t"   'agent-shell-toggle
+    "$b"   'agent-shell-switch-buffer
+    "$n"   'agent-shell-new-shell
+    "$w"   'agent-shell-new-worktree-shell
+    "$R"   'agent-shell-resume-session
+    "$c"   'agent-shell-prompt-compose
+    "$s"   (which-key-prefix "start")
+    "$sc"  'agent-shell-github-start-copilot
+    "$sC"  'agent-shell-anthropic-start-claude-code
+    "$so"  'agent-shell-openai-start-codex
+    "$sg"  'agent-shell-google-start-gemini
+    "$f"   'agent-shell-send-file-to
+    "$r"   'agent-shell-send-region-to
+    "$i"   'agent-shell-send-clipboard-image-to
+    "$I"   'agent-shell-send-screenshot-to)
+  :general-config
+  (local-leader
+    :major-modes '(agent-shell-mode t)
+    :keymaps     '(agent-shell-mode-map)
+    "RET"        'agent-shell-submit
+    "k"          'agent-shell-interrupt
+    "o"          'agent-shell-other-buffer
+    "c"          'agent-shell-prompt-compose
+    "f"          'agent-shell-fork
+    "R"          'agent-shell-reload
+
+    "s"          (which-key-prefix "session")
+    "sm"         'agent-shell-set-session-mode
+    "sM"         'agent-shell-cycle-session-mode
+    "sv"         'agent-shell-set-session-model
+    "st"         'agent-shell-set-session-thought-level
+    "so"         'agent-shell-set-session-config-option
+    "su"         'agent-shell-show-usage
+    "sr"         'agent-shell-resume-session
+
+    "q"          (which-key-prefix "queue")
+    "qq"         'agent-shell-prompt-queue
+    "qd"         'agent-shell-prompt-queue-remove
+    "qr"         'agent-shell-prompt-queue-resume
+
+    "i"          (which-key-prefix "insert")
+    "if"         'agent-shell-send-file
+    "io"         'agent-shell-send-other-file
+    "ii"         'agent-shell-send-clipboard-image
+    "is"         'agent-shell-send-screenshot
+    "i!"         'agent-shell-insert-shell-command-output
+    "ir"         'agent-shell-quote-region
+
+    "y"          (which-key-prefix "copy")
+    "yy"         'agent-shell-copy-last-output
+    "ym"         'agent-shell-copy-as-markdown
+    "ys"         'agent-shell-copy-session-id
+    "yb"         'agent-shell-copy-source-block-at-point
+    "yl"         'agent-shell-copy-link-url-at-point
+
+    "z"          (which-key-prefix "fold")
+    "zz"         'agent-shell-ui-toggle-fragment
+    "za"         'agent-shell-ui-toggle-all-fragments
+    "zn"         'agent-shell-narrow-to-block
+
+    "d"          (which-key-prefix "debug")
+    "dt"         'agent-shell-view-traffic
+    "ds"         'agent-shell-save-traffic
+    "dl"         'agent-shell-view-acp-logs
+    "dL"         'agent-shell-toggle-logging
+    "dx"         'agent-shell-reset-logs
+    "do"         'agent-shell-open-transcript)
+  ;; The viewport modes mirror `agent-shell-mode''s trie.
+  (local-leader
+    :major-modes '(agent-shell-viewport-edit-mode agent-shell-viewport-view-mode t)
+    :keymaps     '(agent-shell-viewport-edit-mode-map agent-shell-viewport-view-mode-map)
+    "k"          'agent-shell-viewport-interrupt
+    "o"          'agent-shell-other-buffer
+    "R"          'agent-shell-reload
+
+    "s"          (which-key-prefix "session")
+    "sm"         'agent-shell-viewport-set-session-mode
+    "sM"         'agent-shell-viewport-cycle-session-mode
+    "sv"         'agent-shell-viewport-set-session-model
+    "st"         'agent-shell-viewport-set-session-thought-level
+
+    "q"          (which-key-prefix "queue")
+    "qq"         'agent-shell-viewport-prompt-queue
+    "qd"         'agent-shell-viewport-prompt-queue-remove
+    "qr"         'agent-shell-viewport-prompt-queue-resume
+
+    "y"          (which-key-prefix "copy")
+    "ys"         'agent-shell-viewport-copy-session-id
+
+    "d"          (which-key-prefix "debug")
+    "dt"         'agent-shell-viewport-view-traffic
+    "ds"         'agent-shell-viewport-save-traffic
+    "dl"         'agent-shell-viewport-view-acp-logs
+    "do"         'agent-shell-viewport-open-transcript)
+  (local-leader
+    :major-modes '(agent-shell-viewport-edit-mode t)
+    :keymaps     '(agent-shell-viewport-edit-mode-map)
+    "RET"        'agent-shell-viewport-compose-send
+    "S"          'agent-shell-viewport-compose-send-override
+    "K"          'agent-shell-viewport-compose-cancel
+    "p"          'agent-shell-viewport-compose-peek-last
+    "/"          'agent-shell-viewport-search-history)
+  (local-leader
+    :major-modes '(agent-shell-viewport-view-mode t)
+    :keymaps     '(agent-shell-viewport-view-mode-map)
+    "r"          (which-key-prefix "reply")
+    "rr"         'agent-shell-viewport-reply
+    "rR"         'agent-shell-viewport-quote-reply
+    "ry"         'agent-shell-viewport-reply-yes
+    "rc"         'agent-shell-viewport-reply-continue
+    "rm"         'agent-shell-viewport-reply-more
+    "ra"         'agent-shell-viewport-reply-again
+    "r1"         'agent-shell-viewport-reply-1
+    "r2"         'agent-shell-viewport-reply-2
+    "r3"         'agent-shell-viewport-reply-3
+    "r4"         'agent-shell-viewport-reply-4
+    "r5"         'agent-shell-viewport-reply-5
+    "r6"         'agent-shell-viewport-reply-6
+    "r7"         'agent-shell-viewport-reply-7
+    "r8"         'agent-shell-viewport-reply-8
+    "r9"         'agent-shell-viewport-reply-9)
+  (local-leader
+    :major-modes '(agent-shell-diff-mode t)
+    :keymaps     '(agent-shell-diff-mode-map)
+    "a"          'agent-shell-diff-accept-all
+    "r"          'agent-shell-diff-reject-all
+    "o"          'agent-shell-diff-open-file))
 
 ;; Shell config =====================================
 ;; ==================================================
@@ -5758,7 +5888,7 @@ its settings."
                                         nil nil nil nil "*patch*")))
     (elispm/magit-write-patch '(lambda ()
                                  (append-to-buffer buffer (point-min) (point-max))
-			                           (pop-to-buffer buffer)
+                                 (pop-to-buffer buffer)
                                  (diff-mode))))
 
   (defun elispm/magit-copy-patch-kill-ring ()
