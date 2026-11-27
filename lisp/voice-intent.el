@@ -12,6 +12,10 @@
 ;; 2. A chat model chooses one of the best few, or none, constrained by a
 ;;    JSON schema to exactly those names, so it can't make one up.
 ;;
+;; A request of several steps is split where it says "and", "then", -고 or
+;; -て; each step that isn't a phrase of `voice-commands' gets its own
+;; shortlist, and one call of the chat model chooses for all of them.
+;;
 ;; What it chooses is only run after asking.  Nothing here writes code.
 ;;
 ;; The commands' embeddings are computed once, which takes a few minutes on
@@ -51,6 +55,9 @@ the `voice-commands'."
               (seq (* any) "shell-command" (* any))
               (seq (* any) "eval-" (* any))
               "load-file" "load-library" "server-" "package-"
+              ;; Evil's :q, :wq and :x quit Emacs from its last window.
+              (seq "evil-" (* any) "quit" (* any))
+              "evil-save-and-close" "evil-save-modified-and-close"
               (seq (* any) "mouse" (* any))
               (seq (* any) "menu-bar" (* any)))
       (* any) eos)
@@ -68,8 +75,9 @@ or menu."
 
 (defconst voice-intent--choose-prompt
   "You choose the one Emacs command that does what the user asked, from the
-given list. The request may be in English, Korean or Japanese. Answer
-\"none\" if no command in the list does it.")
+given list. The request may be in English, Korean or Japanese. Choose
+\"none\" when no command in the list does it, such as anything outside Emacs;
+never choose a command that does something else.")
 
 (defconst voice-intent--scale 508.0
   "Embedding components are stored as round(x * this), clamped to a byte.
@@ -312,70 +320,103 @@ Commands in EXCLUDE are left out."
     (mapcar #'cdr (seq-take (sort scored (lambda (a b) (> (car a) (car b))))
                             count))))
 
-(defun voice-intent--shortlist (query bound)
+(defun voice-intent--shortlist (query bound &optional count)
   "(COMMAND . DESCRIPTION)s to choose from for the QUERY vector.
-The `voice-commands', described by their phrases, then the nearest others."
+The `voice-commands', described by their phrases, then the COUNT (by default
+`voice-intent-shortlist') nearest others."
   (let ((curated (mapcar (lambda (entry)
                            (cons (car entry) (string-join (cdr entry) "; ")))
                          voice-commands)))
     (append curated
             (mapcar (lambda (command) (cons command (voice-intent--doc command)))
-                    (voice-intent--nearest query bound voice-intent-shortlist
+                    (voice-intent--nearest query bound
+                                           (or count voice-intent-shortlist)
                                            (mapcar #'car curated))))))
 
-(defun voice-intent--choose (endpoint request shortlist callback)
-  "The command of SHORTLIST that does REQUEST, to CALLBACK; nil for none."
+(defun voice-intent--ask (endpoint system user properties max-tokens callback)
+  "Ask the chat model at ENDPOINT, with prompts SYSTEM and USER, for a JSON
+object of PROPERTIES (an alist of JSON schemas), all required, in at most
+MAX-TOKENS.  CALLBACK gets the object as an alist, or nil and an error."
   (voice-intent--post
    endpoint
-   `((messages . [((role . "system") (content . ,voice-intent--choose-prompt))
-                  ((role . "user")
-                   (content . ,(concat "Request: " request "\n\nCommands:\n"
-                                       (mapconcat (lambda (entry)
-                                                    (format "- %s: %s"
-                                                            (car entry) (cdr entry)))
-                                                  shortlist "\n"))))])
+   `((messages . [((role . "system") (content . ,system))
+                  ((role . "user") (content . ,user))])
      (temperature . 0)
-     (max_tokens . 60)
+     (max_tokens . ,max-tokens)
      (response_format
       . ((type . "json_schema")
          (json_schema
           . ((name . "answer")
              (schema
               . ((type . "object")
-                 (properties
-                  . ((command
-                      . ((enum . ,(vconcat (mapcar (lambda (entry)
-                                                     (symbol-name (car entry)))
-                                                   shortlist)
-                                           '("none")))))))
-                 (required . ["command"]))))))))
+                 (properties . ,properties)
+                 (required . ,(vconcat (mapcar (lambda (property)
+                                                 (symbol-name (car property)))
+                                               properties))))))))))
    (lambda (reply &optional error)
      (let* ((content (alist-get 'content
                                 (alist-get 'message
                                            (car (alist-get 'choices reply)))))
             (answer (and content (ignore-errors
-                                   (json-parse-string content :object-type 'alist))))
-            (name (alist-get 'command answer)))
-       (cond ((not answer) (funcall callback nil (or error "no answer")))
-             ((equal name "none") (funcall callback nil))
-             (t (funcall callback (intern name))))))))
+                                   (json-parse-string content :object-type 'alist)))))
+       (if answer
+           (funcall callback answer)
+         (funcall callback nil (or error "no answer")))))))
+
+(defun voice-intent--listing (shortlist)
+  (mapconcat (lambda (entry) (format "- %s: %s" (car entry) (cdr entry)))
+             shortlist "\n"))
+
+(defun voice-intent--names (shortlist)
+  "SHORTLIST's command names and \"none\", as a JSON schema enum."
+  `((enum . ,(vconcat (mapcar (lambda (entry) (symbol-name (car entry))) shortlist)
+                      '("none")))))
+
+(defun voice-intent--command (name)
+  "The command NAME (a string from the model) stands for; nil for \"none\"."
+  (and (stringp name) (not (equal name "none")) (intern name)))
+
+(defun voice-intent--choose (endpoint request shortlist callback)
+  "The command of SHORTLIST that does REQUEST, to CALLBACK; nil for none."
+  (voice-intent--ask
+   endpoint voice-intent--choose-prompt
+   (concat "Request: " request "\n\nCommands:\n" (voice-intent--listing shortlist)
+           "\n- none: no command here does it")
+   `((command . ,(voice-intent--names shortlist)))
+   60
+   (lambda (answer &optional error)
+     (if answer
+         (funcall callback (voice-intent--command (alist-get 'command answer)))
+       (funcall callback nil error)))))
 
 (defun voice-intent-available-p ()
   "Whether local models are set up to find commands."
   (and (alist-get 'chat (voice-intent--llm (voice--config))) t))
+
+;; Called from the old index check as well as from a plan.
+(defun voice-intent--unready (llm)
+  "Why the models in LLM (the config's section) can't be asked yet, or nil."
+  (cond
+   ((not (alist-get 'chat llm)) "no local model is set up")
+   ((zerop (hash-table-count (cdr (voice-intent--load-index))))
+    (voice-intent-index #'ignore)
+    "commands aren't indexed yet; M-x voice-intent-index")))
+
+(defun voice-intent--index-later ()
+  "Pick up commands that came with packages loaded since the last check."
+  (unless (or voice-intent--indexing
+              (eq voice-intent--checked (length load-history)))
+    (run-with-idle-timer 5 nil #'voice-intent-index #'ignore)))
 
 (defun voice-intent-pick (request callback)
   "Find the existing command REQUEST asks for, then call CALLBACK with it.
 CALLBACK gets the command symbol, or nil and why not.  Uses the keymaps of
 the current buffer."
   (let* ((llm (voice-intent--llm (voice--config)))
-         (bound (voice-intent--bound)))
-    (cond
-     ((not (alist-get 'chat llm)) (funcall callback nil "no local model is set up"))
-     ((zerop (hash-table-count (cdr (voice-intent--load-index))))
-      (funcall callback nil "commands aren't indexed yet; M-x voice-intent-index")
-      (voice-intent-index #'ignore))
-     (t
+         (bound (voice-intent--bound))
+         (unready (voice-intent--unready llm)))
+    (if unready
+        (funcall callback nil unready)
       (voice-intent--embed
        (alist-get 'embeddings llm)
        (list (concat "task: search result | query: " request))
@@ -390,10 +431,146 @@ the current buffer."
                     (error (funcall callback nil
                                     (format "the model failed: %s" error)))
                     (t (funcall callback nil "no command does that"))))))))
-      ;; Pick up commands that came with packages loaded since.
-      (unless (or voice-intent--indexing
-                  (eq voice-intent--checked (length load-history)))
-        (run-with-idle-timer 5 nil #'voice-intent-index #'ignore))))))
+      (voice-intent--index-later))))
+
+;;; Sequences
+
+(defcustom voice-intent-plan-shortlist 8
+  "How many of the closest commands each step of a plan chooses from,
+besides the `voice-commands'."
+  :type 'integer
+  :group 'voice)
+
+(defconst voice-intent--plan-prompt
+  "You turn a request to the Emacs editor into Emacs commands: for each
+numbered action, choose the one command from that action's list that does it,
+in the state the actions before it leave. The request may be in English,
+Korean or Japanese. Choose \"none\" when no command in the action's list does
+that action, such as anything outside Emacs; never choose a command that does
+something else.")
+
+(defconst voice-intent--joints
+  (list (rx (group (? ",") (+ blank) (or "and then" "and" "then" "after that")
+                   (+ blank)))
+        ;; Korean -고 and Japanese -て stay with the step they end.
+        (rx "고" (group (? (+ blank) "나서") (? ",") (+ blank)))
+        (rx (group (* blank) "그리고" (? ",") (+ blank)))
+        (rx (or "て" "んで") (group (? "から") (any "、,，") (* blank)))
+        (rx "て" (group (? "から"))
+            (not (any "ぁ-ゟ" "下" "、。！？!?,." blank)))
+        (rx (group (* blank) (? "、") (or "それから" "そして") (? "、") (* blank))))
+  "Where a spoken request joins one step to the next: group 1 of a match.")
+
+(defconst voice-intent--not-joints
+  (rx bos (or "싶" "있" "계" "말" "보"))
+  "What after a Korean -고 means it doesn't end a step: -고 싶다 (want to),
+-고 있다 (is doing), -고 말다, -고 보다.")
+
+(defun voice-intent-split (text)
+  "TEXT's steps, split where it says \"and\", \"then\", -고, -て and the like.
+English commas split too, when the text also has such a word."
+  (let ((case-fold-search t)
+        cuts)
+    (dolist (regexp voice-intent--joints)
+      (let ((start 0))
+        (while (string-match regexp text start)
+          (unless (and (string-prefix-p "고" (match-string 0 text))
+                       (string-match-p voice-intent--not-joints
+                                       (substring text (match-end 1))))
+            (push (cons (match-beginning 1) (match-end 1)) cuts))
+          (setq start (max (match-end 1) (1+ (match-beginning 0)))))))
+    (when cuts
+      (let ((start 0))
+        (while (string-match "[[:alpha:]]\\(,[[:blank:]]+\\)[[:ascii:]]" text start)
+          (push (cons (match-beginning 1) (match-end 1)) cuts)
+          (setq start (match-end 1)))))
+    (let ((start 0) parts)
+      ;; Overlapping cuts, like ", " and ", then ", are one.
+      (dolist (cut (sort cuts (lambda (a b) (< (car a) (car b)))))
+        (if (< (car cut) start)
+            (setq start (max start (cdr cut)))
+          (push (substring text start (car cut)) parts)
+          (setq start (cdr cut))))
+      (push (substring text start) parts)
+      (or (delete "" (mapcar (lambda (part)
+                               (string-trim part "[[:space:],、。.!?！？]+"
+                                            "[[:space:],、。.!?！？]+"))
+                             (nreverse parts)))
+          (list text)))))
+
+(declare-function voice--match-command "voice")
+
+(defun voice-intent--choose-each (endpoint plan shortlists callback)
+  "Choose a command for each step of PLAN, a list of (STEP . COMMAND).
+SHORTLISTS has the commands to choose from for each step whose COMMAND is
+nil.  The model sees every step, the known ones with just their command, so
+it knows what \"it\" or \"there\" is.  The chosen commands (nil for none) are
+set in PLAN before CALLBACK is called with no arguments, or with nil and an
+error."
+  (let* ((lists (let ((rest shortlists))
+                  (mapcar (lambda (step)
+                            (if (cdr step)
+                                (list (cons (cdr step) (voice-intent--doc (cdr step))))
+                              (pop rest)))
+                          plan)))
+         (numbers (number-sequence 1 (length plan))))
+    (voice-intent--ask
+     endpoint voice-intent--plan-prompt
+     (concat "Request: " (mapconcat #'car plan ", then ") "\n"
+             (mapconcat (lambda (n)
+                          (format "\nAction %d: %s\nCommands:\n%s\n- none: no command here does this action\n"
+                                  n (car (nth (1- n) plan))
+                                  (voice-intent--listing (nth (1- n) lists))))
+                        numbers ""))
+     (mapcar (lambda (n)
+               (cons (intern (number-to-string n))
+                     (voice-intent--names (nth (1- n) lists))))
+             numbers)
+     (* 40 (length plan))
+     (lambda (answer &optional error)
+       (if (not answer)
+           (funcall callback nil error)
+         (dolist (n numbers)
+           (setcdr (nth (1- n) plan)
+                   (voice-intent--command
+                    (alist-get (intern (number-to-string n)) answer))))
+         (funcall callback))))))
+
+(defun voice-intent-plan (steps callback)
+  "Find the existing command for each of STEPS (strings), then call CALLBACK.
+CALLBACK gets a list of (STEP . COMMAND), COMMAND nil where none does it; or
+nil and why not.  Steps that match `voice-commands' are taken from there; the
+others each get a shortlist, and the chat model chooses for all of them in
+one go.  Uses the keymaps of the current buffer."
+  (let* ((plan (mapcar (lambda (step) (cons step (car (voice--match-command step))))
+                       steps))
+         (open (seq-remove #'cdr plan))
+         (llm (voice-intent--llm (voice--config)))
+         (unready (and open (voice-intent--unready llm))))
+    (cond
+     ((not open) (funcall callback plan))
+     (unready (funcall callback nil unready))
+     (t
+      (let ((bound (voice-intent--bound)))
+        (voice-intent--embed
+         (alist-get 'embeddings llm)
+         (mapcar (lambda (step) (concat "task: search result | query: " (car step)))
+                 open)
+         (lambda (vectors &optional error)
+           (if (not vectors)
+               (funcall callback nil (format "the embedding model failed: %s" error))
+             (voice-intent--choose-each
+              (alist-get 'chat llm) plan
+              (mapcar (lambda (vector)
+                        (voice-intent--shortlist vector bound
+                                                 voice-intent-plan-shortlist))
+                      vectors)
+              (lambda (&optional ok error)
+                (ignore ok)
+                (if error
+                    (funcall callback nil (format "the model failed: %s" error))
+                  (funcall callback plan))))))))
+      (voice-intent--index-later)))))
 
 (provide 'voice-intent)
 ;;; voice-intent.el ends here
