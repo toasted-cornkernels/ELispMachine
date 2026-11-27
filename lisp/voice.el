@@ -17,7 +17,8 @@
 ;; `C-u' before dictating picks another.
 ;;
 ;; `voice-command' listens for a phrase from `voice-commands' instead, and
-;; runs its command; anything else is only shown, never run.
+;; runs its command.  Anything else goes to local models (voice-intent.el),
+;; which find the existing command meant; that runs only after asking.
 ;;
 ;; Transcripts go through learned corrections first: `voice-correct' fixes a
 ;; word of the last dictation and remembers the fix.  voice.fnl keeps them in
@@ -33,6 +34,8 @@
 (require 'thingatpt)
 
 (declare-function emms-pause "emms")
+(declare-function voice-intent-available-p "voice-intent")
+(declare-function voice-intent-pick "voice-intent")
 
 (defgroup voice nil
   "Local dictation via whisper-server."
@@ -301,32 +304,58 @@ enough, as (COMMAND . SIMILARITY)."
             (setq best (cons (car entry) score))))))
     (and best (>= (cdr best) voice-command-similarity) best)))
 
+(defun voice--call-in (command buffer window &optional confirm)
+  "Call COMMAND interactively in WINDOW, if it still shows BUFFER.
+With CONFIRM, ask first.  Off the process sentinel, so commands that read the
+minibuffer (M-x) work as from a key."
+  (run-at-time
+   0 nil
+   (lambda ()
+     (cond
+      ;; Never run a command somewhere other than where it was asked for.
+      ((not (and (window-live-p window) (eq (window-buffer window) buffer)))
+       (message "Voice: not running %s; its buffer isn't shown any more" command))
+      ((and confirm
+            (not (y-or-n-p
+                  (format "Voice: run %s (%s)? " command
+                          (truncate-string-to-width
+                           (car (split-string (or (ignore-errors
+                                                    (documentation command t))
+                                                  "")
+                                              "\n"))
+                           60 nil nil "…")))))
+       (message "Voice: not running %s" command))
+      (t
+       (select-window window)
+       (with-current-buffer buffer
+         (setq this-command command real-this-command command)
+         (call-interactively command t)))))))
+
 (defun voice--run-command (text marker _language)
-  "Run the command TEXT names, in the window and buffer it was asked in."
+  "Run the command TEXT names, in the window and buffer it was asked in.
+A phrase from `voice-commands' runs its command; anything else goes to the
+local models (voice-intent.el), whose choice runs only after asking."
   (let* ((match (voice--match-command text))
          (buffer (marker-buffer marker))
          (window (and (buffer-live-p buffer) (get-buffer-window buffer t))))
     (cond
-     ((not match) (message "Voice: no command for \"%s\"" text))
-     ;; Never run a command somewhere other than where it was asked for.
      ((not (window-live-p window))
-      (message "Voice: not running %s; its buffer isn't shown any more"
-               (car match)))
-     (t
+      (message "Voice: not running \"%s\"; its buffer isn't shown any more" text))
+     (match
       (message "Voice: \"%s\" → %s" text (car match))
-      ;; Off the process sentinel, so commands that read the minibuffer
-      ;; (M-x) work as from a key.
-      (run-at-time
-       0 nil
-       (lambda ()
-         (if (not (and (window-live-p window)
-                       (eq (window-buffer window) buffer)))
-             (message "Voice: not running %s; its buffer isn't shown any more"
-                      (car match))
-           (select-window window)
-           (with-current-buffer buffer
-             (setq this-command (car match) real-this-command (car match))
-             (call-interactively (car match) t)))))))))
+      (voice--call-in (car match) buffer window))
+     ((not (and (require 'voice-intent nil t) (voice-intent-available-p)))
+      (message "Voice: no command for \"%s\"" text))
+     (t
+      (message "Voice: \"%s\": finding the command…" text)
+      (with-current-buffer buffer
+        (voice-intent-pick
+         text
+         (lambda (command &optional why)
+           (if (not command)
+               (message "Voice: no command for \"%s\": %s" text why)
+             (message "Voice: \"%s\" → %s?" text command)
+             (voice--call-in command buffer window t)))))))))
 
 (defun voice-save-buffer ()
   "Save the buffer if it visits a file; never ask for a file to write."
@@ -367,9 +396,7 @@ enough, as (COMMAND . SIMILARITY)."
         (marker voice--marker)
         (handler voice--handler)
         (language voice-language)
-        (prompt (string-join (alist-get (intern voice-language)
-                                        (alist-get 'vocabulary config))
-                             ", ")))
+        (prompt (voice--hs-voice "prompt" voice-language)))
     (setq voice--marker nil)
     (when (string-prefix-p "error:" audio)
       (voice--set-state nil)
@@ -397,107 +424,18 @@ enough, as (COMMAND . SIMILARITY)."
 
 ;;; Corrections
 
-(defun voice--char-class (char)
-  "What kind of character CHAR is, for telling where words start and end."
-  (cond ((not char) nil)
-        ((<= #x3040 char #x309f) 'hiragana)
-        ((<= #x30a0 char #x30ff) 'katakana)
-        ((eq (aref char-script-table char) 'han) 'han)
-        ((eq (aref char-script-table char) 'hangul) 'hangul)
-        ((string-match-p "[[:alnum:]]" (string char)) 'word)))
-
 (defun voice--correct-text (text language)
   "TEXT with the learned corrections for LANGUAGE applied, by voice.fnl."
   (condition-case err (voice--hs-voice "correct" text language)
     (error (message "Voice: corrections skipped: %s" (error-message-string err))
            text)))
 
-(defconst voice--tokenizer-script
-  "ObjC.import('NaturalLanguage');
-function run(argv) {
-  const s = $(argv[0]);
-  const t = $.NLTokenizer.alloc.initWithUnit($.NLTokenUnitWord);
-  t.string = s;
-  const ranges = t.tokensForRange($.NSMakeRange(0, s.length));
-  const out = [];
-  for (let i = 0; i < ranges.count; i++) {
-    out.push(s.substringWithRange(ranges.objectAtIndex(i).rangeValue).js);
-  }
-  return out.join('\\n');
-}"
-  "Words, one per line, from macOS's on-device tokenizer, which knows Japanese.")
-
-(defconst voice--korean-particles
-  '("에서는" "에서도" "으로는" "에게서" "한테서" "까지" "부터" "에서" "에게"
-    "한테" "으로" "처럼" "보다" "에는" "에도" "은" "는" "이" "가" "을" "를"
-    "의" "에" "로" "와" "과" "도" "만")
-  "Endings stripped from Korean words to offer the bare word, longest first.")
-
-(defun voice--tokens (text)
-  "TEXT's words as (START . END) pairs, using macOS's tokenizer if it can."
-  (or (with-temp-buffer
-        (when (and (eq system-type 'darwin)
-                   (eq 0 (ignore-errors
-                           (call-process "/usr/bin/osascript" nil t nil
-                                         "-l" "JavaScript"
-                                         "-e" voice--tokenizer-script text))))
-          (let ((start 0) tokens)
-            (dolist (word (split-string (buffer-string) "\n" t))
-              (when-let* ((from (string-search word text start)))
-                (push (cons from (setq start (+ from (length word)))) tokens)))
-            (nreverse tokens))))
-      (let (tokens (start 0))
-        (while (string-match "[^[:space:][:punct:]]+" text start)
-          (push (cons (match-beginning 0) (match-end 0)) tokens)
-          (setq start (match-end 0)))
-        (nreverse tokens))))
-
-(defun voice--kana-tail-p (word)
-  "Whether WORD is only hiragana: a particle, an ending, or okurigana."
-  (string-match-p "\\`[ぁ-ゟー]+\\'" word))
-
 (defun voice--word-candidates (text)
-  "Pieces of TEXT that might have been misheard, in order.
-Words, and Korean words without their particle.  Japanese has no spaces
-and the tokenizer splits finely, so a word also takes up to two more
-pieces: kanji or katakana continuing it (図書+館), then its hiragana
-tail (行き+まし+た).  A tail is never offered alone or cut short."
-  (let* ((tokens (vconcat (voice--tokens text)))
-         (count (length tokens))
-         (word-at (lambda (k) (substring text (car (aref tokens k))
-                                         (cdr (aref tokens k)))))
-         (glued (lambda (k) (and (> k 0) (< k count)
-                                 (= (cdr (aref tokens (1- k)))
-                                    (car (aref tokens k))))))
-         candidates)
-    (dotimes (i count)
-      (unless (and (funcall glued i)
-                   (voice--kana-tail-p (funcall word-at i)))
-        (let ((j i) (in-tail nil))
-          (while (and (< j (min count (+ i 3)))
-                      (or (= j i) (funcall glued j)))
-            (let* ((kana (voice--kana-tail-p (funcall word-at j)))
-                   (word (substring text (car (aref tokens i))
-                                    (cdr (aref tokens j))))
-                   (particle
-                    (and (eq (voice--char-class (aref word (1- (length word))))
-                             'hangul)
-                         (seq-find (lambda (p)
-                                     (and (string-suffix-p p word)
-                                          (> (length word) (length p))))
-                                   voice--korean-particles))))
-              (when (and (> j i) in-tail (not kana))
-                (setq j count))
-              (when (< j count)
-                (setq in-tail (and (> j i) kana))
-                (unless (and in-tail (funcall glued (1+ j))
-                             (voice--kana-tail-p (funcall word-at (1+ j))))
-                  (push word candidates)
-                  (when particle
-                    (push (substring word 0 (- (length particle)))
-                          candidates)))
-                (setq j (1+ j))))))))
-    (seq-uniq (nreverse candidates))))
+  "Words of TEXT that might have been misheard, from voice.fnl.
+It uses macOS's tokenizer, so Japanese words come apart too."
+  (condition-case nil
+      (split-string (voice--hs-voice "candidates" text) "\n" t)
+    (error (split-string text "[[:space:][:punct:]]+" t))))
 
 (defun voice-correct (heard meant)
   "Replace HEARD with MEANT in the last dictation, and from now on.
@@ -569,8 +507,9 @@ With ARG, pick the language first; it stays for later dictations."
 ;;;###autoload
 (defun voice-command (&optional arg)
   "Start listening for a command, or stop and run the one heard.
-Only phrases in `voice-commands' run anything. With ARG, pick the language
-first, as with `voice-dictate'."
+Phrases in `voice-commands' run their command; other requests go to the
+local models, if set up, whose choice runs after asking.  With ARG, pick the
+language first, as with `voice-dictate'."
   (interactive "P")
   (let ((config (or (voice--config)
                     (user-error "Voice isn't set up on this machine"))))
