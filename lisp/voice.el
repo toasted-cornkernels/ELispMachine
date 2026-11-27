@@ -18,7 +18,9 @@
 ;;
 ;; `voice-command' listens for a phrase from `voice-commands' instead, and
 ;; runs its command.  Anything else goes to local models (voice-intent.el),
-;; which find the existing command meant; that runs only after asking.
+;; which find the existing command meant; that runs only after asking.  The
+;; question takes y or n, even with a Korean or Japanese input method on, or
+;; a spoken answer: the command key again, then yes or no in any language.
 ;;
 ;; Transcripts go through learned corrections first: `voice-correct' fixes a
 ;; word of the last dictation and remembers the fix.  voice.fnl keeps them in
@@ -304,6 +306,93 @@ enough, as (COMMAND . SIMILARITY)."
             (setq best (cons (car entry) score))))))
     (and best (>= (cdr best) voice-command-similarity) best)))
 
+(defcustom voice-answers
+  '((no "no" "not" "nope" "cancel" "don't" "do not" "stop" "never mind" "wait"
+        "아니" "아뇨" "취소" "하지 마" "하지마" "안 해" "안해" "안 돼" "안돼"
+        "됐어" "그만" "싫어"
+        "いいえ" "いや" "やめ" "取り消" "キャンセル" "だめ" "ダメ" "違" "結構"
+        "ない")
+    (yes "yes" "yeah" "yep" "sure" "ok" "okay" "do it" "go ahead" "run it"
+         "please" "네" "예" "응" "그래" "좋아" "실행" "해 줘" "해줘" "맞아" "오케이"
+         "はい" "うん" "ええ" "お願い" "いいよ" "実行" "そう" "オーケー" "オッケー"))
+  "Spoken answers to a question, in any of the languages.
+An answer with a `no' phrase anywhere in it is no; else one with a `yes'
+phrase is yes.  English phrases match whole words."
+  :type '(alist :key-type symbol :value-type (repeat string)))
+
+(defun voice--normalize-answer (text)
+  (string-trim (replace-regexp-in-string
+                "[[:punct:][:space:]]+" " " (downcase text))))
+
+(defun voice--answer (text)
+  "`yes', `no' or nil for the spoken answer TEXT, by `voice-answers'."
+  (let ((text (concat " " (voice--normalize-answer text) " ")))
+    (seq-find (lambda (kind)
+                (seq-some (lambda (phrase)
+                            (let ((phrase (voice--normalize-answer phrase)))
+                              (string-search
+                               (if (string-match-p "\\`[[:ascii:]]+\\'" phrase)
+                                   (concat " " phrase " ")
+                                 phrase)
+                               text)))
+                          (alist-get kind voice-answers)))
+              '(no yes))))
+
+(defun voice--confirm (question)
+  "Ask QUESTION; t for yes.
+Answer with y or n, also while a Korean or Japanese input method is on, or
+with the voice keys and a spoken yes or no in any of the languages."
+  (let* ((source (and (fboundp 'mac-input-source)
+                      (ignore-errors (mac-input-source))))
+         (restore (and source
+                       (not (member source (mac-input-source-list
+                                            'ascii-capable-keyboard)))
+                       source))
+         (inhibit-quit t)
+         heard note answer mine)
+    ;; Korean and Japanese input methods would compose y and n into text.
+    (when restore (ignore-errors (mac-auto-ascii-select-input-source)))
+    (unwind-protect
+        (while (not answer)
+          (let* ((voice-key (voice--key-hint 'voice-command))
+                 (prompt
+                  (concat (or note "") question " "
+                          (pcase (and mine voice--state)
+                            ((or 'starting 'listening)
+                             (format "Listening… %s when done " voice-key))
+                            ('transcribing "Hearing the answer… ")
+                            (_ (format "(y or n, or %s and say it) " voice-key)))))
+                 (event (read-event (propertize prompt 'face 'minibuffer-prompt)
+                                    nil 0.2))
+                 (binding (and event (key-binding (vector event)))))
+            (when heard
+              (setq answer (or (voice--answer heard)
+                               (progn (setq note (format "Heard \"%s\". " heard))
+                                      nil))
+                    heard nil))
+            (cond
+             ((null event))
+             ((memq event '(?y ?Y ?ㅛ)) (setq answer 'yes))
+             ((memq event '(?n ?N ?ㅜ ?\C-g ?\e escape)) (setq answer 'no))
+             ((memq binding '(voice-command voice-dictate))
+              (condition-case err
+                  (cond
+                   ((and voice--state (not mine))
+                    (setq note "Another recording is going on. "))
+                   ((memq voice--state '(starting listening))
+                    (voice--stop (voice--config)))
+                   ((eq voice--state 'transcribing))
+                   (t (setq note nil mine t)
+                      (voice--start (lambda (text &rest _) (setq heard text))
+                                    'voice-command)))
+                (error (setq note (concat (error-message-string err) ". ")))))
+             ((and mine (eq binding 'voice-cancel)) (voice-cancel)))))
+      (when (and mine (memq voice--state '(starting listening))) (voice-cancel))
+      (setq quit-flag nil)
+      (when restore (ignore-errors (mac-select-input-source restore))))
+    (message "%s %s" question (if (eq answer 'yes) "yes" "no"))
+    (eq answer 'yes)))
+
 (defun voice--call-in (command buffer window &optional confirm)
   "Call COMMAND interactively in WINDOW, if it still shows BUFFER.
 With CONFIRM, ask first.  Off the process sentinel, so commands that read the
@@ -316,8 +405,8 @@ minibuffer (M-x) work as from a key."
       ((not (and (window-live-p window) (eq (window-buffer window) buffer)))
        (message "Voice: not running %s; its buffer isn't shown any more" command))
       ((and confirm
-            (not (y-or-n-p
-                  (format "Voice: run %s (%s)? " command
+            (not (voice--confirm
+                  (format "Voice: run %s (%s)?" command
                           (truncate-string-to-width
                            (car (split-string (or (ignore-errors
                                                     (documentation command t))
