@@ -8168,6 +8168,8 @@ A tmux pane below this one when Emacs runs inside tmux, else Terminal.app."
     "y"          'elfeed-search-yank
     "Y"          'elfeed-youtube-player
     "b"          'elfeed-search-browse-url
+    "O"          'elfeed-extras-open-pdf
+    "T"          'elfeed-extras-youtube-transcript
 
     "w"          'elfeed-web-start
     "W"          'elfeed-web-stop
@@ -8207,6 +8209,10 @@ A tmux pane below this one when Emacs runs inside tmux, else Terminal.app."
     "A"          'elfeed-show-add-enclosure-to-playlist
     "P"          'elfeed-show-play-enclosure
     "d"          'elfeed-show-save-enclosure
+    "f"          'elfeed-show-fetch-link
+    "R"          'elfeed-extras-show-readable
+    "O"          'elfeed-extras-open-pdf
+    "T"          'elfeed-extras-youtube-transcript
     "]]"         'elfeed-show-next
     "C-j"        'elfeed-show-next
     "gj"         'elfeed-show-next
@@ -8263,6 +8269,26 @@ A tmux pane below this one when Emacs runs inside tmux, else Terminal.app."
                          "~/RSSFeed/feeds.opml")))
     (when (file-exists-p opml-location)
       (elfeed-load-opml opml-location))))
+
+;; Reader view via rdrview, PDF rendering via pandoc, and YouTube transcripts.
+(use-package elfeed-extras
+  :straight nil
+  :load-path "lisp"
+  :after elfeed
+  :demand t
+  :commands (elfeed-extras-show-readable
+             elfeed-extras-open-pdf elfeed-extras-url-to-pdf
+             elfeed-extras-youtube-transcript elfeed-extras-subed-play))
+
+(use-package subed
+  ;; The package lives in subed/, which the default recipe's :defaults misses.
+  :straight (:host github :repo "sachac/subed" :files ("subed/*.el"))
+  :defer t
+  :general-config
+  (local-leader
+    :major-modes '(subed-mode t)
+    :keymaps     '(subed-mode-map)
+    "p"          'elfeed-extras-subed-play))
 
 ;; Emms config ======================================
 ;; ==================================================

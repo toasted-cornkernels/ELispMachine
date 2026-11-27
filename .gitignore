@@ -8,5 +8,6 @@
 !early-init.el
 !lisp/
 !lisp/voice.el
+!lisp/elfeed-extras.el
 !CaptureTemplates/
 !CaptureTemplates/**
