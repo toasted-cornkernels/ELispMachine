@@ -695,6 +695,29 @@
 ;; Org config =======================================
 ;; ==================================================
 
+(defvar elispm/org-preload-features
+  '(calendar org-macs org-compat org-faces org-entities org-list org-keys
+             org-pcomplete org-src ol ob org-table org-cycle org-fold org-element
+             org evil-org oc-basic org-tempo ol-doi ol-info ol-man
+             face-remap image-converter)
+  "Org libraries to load one at a time while Emacs is idle after startup.
+Without native compilation, loading Org takes ~1.5s on the first visit.")
+
+(defun elispm/org-preload-next ()
+  "Require the next feature in `elispm/org-preload-features' and reschedule."
+  (let ((feature (pop elispm/org-preload-features)))
+    (when feature
+      (unless (featurep feature)
+        (let ((inhibit-message t))
+          (with-demoted-errors "Org preload: %S" (require feature nil t))))
+      (when elispm/org-preload-features
+        (run-with-idle-timer
+         (time-add (or (current-idle-time) 0) 0.25) nil
+         #'elispm/org-preload-next)))))
+
+(add-hook 'emacs-startup-hook
+          (lambda () (run-with-idle-timer 2 nil #'elispm/org-preload-next)))
+
 (use-package org
   :straight (:type built-in)
   :defer t
@@ -1058,12 +1081,17 @@
 
 (use-package org-download
   :defer t
+  :commands (org-download-dnd org-download-dnd-base64)
   :init
-  ;; Loading pulls in url-http and async (~0.1s), so do it once Emacs is idle
-  ;; rather than while the first Org buffer opens. Loading also registers
-  ;; drag-and-drop, which is why it isn't left until a command autoloads it.
-  (with-eval-after-load 'org
-    (run-with-idle-timer 1 nil #'require 'org-download)))
+  ;; Register drag-and-drop handlers up front, as `org-download-enable' would,
+  ;; but via autoloads: loading org-download blocks for ~0.6s.
+  (setq dnd-protocol-alist
+        `(("^\\(https?\\|ftp\\|file\\|nfs\\):" . org-download-dnd)
+          ("^data:" . org-download-dnd-base64)
+          ,@(seq-remove (lambda (entry)
+                          (memq (cdr entry)
+                                '(org-download-dnd org-download-dnd-base64)))
+                        dnd-protocol-alist))))
 
 (use-package htmlize :defer t)
 
@@ -1204,6 +1232,31 @@
   (org-src-fontify-natively t)
   (org-src-tab-acts-natively t)
   (org-edit-src-content-indentation 0)
+  :config
+  ;; Native fontification calls each block's major mode in a hidden
+  ;; " *org-src-fontification:MODE*" buffer.  Skip mode hooks there: they
+  ;; only cost time (eglot-ensure for lua, slime for lisp, ...).
+  (define-advice run-mode-hooks (:before-until (&rest _) elispm/org-src-fontify)
+    (string-prefix-p " *org-src-fontification:" (buffer-name)))
+
+  (defvar elispm/org-src-fontify-fallback-modes
+    '((racket-mode . scheme-mode))
+    "Light modes used to fontify src blocks while the real mode is unloaded.
+Editing with \\[org-edit-special] still uses the real mode.")
+
+  (defvar elispm/org-src-fontifying nil)
+
+  (define-advice org-src-font-lock-fontify-block
+      (:around (orig &rest args) elispm/fallback-modes)
+    (let ((elispm/org-src-fontifying t))
+      (apply orig args)))
+
+  (define-advice org-src-get-lang-mode
+      (:filter-return (mode) elispm/fallback-modes)
+    (or (and elispm/org-src-fontifying
+             (autoloadp (symbol-function mode))
+             (cdr (assq mode elispm/org-src-fontify-fallback-modes)))
+        mode))
   :general-config
   (local-leader
     :major-modes '(org-src-mode t)
