@@ -728,17 +728,16 @@
   (org-enforce-todo-dependencies t)
   (org-todo-keywords '((sequence "TODO" "NEXT" "WORKING" "HOLD" "|"
                                  "DONE" "ABORTED")))
-  (org-export-backends '(ascii html icalendar latex odt markdown))
-  (org-modules (append '(org-crypt
-                         org-habit
-                         ol-eww
-                         ol-w3m
-                         ol-doi
-                         ol-bibtex
-                         ol-info
-                         ol-man)))
+  (org-export-backends '(ascii html icalendar latex odt md))
+  ;; `ol-eww' pulls in eww and url, so it's loaded after eww instead.
+  ;; `org-habit' is loaded with `org-agenda' (see below).
+  (org-modules '(ol-doi ol-info ol-man))
   (org-fontify-quote-and-verse-blocks t)
   (org-use-sub-superscripts '{})
+  :init
+  (with-eval-after-load 'eww
+    (with-eval-after-load 'org
+      (require 'ol-eww)))
   :general-config
   (local-leader
     :major-modes '(org-mode t)
@@ -1057,17 +1056,18 @@
 
 (use-package org-sticky-header :defer t)
 
-(use-package org-transclusion :after org)
-
-(use-package org-download :after org)
+(use-package org-download
+  :defer t
+  :init
+  ;; Loading pulls in url-http and async (~0.1s), so do it once Emacs is idle
+  ;; rather than while the first Org buffer opens. Loading also registers
+  ;; drag-and-drop, which is why it isn't left until a command autoloads it.
+  (with-eval-after-load 'org
+    (run-with-idle-timer 1 nil #'require 'org-download)))
 
 (use-package htmlize :defer t)
 
 (use-package verb :defer t)
-
-(use-package org-auto-tangle
-  :defer t
-  :hook  (org-mode . org-auto-tangle-mode))
 
 (use-package org-anki :defer t)
 
@@ -1096,7 +1096,6 @@
 (use-package ob-gptel
   :straight (ob-gptel :type git :host github
                       :repo  "jwiegley/ob-gptel")
-  :after org
   :defer t)
 
 (use-package ob
@@ -1107,20 +1106,32 @@
                (org-redisplay-inline-images))))
   :defer t
   :config
-  ;; NOTE: `gptel' is intentionally excluded here. Eagerly requiring
-  ;; `ob-gptel' via `org-babel-do-load-languages' while `ob' (part of
-  ;; org core) is itself still being loaded causes a circular
-  ;; `require' of org -> org-element -> ob-gptel -> org, which Emacs
-  ;; reports as "Recursive load". `ob-gptel' is loaded separately
-  ;; above with `:after org', once org has fully finished loading.
-  (let ((org-babel-languages '(lisp clojure scheme
-                                    dot shell awk restclient
-                                    http C ruby
-                                    lua fennel nix
-                                    hledger python)))
-    (org-babel-do-load-languages
-     'org-babel-load-languages
-     (mapcar (lambda (language) `(,language . t)) org-babel-languages)))
+  ;; Load babel languages on first use instead of eagerly through
+  ;; `org-babel-do-load-languages', which costs ~0.3s on every Org startup.
+  (defvar elispm/org-babel-lang-aliases
+    '(("elisp" . "emacs-lisp")
+      ("sh"    . "shell")
+      ("bash"  . "shell")
+      ("zsh"   . "shell")
+      ("c++"   . "C")
+      ("cpp"   . "C"))
+    "Source block languages whose babel library is named differently.")
+
+  (defun elispm/org-babel-lazy-load (lang)
+    "Require the babel library for LANG unless it is already available."
+    (when (and (stringp lang)
+               (not (fboundp (intern (concat "org-babel-execute:" lang)))))
+      (let ((lib (or (cdr (assoc lang elispm/org-babel-lang-aliases)) lang)))
+        (require (intern (concat "ob-" lib)) nil t))))
+
+  (define-advice org-babel-execute-src-block
+      (:before (&optional _arg info _params &rest _) elispm/lazy-load)
+    (elispm/org-babel-lazy-load
+     (car (or info (org-babel-get-src-block-info 'no-eval)))))
+
+  (define-advice org-babel-confirm-evaluate
+      (:before (info) elispm/lazy-load)
+    (elispm/org-babel-lazy-load (car info)))
 
   :general-config
   (local-leader
@@ -1205,7 +1216,7 @@
 
 (use-package org-habit
   :straight (:type built-in)
-  :defer    t)
+  :after    org-agenda)
 
 (use-package org-compat
   :straight nil
@@ -1354,24 +1365,15 @@
   ;; Resume clocking task when emacs is restarted
   (org-clock-persistence-insinuate))
 
-(use-package org-pomodoro
-  :after org
-  :custom
-  (org-pomodoro-length 20)
-  :general-config
-  (local-leader
-    :major-modes '(org-mode t)
-    :keymaps     '(org-mode-map)
-    "cp"         'org-pomodoro))
-
 (use-package org-journal
-  :after org
+  :defer t
+  :mode ("Journal/[0-9]\\{8\\}\\.org\\'" . org-journal-mode)
   :custom
   (org-journal-file-format "%Y%m%d.org")
   (org-journal-dir (if android-p
                        "~/storage/shared/Org/Journal/"
                      "~/Org/Journal/"))
-  :general-config
+  :general
   (local-leader
     :major-modes '(calendar-mode t)
     :keymaps     '(calendar-mode-map)
@@ -1383,6 +1385,7 @@
     "w"          'org-journal-search-calendar-week
     "m"          'org-journal-search-calendar-month
     "y"          'org-journal-search-calendar-year)
+  :general-config
   (local-leader
     :major-modes '(org-journal-mode t)
     :keymaps     '(org-journal-mode-map)
@@ -1404,30 +1407,6 @@
                                   ("json" . "src json")
                                   ("gfm" . "src gfm")
                                   ("txt" . "src text"))))
-
-(use-package org-kanban
-  :after org
-  :general-config
-  (local-leader
-    :major-modes '(org-mode t)
-    :keymaps     '(org-mode-map)
-    "k"          (which-key-prefix :kanban)
-    "k."         'org-kanban/initialize-here
-    "k^"         'org-kanban/initialize-at-beginning
-    "k$"         'org-kanban/initialize-at-end
-
-    "ks"         'org-kanban/shift
-    "kh"         'org-kanban/prev
-    "kj"         'org-kanban/move-subtree-down
-    "kk"         'org-kanban/move-subtree-up
-    "kl"         'org-kanban/next
-
-    "kc"         'org-kanban/configure-block
-    "kv"         'org-kanban/version))
-
-(use-package org-remark :defer t)
-
-(use-package org-noter :defer t)
 
 (use-package org-web-tools :defer t)
 
@@ -4663,6 +4642,18 @@ set so that it clears the whole REPL buffer, not just the output."
   :hook (go-mode . (lambda ()
                      (setq indent-tabs-mode 1)))
   :defer t
+  :init
+  ;; go-mode autoloads `go--is-go-asm' into `magic-mode-alist', so the first
+  ;; file visited in a session (an Org file, say) loads go-mode, url, ffap and
+  ;; etags. Only consult it for .s files.
+  (defun elispm/go-asm-p ()
+    (and buffer-file-name
+         (string-suffix-p ".s" buffer-file-name)
+         (go--is-go-asm)))
+  (setq magic-mode-alist
+        (cons (cons #'elispm/go-asm-p #'go-asm-mode)
+              (seq-remove (lambda (entry) (eq (car entry) #'go--is-go-asm))
+                          magic-mode-alist)))
   :config
   (defun go-run-tests (args)
     (interactive)
@@ -7459,7 +7450,6 @@ A tmux pane below this one when Emacs runs inside tmux, else Terminal.app."
   "aoCj" 'org-clock-jump-to-current-clock
   "aoCo" 'org-clock-out
   "aoCr" 'org-resolve-clocks
-  "aoCp" 'org-pomodoro
 
   "aoj"  (which-key-prefix :journal)
   "aojf" 'org-journal-open-current-journal-file
