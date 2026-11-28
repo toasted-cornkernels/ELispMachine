@@ -54,3 +54,26 @@
 ;; `command-line-1' opens files given on the command line (maybe TRAMP or .gz),
 ;; right after `after-init-hook' and before `emacs-startup-hook'.
 (advice-add 'command-line-1 :before #'elispm/restore-file-name-handlers)
+
+;; Don't redisplay or echo messages while init.el loads; nothing is drawn
+;; until init finishes anyway, so this saves the partial redisplays (~20ms).
+;; Anything that prompts during init (e.g. straight asking to clone a
+;; package) turns redisplay back on first, so it never looks frozen.
+(defconst elispm/startup-prompt-functions
+  '(read-from-minibuffer read-string read-key read-event read-char
+    read-char-exclusive read-passwd y-or-n-p yes-or-no-p))
+
+(defun elispm/restore-redisplay (&rest _)
+  "Undo the startup-only redisplay and message suppression."
+  (advice-remove 'command-line-1 #'elispm/restore-redisplay)
+  (dolist (fn elispm/startup-prompt-functions)
+    (advice-remove fn #'elispm/restore-redisplay))
+  (setq-default inhibit-redisplay nil
+                inhibit-message nil))
+
+(unless (or noninteractive init-file-debug (daemonp))
+  (setq-default inhibit-redisplay t
+                inhibit-message t)
+  (advice-add 'command-line-1 :before #'elispm/restore-redisplay)
+  (dolist (fn elispm/startup-prompt-functions)
+    (advice-add fn :before #'elispm/restore-redisplay)))

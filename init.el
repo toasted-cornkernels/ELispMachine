@@ -696,21 +696,35 @@
 ;; ==================================================
 
 (defvar elispm/org-preload-features
-  '(calendar org-macs org-compat org-faces org-entities org-list org-keys
-             org-pcomplete org-src ol ob org-table org-cycle org-fold org-element
+  '("안" "こ" "✓" "⏰"
+    calendar org-macs org-compat org-faces org-entities org-list org-keys
+             org-pcomplete org-src ol ob org-table org-cycle org-fold
+             generator avl-tree find-func outline time-date org-macro inline
+             org-element-ast xdg tempo ob-emacs-lisp org-element
              org evil-org oc-basic org-tempo ol-doi ol-info ol-man
-             face-remap image-converter org-roam)
+             face-remap image-converter eieio transient magit-section
+             emacsql emacsql-sqlite url-parse org-attach org-capture org-roam)
   "Libraries to load one at a time while Emacs is idle after startup.
 Without native compilation, loading Org takes ~1.5s and org-roam another
-~0.2s on first use.")
+~0.2s on first use.
+
+A string entry is measured in `variable-pitch' instead.  Its script
+isn't covered by the variable-pitch font, so macOS searches for a
+fallback font, which takes ~100-400ms per script the first time.
+Without this, opening a `mixed-pitch-mode' Org buffer containing Hangul
+or symbols paints ~0.8s late.")
 
 (defun elispm/org-preload-next ()
   "Require the next feature in `elispm/org-preload-features' and reschedule."
   (let ((feature (pop elispm/org-preload-features)))
     (when feature
-      (unless (featurep feature)
-        (let ((inhibit-message t))
-          (with-demoted-errors "Org preload: %S" (require feature nil t))))
+      (if (stringp feature)
+          (when (display-graphic-p)
+            (ignore-errors
+              (string-pixel-width (propertize feature 'face 'variable-pitch))))
+        (unless (featurep feature)
+          (let ((inhibit-message t))
+            (with-demoted-errors "Org preload: %S" (require feature nil t)))))
       (when elispm/org-preload-features
         (run-with-idle-timer
          (time-add (or (current-idle-time) 0) 0.25) nil
@@ -3166,11 +3180,21 @@ Requires smartparens because all movement is done using `sp-forward-symbol'."
 
 (use-package overseer
   :defer t
-  :general-config
+  :init
+  ;; overseer's autoloads enable it in every elisp buffer, which loads
+  ;; overseer and pkg-info (~0.5s) on the first .el file.  Only test files
+  ;; need it; the leader keys below autoload it on demand elsewhere.
+  (remove-hook 'emacs-lisp-mode-hook #'overseer-enable-mode)
+  (defun elispm/maybe-overseer-mode ()
+    "Enable `overseer-mode' in ERT test files."
+    (when (and buffer-file-name
+               (string-match-p "-tests?\\.el\\'" buffer-file-name))
+      (overseer-mode 1)))
+  (add-hook 'emacs-lisp-mode-hook #'elispm/maybe-overseer-mode)
+  :general
   (local-leader
     :major-modes '(emacs-lisp-mode t)
     :keymaps     '(emacs-lisp-mode-map)
-    "ta"         'overseer-test
     "ta"         'overseer-test
     "tt"         'overseer-test-run-test
     "tb"         'overseer-test-this-buffer
@@ -6662,7 +6686,17 @@ Uses `magit-patch-save-arguments' internally, so inherit its settings."
   (custom-safe-themes t)
   (auto-dark-themes '((batppuccin-mocha) (batppuccin-latte)))
   (auto-dark-allow-osascript t)
-  (auto-dark-allow-powershell nil))
+  (auto-dark-allow-powershell nil)
+  :config
+  (when (fboundp 'mac-application-state)
+    (defun elispm/auto-dark-mac-appearance ()
+      "Read the macOS appearance directly; AppleScript takes ~100-350ms."
+      (if (string-match-p
+           "Dark" (or (plist-get (mac-application-state) :appearance) ""))
+          'dark
+        'light))
+    (advice-add 'auto-dark--current-mode-applescript
+                :override #'elispm/auto-dark-mac-appearance)))
 
 (defun elispm/pdf-enable-midnight-mode ()
   "Enable midnight mode in all open PDF buffers."
