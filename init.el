@@ -699,9 +699,10 @@
   '(calendar org-macs org-compat org-faces org-entities org-list org-keys
              org-pcomplete org-src ol ob org-table org-cycle org-fold org-element
              org evil-org oc-basic org-tempo ol-doi ol-info ol-man
-             face-remap image-converter)
-  "Org libraries to load one at a time while Emacs is idle after startup.
-Without native compilation, loading Org takes ~1.5s on the first visit.")
+             face-remap image-converter org-roam)
+  "Libraries to load one at a time while Emacs is idle after startup.
+Without native compilation, loading Org takes ~1.5s and org-roam another
+~0.2s on first use.")
 
 (defun elispm/org-preload-next ()
   "Require the next feature in `elispm/org-preload-features' and reschedule."
@@ -1330,6 +1331,7 @@ Editing with \\[org-edit-special] still uses the real mode.")
     "rI"         'org-id-get-create
     "rl"         'org-roam-buffer-toggle
     "ra"         'org-roam-alias-add
+    "ru"         'org-roam-ui-mode
 
     "rd"         (which-key-prefix "org-roam-dailies")
     "rdy"        'org-roam-dailies-goto-yesterday
@@ -1350,17 +1352,13 @@ Editing with \\[org-edit-special] still uses the real mode.")
   (org-roam-db-autosync-mode))
 
 (use-package org-roam-ui
-  :after (org-roam)
+  :defer t
+  :commands (org-roam-ui-mode org-roam-ui-open)
   :custom
   (org-roam-ui-sync-theme t)
   (org-roam-ui-follow t)
   (org-roam-ui-update-on-save t)
-  (org-roam-ui-open-on-start t)
-  :general-config
-  (local-leader
-    :major-modes '(org-mode t)
-    :keymaps     '(org-mode-map)
-    "ru"         'org-roam-ui-mode))
+  (org-roam-ui-open-on-start t))
 
 (use-package org-indent
   :straight nil
@@ -1968,10 +1966,21 @@ Accumulate continuous pinch deltas; each 30 percent change is one level."
                             (yaml-mode       . yaml-ts-mode))))
 
 (use-package combobulate
+  ;; Upstream marks its `require's with ;;;###autoload, so the generated
+  ;; autoloads file loads all of combobulate (~120ms) at startup.
   :straight (combobulate :type git :host github
-                         :repo "mickeynp/combobulate")
+                         :repo "mickeynp/combobulate"
+                         :build (:not autoloads))
   :when treesit-grammars-p
-  :hook (prog-mode . combobulate-mode)
+  :commands combobulate-mode
+  ;; Combobulate only works in tree-sitter buffers; `prog-mode' alone would
+  ;; also load it for *scratch* and Elisp.
+  :hook (prog-mode . elispm/maybe-combobulate-mode)
+  :init
+  (defun elispm/maybe-combobulate-mode ()
+    "Enable `combobulate-mode' if the buffer uses tree-sitter."
+    (when (and (fboundp 'treesit-parser-list) (treesit-parser-list))
+      (combobulate-mode)))
   :general
   (normal-mode-major-mode
     :keymaps     '(combobulate-key-map)
